@@ -1,0 +1,27 @@
+{
+  "name": "@textile/threads-core",
+  "version": "0.0.1",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf ./dist"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.21",
+    "@types/varint": "^5.0.0",
+    "cids": "github:multiformats/js-cid#master",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "iso-random-stream": "^1.1.1",
+    "multibase": "^0.6.0",
+    "varint": "^5.0.0"
+  }
+}
