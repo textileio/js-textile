@@ -1,0 +1,106 @@
+version: 2
+
+defaults: &defaults
+    working_directory: ~/js-threads
+    docker:
+        - image: circleci/node:10-browsers
+jobs:
+    lint-test:
+        <<: *defaults
+        steps:
+            - checkout
+            - restore_cache:
+                key: npm-v1-{{ checksum "package-lock.json" }}-{{ arch }}
+            - restore_cache:
+                key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+            - run: npm install
+            - run:
+                name: Lint
+                command: |
+                    npm run lint
+            - save_cache:
+                key: npm-v1-{{ checksum "package-lock.json" }}-{{ arch }}
+                paths:
+                    - ~/.cache/npm
+            - save_cache:
+                key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+                paths:
+                    - node_modules
+            - run:
+                name: Test
+                command: |
+                    mkdir -p test-results
+                    npm run test:node
+                    npm run test:browser
+            - store_artifacts:
+                path: coverage
+    docs:
+        <<: *defaults
+        steps:
+            - checkout
+            - restore_cache:
+                key: npm-v1-{{ checksum "package-lock.json" }}-{{ arch }}
+            - restore_cache:
+                key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+            - run: npm install
+            - attach_workspace:
+                at: ~/js-threads
+            - run:
+                name: build docs
+                command: npm run docs
+            - persist_to_workspace:
+                root: ~/js-threads
+                paths:
+                  - docs
+    deploy:
+        <<: *defaults
+        steps:
+            - checkout
+            - restore_cache:
+                key: npm-v1-{{ checksum "package-lock.json" }}-{{ arch }}
+            - restore_cache:
+                key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+            - run: npm install
+            - attach_workspace:
+                at: ~/js-threads
+            - run:
+                name: Authenticate
+                command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/js-threads/.npmrc
+            - run:
+                name: Publish Package
+                command: npm publish --access=public --unsafe-perm
+            - run:
+                name: Prepare Docs
+                command: |
+                  npm install -g --silent gh-pages@2.1.1
+                  git config --global user.email "circleci@textile.io"
+                  git config --global user.name "circleci"
+            - add_ssh_keys:
+                fingerprints:
+                    - 9f:f4:f0:11:36:b4:d9:c4:d6:e8:9a:78:9a:be:57:73
+            - run:
+                name: Deploy Docs
+                command: gh-pages --message "[skip ci] chore(docs) update" --dist docs
+
+workflows:
+    version: 2
+    js-threads:
+        jobs:
+            - lint-test:
+                filters:
+                    tags:
+                        only: /.*/
+            - docs:
+                requires:
+                    - lint-test
+                filters:
+                    tags:
+                        only: /^v.*/
+            - deploy:
+                requires:
+                    - docs
+                filters:
+                    tags:
+                        only: /^v.*/
+                    branches:
+                        ignore: /.*/
