@@ -14,10 +14,6 @@ jobs:
             - restore_cache:
                 key: node-v1-{{ checksum "package.json" }}-{{ arch }}
             - run: npm install
-            - run:
-                name: Lint
-                command: |
-                    npm run lint
             - save_cache:
                 key: npm-v1-{{ checksum "package-lock.json" }}-{{ arch }}
                 paths:
@@ -27,12 +23,10 @@ jobs:
                 paths:
                     - node_modules
             - run:
-                name: Test
+                name: Lint and Test
                 command: |
-                    mkdir -p test-results
-                    npm run bootstrap
-                    npm run test:node
-                    npm run test:browser
+                    mkdir -p coverage
+                    npm test
             - store_artifacts:
                 path: coverage
     docs:
