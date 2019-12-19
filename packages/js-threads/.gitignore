@@ -143,6 +143,7 @@ sourcemap.js
 # Jest
 .jest/
 coverage/
+junit/
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

@@ -26,7 +26,14 @@ jobs:
                 name: Lint and Test
                 command: |
                     mkdir -p coverage
-                    npm test
+                    mkdir -p junit
+                    npm run bootstrap
+                    MOCHA_FILE=junit/test-results.xml npm run test:node -- --reporter=mocha-junit-reporter
+                    npm run test:browser
+            - store_test_results:
+                path: ~/junit
+            - store_artifacts:
+                path: ~/junit
             - store_artifacts:
                 path: coverage
     docs:
