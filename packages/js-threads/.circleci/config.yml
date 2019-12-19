@@ -30,7 +30,7 @@ jobs:
                 name: Test
                 command: |
                     mkdir -p test-results
-                    lerna bootstrap
+                    npm run bootstrap
                     npm run test:node
                     npm run test:browser
             - store_artifacts:
