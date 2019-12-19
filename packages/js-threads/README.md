@@ -1,12 +1,12 @@
-# Textile's Threads Protocol _(ts-threads)_
+# Textile's Threads Protocol _(js-threads)_
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
 [![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
-[![GitHub license](https://img.shields.io/github/license/textileio/ts-threads.svg?style=flat-square)](./LICENSE)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/ts-threads.svg?style=popout-square)](./package.json)
+[![GitHub license](https://img.shields.io/github/license/textileio/js-threads.svg?style=flat-square)](./LICENSE)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-threads.svg?style=popout-square)](./package.json)
 [![npm (scoped)](https://img.shields.io/npm/v/@textile/threads.svg?style=popout-square)](https://www.npmjs.com/package/@textile/threads)
-[![Release](https://img.shields.io/github/release/textileio/ts-threads.svg?style=flat-square)](https://github.com/textileio/ts-threads/releases/latest)
-[![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/ts-threads)
+[![Release](https://img.shields.io/github/release/textileio/js-threads.svg?style=flat-square)](https://github.com/textileio/js-threads/releases/latest)
+[![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/js-threads)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 > Typescript implementation of Textile's Threads Protocol
@@ -40,15 +40,15 @@ TODO
 // TODO
 ```
 
-There are also several useful examples included as tests in the [sub-packages](https://github.com/textileio/ts-threads/tree/master/packages) of this repo.
+There are also several useful examples included as tests in the [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo.
 
 ## Developing
 
 This mono-repo is made up of several sub-packages, all managed by [lerna](https://github.com/lerna/lerna). You shouldn't have to do anything special to get started, however, here are a few steps that will make it easier to develop new functionality locally.
 
 ```bash
-git clone git@github.com:textileio/ts-threads.git
-cd ts-threads
+git clone git@github.com:textileio/js-threads.git
+cd js-threads
 npm i
 lerna bootstrap
 ```
@@ -72,7 +72,7 @@ See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other
 
 ## API
 
-See [https://textileio.github.io/js-threads](https://textileio.github.io/ts-threads)
+See [https://textileio.github.io/js-threads](https://textileio.github.io/js-threads)
 
 ## Maintainers
 
