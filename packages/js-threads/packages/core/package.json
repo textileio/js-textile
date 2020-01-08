@@ -13,15 +13,20 @@
     "clean": "rimraf ./dist"
   },
   "devDependencies": {
+    "@types/multiaddr": "^7.2.0",
+    "@types/multibase": "^0.6.0",
     "@types/node": "^12.12.21",
+    "@types/randombytes": "^2.0.0",
     "@types/varint": "^5.0.0",
     "cids": "github:multiformats/js-cid#master",
+    "multiaddr": "^7.2.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "iso-random-stream": "^1.1.1",
+    "loglevel": "^1.6.6",
     "multibase": "^0.6.0",
+    "randombytes": "^2.1.0",
     "varint": "^5.0.0"
   }
 }
