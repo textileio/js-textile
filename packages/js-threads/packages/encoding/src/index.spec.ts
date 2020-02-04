@@ -1,49 +1,46 @@
-/* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import CID from 'cids'
-import Base58 from 'bs58'
 import { expect } from 'chai'
-import { RecordEncoder } from '.'
+import { randomBytes, keys } from 'libp2p-crypto'
+import { Block, EventHeader, RecordNode } from '@textile/threads-core'
+import { defaultOptions, decodeBlock } from './coding'
+import { createEvent } from './event'
+import { createRecord } from './record'
 
-const input = {
-  record_node:
-    'WLQ/rImARp9uZ2dw0tU12DgQDRyT3J/Wwj0rt7I739loFIzYPE82pjZS9tMFVrDvgXsMXU/XAn2z41E6TIqzPbM6/VkKMcru0oEe5VnEmzLRDbYOmBr9Uho7x/KbeWpXfm8GUu+viBBwktuVFz0Gm4Z74UaVwuUVQTCKim7YH/zbPM7QkhbBRQy/DQdn2rQPFRmsJAgd7Fydo4KG+icYcHT1mzilfqOm4nyUvYmQXvPLNqU1xy4=',
-  event_node:
-    'omRib2R52CpYJQABcRIgwu4jIXV2zvNPD3OJpkkx9PYNn/RqwsEKAfBZwgsqkblmaGVhZGVy2CpYJQABcRIg7uOMHiwnnEeIECpLwtE12mkoc5RAqn+lxEYtXeiTpfM=',
-  header_node:
-    'WE2oKDx5XsA/9FVKesyrFTXBKmA5mLXf3Vemu58u5zTh8NjmViDIvYFGdPti1vwDr85QMmiCPMlfpscRLYyyoqAJor6mstTvYypnv3AZKg==',
-  body_node: 'WCG7M6xYU4Z6APHvGVItlP40JsEhjNorfduruomEVDGYcHc=',
-}
+const readKey = randomBytes(44)
+const replicatorKey = randomBytes(44)
+const raw = { txt: 'hello world' }
 
-const readKey = 'ZH8u8CenXXHVCxRPzWGugV3DHsP3vRmD4F6UhHqocpYFbX2r81BRnd4tbDSq'
-const followKey = 'gmpuqCBn8MBSNC5MYtpnAsTHWFRu2wyTGaDrjTHYjJBWCt9snfv4s3vsExTJ'
-const sig = 'hldBgOws94qUGUTZXMumds3vUtlkYr33qlBgmJB22+NQ9F2c3TqvfQvzFzNlaGjg0MtUz2k8MUcvJNHFJ8qjCQ=='
-const key = '29EApHMhnc1uRsxpppSijtWzTjWLBPD6MKErUKxDpD6gK7rjbMf6fHcus4VLf'
-
-describe('Record...', () => {
-  it('should decode and decrypt a log record', async () => {
-    const record = await RecordEncoder.decode(input)
-    const h = await record.header(readKey)
-    expect(h!.key).to.deep.equal(Base58.decode(key))
-    expect(h!.time).to.be.lessThan(new Date().valueOf())
-    const b = await record.body(readKey)
-    expect(b.txt).to.equal('hello world')
-    const e = await record.event()
-    // expect(e!.header).to.be.instanceOf(CID)
-    // expect(e!.body).to.be.instanceOf(CID)
-    const r = await record.record(followKey)
-    expect(r!.sig.toString('base64')).to.equal(sig)
+describe('Encoding...', () => {
+  describe('Event...', () => {
+    it('should encode and encrypt log events', async () => {
+      const key = randomBytes(44)
+      const body = Block.encoder(raw, defaultOptions.codec)
+      const obj = await createEvent(body, readKey, key)
+      expect(obj).to.have.haveOwnProperty('value')
+      expect(obj).to.have.haveOwnProperty('body')
+      expect(obj).to.have.haveOwnProperty('header')
+      const decodedBody = decodeBlock(obj.body, key)
+      expect(decodedBody.decodeUnsafe()).to.deep.equal(raw)
+      const decodedHeader = decodeBlock<EventHeader>(obj.header, readKey)
+      const header = decodedHeader.decodeUnsafe()
+      expect(header).to.haveOwnProperty('key')
+      expect(header).to.haveOwnProperty('time')
+      expect(header.key).to.deep.equal(key)
+      expect(Math.round(Date.now() / 1000) - header.time)
+        .to.be.lessThan(100)
+        .and.greaterThan(-0.0001) // small delta for floating point errors
+    })
   })
 
-  it('should encode and encrypt a log record', async () => {
-    const record = await RecordEncoder.encode({ txt: 'hello world' }, readKey, key)
-    const h = await record.header(readKey)
-    expect(h!.key).to.deep.equal(Base58.decode(key))
-    expect(h!.time).to.be.lessThan(new Date().valueOf())
-    const b = await record.body(readKey)
-    expect(b.txt).to.equal('hello world')
-    const e = await record.event()
-    // expect(e!.header).to.be.instanceOf(CID)
-    // expect(e!.body).to.be.instanceOf(CID)
+  describe('Record...', () => {
+    it('should encode and encrypt a log record', async () => {
+      const privKey = await keys.generateKeyPair('Ed25519', 256)
+      const body = Block.encoder(raw, defaultOptions.codec)
+      const event = await createEvent(body, readKey)
+      const { value } = await createRecord(event, privKey, undefined, replicatorKey)
+      const decoded = decodeBlock<RecordNode>(value, replicatorKey).decode()
+      expect(decoded.prev).to.be.undefined
+      expect(decoded).to.haveOwnProperty('block')
+      expect(decoded).to.haveOwnProperty('sig')
+    })
   })
 })

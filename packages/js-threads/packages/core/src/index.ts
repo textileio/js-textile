@@ -1,5 +1,3 @@
 export * from './thread'
 export * from './service'
-export * from './external'
-export * from './utils'
-export * from './store'
+export { Block } from './ipld'

@@ -4,9 +4,13 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
+  "include": [
+    "src/types/ipld__block.d.ts",
+    "src/**/*.ts"
+
+  ],
   "exclude": [
     "node_modules",
-    "dist",
-    "**/*.spec.ts"
+    "dist"
   ]
 }

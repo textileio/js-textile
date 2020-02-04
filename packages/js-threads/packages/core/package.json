@@ -16,17 +16,17 @@
     "@types/multiaddr": "^7.2.0",
     "@types/multibase": "^0.6.0",
     "@types/node": "^12.12.21",
-    "@types/randombytes": "^2.0.0",
     "@types/varint": "^5.0.0",
-    "cids": "github:multiformats/js-cid#master",
+    "cids": "^0.7.2",
     "multiaddr": "^7.2.1",
+    "peer-id": "^0.13.7",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "loglevel": "^1.6.6",
+    "@ipld/block": "^2.1.3",
     "multibase": "^0.6.0",
-    "randombytes": "^2.1.0",
-    "varint": "^5.0.0"
+    "varint": "^5.0.0",
+    "libp2p-crypto": "^0.17.2"
   }
 }
