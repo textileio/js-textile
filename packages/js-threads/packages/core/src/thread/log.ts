@@ -8,7 +8,7 @@ import { LogID } from './id'
  */
 export interface LogInfo {
   /**
-   * The logs ID. @todo: switch to using PeerId?
+   * The logs ID.
    */
   id: LogID
   /**

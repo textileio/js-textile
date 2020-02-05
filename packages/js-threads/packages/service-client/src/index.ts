@@ -6,6 +6,7 @@ import { keys } from 'libp2p-crypto'
 import log from 'loglevel'
 import {
   ThreadID,
+  LogID,
   ThreadInfo,
   KeyOptions,
   LogInfo,
@@ -13,6 +14,7 @@ import {
   ThreadRecord,
   LogRecord,
   API as Service,
+  marshalKey,
 } from '@textile/threads-core'
 import * as pb from '@textile/threads-service-grpc/api_pb'
 import { API } from '@textile/threads-service-grpc/api_pb_service'
@@ -24,7 +26,7 @@ function getThreadKeys(opts: KeyOptions) {
   const threadKeys = new pb.ThreadKeys()
   opts.replicatorKey && threadKeys.setFollowkey(opts.replicatorKey)
   opts.readKey && threadKeys.setReadkey(opts.readKey)
-  opts.logKey && threadKeys.setLogkey(keys.marshalPublicKey(opts.logKey))
+  opts.logKey && threadKeys.setLogkey(marshalKey(opts.logKey))
   return threadKeys
 }
 
@@ -41,7 +43,7 @@ function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, keyiv: Uint8Ar
   return info
 }
 
-function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
+async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
   const id = ThreadID.fromBytes(Buffer.from(proto.id as string, 'base64'))
   const readKey = Buffer.from(proto.readkey as string, 'base64')
   const replicatorKey = Buffer.from(proto.followkey as string, 'base64')
@@ -53,7 +55,7 @@ function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
     // const pkBytes = Buffer.from(log.privkey as string, 'base64')
     // const privKey = await keys.unmarshalPrivateKey(pkBytes)
     const logInfo: LogInfo = {
-      id: pid.toString(),
+      id: pid,
       addrs: new Set(log.addrsList.map(addr => Multiaddr(Buffer.from(addr as string, 'base64')))),
       heads: new Set(log.headsList.map(head => new CID(Buffer.from(head as string, 'base64')))),
       pubKey: keys.unmarshalPublicKey(Buffer.from(log.pubkey as string, 'base64')),
@@ -77,10 +79,10 @@ function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
 export class Client implements Service {
   /**
    * Client creates a new gRPC client instance.
-   * @param host The local/remote host url. Defaults to 'localhost:7006'.
+   * @param host The local/remote host url. Defaults to 'localhost:5007'.
    * @param defaultTransport The default transport to use when making webgRPC calls. Defaults to WebSockets.
    */
-  constructor(private readonly host: string = 'http://localhost:5006', defaultTransport?: grpc.TransportFactory) {
+  constructor(private readonly host: string = 'http://localhost:5007', defaultTransport?: grpc.TransportFactory) {
     const transport = defaultTransport || grpc.WebsocketTransport()
     grpc.setDefaultTransport(transport)
   }
@@ -170,7 +172,7 @@ export class Client implements Service {
   /**
    * addReplicator to a thread.
    * @param id The Thread ID.
-   * @param addr The multiaddr of the replicator peer.
+   * @param addr The multiaddress of the replicator peer.
    */
   async addReplicator(id: ThreadID, addr: Multiaddr) {
     logger.debug('making add replicator request')
@@ -204,7 +206,7 @@ export class Client implements Service {
    * @param logID The Log ID.
    * @param rec The log record to add.
    */
-  async addRecord(id: ThreadID, logID: PeerId, rec: LogRecord) {
+  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord) {
     logger.debug('making add record request')
     const prec = recordToProto(rec)
     const req = new pb.AddRecordRequest()

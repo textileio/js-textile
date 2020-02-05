@@ -1,7 +1,7 @@
 import PeerId from 'peer-id'
 import CID from 'cids'
 import Multiaddr from 'multiaddr'
-import { ThreadID, ThreadInfo, KeyOptions } from '../thread'
+import { ThreadID, ThreadInfo, KeyOptions, LogID } from '../thread'
 import { ThreadRecord, LogRecord } from './record'
 
 export interface Closer {
@@ -10,19 +10,13 @@ export interface Closer {
 
 /**
  * Service is the network interface for thread orchestration.
+ * @todo Include properties
+ * DAGService provides a DAG API to the network.
+ * @todo: Would come from ipfs-lite
+ * Host provides a network identity.
+ * @todo: Should be a libp2p host, or simply peer-id
  */
-export interface Service extends API {
-  /**
-   * DAGService provides a DAG API to the network.
-   * @todo: Would come from ipfs-lite
-   */
-
-  /**
-   * Host provides a network identity.
-   * @todo: Should be a libp2p host, but here we just use PeerId for now
-   */
-  host: PeerId
-}
+export type Service = API
 
 /**
  * API is the network interface for thread orchestration.
@@ -71,7 +65,7 @@ export interface API {
   /**
    * addReplicator to a thread.
    * @param id The Thread ID.
-   * @param addr The multiaddr of the replicator peer.
+   * @param addr The multiaddress of the replicator peer.
    */
   addReplicator(id: ThreadID, addr: Multiaddr): Promise<PeerId>
 
@@ -88,7 +82,7 @@ export interface API {
    * @param logID The Log ID.
    * @param rec The log record to add.
    */
-  addRecord(id: ThreadID, logID: PeerId, rec: LogRecord): Promise<void>
+  addRecord(id: ThreadID, logID: LogID, rec: LogRecord): Promise<void>
 
   /**
    * GetRecord returns the record at cid.

@@ -1,4 +1,4 @@
-import { PublicKey } from 'libp2p-crypto'
+import { PublicKey, PrivateKey } from 'libp2p-crypto'
 import { ThreadID } from './id'
 import { LogInfo } from './log'
 
@@ -18,7 +18,7 @@ export interface KeyOptions {
    * Asymmetric encryption key (pair). Can be either a public or private key. If a public key is specified, this
    * limits the types of operations the receiving Thread service can perform.
    */
-  logKey?: PublicKey // | PrivateKey
+  logKey?: PublicKey | PrivateKey
 }
 
 // Thread protocol version

@@ -1,11 +1,12 @@
 import { encode, decode } from 'varint'
 import { randomBytes } from 'libp2p-crypto'
 import multibase, { name as Name } from 'multibase'
+import PeerId from 'peer-id'
 
 /**
- * LogID is a simple alias to string for representing logs.
+ * LogID is a simple alias to PeerId for representing logs.
  */
-export type LogID = string
+export type LogID = PeerId
 
 /**
  * Versions. Currently only V1 is supported.
