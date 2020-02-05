@@ -12,7 +12,7 @@
     "test": "npm run test:node && npm run test:browser",
     "test:node": "TS_NODE_FILES=true mocha",
     "test:browser": "lerna exec 'polendina --cleanup src/**/*.spec.ts --webpack-config ../../webpack.test.js'",
-    "docs": "typedoc"
+    "docs": "typedoc && touch ./docs/.nojekyll"
   },
   "author": "Textile <contact@textile.io>",
   "license": "MIT",
@@ -34,6 +34,7 @@
     "polendina": "^1.0.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
+    "touch": "^3.1.0",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.5.4",
     "typedoc": "^0.15.3",
