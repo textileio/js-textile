@@ -1,6 +1,6 @@
 import CID from 'cids'
-import Multiaddr from 'multiaddr'
 import { PublicKey, PrivateKey } from 'libp2p-crypto'
+import { Multiaddr } from '../multiaddr'
 import { LogID } from './id'
 
 /**

@@ -1,12 +1,12 @@
-# Threads Service _(threads-service)_
+# Threads Encoding _(threads-codecs)_
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
 [![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
-[![npm (scoped)](https://img.shields.io/npm/v/@textile/threads-service-client.svg?style=popout-square)](https://www.npmjs.com/package/@textile/threads-service-client)
+[![npm (scoped)](https://img.shields.io/npm/v/@textile/threads-codecs.svg?style=popout-square)](https://www.npmjs.com/package/@textile/threads-codecs)
 [![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/js-threads)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-> Network Service Layer for Textile's Threads Protocol
+> Event codecs for Textile's Threads Protocol
 
 Join us on our [public Slack channel](https://slack.textile.io/) for news, discussions, and status updates. [Check out our blog](https://blog.textile.io) for the latest posts and announcements.
 
@@ -54,4 +54,4 @@ Small note: If editing the README, please conform to the [standard-readme](https
 
 ## License
 
-[MIT](../../LICENSE) (c) 2019-2020 Textile
+[MIT](../../LICENSE) (c) 2020 Textile

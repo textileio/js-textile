@@ -1,6 +1,5 @@
 import { randomBytes, PrivateKey, PublicKey, keys } from 'libp2p-crypto'
 import CID from 'cids'
-import Multiaddr from 'multiaddr'
 import log from 'loglevel'
 import {
   ThreadID,
@@ -12,6 +11,7 @@ import {
   LogID,
   ThreadRecord,
   Closer,
+  Multiaddr,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-service-client'

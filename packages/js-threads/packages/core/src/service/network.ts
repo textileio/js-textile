@@ -1,7 +1,7 @@
 import PeerId from 'peer-id'
 import CID from 'cids'
-import Multiaddr from 'multiaddr'
 import { ThreadID, ThreadInfo, KeyOptions, LogID } from '../thread'
+import { Multiaddr } from '../multiaddr'
 import { ThreadRecord, LogRecord } from './record'
 
 export interface Closer {

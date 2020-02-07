@@ -19,15 +19,16 @@
     "cids": "^0.7.3",
     "datastore-core": "^0.7.0",
     "interface-datastore": "^0.8.0",
-    "loglevel": "^1.6.6",
     "libp2p-crypto": "^0.17.2",
+    "loglevel": "^1.6.6",
     "multiaddr": "^7.2.1",
     "peer-id": "^0.13.7"
   },
   "devDependencies": {
-    "@types/multiaddr": "^7.2.0",
     "@types/datastore-core": "^0.7.0",
     "@types/interface-datastore": "^0.8.0",
+    "@types/multiaddr": "^7.2.0",
+    "delay": "^4.3.0",
     "isomorphic-ws": "^4.0.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2",

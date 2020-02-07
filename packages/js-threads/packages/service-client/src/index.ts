@@ -1,6 +1,5 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import CID from 'cids'
-import Multiaddr from 'multiaddr'
 import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
 import log from 'loglevel'
@@ -15,6 +14,7 @@ import {
   LogRecord,
   API as Service,
   marshalKey,
+  Multiaddr,
 } from '@textile/threads-core'
 import * as pb from '@textile/threads-service-grpc/api_pb'
 import { API } from '@textile/threads-service-grpc/api_pb_service'
@@ -56,7 +56,7 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
     // const privKey = await keys.unmarshalPrivateKey(pkBytes)
     const logInfo: LogInfo = {
       id: pid,
-      addrs: new Set(log.addrsList.map(addr => Multiaddr(Buffer.from(addr as string, 'base64')))),
+      addrs: new Set(log.addrsList.map(addr => new Multiaddr(Buffer.from(addr as string, 'base64')))),
       heads: new Set(log.headsList.map(head => new CID(Buffer.from(head as string, 'base64')))),
       pubKey: keys.unmarshalPublicKey(Buffer.from(log.pubkey as string, 'base64')),
       // privKey,
