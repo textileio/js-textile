@@ -19,6 +19,9 @@ import {
 import * as pb from '@textile/threads-service-grpc/api_pb'
 import { API } from '@textile/threads-service-grpc/api_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
+import { Config, BaseConfig } from './config'
+
+export { Config, BaseConfig }
 
 const logger = log.getLogger('service-client')
 
@@ -74,17 +77,25 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
 
 /**
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
- * This client library can be used to interact with a local or remote Textile gRPC-service.
+ * This client library can be used to interact with a local or remote Threads gRPC Service.
  */
 export class Client implements Service {
   /**
-   * Client creates a new gRPC client instance.
-   * @param host The local/remote host url. Defaults to 'localhost:5007'.
-   * @param defaultTransport The default transport to use when making webgRPC calls. Defaults to WebSockets.
+   * Controls the remote API settings.
    */
-  constructor(private readonly host: string = 'http://localhost:5007', defaultTransport?: grpc.TransportFactory) {
-    const transport = defaultTransport || grpc.WebsocketTransport()
-    grpc.setDefaultTransport(transport)
+  public readonly config: Config
+
+  /**
+   * Client creates a new gRPC client instance.
+   * @param config The remote API configuration object or a set of parameters.
+   */
+  constructor(config: Config | BaseConfig = {}) {
+    if (config instanceof Config) {
+      this.config = config
+    } else {
+      this.config = new Config(config.host, config.transport)
+    }
+    grpc.setDefaultTransport(this.config.transport)
   }
 
   /**
@@ -276,7 +287,8 @@ export class Client implements Service {
       )
     }
     return grpc.invoke(API.Subscribe, {
-      host: this.host,
+      host: this.config.host,
+      metadata: this.config._wrapMetadata(),
       request,
       onMessage: (rec: pb.NewRecordReply) => callback(rec),
       onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
@@ -296,7 +308,8 @@ export class Client implements Service {
     return new Promise((resolve, reject) => {
       grpc.unary(methodDescriptor, {
         request: req,
-        host: this.host,
+        host: this.config.host,
+        metadata: this.config._wrapMetadata(),
         onEnd: res => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {

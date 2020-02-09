@@ -22,9 +22,7 @@ import { LogStore } from './store'
 const logger = log.getLogger('service')
 
 /**
- * Service is the network interface for thread orchestration.
- * @note Currently, the Service assumes that all logs are published using the PeerId provided as 'host'. This is not
- * the longer-term intended behavior, and should not be relied upon.
+ * Service is the Network interface for Thread orchestration.
  */
 export class Service implements Interface {
   public store: LogStore
