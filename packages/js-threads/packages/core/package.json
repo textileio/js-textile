@@ -6,6 +6,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
@@ -31,5 +34,6 @@
     "libp2p-crypto": "^0.17.2",
     "multibase": "^0.6.0",
     "varint": "^5.0.0"
-  }
+  },
+  "gitHead": "4e74ac2be9d2829fbfa5d1a78ead7d0d1f99c996"
 }

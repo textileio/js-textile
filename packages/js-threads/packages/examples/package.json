@@ -6,6 +6,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
@@ -37,5 +40,6 @@
     "@types/yargs": "^15.0.3",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
-  }
+  },
+  "gitHead": "4e74ac2be9d2829fbfa5d1a78ead7d0d1f99c996"
 }
