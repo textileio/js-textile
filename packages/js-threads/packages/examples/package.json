@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-examples",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -13,9 +13,9 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@textile/threads-core": "^0.0.1",
-    "@textile/threads-encoding": "^0.0.1",
-    "@textile/threads-service": "^0.0.1",
+    "@textile/threads-core": "^0.0.2-alpha.0",
+    "@textile/threads-encoding": "^0.0.2-alpha.0",
+    "@textile/threads-service": "^0.0.2-alpha.0",
     "bs58": "^4.0.1",
     "chalk": "^3.0.0",
     "datastore-core": "^0.7.0",
