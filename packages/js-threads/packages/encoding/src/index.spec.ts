@@ -36,7 +36,7 @@ describe('Encoding...', () => {
       const privKey = await keys.generateKeyPair('Ed25519', 256)
       const body = Block.encoder(raw, defaultOptions.codec)
       const event = await createEvent(body, readKey)
-      const { value } = await createRecord(event, privKey, undefined, replicatorKey)
+      const { value } = await createRecord(event, privKey, replicatorKey, undefined)
       const decoded = decodeBlock<RecordNode>(value, replicatorKey).decode()
       expect(decoded.prev).to.be.undefined
       expect(decoded).to.haveOwnProperty('block')

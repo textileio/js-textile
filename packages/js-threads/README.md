@@ -8,6 +8,7 @@
 [![Release](https://img.shields.io/github/release/textileio/js-threads.svg?style=flat-square)](https://github.com/textileio/js-threads/releases/latest)
 [![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/js-threads)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 > Typescript implementation of Textile's Threads Protocol
 
@@ -65,7 +66,7 @@ npm run test:browser
 Similarly, you can compile the Typescript-based sub-packages to Javascript all at once:
 
 ```bash
-lerna run build
+npm run build
 ```
 
 See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other things you can do to make working across multiple packages easier. 
@@ -88,4 +89,4 @@ Small note: If editing the README, please conform to the [standard-readme](https
 
 ## License
 
-[MIT](./LICENSE) (c) 2019 Textile
+[MIT](./LICENSE) (c) 2019-2010 Textile

@@ -6,6 +6,7 @@
 **/*.log
 **/*.cpuprofile
 **/*.heapsnapshot
+**/*.threads*
 
 # Editor Files
 .c9/

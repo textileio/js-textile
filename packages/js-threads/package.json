@@ -11,7 +11,7 @@
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser",
     "test:node": "TS_NODE_FILES=true mocha --exit",
-    "test:browser": "lerna exec 'polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js'",
+    "test:browser": "lerna run test:browser",
     "docs": "typedoc && touch ./docs/.nojekyll"
   },
   "author": "Textile <contact@textile.io>",

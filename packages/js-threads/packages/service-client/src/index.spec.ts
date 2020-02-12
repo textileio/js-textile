@@ -123,7 +123,7 @@ describe('Service Client...', () => {
       const readKey = randomBytes(44)
       const block = Block.encoder(body, 'dag-cbor')
       const event = await createEvent(block, readKey)
-      const record = await createRecord(event, privKey, undefined, replicatorKey)
+      const record = await createRecord(event, privKey, replicatorKey, undefined)
       const cid1 = await record.value.cid()
       const logID = await PeerId.createFromPubKey(privKey.public.bytes)
       await client.addRecord(info.id, logID, record)

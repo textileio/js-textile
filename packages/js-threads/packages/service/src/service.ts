@@ -29,7 +29,6 @@ export class Service implements Interface {
   /**
    * Create a new network Service.
    * @param store The store to use for caching keys and log information.
-   * @param host The underlying Peer Id.
    * @param client A client connected to a remote service peer.
    */
   constructor(store: LogStore | Datastore, private client: Client) {
@@ -72,7 +71,6 @@ export class Service implements Interface {
    * @param opts The set of keys to use when adding the Thread.
    */
   async addThread(addr: Multiaddr, opts: KeyOptions) {
-    throw new Error('Not implemented: Unable to represent custom multiaddr in Javascript.')
     return this.client.addThread(addr, opts)
   }
 
@@ -81,7 +79,11 @@ export class Service implements Interface {
    * @param id The Thread ID.
    */
   async getThread(id: ThreadID) {
-    return this.client.getThread(id)
+    const info = await this.client.getThread(id)
+    // Merge local thread info with remote thread info
+    const local = await this.store.threadInfo(id)
+    const merged = { ...info, ...local }
+    return merged
   }
 
   /**
@@ -101,8 +103,6 @@ export class Service implements Interface {
    * @param id The Thread ID.
    */
   async deleteThread(id: ThreadID): Promise<void> {
-    // @fixme: Implement this.
-    throw new Error('Not implemented')
     return this.client.deleteThread(id)
   }
 
@@ -122,18 +122,16 @@ export class Service implements Interface {
    */
   async createRecord(id: ThreadID, body: any) {
     const block = Block.encoder(body, 'dag-cbor')
-    const info = await this.client.getThread(id)
+    const info = await this.getThread(id)
     // Get (or create a new set of) log keys
     const logInfo = await this.getOwnLog(id, true)
-    // Merge local thread info with remote thread info
-    const local = await this.store.threadInfo(id)
-    const merged = { ...info, ...local }
-    if (!merged.readKey) throw new Error('Missing read key.')
-    const event = await createEvent(block, merged.readKey)
+    if (!info.readKey) throw new Error('Missing read key.')
+    if (!info.replicatorKey) throw new Error('Missing replicator key.')
+    const event = await createEvent(block, info.readKey)
     if (!logInfo.privKey) throw new Error('Missing private key.')
     // If we have head information for this log, use head CID
     const prev = logInfo.heads?.size ? Array.from(logInfo.heads).shift() : undefined
-    const record = await createRecord(event, logInfo.privKey, prev, info.replicatorKey)
+    const record = await createRecord(event, logInfo.privKey, info.replicatorKey, prev)
     await this.client.addRecord(id, logInfo.id, record)
     const res: ThreadRecord = {
       record,
@@ -191,9 +189,10 @@ export class Service implements Interface {
     return info
   }
 
-  async getOwnLog(id: ThreadID, create: true): Promise<LogInfo>
-  async getOwnLog(id: ThreadID, create: boolean): Promise<LogInfo | undefined> {
-    const info = await this.client.getThread(id)
+  async getOwnLog(id: ThreadID, create?: true): Promise<LogInfo>
+  async getOwnLog(id: ThreadID, create?: false): Promise<LogInfo | undefined>
+  async getOwnLog(id: ThreadID, create?: boolean): Promise<LogInfo | undefined> {
+    const info = await this.getThread(id)
     const logs = info.logs || new Set()
     for (const log of logs.values()) {
       const local = await this.store.logInfo(id, log.id)

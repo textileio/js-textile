@@ -1,7 +1,7 @@
 import CID from 'cids'
 import log from 'loglevel'
 import { Block, Event, EventNode, LogRecord, RecordNode } from '@textile/threads-core'
-import { randomBytes, PrivateKey } from 'libp2p-crypto'
+import { PrivateKey } from 'libp2p-crypto'
 import { Options, defaultOptions, encodeBlock, decodeBlock } from './coding'
 
 const logger = log.getLogger('encoding:record')
@@ -20,8 +20,8 @@ export interface EncodedRecord {
 export async function createRecord(
   data: Event,
   privKey: PrivateKey,
+  keyiv: Uint8Array,
   prev?: CID,
-  key?: Uint8Array,
   opts: Options = defaultOptions,
 ) {
   logger.debug('creating record')
@@ -38,7 +38,6 @@ export async function createRecord(
   // Don't include prev unless it is defined
   if (prev) obj.prev = prev
   const node = Block.encoder(obj, opts.codec, opts.algo)
-  const keyiv = key || randomBytes(44)
   const value = encodeBlock(node, keyiv, opts)
   // @todo: We don't support a dag here yet, but this is where we'd add this data to IPFS!
   const record: LogRecord = {

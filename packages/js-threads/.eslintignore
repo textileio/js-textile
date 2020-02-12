@@ -1,5 +1,4 @@
 **/node_modules
 **/docs
-**/examples
 **/dist
 karma.conf.js

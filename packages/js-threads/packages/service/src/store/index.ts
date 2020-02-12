@@ -63,8 +63,8 @@ export class LogStore {
    * @param info Log information.
    */
   async addLog(id: ThreadID, info: LogInfo) {
-    await this.keys.addPubKey(id, info.id, info.pubKey)
-    info.privKey && (await this.keys.addPrivKey(id, info.id, info.privKey))
+    if (info.pubKey) await this.keys.addPubKey(id, info.id, info.pubKey)
+    if (info.privKey) await this.keys.addPrivKey(id, info.id, info.privKey)
     return
   }
 
@@ -76,7 +76,6 @@ export class LogStore {
   async logInfo(id: ThreadID, log: LogID) {
     const privKey = await this.keys.privKey(id, log)
     const pubKey = (await this.keys.pubKey(id, log)) || privKey?.public
-    if (!pubKey) throw new Error('Missing public key')
     const info: LogInfo = {
       id: log,
       privKey,

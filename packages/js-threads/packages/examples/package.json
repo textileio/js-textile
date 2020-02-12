@@ -1,5 +1,5 @@
 {
-  "name": "@textile/threads-service",
+  "name": "@textile/threads-examples",
   "version": "0.0.1",
   "main": "dist/index",
   "types": "dist/index",
@@ -10,29 +10,32 @@
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.json",
-    "clean": "rimraf ./dist",
-    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+    "clean": "rimraf ./dist"
   },
   "dependencies": {
     "@textile/threads-core": "^0.0.1",
     "@textile/threads-encoding": "^0.0.1",
-    "@textile/threads-service-client": "^0.0.1",
-    "cids": "^0.7.3",
+    "@textile/threads-service": "^0.0.1",
+    "bs58": "^4.0.1",
+    "chalk": "^3.0.0",
     "datastore-core": "^0.7.0",
+    "datastore-level": "^0.14.1",
     "interface-datastore": "^0.8.0",
-    "libp2p-crypto": "^0.17.2",
-    "loglevel": "^1.6.6",
+    "moment": "^2.24.0",
     "multiaddr": "^7.2.1",
-    "peer-id": "^0.13.7"
+    "peer-id": "^0.13.7",
+    "ws": "^7.2.1",
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
+    "@types/bs58": "^4.0.1",
     "@types/datastore-core": "^0.7.0",
+    "@types/datastore-level": "^0.14.0",
     "@types/interface-datastore": "^0.8.0",
     "@types/multiaddr": "^7.2.0",
-    "delay": "^4.3.0",
-    "isomorphic-ws": "^4.0.1",
+    "@types/ws": "^7.2.1",
+    "@types/yargs": "^15.0.3",
     "rimraf": "^3.0.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.1"
+    "typescript": "^3.7.2"
   }
 }

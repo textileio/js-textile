@@ -1,10 +1,8 @@
 import varint from 'varint'
-import multibase from 'multibase'
 import CID from 'cids'
+import bs58 from 'bs58'
 import { protocols } from './protocols'
 import * as codec from './codec'
-
-const bs58 = (buf: Buffer) => multibase.encode('base58btc', buf)
 
 /**
  * Creates a [multiaddr](https://github.com/multiformats/multiaddr) from
@@ -266,7 +264,7 @@ export class Multiaddr {
       // Get the last id
       b58str = (tuples.pop() || [])[1]
       // Get multihash, unwrap from CID if needed
-      b58str = bs58(new CID(b58str || '').multihash).toString()
+      b58str = bs58.encode(new CID(b58str || '').multihash)
     } catch (e) {
       b58str = undefined
     }

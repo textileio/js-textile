@@ -14,7 +14,7 @@ export interface LogInfo {
   /**
    * The logs public key used to check signatures.
    */
-  pubKey: PublicKey
+  pubKey?: PublicKey
   /**
    * The logs private key, used to sign content when available.
    */

@@ -10,7 +10,8 @@
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.json",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
