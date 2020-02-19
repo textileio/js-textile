@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as pack from '../package.json'
+import { NodeHttpTransport } from '@improbable-eng/grpc-web-node-http-transport'
 import { ThreadsConfig } from './ThreadsConfig'
 
 export { ThreadsConfig }
@@ -14,6 +15,7 @@ export type APIConfig = {
   threadApiScheme?: string
   threadsApi?: string
   threadsPort?: number
+  node?: boolean
 }
 export class API {
   /**
@@ -54,6 +56,9 @@ export class API {
           config.threadsApi !== (null || undefined) ? config.threadsApi : 'api.textile.io',
           config.threadsPort !== (null || undefined) ? config.threadsPort : 6007,
         )
+    if (config.node === true) {
+      this._threadsConfig.transport = NodeHttpTransport()
+    }
   }
 
   async start(sessionId?: string) {
