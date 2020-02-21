@@ -50,7 +50,7 @@ export class Service implements Interface {
    * is provided, one will be created. Similarly, if no log key is provided, then the "host" Peer ID will be used.
    * If no ReadKey is provided, the service will be unable to write records (but it may be able to return records).
    */
-  async createThread(id: ThreadID, opts: KeyOptions) {
+  async createThread(id: ThreadID, opts: KeyOptions = {}) {
     const logInfo = await this.deriveLogKeys(opts.logKey)
     // Don't send along readKey, or log's privKey information
     const newOpts: KeyOptions = {

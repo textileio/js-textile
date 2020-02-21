@@ -24,7 +24,7 @@
     "@types/varint": "^5.0.0",
     "cids": "^0.7.3",
     "multiaddr": "^7.2.1",
-    "peer-id": "^0.13.7",
+    "peer-id": "^0.13.9",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },

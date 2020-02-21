@@ -24,7 +24,11 @@
     "inlineSourceMap": false,
     "inlineSources": false,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "types": [
+      "node",
+      "mocha"
+    ]
   },
   "exclude": [
     "node_modules",
