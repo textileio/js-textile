@@ -64,7 +64,6 @@ export class ThreadsConfig extends Config {
     this.projectId = resp.data.project_id
   }
   _wrapMetadata(values?: { [key: string]: any }): { [key: string]: any } | undefined {
-    console.log("IN EHRER _wrapMetadata")
     if (!this.sessionId) {
       return values
     }
@@ -76,7 +75,6 @@ export class ThreadsConfig extends Config {
     return response
   }
   _wrapBrowserHeaders(values: grpc.Metadata): grpc.Metadata {
-    console.log("IN EHRER _wrapBrowserHeaders")
     if (!this.sessionId) {
       return values
     }
