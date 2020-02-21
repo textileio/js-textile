@@ -5,10 +5,14 @@ import axios, { AxiosRequestConfig } from 'axios'
 type Session = {
   id: string
   session_id: string
+  config_store_id: string
+  project_id: string
 }
 export class ThreadsConfig extends Config {
   public host: string
   public sessionId?: string
+  public configStoreId?: string
+  public projectId?: string
   constructor(
     public token: string,
     public deviceId: string,
@@ -24,9 +28,11 @@ export class ThreadsConfig extends Config {
     super()
     this.host = `${this.threadApiScheme}://${this.threadsApi}:${this.threadsPort}`
   }
-  async start(sessionId?: string) {
-    if (sessionId !== undefined) {
+  async start(sessionId?: string, configStoreId?: string, projectId?: string) {
+    if (sessionId !== undefined && configStoreId !== undefined && projectId !== undefined) {
       this.sessionId = sessionId
+      this.configStoreId = configStoreId
+      this.projectId = projectId
       return
     }
     return await this.refreshSession()
@@ -54,8 +60,11 @@ export class ThreadsConfig extends Config {
       new Error(resp.statusText)
     }
     this.sessionId = resp.data.session_id
+    this.configStoreId = resp.data.config_store_id
+    this.projectId = resp.data.project_id
   }
   _wrapMetadata(values?: { [key: string]: any }): { [key: string]: any } | undefined {
+    console.log("IN EHRER _wrapMetadata")
     if (!this.sessionId) {
       return values
     }
@@ -67,6 +76,7 @@ export class ThreadsConfig extends Config {
     return response
   }
   _wrapBrowserHeaders(values: grpc.Metadata): grpc.Metadata {
+    console.log("IN EHRER _wrapBrowserHeaders")
     if (!this.sessionId) {
       return values
     }

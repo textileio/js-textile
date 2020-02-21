@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as pack from '../package.json'
 import { ThreadsConfig } from './ThreadsConfig'
+import {Client, Where} from '@textile/threads-client'
 
 export { ThreadsConfig }
 
@@ -27,6 +28,8 @@ export class API {
    * threadsConfig is the (private) threads config.
    */
   private _threadsConfig: ThreadsConfig
+
+  private client?: Client
 
   constructor(config: APIConfig) {
     // prettier-ignore
@@ -58,6 +61,7 @@ export class API {
 
   async start(sessionId?: string) {
     await this._threadsConfig.start(sessionId)
+    this.client = new Client(this._threadsConfig)
     return this
   }
 
@@ -67,6 +71,33 @@ export class API {
 
   get threadsConfig(): ThreadsConfig {
     return this._threadsConfig
+  }
+
+  async getConfigValue(name: string, scope: string = "prod") {
+    const configStoreId = this._threadsConfig.configStoreId!
+    const projectId = this._threadsConfig.projectId!
+    console.log("PROJECT ID", projectId, configStoreId)
+    const query = new Where("ProjectID").eq(projectId).and("Name").eq("endpoint")
+
+    const result = await this.client!.modelFind(configStoreId, "Config", query)
+    return result.entitiesList[0].Values[scope]
+  }
+
+  async watchConfigValue(name: string, handler: (value: any) => void, scope: string = "prod") {
+    const configStoreId = this._threadsConfig.configStoreId!
+    const projectId = this._threadsConfig.projectId!
+    console.log("PROJECT ID", projectId, configStoreId)
+    const query = new Where("ProjectID").eq(projectId).and("Name").eq("endpoint")
+
+    const result = await this.client!.modelFind(configStoreId, "Config", query)
+    const entity = result.entitiesList[0]
+    handler(entity.Values[scope])
+
+    return this.client!.listen(configStoreId, "", entity.ID, (data, error) => {
+      if (!error) {
+        handler(data!.entity.Values[scope])
+      }
+    })
   }
 }
 
