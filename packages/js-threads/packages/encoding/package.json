@@ -13,10 +13,11 @@
     "access": "public"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepublish": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -p tsconfig.json",
-    "clean": "rimraf ./dist",
+    "build": "npm run compile",
+    "compile": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
@@ -26,6 +27,11 @@
     "libp2p-crypto": "^0.17.2",
     "loglevel": "^1.6.6"
   },
+  "references": [
+    {
+      "path": "../core"
+    }
+  ],
   "devDependencies": {
     "@types/node": "^13.1.4",
     "rimraf": "^3.0.0",

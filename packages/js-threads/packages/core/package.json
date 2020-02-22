@@ -10,10 +10,11 @@
     "access": "public"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepublish": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -p tsconfig.json",
-    "clean": "rimraf ./dist",
+    "build": "npm run compile",
+    "compile": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "devDependencies": {

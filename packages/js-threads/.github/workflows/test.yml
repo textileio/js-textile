@@ -70,9 +70,7 @@ jobs:
       run: npm install
 
     - name: Bootstrap
-      run: |
-        npm run bootstrap -- --hoist --no-ci
-        npm run build
+      run: npm run bootstrap -- --hoist
 
     - name: Lint
       run: npm run lint

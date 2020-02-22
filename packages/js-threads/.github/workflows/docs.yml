@@ -35,9 +35,7 @@ jobs:
       run: npm install
 
     - name: Bootstrap
-      run: |
-        npm run bootstrap
-        npm run build
+      run: npm run bootstrap
     - name: Docs
       run: npm run docs
 

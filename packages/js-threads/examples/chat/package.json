@@ -10,9 +10,10 @@
     "access": "public"
   },
   "scripts": {
-    "precompile": "npm run clean",
-    "compile": "tsc -p tsconfig.json",
-    "clean": "rimraf ./dist"
+    "prebuild": "npm run clean",
+    "build": "npm run compile",
+    "compile": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@textile/threads-core": "^0.0.3-alpha.0",
