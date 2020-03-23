@@ -15,9 +15,10 @@ import {
   API as Service,
   marshalKey,
   Multiaddr,
+  Key,
 } from '@textile/threads-core'
-import * as pb from '@textile/threads-service-grpc/api_pb'
-import { API } from '@textile/threads-service-grpc/api_pb_service'
+import * as pb from '@textile/threads-net-grpc/api_pb'
+import { API } from '@textile/threads-net-grpc/api_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
 import { Config, BaseConfig } from './config'
 
@@ -26,18 +27,17 @@ export { Config, BaseConfig }
 const logger = log.getLogger('service-client')
 
 function getThreadKeys(opts: KeyOptions) {
-  const threadKeys = new pb.ThreadKeys()
-  opts.replicatorKey && threadKeys.setFollowkey(opts.replicatorKey)
-  opts.readKey && threadKeys.setReadkey(opts.readKey)
+  const threadKeys = new pb.Keys()
+  opts.threadKey && threadKeys.setThreadkey(opts.threadKey.toBytes())
   opts.logKey && threadKeys.setLogkey(marshalKey(opts.logKey))
   return threadKeys
 }
 
-function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, keyiv: Uint8Array) {
+function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: Key) {
   const threadID = ThreadID.fromBytes(Buffer.from(proto.threadid as string, 'base64'))
   const rawID = Buffer.from(proto.logid as string, 'base64')
   const logID = PeerId.createFromBytes(rawID)
-  const record = proto.record && recordFromProto(proto.record, keyiv)
+  const record = proto.record && recordFromProto(proto.record, key.service)
   const info: ThreadRecord = {
     record,
     threadID,
@@ -48,8 +48,8 @@ function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, keyiv: Uint8Ar
 
 async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
   const id = ThreadID.fromBytes(Buffer.from(proto.id as string, 'base64'))
-  const readKey = Buffer.from(proto.readkey as string, 'base64')
-  const replicatorKey = Buffer.from(proto.followkey as string, 'base64')
+  const threadKey = Buffer.from(proto.threadkey as string, 'base64')
+  const key = Key.fromBytes(threadKey)
   const logs: Set<LogInfo> = new Set()
   for (const log of proto.logsList) {
     const rawId = Buffer.from(log.id as string, 'base64')
@@ -68,8 +68,7 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
   }
   const threadInfo: ThreadInfo = {
     id,
-    readKey,
-    replicatorKey,
+    key,
     logs,
   }
   return threadInfo
@@ -187,10 +186,10 @@ export class Client implements Service {
    */
   async addReplicator(id: ThreadID, addr: Multiaddr) {
     logger.debug('making add replicator request')
-    const req = new pb.AddFollowerRequest()
+    const req = new pb.AddReplicatorRequest()
     req.setThreadid(id.bytes())
     req.setAddr(addr.buffer)
-    const res = (await this.unary(API.AddFollower, req)) as pb.AddFollowerReply.AsObject
+    const res = (await this.unary(API.AddReplicator, req)) as pb.AddReplicatorReply.AsObject
     const rawId = Buffer.from(res.peerid as string, 'base64')
     return PeerId.createFromBytes(rawId)
   }
@@ -208,7 +207,7 @@ export class Client implements Service {
     req.setThreadid(id.bytes())
     req.setBody(block)
     const res = (await this.unary(API.CreateRecord, req)) as pb.NewRecordReply.AsObject
-    return info.replicatorKey && threadRecordFromProto(res, info.replicatorKey)
+    return info.key && threadRecordFromProto(res, info.key)
   }
 
   /**
@@ -241,13 +240,13 @@ export class Client implements Service {
   async getRecord(id: ThreadID, rec: CID) {
     logger.debug('making get record request')
     const info = await this.getThread(id)
+    if (info.key === undefined) throw new Error('Missing thread keys')
     const req = new pb.GetRecordRequest()
     req.setThreadid(id.bytes())
     req.setRecordid(rec.buffer)
     const record = (await this.unary(API.GetRecord, req)) as pb.GetRecordReply.AsObject
-    if (!info.replicatorKey) throw new Error('Missing replicatorKey')
     if (!record.record) throw new Error('Missing return value')
-    const res = recordFromProto(record.record, info.replicatorKey)
+    const res = recordFromProto(record.record, info.key.service)
     return res
   }
 
@@ -272,10 +271,10 @@ export class Client implements Service {
       const logID = PeerId.createFromBytes(rawID)
       if (!keys.has(id)) {
         const info = await this.getThread(id)
-        keys.set(id, info.replicatorKey)
+        keys.set(id, info.key?.service)
       }
       const keyiv = keys.get(id)
-      if (!keyiv) return cb(undefined, new Error('Missing replicatorKey'))
+      if (!keyiv) return cb(undefined, new Error('Missing key'))
       const record = proto.record && recordFromProto(proto.record, keyiv)
       return cb(
         {

@@ -80,17 +80,17 @@ describe('KeyBook', () => {
 
   it('ReplicatorKey', async () => {
     // No readKey exists yet
-    const key = await kb.replicatorKey(tid)
+    const key = await kb.serviceKey(tid)
     expect(key).to.be.undefined
 
     const key128 = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
 
     // Add should not err
-    const res = await kb.addReplicatorKey(tid, key128)
+    const res = await kb.addServiceKey(tid, key128)
     expect(res).to.be.undefined
 
     // Stored read key should match
-    const que = await kb.replicatorKey(tid)
+    const que = await kb.serviceKey(tid)
     expect(que).to.equal(key128)
   })
 })

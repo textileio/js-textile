@@ -103,9 +103,9 @@ export class KeyBook implements Closer {
   }
 
   /**
-   * replicatorKey retrieves the replicator key of a thread.
+   * serviceKey retrieves the replicator key of a thread.
    */
-  async replicatorKey(id: ThreadID) {
+  async serviceKey(id: ThreadID) {
     try {
       return await this.datastore.get(new Key(id.string()).child(new Key('repl')))
     } catch (err) {
@@ -114,11 +114,11 @@ export class KeyBook implements Closer {
   }
 
   /**
-   * addReplicatorKey adds a replicator key under a given thread.
+   * addServiceKey adds a replicator key under a given thread.
    * @param id The Thread ID.
    * @param key The asymmetric replicator key, of length 44 bytes.
    */
-  addReplicatorKey(id: ThreadID, key: Buffer) {
+  addServiceKey(id: ThreadID, key: Buffer) {
     return this.datastore.put(new Key(id.string()).child(new Key('repl')), key)
   }
 

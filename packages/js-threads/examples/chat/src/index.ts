@@ -13,7 +13,7 @@ import { Key } from 'interface-datastore'
 import LevelDatastore from 'datastore-level'
 import { randomBytes } from 'libp2p-crypto'
 import PeerId from 'peer-id'
-import { ThreadID, ThreadRecord, Variant, EventHeader, Multiaddr } from '@textile/threads-core'
+import { ThreadID, ThreadRecord, Variant, EventHeader, Multiaddr, Key as ThreadKey } from '@textile/threads-core'
 import { decodeBlock } from '@textile/threads-encoding'
 
 // Colors
@@ -103,9 +103,8 @@ const resetCmds = () => {
       async function({ name }) {
         const key = new Key(`/names/${name}`)
         if (await store.has(key)) throw new Error('thread name exists')
-        const replicatorKey = randomBytes(44)
-        const readKey = randomBytes(44)
-        const info = await service.createThread(ThreadID.fromRandom(Variant.Raw, 32), { replicatorKey, readKey })
+        const threadKey = ThreadKey.fromRandom()
+        const info = await service.createThread(ThreadID.fromRandom(Variant.Raw, 32), { threadKey })
         thread = info.id
         await store.put(key, thread.bytes())
         console.log(grey('Added thread ') + green(thread.string()) + grey(' as ') + pink(name))
@@ -113,22 +112,20 @@ const resetCmds = () => {
       },
     )
     .command(
-      ':add <name> <address> <replicatorKey> <readKey>',
-      'Add an existing thread with name at address using a base58-encoded replicator and read key.',
+      ':add <name> <addr> <keyString>',
+      'Add an existing thread with name at address using a base32-encoded thread key.',
       {
         addr: { type: 'string', required: true },
-        fKey: { type: 'string', required: true },
+        keyString: { type: 'string', required: true },
         name: { type: 'string', required: true },
-        rKey: { type: 'string', required: true },
       },
-      async function({ name, addr, fKey, rKey }) {
+      async function({ name, addr, keyString }) {
         const key = new Key(`/names/${name}`)
         if (await store.has(key)) throw new Error('thread name exists')
         if (!addr) throw new Error('missing thread address')
         const mAddr = new Multiaddr(addr)
-        const replicatorKey = bs58.decode(fKey)
-        const readKey = bs58.decode(rKey)
-        const info = await service.addThread(mAddr, { replicatorKey, readKey })
+        const threadKey = ThreadKey.fromString(keyString)
+        const info = await service.addThread(mAddr, { threadKey })
         thread = info.id
         await store.put(key, thread.bytes())
         console.log(grey('Added thread: ') + green(thread.string()) + grey('as: ') + green(name))
@@ -142,16 +139,11 @@ const resetCmds = () => {
       thread = ThreadID.fromBytes(info)
       rl.setPrompt(green(`${name}> `))
     })
-    .command(':keys', `Show the active thread's keys.`, {}, async function() {
+    .command(':keys', `Encode the active thread's keys.`, {}, async function() {
       if (!thread.defined()) throw new Error('enter thread first')
       const info = await service.getThread(thread)
-      if (info.readKey) {
-        const key = bs58.encode(Buffer.from(info.readKey))
-        console.log(pink('readkey').padEnd(35) + green(key))
-      }
-      if (info.replicatorKey) {
-        const key = bs58.encode(Buffer.from(info.replicatorKey))
-        console.log(pink('replicatorKey').padEnd(35) + green(key))
+      if (info.key?.read) {
+        console.log(pink('key').padEnd(35) + green(info.key.toString()))
       }
     })
     .command(':exit', 'Exit the active thread, or whole program if no thread active.', {}, function() {
@@ -207,9 +199,9 @@ async function main() {
     if (err) console.log(red(err.toString()))
     if (!rec) return // undefined error, ignore and move on
     const info = await service.getThread(rec.threadID)
-    if (!info.readKey || !rec.record || !info.replicatorKey) return // we don't have the right keys
+    if (!info.key?.read || !rec.record || !info.key.service) return // we don't have the right keys
     const event = rec.record.block
-    const decodedHeader = decodeBlock<EventHeader>(event.header, info.readKey)
+    const decodedHeader = decodeBlock<EventHeader>(event.header, info.key.read)
     const header = decodedHeader.decodeUnsafe()
     if (!header.key) return
     const decodedBody = decodeBlock(event.body, header.key)

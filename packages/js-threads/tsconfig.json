@@ -5,8 +5,7 @@
     "lib": [
       "es6",
       "dom",
-      "esnext",
-      "esnext.asynciterable"
+      "esnext"
     ],
     "composite": true,
     "moduleResolution": "node",

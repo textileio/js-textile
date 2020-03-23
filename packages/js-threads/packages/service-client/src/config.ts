@@ -30,11 +30,11 @@ export class Config {
 
   /**
    * Create a new Config object.
-   * @param host The local/remote host url. Defaults to 'https:127.0.0.1:5007'.
+   * @param host The local/remote host url. Defaults to 'https:127.0.0.1:6007'.
    * @param transport The default transport to use when making web-gRPC calls. Defaults to WebSockets.
    */
   constructor(host?: string, transport?: grpc.TransportFactory) {
-    this.host = host || 'http://127.0.0.1:5007'
+    this.host = host || 'http://127.0.0.1:6007'
     this.transport = transport || grpc.WebsocketTransport()
   }
 

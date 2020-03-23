@@ -12,6 +12,7 @@ import {
   ThreadRecord,
   Closer,
   Multiaddr,
+  Key,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-service-client'
@@ -53,12 +54,14 @@ export class Service implements Interface {
   async createThread(id: ThreadID, opts: KeyOptions = {}) {
     const logInfo = await this.deriveLogKeys(opts.logKey)
     // Don't send along readKey, or log's privKey information
+    const threadKey = opts.threadKey || Key.fromRandom()
     const newOpts: KeyOptions = {
-      replicatorKey: opts.replicatorKey || randomBytes(44),
+      threadKey: new Key(threadKey.service),
       logKey: logInfo.pubKey,
     }
     const info = await this.client.createThread(id, newOpts)
-    info.readKey = opts.readKey || randomBytes(44)
+    // Now we want to store or create read key
+    info.key = new Key(threadKey.service, threadKey.read || randomBytes(32))
     logger.debug('caching thread + log information')
     await this.store.addThread(info)
     await this.store.addLog(id, logInfo)
@@ -125,13 +128,13 @@ export class Service implements Interface {
     const info = await this.getThread(id)
     // Get (or create a new set of) log keys
     const logInfo = await this.getOwnLog(id, true)
-    if (!info.readKey) throw new Error('Missing read key.')
-    if (!info.replicatorKey) throw new Error('Missing replicator key.')
-    const event = await createEvent(block, info.readKey)
+    if (info.key === undefined) throw new Error('Missing key info.')
+    if (info.key.read === undefined) throw new Error('Missing service key.')
+    const event = await createEvent(block, info.key.read)
     if (!logInfo.privKey) throw new Error('Missing private key.')
     // If we have head information for this log, use head CID
     const prev = logInfo.heads?.size ? Array.from(logInfo.heads).shift() : undefined
-    const record = await createRecord(event, logInfo.privKey, info.replicatorKey, prev)
+    const record = await createRecord(event, logInfo.privKey, info.key.service, prev)
     await this.client.addRecord(id, logInfo.id, record)
     const res: ThreadRecord = {
       record,

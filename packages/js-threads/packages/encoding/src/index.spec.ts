@@ -5,14 +5,14 @@ import { defaultOptions, decodeBlock } from './coding'
 import { createEvent } from './event'
 import { createRecord } from './record'
 
-const readKey = randomBytes(44)
-const replicatorKey = randomBytes(44)
+const readKey = randomBytes(32)
+const replicatorKey = randomBytes(32)
 const raw = { txt: 'hello world' }
 
 describe('Encoding...', () => {
   describe('Event...', () => {
     it('should encode and encrypt log events', async () => {
-      const key = randomBytes(44)
+      const key = randomBytes(32)
       const body = Block.encoder(raw, defaultOptions.codec)
       const obj = await createEvent(body, readKey, key)
       expect(obj).to.have.haveOwnProperty('value')

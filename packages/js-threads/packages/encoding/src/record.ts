@@ -67,7 +67,7 @@ export function recordToProto(rec: LogRecord) {
 }
 
 // recordFromProto returns a node from a serialized version that contains link data.
-export function recordFromProto(proto: EncodedRecord, keyiv: Uint8Array, opts: Options = defaultOptions) {
+export function recordFromProto(proto: EncodedRecord, key: Uint8Array, opts: Options = defaultOptions) {
   logger.debug('converting proto object to log record')
   const rawRecord = Buffer.from(proto.recordnode as string, 'base64')
   const rnode = Block.decoder<Buffer>(rawRecord, opts.codec, opts.algo)
@@ -77,7 +77,7 @@ export function recordFromProto(proto: EncodedRecord, keyiv: Uint8Array, opts: O
   const hnode = Block.decoder<Uint8Array>(rawHeader, opts.codec, opts.algo)
   const rawBody = Buffer.from(proto.bodynode as string, 'base64')
   const body = Block.decoder<Uint8Array>(rawBody, opts.codec, opts.algo)
-  const decoded = decodeBlock(rnode, keyiv)
+  const decoded = decodeBlock(rnode, key)
   const robj = decoded.decode()
   const eobj = enode.decode()
   enode.encode() // Created encoded value

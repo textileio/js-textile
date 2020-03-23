@@ -1,25 +1,6 @@
-import { PublicKey, PrivateKey } from 'libp2p-crypto'
 import { ThreadID } from './id'
 import { LogInfo } from './log'
-
-/**
- * KeyOptions defines options for keys when creating / adding a thread.
- */
-export interface KeyOptions {
-  /**
-   * Symmetric encryption key. Should be 44 bytes in length. Can be generated with crypto.randomBytes().
-   */
-  replicatorKey?: Uint8Array
-  /**
-   * Symmetric encryption key. Should be 44 bytes in length. Can be generated with crypto.randomBytes().
-   */
-  readKey?: Uint8Array
-  /**
-   * Asymmetric encryption key (pair). Can be either a public or private key. If a public key is specified, this
-   * limits the types of operations the receiving Thread service can perform.
-   */
-  logKey?: PublicKey | PrivateKey
-}
+import { Key } from './key'
 
 // Thread protocol version
 const version = '0.0.1'
@@ -61,11 +42,7 @@ export interface ThreadInfo {
    */
   logs?: Set<LogInfo>
   /**
-   * Symmetric encryption key.
+   * Symmetric encryption keys.
    */
-  replicatorKey?: Uint8Array
-  /**
-   * Symmetric encryption key.
-   */
-  readKey?: Uint8Array
+  key?: Key
 }

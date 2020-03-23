@@ -1,5 +1,5 @@
-import { Datastore } from 'interface-datastore'
-import { ThreadID, LogInfo, ThreadInfo, LogID } from '@textile/threads-core'
+import { Datastore, Key } from 'interface-datastore'
+import { ThreadID, LogInfo, ThreadInfo, LogID, Key as ThreadKey } from '@textile/threads-core'
 import { KeyBook } from './keybook'
 
 export class LogStore {
@@ -35,11 +35,11 @@ export class LogStore {
    * @param info Thread information.
    */
   async addThread(info: ThreadInfo) {
-    if (!info.replicatorKey) {
-      throw new Error('Replicator key required')
+    if (info.key?.service === undefined) {
+      throw new Error('Service key required')
     }
-    await this.keys.addReplicatorKey(info.id, Buffer.from(info.replicatorKey))
-    info.readKey && (await this.keys.addReadKey(info.id, Buffer.from(info.readKey)))
+    await this.keys.addServiceKey(info.id, info.key.service)
+    info.key.read && (await this.keys.addReadKey(info.id, info.key.read))
   }
 
   /**
@@ -47,12 +47,13 @@ export class LogStore {
    * @param id Thread ID.
    */
   async threadInfo(id: ThreadID) {
-    const replicatorKey = await this.keys.replicatorKey(id)
-    const readKey = await this.keys.readKey(id)
+    const service = await this.keys.serviceKey(id)
+    if (service === undefined) throw new Error('Missing service key')
+    const read = await this.keys.readKey(id)
+    const key = new ThreadKey(service, read)
     const info: ThreadInfo = {
       id,
-      replicatorKey,
-      readKey,
+      key,
     }
     return info
   }

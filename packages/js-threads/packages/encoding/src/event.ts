@@ -7,7 +7,7 @@ const logger = log.getLogger('encoding:event')
 
 export async function createEvent(body: Block, readKey: Uint8Array, key?: Uint8Array, opts: Options = defaultOptions) {
   logger.debug('creating event')
-  const keyiv = key || randomBytes(44)
+  const keyiv = key || randomBytes(32)
   const codedBody = encodeBlock(body, keyiv)
   const header: EventHeader = {
     key: keyiv,
