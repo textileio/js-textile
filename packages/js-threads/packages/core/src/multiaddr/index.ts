@@ -90,7 +90,9 @@ export class Multiaddr {
    * // '<Multiaddr 047f000001060fa1 - /ip4/127.0.0.1/tcp/4001>'
    */
   inspect() {
-    return '<Multiaddr ' + this.buffer.toString('hex') + ' - ' + codec.bufferToString(this.buffer) + '>'
+    return (
+      '<Multiaddr ' + this.buffer.toString('hex') + ' - ' + codec.bufferToString(this.buffer) + '>'
+    )
   }
 
   /**
@@ -337,13 +339,17 @@ export class Multiaddr {
       .slice(1)
 
     if (parts.length < 4) {
-      throw new Error('multiaddr must have a valid format: "/{ip4, ip6, dns4, dns6}/{address}/{tcp, udp}/{port}".')
+      throw new Error(
+        'multiaddr must have a valid format: "/{ip4, ip6, dns4, dns6}/{address}/{tcp, udp}/{port}".',
+      )
     } else if (codes[0] !== 4 && codes[0] !== 41 && codes[0] !== 54 && codes[0] !== 55) {
       throw new Error(
         `no protocol with name: "'${names[0]}'". Must have a valid family name: "{ip4, ip6, dns4, dns6}".`,
       )
     } else if (parts[2] !== 'tcp' && parts[2] !== 'udp') {
-      throw new Error(`no protocol with name: "'${names[1]}'". Must have a valid transport protocol: "{tcp, udp}".`)
+      throw new Error(
+        `no protocol with name: "'${names[1]}'". Must have a valid transport protocol: "{tcp, udp}".`,
+      )
     }
 
     return {

@@ -34,7 +34,11 @@ export class ThreadID {
    */
   static fromRandom(variant: Variant = Variant.Raw, size = 32) {
     // two 8 bytes (max) numbers plus random bytes
-    const bytes = Buffer.concat([Buffer.from(encode(V1)), Buffer.from(encode(variant)), randomBytes(size)])
+    const bytes = Buffer.concat([
+      Buffer.from(encode(V1)),
+      Buffer.from(encode(variant)),
+      randomBytes(size),
+    ])
     return new ThreadID(bytes)
   }
 

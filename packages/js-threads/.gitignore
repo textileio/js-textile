@@ -83,6 +83,7 @@ __pycache__
 docker-compose.swarm.yml
 
 # Other
+**/tmp.db
 _obj
 _test
 *.cgo1.go
@@ -94,6 +95,7 @@ _testmain.go
 local.properties
 *.keystore
 *.iml
+.nyc_output
 
 # Buck
 buck-out/

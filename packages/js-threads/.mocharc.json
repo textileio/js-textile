@@ -1,6 +1,6 @@
 {
   "diff": true,
-  "spec": "packages/*/src/**/*.spec.ts",
+  "spec": "packages/*/src//**.spec.ts",
   "reporter": "spec",
   "recursive": true,
   "require": [
