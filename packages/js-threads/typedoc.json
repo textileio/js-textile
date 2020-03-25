@@ -15,5 +15,6 @@
   "preserveConstEnums": true,
   "stripInternal": true,
   "module": "commonjs",
-  "mdHideSources": true
+  "mdHideSources": true,
+  "pathExclude": ["examples"]
 }
