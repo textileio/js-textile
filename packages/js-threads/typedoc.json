@@ -15,6 +15,5 @@
   "preserveConstEnums": true,
   "stripInternal": true,
   "module": "commonjs",
-  "mdHideSources": true,
-  "lernaExclude": ["threads-example-chat"]
+  "mdHideSources": true
 }
