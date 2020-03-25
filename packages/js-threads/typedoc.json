@@ -4,7 +4,7 @@
   "mode": "modules",
   "out": "docs",
   "include": "src/",
-  "exclude": "**/*.spec.ts",
+  "exclude": ["**/*.spec.ts", "examples/**", "**/node_modules/**"],
   "gitRevision": "master",
   "excludePrivate": true,
   "excludeNotExported": true,
@@ -16,5 +16,5 @@
   "stripInternal": true,
   "module": "commonjs",
   "mdHideSources": true,
-  "pathExclude": ["examples"]
+  "pathExclude": ["examples/**"]
 }
