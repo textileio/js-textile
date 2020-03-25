@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-service",
-  "version": "0.0.3-alpha.0",
+  "version": "0.0.3-alpha.1",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -18,9 +18,9 @@
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
-    "@textile/threads-core": "^0.0.3-alpha.0",
-    "@textile/threads-encoding": "^0.0.3-alpha.0",
-    "@textile/threads-service-client": "^0.0.3-alpha.0",
+    "@textile/threads-core": "^0.0.3-alpha.1",
+    "@textile/threads-encoding": "^0.0.3-alpha.1",
+    "@textile/threads-service-client": "^0.0.3-alpha.1",
     "@types/node": "^13.9.2",
     "cids": "^0.7.3",
     "datastore-core": "^0.7.0",

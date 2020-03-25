@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-service-client",
-  "version": "0.0.3-alpha.0",
+  "version": "0.0.3-alpha.1",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/threads-core": "^0.0.3-alpha.0",
-    "@textile/threads-encoding": "^0.0.3-alpha.0",
+    "@textile/threads-core": "^0.0.3-alpha.1",
+    "@textile/threads-encoding": "^0.0.3-alpha.1",
     "@textile/threads-net-grpc": "0.1.12",
     "@types/node": "^13.9.2",
     "cids": "^0.7.3",
