@@ -35,6 +35,7 @@
     "libp2p-crypto": "^0.17.2",
     "multiaddr": "^7.4.2",
     "multibase": "^0.6.0",
+    "peer-id": "^0.13.11",
     "varint": "^5.0.0"
   },
   "gitHead": "4e74ac2be9d2829fbfa5d1a78ead7d0d1f99c996"

@@ -136,7 +136,7 @@ export class KeyBook implements Closer {
     return threads
   }
 
-  async logs(id: ThreadID) {
+  async logs(id: ThreadID): Promise<Set<LogID>> {
     const logs = new Set<LogID>()
     const q = { keysOnly: true, prefix: id.string() }
     for await (const { key } of this.datastore.query(q)) {
