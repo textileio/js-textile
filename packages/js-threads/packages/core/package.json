@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-core",
-  "version": "0.0.3-alpha.2",
+  "version": "0.0.3-alpha.3",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
