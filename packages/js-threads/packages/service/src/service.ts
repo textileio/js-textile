@@ -1,18 +1,18 @@
-import { randomBytes, PrivateKey, PublicKey, keys } from 'libp2p-crypto'
+import { keys, PrivateKey, PublicKey, randomBytes } from 'libp2p-crypto'
 import CID from 'cids'
 import log from 'loglevel'
 import {
-  ThreadID,
-  KeyOptions,
   Block,
+  Closer,
+  Key,
+  KeyOptions,
+  LogID,
   LogInfo,
   LogRecord,
-  Service as Interface,
-  LogID,
-  ThreadRecord,
-  Closer,
   Multiaddr,
-  Key,
+  Service as Interface,
+  ThreadID,
+  ThreadRecord,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-service-client'
@@ -32,7 +32,7 @@ export class Service implements Interface {
    * @param store The store to use for caching keys and log information.
    * @param client A client connected to a remote service peer.
    */
-  constructor(store: LogStore | Datastore, private client: Client) {
+  constructor(store: LogStore | Datastore, readonly client: Client) {
     this.store = store instanceof LogStore ? store : LogStore.fromDatastore(store)
   }
 
@@ -74,7 +74,21 @@ export class Service implements Interface {
    * @param opts The set of keys to use when adding the Thread.
    */
   async addThread(addr: Multiaddr, opts: KeyOptions) {
-    return this.client.addThread(addr, opts)
+    const logInfo = await this.deriveLogKeys(opts.logKey)
+    // Don't send along readKey, or log's privKey information
+    const threadKey = opts.threadKey
+    if (threadKey === undefined) throw new Error('Missing Thread key(s)')
+    const newOpts: KeyOptions = {
+      threadKey: new Key(threadKey.service),
+      logKey: logInfo.pubKey,
+    }
+    const info = await this.client.addThread(addr, newOpts)
+    // Now we want to store full key information
+    info.key = threadKey
+    logger.debug('caching thread + log information')
+    await this.store.addThread(info)
+    await this.store.addLog(info.id, logInfo)
+    return info
   }
 
   /**
@@ -85,8 +99,7 @@ export class Service implements Interface {
     const info = await this.client.getThread(id)
     // Merge local thread info with remote thread info
     const local = await this.store.threadInfo(id)
-    const merged = { ...info, ...local }
-    return merged
+    return { ...info, ...local }
   }
 
   /**

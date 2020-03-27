@@ -122,8 +122,7 @@ export class Client implements Service {
     req.setThreadid(id.bytes())
     req.setKeys(keys)
     const res = (await this.unary(API.CreateThread, req)) as pb.ThreadInfoReply.AsObject
-    const info = threadInfoFromProto(res)
-    return info
+    return threadInfoFromProto(res)
   }
 
   /**
@@ -138,8 +137,7 @@ export class Client implements Service {
     req.setAddr(addr.buffer)
     req.setKeys(keys)
     const res = (await this.unary(API.AddThread, req)) as pb.ThreadInfoReply.AsObject
-    const info = threadInfoFromProto(res)
-    return info
+    return threadInfoFromProto(res)
   }
 
   /**
@@ -151,8 +149,7 @@ export class Client implements Service {
     const req = new pb.GetThreadRequest()
     req.setThreadid(id.bytes())
     const res = (await this.unary(API.GetThread, req)) as pb.ThreadInfoReply.AsObject
-    const info = threadInfoFromProto(res)
-    return info
+    return threadInfoFromProto(res)
   }
 
   /**
@@ -246,8 +243,7 @@ export class Client implements Service {
     req.setRecordid(rec.buffer)
     const record = (await this.unary(API.GetRecord, req)) as pb.GetRecordReply.AsObject
     if (!record.record) throw new Error('Missing return value')
-    const res = recordFromProto(record.record, info.key.service)
-    return res
+    return recordFromProto(record.record, info.key.service)
   }
 
   /**

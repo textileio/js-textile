@@ -17,15 +17,13 @@ const ed25519 = keys.supportedKeys.ed25519
 async function createThread(client: Client) {
   const id = ThreadID.fromRandom(Variant.Raw, 32)
   const threadKey = Key.fromRandom()
-  const info = await client.createThread(id, { threadKey })
-  return info
+  return client.createThread(id, { threadKey })
 }
 
 function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
   const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
   const ta = new Multiaddr(`/thread/${info.id.string()}`)
-  const full = hostAddr.encapsulate(pa.encapsulate(ta))
-  return full
+  return hostAddr.encapsulate(pa.encapsulate(ta))
 }
 
 describe('Service Client...', () => {
@@ -46,7 +44,7 @@ describe('Service Client...', () => {
       const info = await client.createThread(id, { threadKey })
       expect(info.id.string()).to.equal(id.string())
       expect(info.key).to.not.be.undefined
-    })
+    }).timeout(5000)
 
     it('should add a remote thread', async () => {
       const hostID = await client.getHostID()
@@ -97,7 +95,7 @@ describe('Service Client...', () => {
 
       const pid = await client.addReplicator(info1.id, peerAddr)
       expect(pid.toB58String()).to.equal(hostID2.toB58String())
-    })
+    }).timeout(5000)
 
     it('should create a new record', async () => {
       const info = await createThread(client)
@@ -154,7 +152,9 @@ describe('Service Client...', () => {
     describe('subscribe', () => {
       let client2: Client
       let info: ThreadInfo
-      before(async () => {
+
+      before(async function() {
+        this.timeout(5000)
         client2 = new Client({ host: proxyAddr2 })
         const hostID2 = await client2.getHostID()
         const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
@@ -164,12 +164,12 @@ describe('Service Client...', () => {
       })
 
       it('should handle updates and close cleanly', done => {
-        let rcount = 0
+        let count = 0
         const res = client2.subscribe((rec?: ThreadRecord, err?: Error) => {
           expect(rec).to.not.be.undefined
-          if (rec) rcount += 1
+          if (rec) count += 1
           if (err) throw new Error(`unexpected error: ${err.toString()}`)
-          if (rcount >= 2) {
+          if (count >= 2) {
             res.close()
             done()
           }

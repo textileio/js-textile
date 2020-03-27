@@ -122,7 +122,7 @@ export class ThreadID {
    * @param o The other Thread ID.
    */
   equals(o: ThreadID): boolean {
-    return this.buf == o.buf
+    return this.buf.equals(o.buf)
   }
 
   /**

@@ -366,14 +366,13 @@ export class Multiaddr {
    * Multiaddr.fromNodeAddress({address: '127.0.0.1', port: '4001'}, 'tcp')
    * // <Multiaddr 047f000001060fa1 - /ip4/127.0.0.1/tcp/4001>
    */
-  fromNodeAddress(addr: any, transport: string) {
+  static fromNodeAddress(addr: any, transport: string) {
     if (!addr) throw new Error('requires node address object')
     if (!transport) throw new Error('requires transport protocol')
     const ip = addr.family === 'IPv6' ? 'ip6' : 'ip4'
     return new Multiaddr('/' + [ip, addr.address, transport, addr.port].join('/'))
   }
 
-  // TODO find a better example, not sure about it's good enough
   /**
    * Returns if a Multiaddr is a Thin Waist address or not.
    *
@@ -395,7 +394,7 @@ export class Multiaddr {
    * mh3.isThinWaistAddress()
    * // false
    */
-  isThinWaistAddress(addr: Multiaddr) {
+  static isThinWaistAddress(addr: Multiaddr) {
     const protos = (addr || this).protos()
 
     if (protos.length !== 2) {
@@ -405,10 +404,7 @@ export class Multiaddr {
     if (protos[0].code !== 4 && protos[0].code !== 41) {
       return false
     }
-    if (protos[1].code !== 6 && protos[1].code !== 273) {
-      return false
-    }
-    return true
+    return !(protos[1].code !== 6 && protos[1].code !== 273)
   }
 
   /**
@@ -418,7 +414,7 @@ export class Multiaddr {
    * [`.protoCodes()`](#multiaddrprotocodes) or
    * [`.protoNames()`](#multiaddrprotonames)
    */
-  protocols = protocols
+  static protocols = protocols
 
   /**
    * Returns if something is a Multiaddr that is a name
@@ -435,7 +431,7 @@ export class Multiaddr {
   /**
    * Returns an array of multiaddrs, by resolving the multiaddr that is a name
    */
-  resolve(addr: Multiaddr) {
+  static resolve(addr: Multiaddr) {
     if (!Multiaddr.isMultiaddr(addr) || !Multiaddr.isName(addr)) {
       return Promise.reject(Error('not a valid name'))
     }

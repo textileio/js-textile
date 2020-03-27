@@ -39,6 +39,8 @@ const asUpdate = <T = any>(event: Result<Event<T>>): Update<T> => {
     id: value.id,
     collection: value.collection,
     event: value.patch,
+    // todo: This is a bit of a hack, find a nicer way to do type
+    type: value.patch ? (value.patch as any).type : undefined,
   }
 }
 

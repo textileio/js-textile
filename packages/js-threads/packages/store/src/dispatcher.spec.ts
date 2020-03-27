@@ -41,7 +41,7 @@ describe('Dispatcher', () => {
     }
     const t1 = Date.now()
     // Don't await...
-    d.dispatch({ key: new Key('one'), value }).then(() => console.log('done'))
+    d.dispatch({ key: new Key('one'), value })
     await d.dispatch({ key: new Key('two'), value })
     const t2 = Date.now()
     expect(t2 - t1 + 100).to.be.greaterThan(4000) // Adjust up to catch approx. timings

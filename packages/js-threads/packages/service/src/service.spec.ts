@@ -19,15 +19,13 @@ const ed25519 = keys.supportedKeys.ed25519
 async function createThread(client: Service) {
   const id = ThreadID.fromRandom(Variant.Raw, 32)
   const threadKey = Key.fromRandom()
-  const info = await client.createThread(id, { threadKey })
-  return info
+  return client.createThread(id, { threadKey })
 }
 
 function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
   const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
   const ta = new Multiaddr(`/thread/${info.id.string()}`)
-  const full = hostAddr.encapsulate(pa.encapsulate(ta)) as any
-  return full
+  return hostAddr.encapsulate(pa.encapsulate(ta)) as any
 }
 
 describe('Service...', () => {
