@@ -16,7 +16,7 @@ jobs:
 
     services:
       threads1:
-        image: textile/go-threads:latest
+        image: textile/go-threads:0.1.12
         env:
           THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
           THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
@@ -27,7 +27,7 @@ jobs:
           - "127.0.0.1:6006:6006"
           - "127.0.0.1:6007:6007"
       threads2:
-        image: textile/go-threads:latest
+        image: textile/go-threads:0.1.12
         env:
           THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
           THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
