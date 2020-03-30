@@ -26,7 +26,7 @@ function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
   return hostAddr.encapsulate(pa.encapsulate(ta))
 }
 
-describe('Service Client...', () => {
+describe('Network Client...', () => {
   let client: Client
   before(() => {
     client = new Client({ host: proxyAddr1 })

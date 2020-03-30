@@ -36,7 +36,7 @@ export class LogStore {
    */
   async addThread(info: ThreadInfo) {
     if (info.key?.service === undefined) {
-      throw new Error('Service key required')
+      throw new Error('Network key required')
     }
     await this.keys.addServiceKey(info.id, info.key.service)
     info.key.read && (await this.keys.addReadKey(info.id, info.key.read))
@@ -48,7 +48,7 @@ export class LogStore {
    */
   async threadInfo(id: ThreadID) {
     const service = await this.keys.serviceKey(id)
-    if (service === undefined) throw new Error('Missing service key')
+    if (service === undefined) throw new Error('Missing network key')
     const read = await this.keys.readKey(id)
     const key = new ThreadKey(service, read)
     const info: ThreadInfo = {

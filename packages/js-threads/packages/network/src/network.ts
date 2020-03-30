@@ -10,34 +10,34 @@ import {
   LogInfo,
   LogRecord,
   Multiaddr,
-  Service as Interface,
+  Network as Interface,
   ThreadID,
   ThreadRecord,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
-import { Client } from '@textile/threads-service-client'
+import { Client } from '@textile/threads-network-client'
 import { Datastore } from 'interface-datastore'
 import PeerId from 'peer-id'
 import { LogStore } from './store'
 
-const logger = log.getLogger('service')
+const logger = log.getLogger('network')
 
 /**
- * Service is the Network interface for Thread orchestration.
+ * Network is the Network interface for Thread orchestration.
  */
-export class Service implements Interface {
+export class Network implements Interface {
   public store: LogStore
   /**
-   * Create a new network Service.
+   * Create a new network Network.
    * @param store The store to use for caching keys and log information.
-   * @param client A client connected to a remote service peer.
+   * @param client A client connected to a remote network peer.
    */
   constructor(store: LogStore | Datastore, readonly client: Client) {
     this.store = store instanceof LogStore ? store : LogStore.fromDatastore(store)
   }
 
   /**
-   * getHostID returns the service's (remote) host peer ID.
+   * getHostID returns the network's (remote) host peer ID.
    */
   async getHostID() {
     return this.client.getHostID()
@@ -49,7 +49,7 @@ export class Service implements Interface {
    * @param id The Thread id.
    * @param opts The set of keys to use when creating the Thread. All keys are "optional", though if no replicator key
    * is provided, one will be created. Similarly, if no log key is provided, then the "host" Peer ID will be used.
-   * If no ReadKey is provided, the service will be unable to write records (but it may be able to return records).
+   * If no ReadKey is provided, the network will be unable to write records (but it may be able to return records).
    */
   async createThread(id: ThreadID, opts: KeyOptions = {}) {
     const logInfo = await this.deriveLogKeys(opts.logKey)
@@ -142,7 +142,7 @@ export class Service implements Interface {
     // Get (or create a new set of) log keys
     const logInfo = await this.getOwnLog(id, true)
     if (info.key === undefined) throw new Error('Missing key info.')
-    if (info.key.read === undefined) throw new Error('Missing service key.')
+    if (info.key.read === undefined) throw new Error('Missing network key.')
     const event = await createEvent(block, info.key.read)
     if (!logInfo.privKey) throw new Error('Missing private key.')
     // If we have head information for this log, use head CID

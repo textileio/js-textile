@@ -1,5 +1,5 @@
 {
-  "name": "@textile/threads-service-client",
+  "name": "@textile/threads-network-client",
   "version": "0.0.3-alpha.3",
   "main": "dist/index",
   "types": "dist/index",

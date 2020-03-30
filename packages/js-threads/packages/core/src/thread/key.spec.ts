@@ -8,7 +8,7 @@ describe('Thread Key', () => {
     expect(k).to.have.ownProperty('read')
   })
 
-  it('should be able to create a service only key', () => {
+  it('should be able to create a network only key', () => {
     const k = Key.fromRandom(false)
     expect(k).to.have.ownProperty('service')
     expect(k.read).to.be.undefined
@@ -23,7 +23,7 @@ describe('Thread Key', () => {
     expect(k1.read?.equals(k2.read!)).to.be.true
   })
 
-  it('should be able to create a service key from an input Buffer', () => {
+  it('should be able to create a network key from an input Buffer', () => {
     const k1 = Key.fromRandom(false)
     const b = k1.toBytes()
     const k2 = Key.fromBytes(b)
@@ -40,7 +40,7 @@ describe('Thread Key', () => {
     expect(k1.read?.equals(k2.read!)).to.be.true
   })
 
-  it('should be able to create a service key from an input string', () => {
+  it('should be able to create a network key from an input string', () => {
     const k1 = Key.fromRandom(false)
     const b = k1.toString()
     const k2 = Key.fromString(b)

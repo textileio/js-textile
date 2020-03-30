@@ -57,7 +57,7 @@ const program = yargs(process.argv.slice(2))
   .describe({ repo: 'Path to local key store' })
   .default({ apiAddr: 'http://127.0.0.1:5008' })
   .alias({ a: 'apiAddr' })
-  .describe({ apiAddr: 'Threads service API gRPC proxy bind multiaddress' }).argv
+  .describe({ apiAddr: 'Threads network API gRPC proxy bind multiaddress' }).argv
 
 // Setup
 if (!fs.existsSync(program.repo)) {

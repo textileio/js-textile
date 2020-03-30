@@ -1,5 +1,5 @@
 import { Datastore } from 'interface-datastore'
-import { Service } from '@textile/threads-service'
+import { Network } from '@textile/threads-network'
 import { ThreadID, ThreadRecord, Closer } from '@textile/threads-core'
 import retry, { Options } from 'async-retry'
 import merge from 'deepmerge'
@@ -26,7 +26,7 @@ export class EventBus<T = any> extends EventEmitter<Events> {
   public queue: Queue<EventJob<T>>
   constructor(
     queue: Queue<EventJob<T>> | Datastore<any>,
-    public service: Service,
+    public network: Network,
     opts: Options = {},
   ) {
     super()
@@ -38,9 +38,9 @@ export class EventBus<T = any> extends EventEmitter<Events> {
       const threadID = ThreadID.fromBytes(id)
       try {
         await retry(async (_bail, _num) => {
-          // @todo: We could use bail here to bail if the service errors out with a 'headers closed error'
-          // This would mean that the gRPC service isn't running, i.e., we are in 'offline' mode
-          await this.service.createRecord(threadID, body)
+          // @todo: We could use bail here to bail if the network errors out with a 'headers closed error'
+          // This would mean that the gRPC network isn't running, i.e., we are in 'offline' mode
+          await this.network.createRecord(threadID, body)
           // @todo: Add debugging outputs here
           return this.queue.done()
         }, merge(retryOpts, opts))
@@ -51,12 +51,12 @@ export class EventBus<T = any> extends EventEmitter<Events> {
     })
   }
 
-  private serviceWatcher(id?: ThreadID, start = true) {
+  private networkWatcher(id?: ThreadID, start = true) {
     if (start) {
       const func = async (rec?: ThreadRecord) => {
         if (rec) this.emit('record', rec)
       }
-      this.closer = id ? this.service.subscribe(func, id) : this.service.subscribe(func)
+      this.closer = id ? this.network.subscribe(func, id) : this.network.subscribe(func)
     } else if (this.closer) {
       return this.closer.close()
     }
@@ -65,13 +65,13 @@ export class EventBus<T = any> extends EventEmitter<Events> {
   async start(id?: ThreadID) {
     this.isStarted = true
     await this.queue.open()
-    this.serviceWatcher(id)
+    this.networkWatcher(id)
     return this.queue.start()
   }
 
   async stop() {
     this.isStarted = false
-    this.serviceWatcher(undefined, false)
+    this.networkWatcher(undefined, false)
     this.queue.stop()
     await this.queue.close()
   }

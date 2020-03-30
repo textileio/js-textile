@@ -4,7 +4,7 @@ import uuid from 'uuid'
 import { reduce } from 'streaming-iterables'
 import * as mingo from 'mingo'
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
-import { Dispatcher, Entity, JsonPatchStore } from '@textile/threads-store'
+import { Dispatcher, Instance, JsonPatchStore } from '@textile/threads-store'
 import { FilterQuery } from './query'
 
 export { FilterQuery }
@@ -22,7 +22,7 @@ const dot = (mingo as any)._internal().resolve
 
 export const existingKeyError = new Error('Existing key')
 
-interface FindOptions<T extends Entity> extends Pick<Query<T>, 'limit' | 'offset' | 'keysOnly'> {
+interface FindOptions<T extends Instance> extends Pick<Query<T>, 'limit' | 'offset' | 'keysOnly'> {
   sort?: { [key in keyof T]?: 1 | -1 }
 }
 
@@ -37,9 +37,7 @@ const cmp = (a: any, b: any, asc: 1 | -1 = 1) => {
   return 0
 }
 
-// Entities/Documents
-
-const handler = <T extends Entity>(obj: T) => {
+const handler = <T extends Instance>(obj: T) => {
   return {
     get: (target: T | Document<T>, property: keyof T, _receiver: any) => {
       if (Reflect.has(obj, property)) {
@@ -58,42 +56,42 @@ const handler = <T extends Entity>(obj: T) => {
 /**
  * Options for creating a new collection.
  */
-export interface Options<T extends Entity> {
+export interface Options<T extends Instance> {
   child?: Datastore<T>
   dispatcher?: Dispatcher
 }
 
 /**
- * Document is a wrapper around a collection and a (proxy to) an entity object.
+ * Document is a wrapper around a Collection and a (proxy to) an Instance object.
  */
-export class Document<T extends Entity = any> {
+export class Document<T extends Instance = any> {
   constructor(private _collection: Collection<T>, private _data: T) {
     return new Proxy<Document<T>>(this, handler(this._data))
   }
 
   /**
-   * Save this entity to its parent collection.
+   * Save this Instance to its parent collection.
    */
   save() {
     return this._collection.save(this._data)
   }
 
   /**
-   * Remove this entity (by id) from its parent collection.
+   * Remove this Instance (by id) from its parent collection.
    */
   remove() {
     return this._collection.delete(this._data.ID)
   }
 
   /**
-   * Check if this entity (by id) exists in its parent collection.
+   * Check if this Instance (by id) exists in its parent collection.
    */
   exists() {
     return this._collection.has(this._data.ID)
   }
 
   /**
-   * Get a JSON representation of this entity.
+   * Get a JSON representation of this Instance.
    */
   toJSON() {
     return this._data
@@ -106,13 +104,13 @@ export class Document<T extends Entity = any> {
 
 // Collections
 
-export interface Collection<T extends Entity = any> {
+export interface Collection<T extends Instance = any> {
   (data: Partial<T>): Document<T> & T
 
   new(data: Partial<T>): Document<T> & T
 }
 
-export class ReadonlyCollection<T extends Entity = any> {
+export class ReadonlyCollection<T extends Instance = any> {
   /**
    * Validator is a function for validating inputs against a given schema.
    */
@@ -133,7 +131,7 @@ export class ReadonlyCollection<T extends Entity = any> {
     this.child = new JsonPatchStore(options.child, new Key(name), options.dispatcher)
   }
 
-  static fromCollection<T extends Entity>(other: Collection<T>) {
+  static fromCollection<T extends Instance>(other: Collection<T>) {
     const readOnly = new ReadonlyCollection(other.name, {})
     readOnly.validator = other.validator
     readOnly.child = other.child
@@ -141,16 +139,16 @@ export class ReadonlyCollection<T extends Entity = any> {
   }
 
   /**
-   * Find an entity by ID
-   * @param id The entity id.
+   * Find an Instance by ID
+   * @param id The Instance id.
    */
   async findById(id: string) {
     return this.child.get(new Key(id))
   }
 
   /**
-   * Check that a given entity exists.
-   * @param id The entity id.
+   * Check that a given Instance exists.
+   * @param id The Instance id.
    */
   async has(id: string) {
     return this.child.has(new Key(id))
@@ -184,7 +182,7 @@ export class ReadonlyCollection<T extends Entity = any> {
   }
 
   /**
-   * Find the first entity matching the query
+   * Find the first Instance matching the query
    * @param query Mongodb-style filter query.
    */
   findOne(query: FilterQuery<T>, options: FindOptions<T> = {}) {
@@ -204,7 +202,7 @@ export class ReadonlyCollection<T extends Entity = any> {
 /**
  * Collection is a store of entities defined by a single schema.
  */
-export class Collection<T extends Entity = any> extends ReadonlyCollection<T> {
+export class Collection<T extends Instance = any> extends ReadonlyCollection<T> {
   /**
    * Collection creates a new collection.
    * @param name A name for the collection.
@@ -216,12 +214,12 @@ export class Collection<T extends Entity = any> extends ReadonlyCollection<T> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const c = this
     // Hacky function that gives us a nice ux for creating entities.
-    const self = function Doc(entity: T) {
-      if (!entity.ID) entity.ID = uuid()
-      if (!c.validator(entity) && c.validator.errors) {
+    const self = function Doc(instance: T) {
+      if (!instance.ID) instance.ID = uuid()
+      if (!c.validator(instance) && c.validator.errors) {
         throw new ValidationError(c.validator.errors)
       }
-      return new Document(c, entity) as Document<T> & T
+      return new Document(c, instance) as Document<T> & T
     }
     Object.setPrototypeOf(self, this.constructor.prototype)
     Object.getOwnPropertyNames(this).forEach(p => {
@@ -238,12 +236,12 @@ export class Collection<T extends Entity = any> extends ReadonlyCollection<T> {
    */
   save(...entities: T[]) {
     const batch = this.child.batch()
-    for (const entity of entities) {
-      if (!entity.ID) entity.ID = uuid()
-      if (!this.validator(entity) && this.validator.errors) {
+    for (const instance of entities) {
+      if (!instance.ID) instance.ID = uuid()
+      if (!this.validator(instance) && this.validator.errors) {
         throw new ValidationError(this.validator.errors)
       }
-      batch.put(new Key(entity.ID), entity)
+      batch.put(new Key(instance.ID), instance)
     }
     return batch.commit()
   }
@@ -261,26 +259,26 @@ export class Collection<T extends Entity = any> extends ReadonlyCollection<T> {
   }
 
   /**
-   * Insert (multiple) new entities.
+   * Insert (multiple) new instances.
    * @note Insert is similar to save, except it will not allow saving/overwriting existing entities.
-   * @param entities
+   * @param instances
    */
-  async insert(...entities: T[]) {
+  async insert(...instances: T[]) {
     // By convention we'll use insert here, but could use a specific key instead
     const lockKey = new Key('insert')
     await this.child.readLock(lockKey)
     try {
       const batch = this.child.batch()
-      for (const entity of entities) {
-        if (!entity.ID) entity.ID = uuid()
-        const key = new Key(entity.ID)
+      for (const instance of instances) {
+        if (!instance.ID) instance.ID = uuid()
+        const key = new Key(instance.ID)
         if (await this.child.has(key)) {
           throw existingKeyError
         }
-        if (!this.validator(entity) && this.validator.errors) {
+        if (!this.validator(instance) && this.validator.errors) {
           throw new ValidationError(this.validator.errors)
         }
-        batch.put(key, entity)
+        batch.put(key, instance)
       }
       return await batch.commit()
     } finally {

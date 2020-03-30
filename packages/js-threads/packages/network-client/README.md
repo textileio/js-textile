@@ -1,4 +1,4 @@
-# Threads Service Client _(threads-service-client)_
+# Threads Network Client _(threads-service-client)_
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
 [![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
@@ -6,7 +6,7 @@
 [![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/js-threads)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-> Client for interacting with Textile's (remote) Threads gRPC Service
+> Client for interacting with Textile's (remote) Threads gRPC Network
 
 Join us on our [public Slack channel](https://slack.textile.io/) for news, discussions, and status updates. [Check out our blog](https://blog.textile.io) for the latest posts and announcements.
 

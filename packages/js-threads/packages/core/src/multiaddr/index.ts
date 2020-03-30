@@ -66,7 +66,7 @@ export class Multiaddr {
   toJSON = this.toString
 
   /**
-   * Returns Multiaddr as a convenient options object to be used with net.createConnection
+   * Returns Multiaddr as a convenient options object to be used with network.createConnection
    *
    * @example
    * Multiaddr('/ip4/127.0.0.1/tcp/4001').toOptions()

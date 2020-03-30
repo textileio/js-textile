@@ -12,7 +12,7 @@ import {
   Block,
   ThreadRecord,
   LogRecord,
-  API as Service,
+  Network,
   marshalKey,
   Multiaddr,
   Key,
@@ -24,7 +24,7 @@ import { Config, BaseConfig } from './config'
 
 export { Config, BaseConfig }
 
-const logger = log.getLogger('service-client')
+const logger = log.getLogger('network-client')
 
 function getThreadKeys(opts: KeyOptions) {
   const threadKeys = new pb.Keys()
@@ -76,9 +76,9 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
 
 /**
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
- * This client library can be used to interact with a local or remote Threads gRPC Service.
+ * This client library can be used to interact with a local or remote Threads gRPC Network.
  */
-export class Client implements Service {
+export class Client implements Network {
   /**
    * Controls the remote API settings.
    */
@@ -98,7 +98,7 @@ export class Client implements Service {
   }
 
   /**
-   * getHostID returns the service's (remote) host peer ID.
+   * getHostID returns the network's (remote) host peer ID.
    */
   async getHostID() {
     logger.debug('making get host ID request')
@@ -111,9 +111,9 @@ export class Client implements Service {
    * createThread with id.
    * @param id The Thread id.
    * @param opts The set of keys to use when creating the Thread. All keys are "optional", though if no replicator key
-   * is provided, one will be created (and returned) on the remote service. Similarly, if no LogKey is provided, then
-   * a private key will be generated (and returned) on the remote service. If no ReadKey is provided, the remote
-   * service will be unable to write records (but it can return records).
+   * is provided, one will be created (and returned) on the remote network. Similarly, if no LogKey is provided, then
+   * a private key will be generated (and returned) on the remote network. If no ReadKey is provided, the remote
+   * network will be unable to write records (but it can return records).
    */
   async createThread(id: ThreadID, opts: KeyOptions) {
     logger.debug('making create thread request')

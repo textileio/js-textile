@@ -8,15 +8,15 @@ import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
 import { ThreadID, Variant, ThreadInfo, Block, ThreadRecord, Multiaddr, Key } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
-import { Client } from '@textile/threads-service-client'
+import { Client } from '@textile/threads-network-client'
 import { MemoryDatastore } from 'interface-datastore'
-import { Service } from '.'
+import { Network } from '.'
 
 const proxyAddr1 = 'http://127.0.0.1:6007'
 const proxyAddr2 = 'http://127.0.0.1:6207'
 const ed25519 = keys.supportedKeys.ed25519
 
-async function createThread(client: Service) {
+async function createThread(client: Network) {
   const id = ThreadID.fromRandom(Variant.Raw, 32)
   const threadKey = Key.fromRandom()
   return client.createThread(id, { threadKey })
@@ -28,10 +28,10 @@ function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
   return hostAddr.encapsulate(pa.encapsulate(ta)) as any
 }
 
-describe('Service...', () => {
-  let client: Service
+describe('Network...', () => {
+  let client: Network
   before(() => {
-    client = new Service(new MemoryDatastore(), new Client({ host: proxyAddr1 }))
+    client = new Network(new MemoryDatastore(), new Client({ host: proxyAddr1 }))
   })
   describe('Basic...', () => {
     it('should return a remote host peer id', async () => {
@@ -148,10 +148,10 @@ describe('Service...', () => {
     })
 
     describe('subscribe', () => {
-      let client2: Service
+      let client2: Network
       let info: ThreadInfo
       before(async () => {
-        client2 = new Service(new MemoryDatastore(), new Client({ host: proxyAddr2 }))
+        client2 = new Network(new MemoryDatastore(), new Client({ host: proxyAddr2 }))
         const hostID2 = await client2.getHostID()
         const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
         const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))

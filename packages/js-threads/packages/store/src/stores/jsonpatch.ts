@@ -5,9 +5,9 @@ import { Codec } from '../codec'
 import { Store, safeGet } from './store'
 
 /**
- * Entity is any object with an ID field.
+ * Instance is any object with an ID field.
  */
-export interface Entity {
+export interface Instance {
   ID: string
   [others: string]: any
 }
@@ -24,30 +24,30 @@ export namespace Op {
   }
 }
 
-export interface Op<T extends Entity> {
+export interface Op<T extends Instance> {
   type: Op.Type
-  entityID: string
+  instanceID: string
   patch?: Operation[] | T
 }
 
-export class JsonPatchCodec<T extends Entity> implements Codec<T, Op<T>> {
+export class JsonPatchCodec<T extends Instance> implements Codec<T, Op<T>> {
   async onDelete(_store: Datastore<T>, key: Key) {
     return {
       type: Op.Type.Delete,
-      entityID: key.toString().slice(1),
+      instanceID: key.toString().slice(1),
       patch: undefined,
     }
   }
   async onPut(store: Datastore<T>, key: Key, value: T) {
-    const entityID = key.toString().slice(1)
+    const instanceID = key.toString().slice(1)
     let patch: Op<T>
     const old = await safeGet(store, key)
     if (old === undefined) {
-      patch = { type: Op.Type.Create, entityID, patch: value }
+      patch = { type: Op.Type.Create, instanceID, patch: value }
     } else {
       const ops = jsonpatch.compare(old, value)
       // If no ops, old == new
-      patch = { type: Op.Type.Save, entityID, patch: ops.length > 0 ? ops : old }
+      patch = { type: Op.Type.Save, instanceID, patch: ops.length > 0 ? ops : old }
     }
     return patch
   }
@@ -72,7 +72,7 @@ export class JsonPatchCodec<T extends Entity> implements Codec<T, Op<T>> {
   }
 }
 
-export class JsonPatchStore<T extends Entity> extends Store<T, Op<T>> {
+export class JsonPatchStore<T extends Instance> extends Store<T, Op<T>> {
   constructor(
     child: Datastore<any> = new MemoryDatastore(),
     prefix?: Key,

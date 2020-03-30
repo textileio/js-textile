@@ -13,7 +13,7 @@ export interface KeyOptions {
   threadKey?: Key
   /**
    * Asymmetric encryption key (pair). Can be either a public or private key. If a public key is specified, this
-   * limits the types of operations the receiving Thread service can perform.
+   * limits the types of operations the receiving Thread network can perform.
    */
   logKey?: PublicKey | PrivateKey
 }
@@ -42,7 +42,7 @@ export const keyToString = (k: Buffer) => {
 
 /**
  * Key is a thread encryption key with two components.
- * @param sk Service key is used to encrypt outer log record linkages.
+ * @param sk Network key is used to encrypt outer log record linkages.
  * @param rk Read key is used to encrypt inner record events.
  */
 export class Key {
@@ -97,7 +97,7 @@ export class Key {
    * Return the base32-encoded string representation of raw key bytes.
    * For example:
    * Full: "brv7t5l2h55uklz5qwpntcat26csaasfchzof3emmdy6povabcd3a2to2qdkqdkto2prfhizerqqudqsdvwherbiy4nazqxjejgdr4oy"
-   * Service: "bp2vvqody5zm6yqycsnazb4kpqvycbdosos352zvpsorxce5koh7q"
+   * Network: "bp2vvqody5zm6yqycsnazb4kpqvycbdosos352zvpsorxce5koh7q"
    */
   toString() {
     return multibase.encode('base32', this.toBytes()).toString()

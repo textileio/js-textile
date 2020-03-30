@@ -9,21 +9,11 @@ export interface Closer {
 }
 
 /**
- * Service is the network interface for thread orchestration.
- * @todo Include properties
- * DAGService provides a DAG API to the network.
- * @todo: Would come from ipfs-lite
- * Host provides a network identity.
- * @todo: Should be a libp2p host, or simply peer-id
+ * Network is the network interface for thread orchestration.
  */
-export type Service = API
-
-/**
- * API is the network interface for thread orchestration.
- */
-export interface API {
+export interface Network {
   /**
-   * getHostID returns the service's (remote) host peer ID.
+   * getHostID returns the network's (remote) host peer ID.
    */
   getHostID(): Promise<PeerId>
 
@@ -32,7 +22,7 @@ export interface API {
    * @param id The Thread id.
    * @param opts The set of keys to use when creating the Thread. All keys are "optional", though if no replicator key
    * is provided, one will be created (and returned). Similarly, if no LogKey is provided, then a private key will be
-   * generated (and returned). If no ReadKey is provided, the service will be unable to write records (but it may be
+   * generated (and returned). If no ReadKey is provided, the network will be unable to write records (but it may be
    * able to return records).
    */
   createThread(id: ThreadID, opts: KeyOptions): Promise<ThreadInfo>

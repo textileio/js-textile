@@ -1,9 +1,9 @@
 import toJsonSchema from 'to-json-schema'
 import cbor from 'cbor-sync'
 import parse from 'url-parse'
-import { Service, Client } from '@textile/threads-service'
+import { Network, Client } from '@textile/threads-network'
 import { EventEmitter2 } from 'eventemitter2'
-import { Dispatcher, Entity, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
+import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
 import { Datastore, MemoryDatastore, Key } from 'interface-datastore'
 import { ThreadID, ThreadRecord, Multiaddr, ThreadInfo, Key as ThreadKey } from '@textile/threads-core'
 import { EventBus } from './eventbus'
@@ -17,7 +17,7 @@ const duplicateCollection = new Error('Duplicate collection')
 export type Options = {
   dispatcher?: Dispatcher
   eventBus?: EventBus
-  service?: Service
+  network?: Network
 }
 
 export class Database {
@@ -30,11 +30,11 @@ export class Database {
    */
   public collections: Map<string, Collection> = new Map()
   /**
-   * Service is the networking layer
+   * Network is the networking layer
    */
-  public service: Service
+  public network: Network
   /**
-   * EventBus is used to marshal events to and from a Threads service
+   * EventBus is used to marshal events to and from a Threads network
    */
   public eventBus: EventBus
   /**
@@ -58,12 +58,12 @@ export class Database {
     this.child = new DomainDatastore(datastore, new Key('db'))
     this.dispatcher =
       options.dispatcher ?? new Dispatcher(new DomainDatastore(datastore, new Key('dispatcher')))
-    this.service =
-      options.service ??
-      new Service(new DomainDatastore(datastore, new Key('service')), new Client())
+    this.network =
+      options.network ??
+      new Network(new DomainDatastore(datastore, new Key('network')), new Client())
     this.eventBus =
       options.eventBus ??
-      new EventBus(new DomainDatastore(this.child, new Key('eventbus')), this.service)
+      new EventBus(new DomainDatastore(this.child, new Key('eventbus')), this.network)
   }
 
   /**
@@ -81,15 +81,15 @@ export class Database {
     options: Options = {},
   ) {
     const db = new Database(datastore, options)
-    const info = await db.service.addThread(addr, { threadKey })
+    const info = await db.network.addThread(addr, { threadKey })
     await db.open(info.id)
-    await db.service.pullThread(info.id)
+    await db.network.pullThread(info.id)
     return db
   }
 
   @Cache()
   async ownLogInfo() {
-    return this.threadID && this.service.getOwnLog(this.threadID, false)
+    return this.threadID && this.network.getOwnLog(this.threadID, false)
   }
 
   /**
@@ -98,7 +98,7 @@ export class Database {
    * @param name A name for the collection.
    * @param data A valid JSON object.
    */
-  newCollectionFromObject<T extends Entity>(name: string, data: T) {
+  newCollectionFromObject<T extends Instance>(name: string, data: T) {
     const schema = toJsonSchema(data) as JSONSchema
     return this.newCollection<T>(name, schema)
   }
@@ -108,7 +108,7 @@ export class Database {
    * @param name A name for the collection.
    * @param schema A valid JSON schema object.
    */
-  async newCollection<T extends Entity>(name: string, schema: JSONSchema) {
+  async newCollection<T extends Instance>(name: string, schema: JSONSchema) {
     if (!this.threadID?.defined()) {
       await this.open()
     }
@@ -131,7 +131,7 @@ export class Database {
   /**
    * Open the database.
    * Opens the underlying datastore if not already open, and enables the dispatcher and
-   * underlying services (event bus, network service, etc). If threadID is undefined, and the
+   * underlying services (event bus, network network, etc). If threadID is undefined, and the
    * database was already bootstrapped on a thread, it will continue using that thread. In the
    * opposite case, it will create a new thread. If threadID is provided, and the database was
    * not bootstrapped on an existing thread, it will attempt to use the provided threadID,
@@ -146,7 +146,7 @@ export class Database {
       if (hasExisting) {
         this.threadID = ThreadID.fromBytes(await this.child.get(idKey))
       } else {
-        const info = await createThread(this.service)
+        const info = await createThread(this.network)
         await this.child.put(idKey, info.id.bytes())
         this.threadID = info.id
       }
@@ -160,9 +160,9 @@ export class Database {
       } else {
         let info: ThreadInfo
         try {
-          info = await this.service.getThread(threadID)
+          info = await this.network.getThread(threadID)
         } catch (_err) {
-          info = await createThread(this.service, threadID)
+          info = await createThread(this.network, threadID)
         }
         await this.child.put(idKey, info.id.bytes())
         this.threadID = info.id
@@ -178,10 +178,10 @@ export class Database {
    */
   async getInfo() {
     if (this.threadID !== undefined) {
-      const info = await this.service.getThread(this.threadID)
-      const hostID = await this.service.getHostID()
+      const info = await this.network.getThread(this.threadID)
+      const hostID = await this.network.getHostID()
       // This is the only address we know about... and the port is wrong
-      const hostAddr = Multiaddr.fromNodeAddress(parse(this.service.client.config.host), 'tcp')
+      const hostAddr = Multiaddr.fromNodeAddress(parse(this.network.client.config.host), 'tcp')
       const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
       const ta = new Multiaddr(`/thread/${info.id.string()}`)
       const full = hostAddr.encapsulate(pa.encapsulate(ta))
@@ -195,7 +195,7 @@ export class Database {
   /**
    * Close and stop the database.
    * Stops the underlying datastore if not already stopped, and disables the dispatcher and
-   * underlying services (event bus, network service, etc.)
+   * underlying services (event bus, network network, etc.)
    */
   async close() {
     this.collections.clear()
@@ -207,12 +207,12 @@ export class Database {
 
   private async onRecord(rec: ThreadRecord) {
     if (this.threadID?.equals(rec.threadID)) {
-      const logInfo = await this.service.getOwnLog(this.threadID, false)
+      const logInfo = await this.network.getOwnLog(this.threadID, false)
       if (logInfo?.id.equals(rec.logID)) {
         return // Ignore our own events since DB already dispatches to DB reducers
       }
       // @todo Should just cache this information, as its unlikely to change
-      const info = await this.service.getThread(this.threadID)
+      const info = await this.network.getThread(this.threadID)
       const value: Event | undefined = decodeRecord(rec, info)
       if (value !== undefined) {
         const collection = this.collections.get(value.collection)
@@ -233,7 +233,7 @@ export class Database {
     }
   }
 
-  private async onUpdate<T extends Entity>(...updates: Update<Op<T>>[]) {
+  private async onUpdate<T extends Instance>(...updates: Update<Op<T>>[]) {
     for (const update of updates) {
       // Event name: <collection>.<id>.<type>
       const event: string[] = [update.collection, update.id]

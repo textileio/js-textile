@@ -1,5 +1,5 @@
 {
-  "name": "@textile/threads-service",
+  "name": "@textile/threads-network",
   "version": "0.0.3-alpha.3",
   "main": "dist/index",
   "types": "dist/index",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@textile/threads-core": "^0.0.3-alpha.3",
     "@textile/threads-encoding": "^0.0.3-alpha.3",
-    "@textile/threads-service-client": "^0.0.3-alpha.3",
+    "@textile/threads-network-client": "^0.0.3-alpha.3",
     "@types/node": "^13.9.2",
     "cids": "^0.7.3",
     "datastore-core": "^0.7.0",
@@ -37,7 +37,7 @@
       "path": "../encoding"
     },
     {
-      "path": "../service-client"
+      "path": "../network-client"
     }
   ],
   "devDependencies": {
