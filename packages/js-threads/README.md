@@ -6,7 +6,8 @@
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-threads.svg?style=popout-square)](./package.json)
 [![npm (scoped)](https://img.shields.io/npm/v/@textile/threads.svg?style=popout-square)](https://www.npmjs.com/package/@textile/threads)
 [![Release](https://img.shields.io/github/release/textileio/js-threads.svg?style=flat-square)](https://github.com/textileio/js-threads/releases/latest)
-[![docs](https://img.shields.io/badge/docs-master-success.svg?style=popout-square)](https://textileio.github.io/js-threads)
+![tests](https://github.com/textileio/js-threads/workflows/Test/badge.svg)
+[![docs](https://github.com/textileio/js-threads/workflows/Docs/badge.svg)](https://textileio.github.io/js-threads)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
