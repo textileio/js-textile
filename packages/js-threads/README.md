@@ -1,8 +1,8 @@
 # Textile's Threads Protocol _(js-threads)_
 
-[![Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg)](https://textile.io)
-[![Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg)](https://slack.textile.io)
-[![License](https://img.shields.io/github/License/textileio/js-threads.svg)](./LICENSE)
+[![Textile](https://img.shields.io/badge/Made%20by-Textile-informational.svg)](https://textile.io)
+[![Chat on Slack](https://img.shields.io/badge/Slack-slack.textile.io-informational.svg)](https://slack.textile.io)
+[![License](https://img.shields.io/github/license/textileio/js-threads.svg)](./LICENSE)
 [![package.json version](https://img.shields.io/github/package-json/v/textileio/js-threads.svg)](./package.json)
 [![npm (scoped)](https://img.shields.io/npm/v/@textile/threads.svg)](https://www.npmjs.com/package/@textile/threads)
 [![Release](https://img.shields.io/github/release/textileio/js-threads.svg)](https://github.com/textileio/js-threads/releases/latest)
