@@ -15,6 +15,7 @@ import { Database } from './db'
 import { EventBus } from './eventbus'
 import { threadAddr } from './utils'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const level = require('level')
 
 interface DummyInstance {
@@ -31,7 +32,8 @@ interface DummyInstance {
  * events on a collection. Similarly, ** listens to all events on all collections.
  */
 async function runListenersComplexUseCase(los: string[]) {
-  const db = new Database() // Use the defaults
+  const store = new MemoryDatastore()
+  const db = new Database(store)
   const Collection1 = await db.newCollectionFromObject<DummyInstance>('Collection1', {
     ID: '',
     name: '',
@@ -53,7 +55,7 @@ async function runListenersComplexUseCase(los: string[]) {
   const events: Update[] = []
   // @todo: Should we wrap this in a 'listen' method instead?
   for (const name of los) {
-    db.emitter.on(name, update => {
+    db.on(name, (update: any) => {
       events.push(update)
     })
   }
@@ -92,7 +94,7 @@ async function runListenersComplexUseCase(los: string[]) {
   // Collection2 delete i2
   await Collection1.delete(i2.ID)
 
-  db.emitter.removeAllListeners()
+  db.removeAllListeners()
   await db.close()
   // Expected generated actions:
   // Collection1 Save i1
@@ -109,12 +111,13 @@ async function runListenersComplexUseCase(los: string[]) {
 
 describe('Database', () => {
   describe.skip('end to end test', () => {
-    it('should allow paired peers to exchange updates', async function () {
+    it('should allow paired peers to exchange updates', async function() {
       if (isBrowser) return this.skip()
       // @todo This test is probably too slow for CI, but should run just fine locally
       // Should probably just skip it (https://stackoverflow.com/a/48121978) in CI
       // Peer 1: Create db1, register a collection, create and update an instance.
-      const d1 = new Database() // All defaults
+      const store = new MemoryDatastore()
+      const d1 = new Database(store) // Store must be specified explicitly
       await d1.open()
       const id1 = d1.threadID
       if (id1 === undefined) {
@@ -138,8 +141,7 @@ describe('Database', () => {
       const datastore = new MemoryDatastore()
       const client = new Client({ host: 'http://127.0.0.1:6207' })
       const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
-      const test = await network.getHostID()
-      const d2 = await Database.fromAddress(addr, info.key, datastore, {
+      const d2 = await Database.fromAddress(addr, datastore, info.key, {
         network,
       })
       // Create parallel collection

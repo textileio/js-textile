@@ -9,13 +9,13 @@ import PeerId from 'peer-id'
 export type LogID = PeerId
 
 /**
- * ThreadID represents a self-describing thread identifier.
+ * ThreadID represents a self-describing Thread identifier.
  * It is formed by a Version, a Variant, and a random number of a given length.
  */
 class ThreadID {
   constructor(private buf: Buffer) {}
   /**
-   * Create a new random Thead ID.
+   * fromRandom creates a new random ID object.
    * @param variant The Thread variant to use. @see Variant
    * @param size The size of the random component to use. Defaults to 32 bytes.
    */
@@ -30,7 +30,7 @@ class ThreadID {
   }
 
   /**
-   * fromEncoded parses an ID-encoded string and returns an ID object.
+   * fromString parses an ID-encoded string and returns an ID object.
    * For IDV1, an ID-encoded string is primarily a multibase string:
    *    <multibase-type-code><base-encoded-string>
    * The base-encoded string represents a:
@@ -72,7 +72,7 @@ class ThreadID {
   }
 
   /**
-   * isEncoded returns the multibase encoding for a multibase encoded string.
+   * getEncoding returns the multibase encoding for a multibase encoded string.
    * Returns the name of the encoding if it is encoded, and throws an error otherwise.
    * @param v The Thread ID to check.
    */
@@ -89,7 +89,7 @@ class ThreadID {
   }
 
   /**
-   * Defined returns true if an ID is defined.
+   * isDefined returns true if an ID is defined.
    * Calling any other methods on an undefined ID will result in undefined behavior.
    */
   isDefined(): boolean {
@@ -97,7 +97,7 @@ class ThreadID {
   }
 
   /**
-   * Bytes returns the byte representation of an ID.
+   * toBytes returns the byte representation of an ID.
    * The output of bytes can be parsed back into an ID with fromBytes.
    */
   toBytes(): Buffer {
@@ -105,7 +105,7 @@ class ThreadID {
   }
 
   /**
-   * Equals checks that two IDs are the same.
+   * equals checks that two IDs are the same.
    * @param o The other Thread ID.
    */
   equals(o: ThreadID): boolean {
@@ -113,14 +113,14 @@ class ThreadID {
   }
 
   /**
-   * Version returns the ID version.
+   * version returns the ID version.
    */
   version(): number {
     return decode(this.buf)
   }
 
   /**
-   * Variant returns the variant of an ID.
+   * variant returns the variant of an ID.
    */
   variant(): number {
     let copy = Buffer.from(this.buf)

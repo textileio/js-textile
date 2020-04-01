@@ -17,8 +17,11 @@ export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7
 const dot = (mingo as any)._internal().resolve
 
 // Setup the key field for our collection
-// @todo: The mingo types are incorrect here... so we hack around those a bit.
-;(mingo as any).setup({ key: 'ID' })
+// @todo: The mingo types are incorrect here:
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+mingo.setup({ key: 'ID' })
 
 export const existingKeyError = new Error('Existing key')
 
@@ -29,6 +32,11 @@ interface FindOptions<T extends Instance> extends Pick<Query<T>, 'limit' | 'offs
 const defaultOptions: Options<any> = {
   child: new MemoryDatastore(),
   dispatcher: new Dispatcher(),
+}
+
+export interface Config {
+  name: string
+  schema: JSONSchema
 }
 
 const cmp = (a: any, b: any, asc: 1 | -1 = 1) => {
@@ -107,7 +115,7 @@ export class Document<T extends Instance = any> {
 export interface Collection<T extends Instance = any> {
   (data: Partial<T>): Document<T> & T
 
-  new(data: Partial<T>): Document<T> & T
+  new (data: Partial<T>): Document<T> & T
 }
 
 export class ReadonlyCollection<T extends Instance = any> {
@@ -184,6 +192,7 @@ export class ReadonlyCollection<T extends Instance = any> {
   /**
    * Find the first Instance matching the query
    * @param query Mongodb-style filter query.
+   * @param options Additional search options.
    */
   findOne(query: FilterQuery<T>, options: FindOptions<T> = {}) {
     const it = this.find(query, options)
@@ -193,6 +202,7 @@ export class ReadonlyCollection<T extends Instance = any> {
   /**
    * Count all entities matching the query
    * @param query Mongodb-style filter query.
+   * @param options Additional search options.
    */
   count(query: FilterQuery<T>, options: FindOptions<T> = {}) {
     return reduce((acc, _value) => acc + 1, 0, this.find(query, options))

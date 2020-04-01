@@ -7,7 +7,7 @@ import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@texti
 import { Datastore, MemoryDatastore, Key } from 'interface-datastore'
 import { ThreadID, ThreadRecord, Multiaddr, ThreadInfo, ThreadKey } from '@textile/threads-core'
 import { EventBus } from './eventbus'
-import { Collection, JSONSchema } from './collection'
+import { Collection, JSONSchema, Config } from './collection'
 import { createThread, decodeRecord, Cache } from './utils'
 
 const metaKey = new Key('meta')
@@ -20,7 +20,7 @@ export type Options = {
   network?: Network
 }
 
-export class Database {
+export class Database extends EventEmitter2 {
   /**
    * ThreadID is the id for the thread to use for this
    */
@@ -47,14 +47,13 @@ export class Database {
    */
   public child: DomainDatastore<any>
 
-  public emitter: EventEmitter2 = new EventEmitter2({ wildcard: true })
-
   /**
    * Database creates a new database using the provided thread.
    * @param datastore The primary datastore, and is used to partition out stores as sub-domains.
    * @param options A set of database options.
    */
-  constructor(datastore: Datastore<any> = new MemoryDatastore<any>(), options: Options = {}) {
+  constructor(datastore: Datastore<any>, options: Options = {}) {
+    super({ wildcard: true })
     this.child = new DomainDatastore(datastore, new Key('db'))
     this.dispatcher =
       options.dispatcher ?? new Dispatcher(new DomainDatastore(datastore, new Key('dispatcher')))
@@ -68,26 +67,28 @@ export class Database {
 
   /**
    * fromAddress creates a new database from a thread hosted by another peer.
+   * Unlike the Database constructor, this will auto-start the database and begin pulling from the underlying Thread.
    * @param addr The address for the thread with which to connect.
    * Should be of the form /ip4/<url/ip-address>/tcp/<port>/p2p/<peer-id>/thread/<thread-id>
    * @param threadKey Set of symmetric keys.
-   * @param datastore The primary datastore, and is used to partition out stores as sub-domains.
+   * @param datastore The primary datastore.
    * @param options A set of database options.
+   * @param collections An array of collection config objects to use when initializing the database.
    */
   static async fromAddress(
     addr: Multiaddr,
+    datastore: Datastore<any>,
     threadKey?: ThreadKey,
-    datastore: Datastore<any> = new MemoryDatastore<any>(),
     options: Options = {},
+    collections?: Config[],
   ) {
     const db = new Database(datastore, options)
     const info = await db.network.addThread(addr, { threadKey })
-    await db.open(info.id)
-    await db.network.pullThread(info.id)
+    await db.open(info.id, collections)
     return db
   }
 
-  @Cache()
+  @Cache() // @todo: Specify cache duration?
   async ownLogInfo() {
     return this.threadID && this.network.getOwnLog(this.threadID, false)
   }
@@ -136,8 +137,10 @@ export class Database {
    * opposite case, it will create a new thread. If threadID is provided, and the database was
    * not bootstrapped on an existing thread, it will attempt to use the provided threadID,
    * otherwise, a thread id mismatch error is thrown.
+   * @param threadID The Thread ID to use for this database,
+   * @param collections An array of Collection Config objects to use when initializing the Database.
    */
-  async open(threadID?: ThreadID) {
+  async open(threadID?: ThreadID, collections?: Config[]) {
     await this.child.open()
     const idKey = metaKey.child(new Key('threadid'))
     const hasExisting = await this.child.has(idKey)
@@ -169,8 +172,13 @@ export class Database {
       }
     }
     await this.rehydrate()
+    // Now that we have re-hydrated any existing collections, add the ones specified here
+    for (const { name, schema } of (collections || []).values()) {
+      await this.newCollection(name, schema)
+    }
     await this.eventBus.start(this.threadID)
     this.eventBus.on('record', this.onRecord.bind(this))
+    this.network.pullThread(this.threadID) // Don't await
   }
 
   /**
@@ -187,7 +195,7 @@ export class Database {
       const full = hostAddr.encapsulate(pa.encapsulate(ta))
       return {
         dbKey: info.key,
-        addresses: [ full.toString() ]
+        addresses: [full.toString()],
       }
     }
   }
@@ -240,7 +248,7 @@ export class Database {
       if (update.type !== undefined) {
         event.push(update.type.toString())
       }
-      this.emitter.emit(event, update)
+      this.emit(event, update)
     }
   }
 
