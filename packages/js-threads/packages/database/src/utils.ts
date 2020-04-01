@@ -4,7 +4,7 @@ import {
   ThreadID,
   Multiaddr,
   ThreadRecord,
-  Key,
+  ThreadKey,
 } from '@textile/threads-core'
 import { Network } from '@textile/threads-network'
 import { decodeBlock } from '@textile/threads-encoding'
@@ -27,10 +27,10 @@ export async function createThread(
   network: Network,
   id: ThreadID = ThreadID.fromRandom(ThreadID.Variant.Raw, 32),
 ) {
-  const threadKey = Key.fromRandom(true)
+  const threadKey = ThreadKey.fromRandom(true)
   // @todo: Let users/developers provide their own keys here.
   const logKey = await ed25519.generateKeyPair()
-  return network.createThread(id, {  threadKey, logKey })
+  return network.createThread(id, { threadKey, logKey })
 }
 
 export function threadAddr(hostAddr: Multiaddr, hostID: string, threadID: string) {

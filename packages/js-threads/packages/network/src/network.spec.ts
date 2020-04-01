@@ -6,7 +6,7 @@ import { randomBytes } from 'libp2p-crypto'
 import { expect } from 'chai'
 import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
-import { ThreadID, ThreadInfo, Block, ThreadRecord, Multiaddr, Key } from '@textile/threads-core'
+import { ThreadID, ThreadInfo, Block, ThreadRecord, Multiaddr, ThreadKey } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'
 import { MemoryDatastore } from 'interface-datastore'
@@ -18,7 +18,7 @@ const ed25519 = keys.supportedKeys.ed25519
 
 async function createThread(client: Network) {
   const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
-  const threadKey = Key.fromRandom()
+  const threadKey = ThreadKey.fromRandom()
   return client.createThread(id, { threadKey })
 }
 
@@ -41,7 +41,7 @@ describe('Network...', () => {
 
     it('should create a remote thread', async () => {
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
-      const threadKey = Key.fromRandom()
+      const threadKey = ThreadKey.fromRandom()
       const info = await client.createThread(id, { threadKey })
       expect(info.id.toString()).to.equal(id.toString())
       expect(info.key?.read).to.not.be.undefined
@@ -112,7 +112,7 @@ describe('Network...', () => {
     it('should be able to add a pre-formed record', async () => {
       // Create a thread, keeping read key and log private key on the client
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
-      const threadKey = Key.fromRandom(false)
+      const threadKey = ThreadKey.fromRandom(false)
       const privKey = await ed25519.generateKeyPair()
       const logKey = privKey.public
       const info = await client.createThread(id, { threadKey, logKey })

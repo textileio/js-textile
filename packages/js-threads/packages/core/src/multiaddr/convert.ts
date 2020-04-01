@@ -1,5 +1,5 @@
 import varint from 'varint'
-import { ThreadID } from '../thread'
+import { ThreadID } from '../thread/id'
 import { protocols } from './protocols'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Convert = require('multiaddr/src/convert')

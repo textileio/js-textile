@@ -15,7 +15,7 @@ import {
   Network,
   marshalKey,
   Multiaddr,
-  Key,
+  ThreadKey,
 } from '@textile/threads-core'
 import * as pb from '@textile/threads-net-grpc/api_pb'
 import { API } from '@textile/threads-net-grpc/api_pb_service'
@@ -33,7 +33,7 @@ function getThreadKeys(opts: KeyOptions) {
   return threadKeys
 }
 
-function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: Key) {
+function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: ThreadKey) {
   const threadID = ThreadID.fromBytes(Buffer.from(proto.threadid as string, 'base64'))
   const rawID = Buffer.from(proto.logid as string, 'base64')
   const logID = PeerId.createFromBytes(rawID)
@@ -49,7 +49,7 @@ function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: Key) {
 async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
   const id = ThreadID.fromBytes(Buffer.from(proto.id as string, 'base64'))
   const threadKey = Buffer.from(proto.threadkey as string, 'base64')
-  const key = Key.fromBytes(threadKey)
+  const key = ThreadKey.fromBytes(threadKey)
   const logs: Set<LogInfo> = new Set()
   for (const log of proto.logsList) {
     const rawId = Buffer.from(log.id as string, 'base64')

@@ -1,6 +1,6 @@
 import { ThreadID } from './id'
 import { LogInfo } from './log'
-import { Key } from './key'
+import { ThreadKey } from './key'
 
 // Thread protocol version
 const version = '0.0.1'
@@ -44,5 +44,5 @@ export interface ThreadInfo {
   /**
    * Symmetric encryption keys.
    */
-  key?: Key
+  key?: ThreadKey
 }

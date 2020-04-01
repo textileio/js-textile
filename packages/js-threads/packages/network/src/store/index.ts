@@ -1,5 +1,5 @@
 import { Datastore, Key } from 'interface-datastore'
-import { ThreadID, LogInfo, ThreadInfo, LogID, Key as ThreadKey } from '@textile/threads-core'
+import { ThreadID, LogInfo, ThreadInfo, LogID, ThreadKey } from '@textile/threads-core'
 import { KeyBook } from './keybook'
 
 export class LogStore {

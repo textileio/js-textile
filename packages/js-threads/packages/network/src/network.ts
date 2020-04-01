@@ -4,7 +4,7 @@ import log from 'loglevel'
 import {
   Block,
   Closer,
-  Key,
+  ThreadKey,
   KeyOptions,
   LogID,
   LogInfo,
@@ -54,14 +54,14 @@ export class Network implements Interface {
   async createThread(id: ThreadID, opts: KeyOptions = {}) {
     const logInfo = await this.deriveLogKeys(opts.logKey)
     // Don't send along readKey, or log's privKey information
-    const threadKey = opts.threadKey || Key.fromRandom()
+    const threadKey = opts.threadKey || ThreadKey.fromRandom()
     const newOpts: KeyOptions = {
-      threadKey: new Key(threadKey.service),
+      threadKey: new ThreadKey(threadKey.service),
       logKey: logInfo.pubKey,
     }
     const info = await this.client.createThread(id, newOpts)
     // Now we want to store or create read key
-    info.key = new Key(threadKey.service, threadKey.read || randomBytes(32))
+    info.key = new ThreadKey(threadKey.service, threadKey.read || randomBytes(32))
     logger.debug('caching thread + log information')
     await this.store.addThread(info)
     await this.store.addLog(id, logInfo)
@@ -79,7 +79,7 @@ export class Network implements Interface {
     const threadKey = opts.threadKey
     if (threadKey === undefined) throw new Error('Missing Thread key(s)')
     const newOpts: KeyOptions = {
-      threadKey: new Key(threadKey.service),
+      threadKey: new ThreadKey(threadKey.service),
       logKey: logInfo.pubKey,
     }
     const info = await this.client.addThread(addr, newOpts)

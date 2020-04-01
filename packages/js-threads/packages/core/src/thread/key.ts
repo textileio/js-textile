@@ -10,7 +10,7 @@ export interface KeyOptions {
   /**
    * Set of symmetric encryption keys.Can be generated with Key.fromRandom().
    */
-  threadKey?: Key
+  threadKey?: ThreadKey
   /**
    * Asymmetric encryption key (pair). Can be either a public or private key. If a public key is specified, this
    * limits the types of operations the receiving Thread network can perform.
@@ -45,14 +45,14 @@ export const keyToString = (k: Buffer) => {
  * @param sk Network key is used to encrypt outer log record linkages.
  * @param rk Read key is used to encrypt inner record events.
  */
-export class Key {
+export class ThreadKey {
   constructor(readonly service: Buffer, readonly read?: Buffer) {}
   /**
    * Create a new set of keys.
    * @param withRead Whether to also include a random read key.
    */
   static fromRandom(withRead = true) {
-    return new Key(randomBytes(keyBytes), withRead ? randomBytes(keyBytes) : undefined)
+    return new ThreadKey(randomBytes(keyBytes), withRead ? randomBytes(keyBytes) : undefined)
   }
 
   /**
@@ -68,7 +68,7 @@ export class Key {
     if (bytes.byteLength === keyBytes * 2) {
       rk = bytes.slice(keyBytes)
     }
-    return new Key(sk, rk)
+    return new ThreadKey(sk, rk)
   }
 
   /**
