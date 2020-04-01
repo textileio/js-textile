@@ -109,7 +109,7 @@ export class Database {
    * @param schema A valid JSON schema object.
    */
   async newCollection<T extends Instance>(name: string, schema: JSONSchema) {
-    if (!this.threadID?.defined()) {
+    if (!this.threadID?.isDefined()) {
       await this.open()
     }
     if (this.collections.has(name)) {
@@ -147,7 +147,7 @@ export class Database {
         this.threadID = ThreadID.fromBytes(await this.child.get(idKey))
       } else {
         const info = await createThread(this.network)
-        await this.child.put(idKey, info.id.bytes())
+        await this.child.put(idKey, info.id.toBytes())
         this.threadID = info.id
       }
     } else {
@@ -164,7 +164,7 @@ export class Database {
         } catch (_err) {
           info = await createThread(this.network, threadID)
         }
-        await this.child.put(idKey, info.id.bytes())
+        await this.child.put(idKey, info.id.toBytes())
         this.threadID = info.id
       }
     }
@@ -183,7 +183,7 @@ export class Database {
       // This is the only address we know about... and the port is wrong
       const hostAddr = Multiaddr.fromNodeAddress(parse(this.network.client.config.host), 'tcp')
       const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
-      const ta = new Multiaddr(`/thread/${info.id.string()}`)
+      const ta = new Multiaddr(`/thread/${info.id.toString()}`)
       const full = hostAddr.encapsulate(pa.encapsulate(ta))
       return {
         dbKey: info.key,
@@ -225,7 +225,7 @@ export class Database {
   }
 
   private async onEvents(...events: Event[]) {
-    const id = this.threadID?.bytes()
+    const id = this.threadID?.toBytes()
     if (id !== undefined) {
       for (const body of events) {
         await this.eventBus.push({ id, body })

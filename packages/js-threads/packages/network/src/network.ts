@@ -109,7 +109,7 @@ export class Network implements Interface {
    * @param id The Thread ID.
    */
   async pullThread(id: ThreadID) {
-    logger.debug(`pulling thread ${id.string()}`)
+    logger.debug(`pulling thread ${id.toString()}`)
     // @note: Not need to worry about safety here, the remote peer will handle that for us.
     return this.client.pullThread(id)
   }

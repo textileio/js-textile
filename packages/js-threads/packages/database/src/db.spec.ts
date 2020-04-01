@@ -3,7 +3,7 @@
 ;(global as any).WebSocket = require('isomorphic-ws')
 
 import { expect } from 'chai'
-import { Multiaddr, ThreadID, Variant } from '@textile/threads-core'
+import { Multiaddr, ThreadID } from '@textile/threads-core'
 import LevelDatastore from 'datastore-level'
 import delay from 'delay'
 import { isBrowser } from 'browser-or-node'
@@ -130,7 +130,7 @@ describe('Database', () => {
       // Boilerplate to generate peer1 thread-addr
       const hostID = await d1.network.getHostID()
       const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
-      const addr = threadAddr(hostAddr, hostID.toB58String(), id1.string())
+      const addr = threadAddr(hostAddr, hostID.toB58String(), id1.toString())
 
       // Peer 2: Create a completely parallel db2, which will sync with the previous one and should
       // have the same state of dummy.
@@ -179,7 +179,7 @@ describe('Database', () => {
       const eventBus = new EventBus(new DomainDatastore(datastore, new Key('eventbus')), network)
       const db = new Database(datastore, { dispatcher, network, eventBus })
 
-      const id = ThreadID.fromRandom(Variant.Raw, 32)
+      const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       await db.open(id)
 
       await db.newCollectionFromObject<DummyInstance>('dummy', {

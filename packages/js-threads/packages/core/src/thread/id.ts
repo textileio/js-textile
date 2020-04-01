@@ -9,33 +9,20 @@ import PeerId from 'peer-id'
 export type LogID = PeerId
 
 /**
- * Versions. Currently only V1 is supported.
- */
-export const V1 = 0x01
-
-/**
- * Variant denotes Thread variant. Currently only two variants are supported.
- */
-export enum Variant {
-  Raw = 0x55,
-  AccessControlled = 0x70, // Supports access control lists
-}
-
-/**
  * ThreadID represents a self-describing thread identifier.
  * It is formed by a Version, a Variant, and a random number of a given length.
  */
-export class ThreadID {
+class ThreadID {
   constructor(private buf: Buffer) {}
   /**
    * Create a new random Thead ID.
    * @param variant The Thread variant to use. @see Variant
    * @param size The size of the random component to use. Defaults to 32 bytes.
    */
-  static fromRandom(variant: Variant = Variant.Raw, size = 32) {
+  static fromRandom(variant: ThreadID.Variant = ThreadID.Variant.Raw, size = 32) {
     // two 8 bytes (max) numbers plus random bytes
     const bytes = Buffer.concat([
-      Buffer.from(encode(V1)),
+      Buffer.from(encode(ThreadID.V1)),
       Buffer.from(encode(variant)),
       randomBytes(size),
     ])
@@ -50,7 +37,7 @@ export class ThreadID {
    *    <version><variant><random-number>
    * @param v The input encoded Thread ID.
    */
-  static fromEncoded(v: string | Buffer) {
+  static fromString(v: string | Buffer) {
     if (v.length < 2) {
       throw new Error('id too short')
     }
@@ -74,7 +61,7 @@ export class ThreadID {
     }
     copy = copy.slice(decode.bytes, copy.length)
     const variant = decode(copy)
-    if (!(variant in Variant)) {
+    if (!(variant in ThreadID.Variant)) {
       throw new Error('invalid variant.')
     }
     const id = copy.slice(decode.bytes, copy.length)
@@ -89,7 +76,7 @@ export class ThreadID {
    * Returns the name of the encoding if it is encoded, and throws an error otherwise.
    * @param v The Thread ID to check.
    */
-  static isEncoded(v: string): string {
+  static getEncoding(v: string): string {
     if (v.length < 2) {
       throw new Error('Too Short')
     }
@@ -105,7 +92,7 @@ export class ThreadID {
    * Defined returns true if an ID is defined.
    * Calling any other methods on an undefined ID will result in undefined behavior.
    */
-  defined(): boolean {
+  isDefined(): boolean {
     return this.buf.length > 0
   }
 
@@ -113,7 +100,7 @@ export class ThreadID {
    * Bytes returns the byte representation of an ID.
    * The output of bytes can be parsed back into an ID with fromBytes.
    */
-  bytes(): Buffer {
+  toBytes(): Buffer {
     return this.buf
   }
 
@@ -123,13 +110,6 @@ export class ThreadID {
    */
   equals(o: ThreadID): boolean {
     return this.buf.equals(o.buf)
-  }
-
-  /**
-   * toString returns the binary representation of the ID as a string.
-   */
-  toString(): string {
-    return this.buf.toString()
   }
 
   /**
@@ -150,25 +130,12 @@ export class ThreadID {
   }
 
   /**
-   * String returns the default string representation of an ID.
-   * Currently, Base32 is used as the encoding for the multibase string.
+   * toString returns the (multibase encoded) string representation of an ID.
+   * @param base Name of the base to use for encoding. Defaults to 'base32'.
    */
-  string(): string {
+  toString(base: Name = 'base32'): string {
     switch (this.version()) {
-      case V1:
-        return multibase.encode('base32', this.buf).toString()
-      default:
-        throw new Error('unknown ID version')
-    }
-  }
-
-  /**
-   * String returns the string representation of an ID encoded is selected base.
-   * @param base Name of the base to use for encoding.
-   */
-  stringOfBase(base: Name): string {
-    switch (this.version()) {
-      case V1:
+      case ThreadID.V1:
         return multibase.encode(base, this.buf).toString()
       default:
         throw new Error('unknown ID version.')
@@ -176,7 +143,20 @@ export class ThreadID {
   }
 }
 
-/**
- * Undef can be used to represent a null or undefined ID.
- */
-export const Undef = new ThreadID(Buffer.alloc(0))
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace ThreadID {
+  /**
+   * Versions. Currently only V1 is supported.
+   */
+  export const V1 = 0x01
+
+  /**
+   * Variant denotes Thread variant. Currently only two variants are supported.
+   */
+  export enum Variant {
+    Raw = 0x55,
+    AccessControlled = 0x70, // Supports access control lists
+  }
+}
+
+export { ThreadID }

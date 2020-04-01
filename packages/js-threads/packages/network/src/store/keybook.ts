@@ -13,7 +13,7 @@ import PeerId from 'peer-id'
 const baseKey = new Key('/thread/keys')
 const getKey = (id: ThreadID, log: LogID, suffix?: string) => {
   const idString = log.toB58String()
-  return new Key(id.string()).child(new Key(suffix ? `${idString}:${suffix}` : idString))
+  return new Key(id.toString()).child(new Key(suffix ? `${idString}:${suffix}` : idString))
 }
 
 /**
@@ -87,7 +87,7 @@ export class KeyBook implements Closer {
    */
   async readKey(id: ThreadID) {
     try {
-      return await this.datastore.get(new Key(id.string()).child(new Key('read')))
+      return await this.datastore.get(new Key(id.toString()).child(new Key('read')))
     } catch (err) {
       return
     }
@@ -99,7 +99,7 @@ export class KeyBook implements Closer {
    * @param key The asymmetric read key, of length 44 bytes.
    */
   addReadKey(id: ThreadID, key: Buffer) {
-    return this.datastore.put(new Key(id.string()).child(new Key('read')), key)
+    return this.datastore.put(new Key(id.toString()).child(new Key('read')), key)
   }
 
   /**
@@ -107,7 +107,7 @@ export class KeyBook implements Closer {
    */
   async serviceKey(id: ThreadID) {
     try {
-      return await this.datastore.get(new Key(id.string()).child(new Key('repl')))
+      return await this.datastore.get(new Key(id.toString()).child(new Key('repl')))
     } catch (err) {
       return
     }
@@ -119,7 +119,7 @@ export class KeyBook implements Closer {
    * @param key The asymmetric replicator key, of length 44 bytes.
    */
   addServiceKey(id: ThreadID, key: Buffer) {
-    return this.datastore.put(new Key(id.string()).child(new Key('repl')), key)
+    return this.datastore.put(new Key(id.toString()).child(new Key('repl')), key)
   }
 
   async threads() {
@@ -130,7 +130,7 @@ export class KeyBook implements Closer {
     })) {
       // We only care about threads we can replicate
       if (key.name() === 'repl') {
-        threads.add(ThreadID.fromEncoded(key.parent().toString()))
+        threads.add(ThreadID.fromString(key.parent().toString()))
       }
     }
     return threads
@@ -138,7 +138,7 @@ export class KeyBook implements Closer {
 
   async logs(id: ThreadID): Promise<Set<LogID>> {
     const logs = new Set<LogID>()
-    const q = { keysOnly: true, prefix: id.string() }
+    const q = { keysOnly: true, prefix: id.toString() }
     for await (const { key } of this.datastore.query(q)) {
       if (['priv', 'pub'].includes(key.name())) {
         const log = PeerId.createFromB58String(key.type())

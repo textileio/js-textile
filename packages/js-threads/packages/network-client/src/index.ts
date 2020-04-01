@@ -119,7 +119,7 @@ export class Client implements Network {
     logger.debug('making create thread request')
     const keys = getThreadKeys(opts)
     const req = new pb.CreateThreadRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     req.setKeys(keys)
     const res = (await this.unary(API.CreateThread, req)) as pb.ThreadInfoReply.AsObject
     return threadInfoFromProto(res)
@@ -147,7 +147,7 @@ export class Client implements Network {
   async getThread(id: ThreadID) {
     logger.debug('making get thread request')
     const req = new pb.GetThreadRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     const res = (await this.unary(API.GetThread, req)) as pb.ThreadInfoReply.AsObject
     return threadInfoFromProto(res)
   }
@@ -159,7 +159,7 @@ export class Client implements Network {
   async pullThread(id: ThreadID) {
     logger.debug('making pull thread request')
     const req = new pb.PullThreadRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     await this.unary(API.PullThread, req)
     return
   }
@@ -171,7 +171,7 @@ export class Client implements Network {
   async deleteThread(id: ThreadID) {
     logger.debug('making delete thread request')
     const req = new pb.DeleteThreadRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     await this.unary(API.DeleteThread, req)
     return
   }
@@ -184,7 +184,7 @@ export class Client implements Network {
   async addReplicator(id: ThreadID, addr: Multiaddr) {
     logger.debug('making add replicator request')
     const req = new pb.AddReplicatorRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     req.setAddr(addr.buffer)
     const res = (await this.unary(API.AddReplicator, req)) as pb.AddReplicatorReply.AsObject
     const rawId = Buffer.from(res.peerid as string, 'base64')
@@ -201,7 +201,7 @@ export class Client implements Network {
     const info = await this.getThread(id)
     const block = Block.encoder(body, 'dag-cbor').encode()
     const req = new pb.CreateRecordRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     req.setBody(block)
     const res = (await this.unary(API.CreateRecord, req)) as pb.NewRecordReply.AsObject
     return info.key && threadRecordFromProto(res, info.key)
@@ -217,7 +217,7 @@ export class Client implements Network {
     logger.debug('making add record request')
     const prec = recordToProto(rec)
     const req = new pb.AddRecordRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     req.setLogid(logID.toBytes())
     const record = new pb.Record()
     record.setBodynode(prec.bodynode)
@@ -239,7 +239,7 @@ export class Client implements Network {
     const info = await this.getThread(id)
     if (info.key === undefined) throw new Error('Missing thread keys')
     const req = new pb.GetRecordRequest()
-    req.setThreadid(id.bytes())
+    req.setThreadid(id.toBytes())
     req.setRecordid(rec.buffer)
     const record = (await this.unary(API.GetRecord, req)) as pb.GetRecordReply.AsObject
     if (!record.record) throw new Error('Missing return value')
@@ -253,7 +253,7 @@ export class Client implements Network {
    */
   subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, ...threads: ThreadID[]) {
     logger.debug('making subscribe request')
-    const ids = threads.map(thread => thread.bytes())
+    const ids = threads.map(thread => thread.toBytes())
     const request = new pb.SubscribeRequest()
     request.setThreadidsList(ids)
     const keys = new Map<ThreadID, Uint8Array | undefined>() // replicator key cache

@@ -1,12 +1,12 @@
 import varint from 'varint'
-import { ThreadID } from '../thread/id'
+import { ThreadID } from '../thread'
 import { protocols } from './protocols'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Convert = require('multiaddr/src/convert')
 
 function thread2buf(str: string) {
   // const buf = Buffer.from(str)
-  const buf = ThreadID.fromEncoded(str).bytes()
+  const buf = ThreadID.fromString(str).toBytes()
   const size = Buffer.from(varint.encode(buf.length))
   return Buffer.concat([size, buf])
 }
@@ -19,7 +19,7 @@ function buf2thread(buf: Buffer) {
     throw new Error('inconsistent lengths')
   }
 
-  return ThreadID.fromBytes(buf).string()
+  return ThreadID.fromBytes(buf).toString()
 }
 
 export function toString(prt: string | number, buf: Buffer) {

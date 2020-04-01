@@ -6,7 +6,7 @@ import { randomBytes } from 'libp2p-crypto'
 import { expect } from 'chai'
 import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
-import { ThreadID, Variant, ThreadInfo, Block, ThreadRecord, Multiaddr, Key } from '@textile/threads-core'
+import { ThreadID, ThreadInfo, Block, ThreadRecord, Multiaddr, Key } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'
 import { MemoryDatastore } from 'interface-datastore'
@@ -17,14 +17,14 @@ const proxyAddr2 = 'http://127.0.0.1:6207'
 const ed25519 = keys.supportedKeys.ed25519
 
 async function createThread(client: Network) {
-  const id = ThreadID.fromRandom(Variant.Raw, 32)
+  const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
   const threadKey = Key.fromRandom()
   return client.createThread(id, { threadKey })
 }
 
 function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
   const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
-  const ta = new Multiaddr(`/thread/${info.id.string()}`)
+  const ta = new Multiaddr(`/thread/${info.id.toString()}`)
   return hostAddr.encapsulate(pa.encapsulate(ta)) as any
 }
 
@@ -40,10 +40,10 @@ describe('Network...', () => {
     })
 
     it('should create a remote thread', async () => {
-      const id = ThreadID.fromRandom(Variant.Raw, 32)
+      const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       const threadKey = Key.fromRandom()
       const info = await client.createThread(id, { threadKey })
-      expect(info.id.string()).to.equal(id.string())
+      expect(info.id.toString()).to.equal(id.toString())
       expect(info.key?.read).to.not.be.undefined
       expect(info.key?.service).to.not.be.undefined
     })
@@ -55,13 +55,13 @@ describe('Network...', () => {
       const addr = threadAddr(hostAddr, hostID, info1)
       const client2 = new Client({ host: proxyAddr2 })
       const info2 = await client2.addThread(addr, { threadKey: info1.key })
-      expect(info2.id.string()).to.equal(info1.id.string())
+      expect(info2.id.toString()).to.equal(info1.id.toString())
     })
 
     it('should add and then get a remote thread', async () => {
       const info1 = await createThread(client)
       const info2 = await client.getThread(info1.id)
-      expect(info2.id.string()).to.equal(info1.id.string())
+      expect(info2.id.toString()).to.equal(info1.id.toString())
     })
 
     it('should pull a thread for records', async () => {
@@ -99,7 +99,7 @@ describe('Network...', () => {
       const info = await createThread(client)
       const body = { foo: 'bar', baz: Buffer.from('howdy') }
       const rec = await client.createRecord(info.id, body)
-      expect(rec?.threadID.string()).to.equal(info.id.string())
+      expect(rec?.threadID.toString()).to.equal(info.id.toString())
       expect(rec?.logID).to.not.be.undefined
       if (rec?.record) {
         const block = rec.record.block
@@ -111,7 +111,7 @@ describe('Network...', () => {
 
     it('should be able to add a pre-formed record', async () => {
       // Create a thread, keeping read key and log private key on the client
-      const id = ThreadID.fromRandom(Variant.Raw, 32)
+      const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       const threadKey = Key.fromRandom(false)
       const privKey = await ed25519.generateKeyPair()
       const logKey = privKey.public

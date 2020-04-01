@@ -1,6 +1,5 @@
 import {
   ThreadInfo,
-  Variant,
   EventHeader,
   ThreadID,
   Multiaddr,
@@ -26,7 +25,7 @@ export function decodeRecord<T = any>(rec: ThreadRecord, info: ThreadInfo) {
 
 export async function createThread(
   network: Network,
-  id: ThreadID = ThreadID.fromRandom(Variant.Raw, 32),
+  id: ThreadID = ThreadID.fromRandom(ThreadID.Variant.Raw, 32),
 ) {
   const threadKey = Key.fromRandom(true)
   // @todo: Let users/developers provide their own keys here.
