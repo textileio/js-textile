@@ -1,15 +1,15 @@
 # Textile's Threads Protocol _(js-threads)_
 
-[![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
-[![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
-[![GitHub license](https://img.shields.io/github/license/textileio/js-threads.svg?style=flat-square)](./LICENSE)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-threads.svg?style=popout-square)](./package.json)
-[![npm (scoped)](https://img.shields.io/npm/v/@textile/threads.svg?style=popout-square)](https://www.npmjs.com/package/@textile/threads)
-[![Release](https://img.shields.io/github/release/textileio/js-threads.svg?style=flat-square)](https://github.com/textileio/js-threads/releases/latest)
-![tests](https://github.com/textileio/js-threads/workflows/Test/badge.svg)
-[![docs](https://github.com/textileio/js-threads/workflows/Docs/badge.svg)](https://textileio.github.io/js-threads)
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg)](https://textile.io)
+[![Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg)](https://slack.textile.io)
+[![License](https://img.shields.io/github/License/textileio/js-threads.svg)](./LICENSE)
+[![package.json version](https://img.shields.io/github/package-json/v/textileio/js-threads.svg)](./package.json)
+[![npm (scoped)](https://img.shields.io/npm/v/@textile/threads.svg)](https://www.npmjs.com/package/@textile/threads)
+[![Release](https://img.shields.io/github/release/textileio/js-threads.svg)](https://github.com/textileio/js-threads/releases/latest)
+![Tests](https://github.com/textileio/js-threads/workflows/Test/badge.svg)
+[![Docs](https://github.com/textileio/js-threads/workflows/Docs/badge.svg)](https://textileio.github.io/js-threads)
+[![Standard-readme compliant](https://img.shields.io/badge/Standard--Readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
+[![Lerna](https://img.shields.io/badge/Maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 > Typescript implementation of Textile's Threads Protocol
 
