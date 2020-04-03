@@ -53,7 +53,9 @@ The primary public API to Threads is the [Threads Database](./packages/database)
 
 Plus more features on the way!
 
-Need something specific? Take a look at our [contributor guide](#contributing) for details on how to ask for features, or better yet, submit a PR :wink:
+Want something specific? Take a look at our [contributor guide](#contributing) for details on how to ask for features, or better yet, submit a PR yourself :wink:!
+
+### Overview
 
 Underlying the Threads Database are a number of ideas and technologies, which are outlined in detail in the [Threads whitepaper](https://github.com/textileio/papers). These components are all housed within this [mono-repo](https://en.wikipedia.org/wiki/Monorepo), and include a set of [core modules](./packages/core) for creating Thread identities and keys (`@textile/threads-core`), as well as tooling for data [encryption and encoding](./packages/encoding) (`@textile/threads-encoding`), networking (with support for [local](./packages/network) (`@textile/threads-network`) and [remote](./packages/network-client) (`@textile/threads-network-client`) key management), and a local-first, event-sourced [storage layer](./packages/store) (`@textile/threads-store`).
 
