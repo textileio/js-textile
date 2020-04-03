@@ -69,39 +69,76 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * ValueTransformDatastore creates a new datastore that supports custom encoding/decoding of values.
    *
    * @param child The underlying datastore to wrap.
-   * @param transform A transform object to use for encoding/decoding.
+   * @param encoder A transform object to use for encoding/decoding.
    */
   constructor(public child: Datastore<O>, public encoder: Encoder<T, O>) {}
 
+  /**
+   * Open the underlying datastore.
+   */
   open() {
     return this.child.open()
   }
 
-  put(key: Key, val: T) {
-    return this.child.put(key, this.encoder.encode(val))
+  /**
+   * Stores a value under the given key.
+   * @param key The key.
+   * @param value The value.
+   */
+  put(key: Key, value: T) {
+    return this.child.put(key, this.encoder.encode(value))
   }
 
-  async get(key: Key) {
-    return this.encoder.decode(await this.child.get(key))
-  }
-
-  has(key: Key) {
-    return this.child.has(key)
-  }
-
+  /**
+   * Deletes the value under the given key.
+   * @param key The key.
+   */
   delete(key: Key) {
     return this.child.delete(key)
   }
 
+  /**
+   * Gets the value under the given key.
+   * @throws if the given key is not found.
+   * @param key The key.
+   */
+  async get(key: Key) {
+    return this.encoder.decode(await this.child.get(key))
+  }
+
+  /**
+   * Returns whether the given key is in the store.
+   * @param key The key.
+   */
+  has(key: Key) {
+    return this.child.has(key)
+  }
+
+  /**
+   * Returns a Batch object with which you can chain multiple operations.
+   * The operations are only executed upon calling `commit`.
+   */
   batch() {
     const b: Batch<O> = this.child.batch()
     const batch: Batch<T> = {
+      /**
+       * Stores a value under the given key.
+       * @param key The key.
+       * @param value The value.
+       */
       put: (key: Key, value: T) => {
         b.put(key, this.encoder.encode(value))
       },
+      /**
+       * Deletes the value under the given key.
+       * @param key The key.
+       */
       delete: (key: Key) => {
         b.delete(key)
       },
+      /**
+       * Executes the accumulated operations.
+       */
       commit: () => {
         return b.commit()
       },
@@ -114,9 +151,9 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * Returns an Iterable with each item being a Value (i.e., { key, value } pair).
    * @param query The query object.
    */
-  query(q: Query<T>): AsyncIterable<Result<T>> {
+  query(query: Query<T>): AsyncIterable<Result<T>> {
     // @todo: Wrap all filters and orders in a decode call?
-    const { keysOnly, prefix, ...rest } = q
+    const { keysOnly, prefix, ...rest } = query
     const raw = this.child.query({ keysOnly, prefix })
     let it = utils.map(raw, ({ key, value }) => {
       const val = (keysOnly ? undefined : this.encoder.decode(value)) as T
@@ -139,6 +176,9 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
     return it
   }
 
+  /**
+   * Close the underlying datastore.
+   */
   close() {
     return this.child.close()
   }

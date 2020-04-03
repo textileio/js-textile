@@ -59,7 +59,9 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
     // const privKey = await keys.unmarshalPrivateKey(pkBytes)
     const logInfo: LogInfo = {
       id: pid,
-      addrs: new Set(log.addrsList.map(addr => new Multiaddr(Buffer.from(addr as string, 'base64')))),
+      addrs: new Set(
+        log.addrsList.map(addr => new Multiaddr(Buffer.from(addr as string, 'base64'))),
+      ),
       heads: new Set(log.headsList.map(head => new CID(Buffer.from(head as string, 'base64')))),
       pubKey: keys.unmarshalPublicKey(Buffer.from(log.pubkey as string, 'base64')),
       // privKey,

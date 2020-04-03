@@ -185,6 +185,10 @@ export class Network implements Interface {
     return this.client.subscribe(cb, ...threads)
   }
 
+  /**
+   * deriveLogKeys returns a set of log keys from the given inputs.
+   * @param key Optional public or private log key.
+   */
   async deriveLogKeys(key?: PublicKey | PrivateKey) {
     let pubKey: PublicKey
     let privKey: PrivateKey | undefined
@@ -205,6 +209,12 @@ export class Network implements Interface {
     return info
   }
 
+  /**
+   * getOwnLog returns the local peers log. If the given log does not yet exist and create is true, a new log is
+   * created, otherwise (i.e., if create is false), undefined is returned.
+   * @param id
+   * @param create
+   */
   async getOwnLog(id: ThreadID, create?: true): Promise<LogInfo>
   async getOwnLog(id: ThreadID, create?: false): Promise<LogInfo | undefined>
   async getOwnLog(id: ThreadID, create?: boolean): Promise<LogInfo | undefined> {

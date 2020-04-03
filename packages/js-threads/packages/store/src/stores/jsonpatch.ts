@@ -24,12 +24,18 @@ export namespace Op {
   }
 }
 
+/**
+ * Op is a custom Store operation with a specific set of types.
+ */
 export interface Op<T extends Instance> {
   type: Op.Type
   instanceID: string
   patch?: Operation[] | T
 }
 
+/**
+ * JsonPatchCodec uses JSON-Patch standard (RFC 6902) semantics to update JSON documents using delta patches.
+ */
 export class JsonPatchCodec<T extends Instance> implements Codec<T, Op<T>> {
   async onDelete(_store: Datastore<T>, key: Key) {
     return {
@@ -72,6 +78,9 @@ export class JsonPatchCodec<T extends Instance> implements Codec<T, Op<T>> {
   }
 }
 
+/**
+ * JsonPatchStore uses the JsonPatchCodec to manage updates.
+ */
 export class JsonPatchStore<T extends Instance> extends Store<T, Op<T>> {
   constructor(
     child: Datastore<any> = new MemoryDatastore(),

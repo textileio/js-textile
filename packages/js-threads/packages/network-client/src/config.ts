@@ -1,5 +1,8 @@
 import { grpc } from '@improbable-eng/grpc-web'
 
+/**
+ * BaseConfig is a set of basic gRPC Proxy configuration options.
+ */
 export interface BaseConfig {
   /**
    * The local/remote host url.

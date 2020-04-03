@@ -71,6 +71,4 @@ export class Dispatcher extends RWLock {
       this.unlock()
     }
   }
-
-  // @todo: Should we have a close/stop method/behavior?
 }

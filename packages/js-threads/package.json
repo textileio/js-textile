@@ -17,6 +17,7 @@
   },
   "author": "Textile <contact@textile.io>",
   "license": "MIT",
+  "repository": "github:textileio/js-threads",
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",

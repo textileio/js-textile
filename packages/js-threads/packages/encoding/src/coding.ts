@@ -1,4 +1,3 @@
-// @todo: Move to using web-native crypto libs when run in browser
 import crypto, { CipherGCMTypes, randomBytes } from 'crypto'
 import { Block } from '@textile/threads-core'
 
@@ -11,12 +10,17 @@ export interface Options {
 // NonceBytes is the length of GCM nonce.
 const nonceBytes = 12
 
+// TagBytes is the length of the GCM tag component.
 const tagBytes = 16
 
 // KeyBytes is the length of GCM key.
 const keyBytes = 32
 
-export const defaultOptions: Options = { codec: 'dag-cbor', algo: 'sha2-256', cipher: 'aes-256-gcm' }
+export const defaultOptions: Options = {
+  codec: 'dag-cbor',
+  algo: 'sha2-256',
+  cipher: 'aes-256-gcm',
+}
 
 /**
  * EncodeBlock returns a node by encrypting the block's raw bytes with key.
@@ -45,7 +49,11 @@ export function encodeBlock(block: Block, key: Uint8Array, opts: Options = defau
  * @param key Encryption key.
  * @param opts Additional decoding options.
  */
-export function decodeBlock<T = any>(block: Block<Uint8Array>, key: Uint8Array, opts: Options = defaultOptions) {
+export function decodeBlock<T = any>(
+  block: Block<Uint8Array>,
+  key: Uint8Array,
+  opts: Options = defaultOptions,
+) {
   // Start with Block node wrapping raw encrypted bytes
   const raw = block.decodeUnsafe()
   // Extract the tag from the payload

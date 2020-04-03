@@ -17,6 +17,7 @@
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
+  "repository": "github:textileio/js-threads",
   "devDependencies": {
     "@types/bs58": "^4.0.1",
     "@types/multiaddr": "^7.2.0",

@@ -16,7 +16,14 @@ export interface EncodedRecord {
   bodynode: Uint8Array | string
 }
 
-// CreateRecord returns a new record from the given block and log private key.
+/**
+ * CreateRecord returns a new record from the given block and log private key.
+ * @param data Input Event data.
+ * @param privKey The private key to use for signing.
+ * @param keyiv The symmetric key to use for encrypting the record body.
+ * @param prev An optional previous Record CID.
+ * @param opts Additional encoding/encryption options.
+ */
 export async function createRecord(
   data: Event,
   privKey: PrivateKey,
@@ -48,8 +55,10 @@ export async function createRecord(
   return record
 }
 
-// RecordToProto returns a proto version of a record for transport.
-// Nodes are sent encrypted.
+/**
+ * RecordToProto returns a proto version of a record for transport. Nodes are sent encrypted.
+ * @param rec The input record to encode as a protobuf-like object.
+ */
 export function recordToProto(rec: LogRecord) {
   logger.debug('converting log record to proto object')
   const event = rec.block
@@ -66,8 +75,17 @@ export function recordToProto(rec: LogRecord) {
   return record
 }
 
-// recordFromProto returns a node from a serialized version that contains link data.
-export function recordFromProto(proto: EncodedRecord, key: Uint8Array, opts: Options = defaultOptions) {
+/**
+ * RecordFromProto returns a node from a serialized version that contains link data.
+ * @param proto The input protobuf-like object.
+ * @param key The symmetric key.
+ * @param opts Additional encoding/encryption options.
+ */
+export function recordFromProto(
+  proto: EncodedRecord,
+  key: Uint8Array,
+  opts: Options = defaultOptions,
+) {
   logger.debug('converting proto object to log record')
   const rawRecord = Buffer.from(proto.recordnode as string, 'base64')
   const rnode = Block.decoder<Buffer>(rawRecord, opts.codec, opts.algo)

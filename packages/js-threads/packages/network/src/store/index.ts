@@ -2,12 +2,24 @@ import { Datastore, Key } from 'interface-datastore'
 import { ThreadID, LogInfo, ThreadInfo, LogID, ThreadKey } from '@textile/threads-core'
 import { KeyBook } from './keybook'
 
+/**
+ * LogStore is an internal store of log information.
+ * Currently, it simply wraps a Key Store for managing local Thread and Log keys.
+ */
 export class LogStore {
   constructor(public keys: KeyBook) {}
+
+  /**
+   * Create a new LogStore from an existing datastore instance.
+   * @param store
+   */
   static fromDatastore(store: Datastore<Buffer>) {
     return new LogStore(new KeyBook(store))
   }
 
+  /**
+   * Close the underlying key store.
+   */
   async close() {
     await this.keys.close()
     return
@@ -17,8 +29,7 @@ export class LogStore {
    * Threads returns all threads in the store.
    */
   async threads() {
-    const threads = await this.keys.threads()
-    return threads
+    return this.keys.threads()
   }
 
   /**
@@ -26,8 +37,7 @@ export class LogStore {
    * @param id Thread ID.
    */
   async logs(id: ThreadID): Promise<Set<LogID>> {
-    const logs = await this.keys.logs(id)
-    return logs
+    return this.keys.logs(id)
   }
 
   /**

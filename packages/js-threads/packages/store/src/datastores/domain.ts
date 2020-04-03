@@ -76,7 +76,6 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
 
   /**
    * Stores a value under the given key.
-   * @throws If a lower-level key is used (i.e., one with nested namespaces).
    * @param key The key.
    * @param value The value.
    */
@@ -86,7 +85,6 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
 
   /**
    * Deletes the value under the given key.
-   * @throws If a lower-level key is used (i.e., one with nested namespaces).
    * @param key The key.
    */
   delete(key: Key) {
@@ -96,14 +94,12 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
   /**
    * Returns a Batch object with which you can chain multiple operations.
    * The operations are only executed upon calling `commit`.
-   * @throws If a lower-level key is used (i.e., one with nested namespaces) in any operations.
    */
   batch() {
     const b: Batch<T> = super.batch()
     const batch: Batch<T> = {
       /**
        * Stores a value under the given key.
-       * @throws If a lower-level key is used (i.e., one with nested namespaces).
        * @param key The key.
        * @param value The value.
        */
@@ -112,7 +108,6 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
       },
       /**
        * Deletes the value under the given key.
-       * @throws If a lower-level key is used (i.e., one with nested namespaces).
        * @param key The key.
        */
       delete: (key: Key) => {

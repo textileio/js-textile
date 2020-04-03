@@ -17,7 +17,7 @@ const getKey = (id: ThreadID, log: LogID, suffix?: string) => {
 }
 
 /**
- * KeyBook stores thread/log keys.
+ * KeyBook stores Thread/Log keys.
  */
 export class KeyBook implements Closer {
   constructor(private datastore: Datastore<Buffer>) {
@@ -46,7 +46,7 @@ export class KeyBook implements Closer {
    */
   async addPubKey(id: ThreadID, log: LogID, pubKey: PublicKey) {
     const key = pubKey.bytes
-    if (!log.isEqual(await PeerId.createFromPubKey(key))) {
+    if (!log.equals(await PeerId.createFromPubKey(key))) {
       throw new Error('Public Key Mismatch')
     }
     return this.datastore.put(getKey(id, log, 'pub'), key)
@@ -75,7 +75,7 @@ export class KeyBook implements Closer {
   async addPrivKey(id: ThreadID, log: LogID, privKey: PrivateKey) {
     const key = privKey.bytes
     const check = await PeerId.createFromPrivKey(key)
-    if (!log.isEqual(check)) {
+    if (!log.equals(check)) {
       throw new Error('Private Key Mismatch')
     }
     return this.datastore.put(getKey(id, log, 'priv'), key)

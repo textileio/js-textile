@@ -17,6 +17,7 @@
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
+  "repository": "github:textileio/js-threads",
   "dependencies": {
     "@textile/threads-core": "^0.0.3-alpha.3",
     "@textile/threads-encoding": "^0.0.3-alpha.3",
