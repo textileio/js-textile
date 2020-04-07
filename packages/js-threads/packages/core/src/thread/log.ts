@@ -26,5 +26,5 @@ export interface LogInfo {
   /**
    * The set of heads for this log.
    */
-  heads?: Set<CID>
+  head?: CID
 }

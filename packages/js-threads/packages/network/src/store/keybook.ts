@@ -148,6 +148,37 @@ export class KeyBook implements Closer {
     return logs
   }
 
+  /**
+   * clearThreadKeys deletes all keys under a given thread.
+   * @param id Thread ID.
+   */
+  async clearThreadKeys(id: ThreadID) {
+    const batch = this.datastore.batch()
+    for await (const { key } of this.datastore.query({
+      prefix: baseKey.child(new Key(id.toString())).toString(),
+      keysOnly: true,
+    })) {
+      batch.delete(key)
+    }
+    return batch.commit()
+  }
+
+  /**
+   * clearLogKeys deletes all keys under a given log.
+   * @param id Thread ID.
+   * @param log: Log ID.
+   */
+  async clearLogKeys(id: ThreadID, log: LogID) {
+    const batch = this.datastore.batch()
+    for await (const { key } of this.datastore.query({
+      prefix: getKey(id, log).toString(),
+      keysOnly: true,
+    })) {
+      batch.delete(key)
+    }
+    return batch.commit()
+  }
+
   close() {
     return this.datastore.close()
   }

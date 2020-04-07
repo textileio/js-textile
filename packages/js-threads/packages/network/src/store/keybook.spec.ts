@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { expect } from 'chai'
 import { MemoryDatastore } from 'interface-datastore'
-import { ThreadID } from '@textile/threads-core'
+import { LogID, ThreadID } from '@textile/threads-core'
 import PeerId from 'peer-id'
 import crypto, { PrivateKey } from 'libp2p-crypto'
 import { KeyBook } from './keybook'
 
 let kb: KeyBook
 const tid: ThreadID = ThreadID.fromRandom(0, 24)
+let log: LogID
 
 describe('KeyBook', () => {
   beforeEach(() => {
@@ -20,7 +21,7 @@ describe('KeyBook', () => {
     const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
     expect(privKey).to.not.be.undefined
 
-    const log = await PeerId.createFromPrivKey(privKey.bytes)
+    log = await PeerId.createFromPrivKey(privKey.bytes)
 
     // No privkey exists yet
     const key = await kb.privKey(tid, log)
@@ -43,7 +44,7 @@ describe('KeyBook', () => {
     const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
     expect(privKey).to.not.be.undefined
 
-    const log = await PeerId.createFromPubKey(privKey.public.bytes)
+    log = await PeerId.createFromPubKey(privKey.public.bytes)
 
     // No pubKey exists yet
     const key = await kb.pubKey(tid, log)
@@ -92,5 +93,25 @@ describe('KeyBook', () => {
     // Stored read key should match
     const que = await kb.serviceKey(tid)
     expect(que).to.equal(key128)
+  })
+
+  it('clear keys', async () => {
+    const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
+    log = await PeerId.createFromPubKey(privKey.public.bytes)
+    await kb.addPubKey(tid, log, privKey.public)
+
+    const keyBefore = await kb.pubKey(tid, log)
+    expect(keyBefore).to.not.be.undefined
+
+    const logs = await kb.logs(tid)
+
+    expect(logs.size).to.be.greaterThan(0)
+
+    await kb.clearLogKeys(tid, log)
+    const keyAfter = await kb.pubKey(tid, log)
+    expect(keyAfter).to.be.undefined
+
+    await kb.clearThreadKeys(tid)
+    expect((await kb.threads()).size).to.equal(0)
   })
 })

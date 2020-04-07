@@ -27,17 +27,22 @@ export interface LogRecord {
  */
 export interface RecordNode {
   /**
-   * Signature of current and previous blocks.
+   * Signature of current and previous blocks from the log key.
    */
   sig: Uint8Array
   /**
-   * CID of record block.
+   * CID of inner block.
    */
   block: CID
   /**
    * CID of previous record.
    */
   prev?: CID
+
+  /**
+   * Public of the identity used to author this record.
+   */
+  pubKey?: Uint8Array
 }
 
 /**

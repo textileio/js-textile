@@ -3,21 +3,6 @@ import multibase from 'multibase'
 
 export const invalidKeyError = new Error('Invalid key')
 
-/**
- * KeyOptions defines options for keys when creating / adding a thread.
- */
-export interface KeyOptions {
-  /**
-   * Set of symmetric encryption keys.Can be generated with Key.fromRandom().
-   */
-  threadKey?: ThreadKey
-  /**
-   * Asymmetric encryption key (pair). Can be either a public or private key. If a public key is specified, this
-   * limits the types of operations the receiving Thread network can perform.
-   */
-  logKey?: PublicKey | PrivateKey
-}
-
 // NonceBytes is the length of GCM nonce.
 const nonceBytes = 12
 

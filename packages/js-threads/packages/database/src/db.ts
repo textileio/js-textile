@@ -4,8 +4,17 @@ import parse from 'url-parse'
 import { Network, Client } from '@textile/threads-network'
 import { EventEmitter2 } from 'eventemitter2'
 import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
-import { Datastore, MemoryDatastore, Key } from 'interface-datastore'
-import { ThreadID, ThreadRecord, Multiaddr, ThreadInfo, ThreadKey } from '@textile/threads-core'
+import { Datastore, Key } from 'interface-datastore'
+import {
+  ThreadID,
+  ThreadRecord,
+  ThreadInfo,
+  ThreadKey,
+  ThreadToken,
+  Multiaddr,
+  Identity,
+  randomIdentity,
+} from '@textile/threads-core'
 import { EventBus } from './eventbus'
 import { Collection, JSONSchema, Config } from './collection'
 import { createThread, decodeRecord, Cache } from './utils'
@@ -14,10 +23,36 @@ const metaKey = new Key('meta')
 const schemaKey = metaKey.child(new Key('schema'))
 const duplicateCollection = new Error('Duplicate collection')
 
-export type Options = {
+export interface InitOptions {
   dispatcher?: Dispatcher
   eventBus?: EventBus
   network?: Network
+  /**
+   * An optional identity to use for creating records in the database.
+   * @see @textile/network for details.
+   */
+  identity?: Identity
+  /**
+   * An optional token to use for remote calls from this database.
+   * @see @textile/network for details.
+   */
+  token?: ThreadToken
+}
+
+export interface StartOptions {
+  /**
+   * The Thread ID to use for this database
+   */
+  threadID?: ThreadID
+  /**
+   * An array of Collection Config objects to use when initializing the Database
+   */
+  collections?: Config[]
+  /**
+   * An optional token to use for remote calls from this database.
+   * @see @textile/network for details.
+   */
+  token?: ThreadToken
 }
 
 export class Database extends EventEmitter2 {
@@ -52,14 +87,23 @@ export class Database extends EventEmitter2 {
    * @param datastore The primary datastore, and is used to partition out stores as sub-domains.
    * @param options A set of database options.
    */
-  constructor(datastore: Datastore<any>, options: Options = {}) {
+  constructor(datastore: Datastore<any>, options: InitOptions = {}) {
     super({ wildcard: true })
     this.child = new DomainDatastore(datastore, new Key('db'))
     this.dispatcher =
       options.dispatcher ?? new Dispatcher(new DomainDatastore(datastore, new Key('dispatcher')))
-    this.network =
-      options.network ??
-      new Network(new DomainDatastore(datastore, new Key('network')), new Client())
+    // Only if someone _doesn't_ provide a Network, which they should do in most realistic scenarios.
+    if (options.network === undefined) {
+      const client = new Client() // @todo: Maybe we should use different defaults here?
+      client.config.session = options.token
+      this.network = new Network(
+        new DomainDatastore(datastore, new Key('network')),
+        client,
+        options.identity,
+      )
+    } else {
+      this.network = options.network
+    }
     this.eventBus =
       options.eventBus ??
       new EventBus(new DomainDatastore(this.child, new Key('eventbus')), this.network)
@@ -73,22 +117,24 @@ export class Database extends EventEmitter2 {
    * @param threadKey Set of symmetric keys.
    * @param datastore The primary datastore.
    * @param options A set of database options.
-   * @param collections An array of collection config objects to use when initializing the database.
    */
   static async fromAddress(
     addr: Multiaddr,
     datastore: Datastore<any>,
     threadKey?: ThreadKey,
-    options: Options = {},
-    collections?: Config[],
+    options: InitOptions = {},
   ) {
     const db = new Database(datastore, options)
+    if (!db.network.token) {
+      // If we didn't supply an identity upon init, try to create a random one now.
+      await db.network.getToken(db.network.identity ?? (await randomIdentity()))
+    }
     const info = await db.network.addThread(addr, { threadKey })
-    await db.open(info.id, collections)
+    await db.open({ ...options, threadID: info.id })
     return db
   }
 
-  @Cache() // @todo: Specify cache duration?
+  @Cache({ duration: 1800000 })
   async ownLogInfo() {
     return this.threadID && this.network.getOwnLog(this.threadID, false)
   }
@@ -137,15 +183,22 @@ export class Database extends EventEmitter2 {
    * opposite case, it will create a new thread. If threadID is provided, and the database was
    * not bootstrapped on an existing thread, it will attempt to use the provided threadID,
    * otherwise, a thread id mismatch error is thrown.
-   * @param threadID The Thread ID to use for this database,
-   * @param collections An array of Collection Config objects to use when initializing the Database.
+   * @param options A set of options to configure the setup and usage of the underlying database.
    */
-  async open(threadID?: ThreadID, collections?: Config[]) {
+  async open(options: StartOptions = {}) {
+    // Check that we have a valid token
+    if (options.token) {
+      this.network.token = options.token
+    }
+    if (!this.network.token) {
+      // If we didn't supply an identity upon init, try to create a random one now.
+      await this.network.getToken(this.network.identity ?? (await randomIdentity()))
+    }
     await this.child.open()
     const idKey = metaKey.child(new Key('threadid'))
     const hasExisting = await this.child.has(idKey)
 
-    if (threadID === undefined) {
+    if (options.threadID === undefined) {
       if (hasExisting) {
         this.threadID = ThreadID.fromBytes(await this.child.get(idKey))
       } else {
@@ -156,16 +209,16 @@ export class Database extends EventEmitter2 {
     } else {
       if (hasExisting) {
         const existing = ThreadID.fromBytes(await this.child.get(idKey))
-        if (!existing.equals(threadID)) {
+        if (!existing.equals(options.threadID)) {
           throw new Error('Thread id mismatch')
         }
         this.threadID = existing
       } else {
         let info: ThreadInfo
         try {
-          info = await this.network.getThread(threadID)
+          info = await this.network.getThread(options.threadID)
         } catch (_err) {
-          info = await createThread(this.network, threadID)
+          info = await createThread(this.network, options.threadID)
         }
         await this.child.put(idKey, info.id.toBytes())
         this.threadID = info.id
@@ -173,7 +226,7 @@ export class Database extends EventEmitter2 {
     }
     await this.rehydrate()
     // Now that we have re-hydrated any existing collections, add the ones specified here
-    for (const { name, schema } of (collections || []).values()) {
+    for (const { name, schema } of (options.collections || []).values()) {
       await this.newCollection(name, schema)
     }
     await this.eventBus.start(this.threadID)
@@ -208,9 +261,7 @@ export class Database extends EventEmitter2 {
   async close() {
     this.collections.clear()
     await this.eventBus.stop()
-    await this.child.close()
-    // @todo: Should we also 'close' the dispatcher?
-    return
+    return this.child.close()
   }
 
   private async onRecord(rec: ThreadRecord) {
@@ -219,7 +270,7 @@ export class Database extends EventEmitter2 {
       if (logInfo?.id.equals(rec.logID)) {
         return // Ignore our own events since DB already dispatches to DB reducers
       }
-      // @todo Should just cache this information, as its unlikely to change
+      // @todo should just cache this information, as its unlikely to change
       const info = await this.network.getThread(this.threadID)
       const value: Event | undefined = decodeRecord(rec, info)
       if (value !== undefined) {

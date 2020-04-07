@@ -116,8 +116,8 @@ describe('Database', () => {
       // @todo This test is probably too slow for CI, but should run just fine locally
       // Should probably just skip it (https://stackoverflow.com/a/48121978) in CI
       // Peer 1: Create db1, register a collection, create and update an instance.
-      const store = new MemoryDatastore()
-      const d1 = new Database(store) // Store must be specified explicitly
+      // @note: No identity is supplied, so a random Ed25519 private key is used by default
+      const d1 = new Database(new MemoryDatastore())
       await d1.open()
       const id1 = d1.threadID
       if (id1 === undefined) {
@@ -141,6 +141,7 @@ describe('Database', () => {
       const datastore = new MemoryDatastore()
       const client = new Client({ host: 'http://127.0.0.1:6207' })
       const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
+      // @note: No identity is supplied, so a random Ed25519 private key is used by default
       const d2 = await Database.fromAddress(addr, datastore, info.key, {
         network,
       })
@@ -165,7 +166,7 @@ describe('Database', () => {
   })
 
   describe('Persistence', () => {
-    const tmp = 'database.db'
+    const tmp = './database.db'
     after(() => {
       level.destroy(tmp, () => {
         return
@@ -182,7 +183,7 @@ describe('Database', () => {
       const db = new Database(datastore, { dispatcher, network, eventBus })
 
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
-      await db.open(id)
+      await db.open({ threadID: id })
 
       await db.newCollectionFromObject<DummyInstance>('dummy', {
         ID: '',
@@ -191,7 +192,7 @@ describe('Database', () => {
       })
       // Re-do again to re-use id. If something wasn't closed correctly, would fail
       await db.close() // Closes eventBus and datastore
-      await db.open(id)
+      await db.open({ threadID: id })
       expect(db.collections.size).to.equal(1)
       await db.close()
     })

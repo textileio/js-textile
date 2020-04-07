@@ -22,7 +22,7 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/threads-core": "^0.0.3-alpha.3",
     "@textile/threads-encoding": "^0.0.3-alpha.3",
-    "@textile/threads-net-grpc": "0.1.12",
+    "@textile/threads-net-grpc": "0.1.13",
     "@types/node": "^13.9.2",
     "cids": "^0.7.3",
     "libp2p-crypto": "^0.17.2",

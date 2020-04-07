@@ -5,7 +5,6 @@ import {
   Block,
   Closer,
   ThreadKey,
-  KeyOptions,
   LogID,
   LogInfo,
   LogRecord,
@@ -13,6 +12,9 @@ import {
   Network as Interface,
   ThreadID,
   ThreadRecord,
+  ThreadOptions,
+  Identity,
+  NewThreadOptions,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'
@@ -22,18 +24,30 @@ import { LogStore } from './store'
 
 const logger = log.getLogger('network')
 
+const ed25519 = keys.supportedKeys.ed25519
+
 /**
  * Network is the Network interface for Thread orchestration.
  */
 export class Network implements Interface {
   public store: LogStore
+  readonly identity?: Identity
+  public token?: string
   /**
    * Create a new network Network.
    * @param store The store to use for caching keys and log information.
    * @param client A client connected to a remote network peer.
+   * @param identity Identity represents an entity with a public key capable of signing a message
    */
-  constructor(store: LogStore | Datastore, readonly client: Client) {
+  constructor(store: LogStore | Datastore, readonly client: Client, identity?: Identity) {
+    this.identity = identity
     this.store = store instanceof LogStore ? store : LogStore.fromDatastore(store)
+  }
+
+  async getToken(identity: Identity | undefined = this.identity) {
+    if (identity === undefined) throw new Error('Identity required.')
+    this.token = await this.client.getToken(identity)
+    return this.token
   }
 
   /**
@@ -51,13 +65,14 @@ export class Network implements Interface {
    * is provided, one will be created. Similarly, if no log key is provided, then the "host" Peer ID will be used.
    * If no ReadKey is provided, the network will be unable to write records (but it may be able to return records).
    */
-  async createThread(id: ThreadID, opts: KeyOptions = {}) {
-    const logInfo = await this.deriveLogKeys(opts.logKey)
+  async createThread(id: ThreadID, opts?: NewThreadOptions) {
+    const logInfo = await this.deriveLogKeys(opts?.logKey)
     // Don't send along readKey, or log's privKey information
-    const threadKey = opts.threadKey || ThreadKey.fromRandom()
-    const newOpts: KeyOptions = {
+    const threadKey = opts?.threadKey || ThreadKey.fromRandom()
+    const newOpts: NewThreadOptions = {
       threadKey: new ThreadKey(threadKey.service),
       logKey: logInfo.pubKey,
+      token: opts?.token ?? this.token,
     }
     const info = await this.client.createThread(id, newOpts)
     // Now we want to store or create read key
@@ -73,14 +88,15 @@ export class Network implements Interface {
    * @param addr The Thread multiaddress.
    * @param opts The set of keys to use when adding the Thread.
    */
-  async addThread(addr: Multiaddr, opts: KeyOptions) {
-    const logInfo = await this.deriveLogKeys(opts.logKey)
+  async addThread(addr: Multiaddr, opts?: NewThreadOptions) {
+    const logInfo = await this.deriveLogKeys(opts?.logKey)
     // Don't send along readKey, or log's privKey information
-    const threadKey = opts.threadKey
+    const threadKey = opts?.threadKey
     if (threadKey === undefined) throw new Error('Missing Thread key(s)')
-    const newOpts: KeyOptions = {
+    const newOpts: NewThreadOptions = {
       threadKey: new ThreadKey(threadKey.service),
       logKey: logInfo.pubKey,
+      token: opts?.token ?? this.token,
     }
     const info = await this.client.addThread(addr, newOpts)
     // Now we want to store full key information
@@ -94,9 +110,10 @@ export class Network implements Interface {
   /**
    * getThread with id.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  async getThread(id: ThreadID) {
-    const info = await this.client.getThread(id)
+  async getThread(id: ThreadID, opts: ThreadOptions = { token: this.token }) {
+    const info = await this.client.getThread(id, opts)
     // Merge local thread info with remote thread info
     const local = await this.store.threadInfo(id)
     return { ...info, ...local }
@@ -107,38 +124,43 @@ export class Network implements Interface {
    * Logs owned by this host are traversed on the (possibly remote) network client. Remotely addressed logs are pulled
    * from the network on the (possible remote) client and forwarded to this peer.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  async pullThread(id: ThreadID) {
+  async pullThread(id: ThreadID, opts: ThreadOptions = { token: this.token }) {
     logger.debug(`pulling thread ${id.toString()}`)
     // @note: Not need to worry about safety here, the remote peer will handle that for us.
-    return this.client.pullThread(id)
+    return this.client.pullThread(id, opts)
   }
 
   /**
    * deleteThread with id.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  async deleteThread(id: ThreadID): Promise<void> {
-    return this.client.deleteThread(id)
+  async deleteThread(id: ThreadID, opts: ThreadOptions = { token: this.token }) {
+    await this.client.deleteThread(id, opts)
+    return this.store.deleteThread(id)
   }
 
   /**
    * addReplicator to a thread.
    * @param id The Thread ID.
    * @param addr The multiaddress of the replicator peer.
+   * @param opts Thread options.
    */
-  async addReplicator(id: ThreadID, addr: Multiaddr) {
-    return this.client.addReplicator(id, addr)
+  async addReplicator(id: ThreadID, addr: Multiaddr, opts: ThreadOptions = { token: this.token }) {
+    return this.client.addReplicator(id, addr, opts)
   }
 
   /**
    * createRecord with body.
    * @param id The Thread ID.
    * @param body The body to add as content.
+   * @param opts Thread options.
    */
-  async createRecord(id: ThreadID, body: any) {
+  async createRecord(id: ThreadID, body: any, opts: ThreadOptions = { token: this.token }) {
     const block = Block.encoder(body, 'dag-cbor')
-    const info = await this.getThread(id)
+    const info = await this.getThread(id, opts)
     // Get (or create a new set of) log keys
     const logInfo = await this.getOwnLog(id, true)
     if (info.key === undefined) throw new Error('Missing key info.')
@@ -146,9 +168,18 @@ export class Network implements Interface {
     const event = await createEvent(block, info.key.read)
     if (!logInfo.privKey) throw new Error('Missing private key.')
     // If we have head information for this log, use head CID
-    const prev = logInfo.heads?.size ? Array.from(logInfo.heads).shift() : undefined
-    const record = await createRecord(event, logInfo.privKey, info.key.service, prev)
-    await this.client.addRecord(id, logInfo.id, record)
+    const prev = logInfo.head
+    // Use supplied identity if available, otherwise, default to log private key
+    // Using log private key assumes the log owner is also the identity owner, which might not always be the case.
+    // In most cases, there _will_ be an available identity because it is required for `getToken`.
+    const pubKey = this.identity?.public ?? logInfo.privKey.public
+    const record = await createRecord(event, {
+      privKey: logInfo.privKey,
+      servKey: info.key.service,
+      prev,
+      pubKey,
+    })
+    await this.client.addRecord(id, logInfo.id, record, opts)
     const res: ThreadRecord = {
       record,
       threadID: id,
@@ -162,27 +193,39 @@ export class Network implements Interface {
    * @param id The Thread ID.
    * @param logID The Log ID.
    * @param rec The log record to add.
+   * @param opts Threads options.
    */
-  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord) {
-    await this.client.addRecord(id, logID, rec)
+  async addRecord(
+    id: ThreadID,
+    logID: LogID,
+    rec: LogRecord,
+    opts: ThreadOptions = { token: this.token },
+  ) {
+    await this.client.addRecord(id, logID, rec, opts)
   }
 
   /**
    * getRecord returns the record at cid.
    * @param id The Thread ID.
    * @param rec The record's CID.
+   * @param opts Thread options.
    */
-  async getRecord(id: ThreadID, rec: CID) {
-    return this.client.getRecord(id, rec)
+  async getRecord(id: ThreadID, rec: CID, opts: ThreadOptions = { token: this.token }) {
+    return this.client.getRecord(id, rec, opts)
   }
 
   /**
    * subscribe to new record events in the given threads.
    * @param cb The callback to call on each new thread record.
    * @param threads The variadic set of threads to subscribe to.
+   * @param opts Thread options.
    */
-  subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, ...threads: ThreadID[]): Closer {
-    return this.client.subscribe(cb, ...threads)
+  subscribe(
+    cb: (rec?: ThreadRecord, err?: Error) => void,
+    threads: ThreadID[] = [],
+    opts: ThreadOptions = { token: this.token },
+  ): Closer {
+    return this.client.subscribe(cb, threads, opts)
   }
 
   /**
@@ -193,7 +236,7 @@ export class Network implements Interface {
     let pubKey: PublicKey
     let privKey: PrivateKey | undefined
     if (!key) {
-      privKey = await keys.supportedKeys.ed25519.generateKeyPair()
+      privKey = await ed25519.generateKeyPair()
       pubKey = privKey.public
     } else if ((key as PrivateKey).public) {
       privKey = key as PrivateKey

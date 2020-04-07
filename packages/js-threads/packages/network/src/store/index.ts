@@ -53,6 +53,14 @@ export class LogStore {
   }
 
   /**
+   * deleteThread removes a thread from the store.
+   * @param id Thread ID.
+   */
+  async deleteThread(id: ThreadID) {
+    return this.keys.clearThreadKeys(id)
+  }
+
+  /**
    * threadInfo returns info about a thread.
    * @param id Thread ID.
    */
@@ -77,6 +85,15 @@ export class LogStore {
     if (info.pubKey) await this.keys.addPubKey(id, info.id, info.pubKey)
     if (info.privKey) await this.keys.addPrivKey(id, info.id, info.privKey)
     return
+  }
+
+  /**
+   * deleteLog removes a log under the given thread.
+   * @param id Thread ID.
+   * @param log Log ID.
+   */
+  async deleteLog(id: ThreadID, log: LogID) {
+    return this.keys.clearLogKeys(id, log)
   }
 
   /**

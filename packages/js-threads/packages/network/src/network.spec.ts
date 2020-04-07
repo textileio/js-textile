@@ -6,7 +6,14 @@ import { randomBytes } from 'libp2p-crypto'
 import { expect } from 'chai'
 import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
-import { ThreadID, ThreadInfo, Block, ThreadRecord, Multiaddr, ThreadKey } from '@textile/threads-core'
+import {
+  ThreadID,
+  ThreadInfo,
+  Block,
+  ThreadRecord,
+  Multiaddr,
+  ThreadKey, ThreadToken,
+} from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'
 import { MemoryDatastore } from 'interface-datastore'
@@ -30,8 +37,11 @@ function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
 
 describe('Network...', () => {
   let client: Network
-  before(() => {
-    client = new Network(new MemoryDatastore(), new Client({ host: proxyAddr1 }))
+  before(async () => {
+    const identity = await ed25519.generateKeyPair()
+    client = new Network(new MemoryDatastore(), new Client({ host: proxyAddr1 }), identity)
+    const token = await client.getToken(identity)
+    expect(token).to.not.be.undefined
   })
   describe('Basic...', () => {
     it('should return a remote host peer id', async () => {
@@ -54,7 +64,10 @@ describe('Network...', () => {
       const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
       const addr = threadAddr(hostAddr, hostID, info1)
       const client2 = new Client({ host: proxyAddr2 })
-      const info2 = await client2.addThread(addr, { threadKey: info1.key })
+      // Create temporary identity
+      const identity = await ed25519.generateKeyPair()
+      const token2 = await client2.getToken(identity)
+      const info2 = await client2.addThread(addr, { threadKey: info1.key, token: token2 })
       expect(info2.id.toString()).to.equal(info1.id.toString())
     })
 
@@ -73,12 +86,20 @@ describe('Network...', () => {
       }
     })
 
-    it.skip('should delete an existing thread', async () => {
+    it('should delete an existing thread', async () => {
       const info = await createThread(client)
+      const info2 = await client.getThread(info.id)
+      expect(info2.id.toString()).to.equal(info.id.toString())
       try {
         await client.deleteThread(info.id)
       } catch (err) {
         throw new Error(`unexpected error: ${err}`)
+      }
+      try {
+        await client.getThread(info.id)
+        throw new Error('should not have throw')
+      } catch (err) {
+        expect(err.toString()).to.equal('Error: thread not found')
       }
     })
 
@@ -121,7 +142,12 @@ describe('Network...', () => {
       const readKey = randomBytes(32)
       const block = Block.encoder(body, 'dag-cbor')
       const event = await createEvent(block, readKey)
-      const record = await createRecord(event, privKey, threadKey.service, undefined)
+      // Re-use log key for pub key
+      const record = await createRecord(event, {
+        privKey,
+        servKey: threadKey.service,
+        pubKey: logKey,
+      })
       const cid1 = await record.value.cid()
       const logID = await PeerId.createFromPubKey(privKey.public.bytes)
       await client.addRecord(info.id, logID, record)
@@ -150,6 +176,8 @@ describe('Network...', () => {
     describe('subscribe', () => {
       let client2: Network
       let info: ThreadInfo
+      let token2: ThreadToken
+
       before(async () => {
         client2 = new Network(new MemoryDatastore(), new Client({ host: proxyAddr2 }))
         const hostID2 = await client2.getHostID()
@@ -157,19 +185,26 @@ describe('Network...', () => {
         const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))
         info = await createThread(client)
         await client.addReplicator(info.id, peerAddr)
+        // Create temporary identity
+        const identity = await ed25519.generateKeyPair()
+        token2 = await client2.getToken(identity)
       })
 
       it('should handle updates and close cleanly', done => {
         let rcount = 0
-        const res = client2.subscribe((rec?: ThreadRecord, err?: Error) => {
-          expect(rec).to.not.be.undefined
-          if (rec) rcount += 1
-          if (err) throw new Error(`unexpected error: ${err.toString()}`)
-          if (rcount >= 2) {
-            res.close()
-            done()
-          }
-        }, info.id)
+        const res = client2.subscribe(
+          (rec?: ThreadRecord, err?: Error) => {
+            expect(rec).to.not.be.undefined
+            if (rec) rcount += 1
+            if (err) throw new Error(`unexpected error: ${err.toString()}`)
+            if (rcount >= 2) {
+              res.close()
+              done()
+            }
+          },
+          [info.id],
+          { token: token2 },
+        )
         client.createRecord(info.id, { foo: 'bar1' }).then(() => {
           client.createRecord(info.id, { foo: 'bar2' })
         })

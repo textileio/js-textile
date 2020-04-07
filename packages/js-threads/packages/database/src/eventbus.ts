@@ -56,7 +56,7 @@ export class EventBus<T = any> extends EventEmitter<Events> {
       const func = async (rec?: ThreadRecord) => {
         if (rec) this.emit('record', rec)
       }
-      this.closer = id ? this.network.subscribe(func, id) : this.network.subscribe(func)
+      this.closer = id ? this.network.subscribe(func, [id]) : this.network.subscribe(func)
     } else if (this.closer) {
       return this.closer.close()
     }

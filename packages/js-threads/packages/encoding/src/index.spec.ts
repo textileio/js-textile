@@ -23,11 +23,7 @@ describe('Encoding...', () => {
       const decodedHeader = decodeBlock<EventHeader>(obj.header, readKey)
       const header = decodedHeader.decodeUnsafe()
       expect(header).to.haveOwnProperty('key')
-      expect(header).to.haveOwnProperty('time')
       expect(header.key).to.deep.equal(key)
-      expect(Math.round(Date.now() / 1000) - header.time)
-        .to.be.lessThan(100)
-        .and.greaterThan(-0.0001) // small delta for floating point errors
     })
   })
 
@@ -36,7 +32,9 @@ describe('Encoding...', () => {
       const privKey = await keys.generateKeyPair('Ed25519', 256)
       const body = Block.encoder(raw, defaultOptions.codec)
       const event = await createEvent(body, readKey)
-      const { value } = await createRecord(event, privKey, replicatorKey, undefined)
+      // We just use the public key from the private key here for testing
+      const pubKey = privKey.public
+      const { value } = await createRecord(event, { privKey, servKey: replicatorKey, pubKey })
       const decoded = decodeBlock<RecordNode>(value, replicatorKey).decode()
       expect(decoded.prev).to.be.undefined
       expect(decoded).to.haveOwnProperty('block')

@@ -45,8 +45,4 @@ export interface EventHeader {
    * Single-use symmetric key
    */
   key?: Uint8Array
-  /**
-   * Unix seconds since epoch
-   */
-  time: number
 }

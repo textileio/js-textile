@@ -1,6 +1,14 @@
 import PeerId from 'peer-id'
 import CID from 'cids'
-import { ThreadID, ThreadInfo, KeyOptions, LogID } from '../thread'
+import {
+  ThreadID,
+  ThreadInfo,
+  ThreadOptions,
+  NewThreadOptions,
+  ThreadToken,
+  Identity,
+  LogID,
+} from '../thread'
 import { Multiaddr } from '../multiaddr'
 import { ThreadRecord, LogRecord } from './record'
 
@@ -18,73 +26,90 @@ export interface Network {
   getHostID(): Promise<PeerId>
 
   /**
-   * createThread with id.
+   * getToken returns a signed token representing an identity.
+   * @param identity The thread identity.
+   */
+  getToken(identity: Identity): Promise<ThreadToken>
+
+  /**
+   * createThread with credentials.
    * @param id The Thread id.
-   * @param opts The set of keys to use when creating the Thread. All keys are "optional", though if no replicator key
-   * is provided, one will be created (and returned). Similarly, if no LogKey is provided, then a private key will be
-   * generated (and returned). If no ReadKey is provided, the network will be unable to write records (but it may be
-   * able to return records).
+   * @param opts The set of keys and options to use when creating the Thread.
+   * All keys are "optional", though if no thread key is provided, one will be created (and returned).
+   * Similarly, if no log key is provided, then a private key will be generated (and returned).
    */
-  createThread(id: ThreadID, opts: KeyOptions): Promise<ThreadInfo>
+  createThread(id: ThreadID, opts: NewThreadOptions): Promise<ThreadInfo>
 
   /**
-   * addThread from a multiaddress.
+   * addThread with credentials from a multiaddress.
    * @param addr The Thread multiaddress.
-   * @param opts The set of keys to use when adding the Thread.
+   * @param opts The set of keys and options to use when adding the Thread.
    */
-  addThread(addr: Multiaddr, opts: KeyOptions): Promise<ThreadInfo>
+  addThread(addr: Multiaddr, opts: NewThreadOptions): Promise<ThreadInfo>
 
   /**
-   * getThread with id.
+   * getThread with credentials.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  getThread(id: ThreadID): Promise<ThreadInfo>
+  getThread(id: ThreadID, opts?: ThreadOptions): Promise<ThreadInfo>
 
   /**
    * pullThread for new records.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  pullThread(id: ThreadID): Promise<void>
+  pullThread(id: ThreadID, opts?: ThreadOptions): Promise<void>
 
   /**
    * deleteThread with id.
    * @param id The Thread ID.
+   * @param opts Thread options.
    */
-  deleteThread(id: ThreadID): Promise<void>
+  deleteThread(id: ThreadID, opts?: ThreadOptions): Promise<void>
 
   /**
    * addReplicator to a thread.
    * @param id The Thread ID.
    * @param addr The multiaddress of the replicator peer.
+   * @param opts Thread options.
    */
-  addReplicator(id: ThreadID, addr: Multiaddr): Promise<PeerId>
+  addReplicator(id: ThreadID, addr: Multiaddr, opts?: ThreadOptions): Promise<PeerId>
 
   /**
-   * createRecord with body.
+   * createRecord from body.
    * @param id The Thread ID.
    * @param body The body to add as content.
+   * @param opts Thread options.
    */
-  createRecord(id: ThreadID, body: any): Promise<ThreadRecord | undefined>
+  createRecord(id: ThreadID, body: any, opts?: ThreadOptions): Promise<ThreadRecord | undefined>
 
   /**
    * addRecord to the given log.
    * @param id The Thread ID.
    * @param logID The Log ID.
    * @param rec The log record to add.
+   * @param opts Thread options.
    */
-  addRecord(id: ThreadID, logID: LogID, rec: LogRecord): Promise<void>
+  addRecord(id: ThreadID, logID: LogID, rec: LogRecord, opts?: ThreadOptions): Promise<void>
 
   /**
    * GetRecord returns the record at cid.
    * @param id The Thread ID.
    * @param rec The record's CID.
+   * @param opts Thread options.
    */
-  getRecord(id: ThreadID, rec: CID): Promise<LogRecord>
+  getRecord(id: ThreadID, rec: CID, opts?: ThreadOptions): Promise<LogRecord>
 
   /**
    * subscribe to new record events in the given threads.
    * @param cb The callback to call on each new thread record.
    * @param threads A (variadic) set of threads to subscribe to.
+   * @param opts Thread options.
    */
-  subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, ...threads: ThreadID[]): Closer
+  subscribe(
+    cb: (rec?: ThreadRecord, err?: Error) => void,
+    threads?: ThreadID[],
+    opts?: ThreadOptions,
+  ): Closer
 }

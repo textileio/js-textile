@@ -1,7 +1,7 @@
 import CID from 'cids'
 import log from 'loglevel'
 import { Block, Event, EventNode, LogRecord, RecordNode } from '@textile/threads-core'
-import { PrivateKey } from 'libp2p-crypto'
+import { PrivateKey, PublicKey } from 'libp2p-crypto'
 import { Options, defaultOptions, encodeBlock, decodeBlock } from './coding'
 
 const logger = log.getLogger('encoding:record')
@@ -16,36 +16,58 @@ export interface EncodedRecord {
   bodynode: Uint8Array | string
 }
 
+export interface CreateRecordConfig {
+  /**
+   * The private key to use for signing.
+   */
+  privKey: PrivateKey
+
+  /**
+   * The public key of the Record author.
+   */
+  pubKey: PublicKey
+
+  /**
+   * The symmetric key to use for encrypting the record body.
+   */
+  servKey: Uint8Array
+
+  /**
+   * An optional previous Record CID.
+   */
+  prev?: CID
+}
+
 /**
  * CreateRecord returns a new record from the given block and log private key.
  * @param data Input Event data.
- * @param privKey The private key to use for signing.
- * @param keyiv The symmetric key to use for encrypting the record body.
- * @param prev An optional previous Record CID.
+ * @param config A set of key/CID options for creating the new record.
  * @param opts Additional encoding/encryption options.
  */
 export async function createRecord(
   data: Event,
-  privKey: PrivateKey,
-  keyiv: Uint8Array,
-  prev?: CID,
+  config: CreateRecordConfig,
   opts: Options = defaultOptions,
 ) {
   logger.debug('creating record')
   const block = await data.value.cid()
   let payload = block.buffer
-  if (prev && CID.isCID(prev)) {
-    payload = Buffer.concat([payload, prev.buffer])
+  const pubKey = config.pubKey.bytes
+  if (config.prev && CID.isCID(config.prev)) {
+    payload = Buffer.concat([payload, config.prev.buffer])
+  } else {
+    payload = pubKey
   }
-  const sig = await privKey.sign(payload)
+  const sig = await config.privKey.sign(payload)
   const obj: RecordNode = {
     block,
     sig,
+    pubKey,
   }
   // Don't include prev unless it is defined
-  if (prev) obj.prev = prev
+  if (config.prev) obj.prev = config.prev
   const node = Block.encoder(obj, opts.codec, opts.algo)
-  const value = encodeBlock(node, keyiv, opts)
+  const value = encodeBlock(node, config.servKey, opts)
   // @todo: We don't support a dag here yet, but this is where we'd add this data to IPFS!
   const record: LogRecord = {
     value,
