@@ -23,6 +23,7 @@ import {
 import * as pb from '@textile/threads-net-grpc/api_pb'
 import { API, APIGetToken } from '@textile/threads-net-grpc/api_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
+import nextTick from 'next-tick'
 import { Config, BaseConfig } from './config'
 
 export { Config, BaseConfig }
@@ -344,12 +345,12 @@ export class Client implements Network {
       host: this.config.host,
       metadata: this.config._wrapMetadata({ Authorization: `Bearer ${token}` }),
       request,
-      onMessage: (rec: pb.NewRecordReply) => callback(rec),
+      onMessage: (rec: pb.NewRecordReply) => nextTick(() => callback(rec)),
       onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
         if (status !== grpc.Code.OK) {
-          return callback(undefined, new Error(message))
+          return nextTick(() => callback(undefined, new Error(message)))
         }
-        return callback()
+        return nextTick(() => callback())
       },
     })
   }

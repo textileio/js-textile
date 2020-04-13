@@ -12,6 +12,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "license": "MIT",
   "scripts": {
     "prepublish": "npm run build",
     "prebuild": "npm run clean",
