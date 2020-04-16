@@ -43,18 +43,18 @@
     };
 
     (async function () {
-
+      window.threads = textile.threads
       window.api = new textile.API({
-        token: '<project token>',
-        deviceId: '<user id>',
-        dev: true
+        token: '7304fe17-af1f-411e-88a7-80deee913f84',
+        deviceId: '275dcb28-abb9-4cc0-a610-87f101c6167d',
+        dev: false
       })
-      window.api.start()
-      window.client = api.threadsClient
+      await api.start()
+      window.client = new threads.Client(window.api.threadsConfig)
       try {
         // Create a new store
-        const threadId = client.ThreadID.fromRandom()
-        const dbID = threadId.bytes()
+        const threadId = threads.ThreadID.fromRandom()
+        const dbID = threadId.toBytes()
         const res = await client.newDB(dbID)
 
         // Register a person schema

@@ -6,9 +6,10 @@
 
 import { Client } from '@textile/threads-client'
 import { expect } from 'chai'
-import { API, ThreadID } from './API'
+import { API } from './API'
+import { ThreadID } from './libs/threads'
 
-describe('API', function() {
+describe('API', function () {
   let api: API
   let client: Client
   describe('create new instance', () => {

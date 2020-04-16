@@ -3,11 +3,10 @@
  * @module @textile/textile
  */
 
-import { ThreadID } from '@textile/threads-core'
 import { Config } from './models/API'
 import { ThreadsConfig } from './models/Threads'
 
-export { Config, ThreadID }
+export { Config }
 
 /**
  * API is the primary interface to the Textile API
@@ -61,14 +60,14 @@ export class API {
   /**
    * Get the existing session ID after successfully running start.
    */
-  get sessionId(): string | undefined {
+  public get sessionId(): string | undefined {
     return this._threadsConfig.sessionId
   }
 
   /**
    * Export the threadConfig.
    */
-  get threadsConfig(): ThreadsConfig {
+  public get threadsConfig(): ThreadsConfig {
     return this._threadsConfig
   }
 }

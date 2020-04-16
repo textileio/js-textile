@@ -36,8 +36,9 @@ Textile provides remote threads APIs your app can use.
 - deviceId: a unique ID (uuid) for this user in your app
 
 ```js
-import {API} from '@textile/textile'
-import {Client} from '@textile/threads-client'
+import {API, threads} from '@textile/textile'
+
+const Client = threads.Client;
 
 const api = new API({
     token: '<project token>',
