@@ -1,7 +1,7 @@
 import PeerId from 'peer-id'
 import CID from 'cids'
+import { ThreadID } from '@textile/threads-id'
 import {
-  ThreadID,
   ThreadInfo,
   ThreadOptions,
   NewThreadOptions,

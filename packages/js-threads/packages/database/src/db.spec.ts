@@ -166,7 +166,7 @@ describe('Database', () => {
   })
 
   describe('Persistence', () => {
-    const tmp = './database.db'
+    const tmp = './test.db'
     after(() => {
       level.destroy(tmp, () => {
         return

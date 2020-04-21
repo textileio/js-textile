@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ThreadID } from './id'
+import { ThreadID } from '.'
 
 describe('Thread ID', () => {
   it('should be able to create a random ID', () => {

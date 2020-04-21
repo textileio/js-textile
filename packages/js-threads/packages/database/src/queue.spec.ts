@@ -165,7 +165,7 @@ describe('Queue', () => {
 
   describe('Maintaining queue length count', () => {
     let store: Datastore
-    const tmp = 'queue.db'
+    const tmp = 'test.db'
 
     before(done => {
       store = new MemoryDatastore()

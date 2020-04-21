@@ -1,6 +1,6 @@
 import CID from 'cids'
 import PeerId from 'peer-id'
-import { ThreadID } from '../thread'
+import { ThreadID } from '@textile/threads-id'
 import { Block } from '../ipld'
 import { Event } from './event'
 

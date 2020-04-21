@@ -1,5 +1,6 @@
 import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
 
+export * from '@textile/threads-id'
 export * from './thread'
 export * from './network'
 export { Multiaddr } from './multiaddr'

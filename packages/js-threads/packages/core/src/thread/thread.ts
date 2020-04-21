@@ -1,5 +1,6 @@
 import { PrivateKey, PublicKey, keys } from 'libp2p-crypto'
-import { ThreadID } from './id'
+import { ThreadID } from '@textile/threads-id'
+import multibase from 'multibase'
 import { LogInfo } from './log'
 import { ThreadKey } from './key'
 
@@ -61,6 +62,10 @@ export type Identity = Pick<PrivateKey, 'sign' | 'public'>
  */
 export function randomIdentity() {
   return keys.supportedKeys.ed25519.generateKeyPair()
+}
+
+export function publicKeyToString(key: PublicKey) {
+  return multibase.encode('base32', key.bytes).toString()
 }
 
 /**

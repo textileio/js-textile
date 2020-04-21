@@ -1,12 +1,6 @@
 import { encode, decode } from 'varint'
-import { randomBytes } from 'libp2p-crypto'
+import randomBytes from '@consento/sync-randombytes'
 import multibase, { name as Name } from 'multibase'
-import PeerId from 'peer-id'
-
-/**
- * LogID is a simple alias to PeerId for representing logs.
- */
-export type LogID = PeerId
 
 /**
  * ThreadID represents a self-describing Thread identifier.
@@ -24,7 +18,7 @@ class ThreadID {
     const bytes = Buffer.concat([
       Buffer.from(encode(ThreadID.V1)),
       Buffer.from(encode(variant)),
-      randomBytes(size),
+      randomBytes(Buffer.alloc(size)),
     ])
     return new ThreadID(bytes)
   }

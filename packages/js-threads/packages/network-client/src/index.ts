@@ -116,7 +116,7 @@ export class Client implements Network {
           try {
             sig = await identity.sign(Buffer.from(challenge as string))
           } catch (err) {
-            console.log(err)
+            reject(err)
           }
           const req = new pb.GetTokenRequest()
           req.setSignature(sig)
@@ -126,6 +126,7 @@ export class Client implements Network {
         }
       })
       client.onEnd(code => {
+        client.close()
         if (code === grpc.Code.OK) {
           resolve(token)
         } else {
