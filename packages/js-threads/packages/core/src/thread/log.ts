@@ -1,7 +1,7 @@
 import CID from 'cids'
 import { PublicKey, PrivateKey } from 'libp2p-crypto'
 import PeerId from 'peer-id'
-import { Multiaddr } from '../multiaddr'
+import { Multiaddr } from '@textile/multiaddr'
 
 /**
  * LogID is a simple alias to PeerId for representing logs.

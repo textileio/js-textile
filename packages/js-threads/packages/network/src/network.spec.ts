@@ -12,7 +12,8 @@ import {
   Block,
   ThreadRecord,
   Multiaddr,
-  ThreadKey, ThreadToken,
+  ThreadKey,
+  ThreadToken,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'

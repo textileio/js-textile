@@ -19,6 +19,8 @@
   "license": "MIT",
   "repository": "github:textileio/js-threads",
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
     "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^2.9.0",

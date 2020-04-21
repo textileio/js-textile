@@ -15,7 +15,7 @@ import * as codec from './codec'
  * Multiaddr('/ip4/127.0.0.1/tcp/4001')
  * // <Multiaddr 047f000001060fa1 - /ip4/127.0.0.1/tcp/4001>
  */
-export class Multiaddr {
+class Multiaddr {
   public buffer: Buffer = Buffer.alloc(0)
   constructor(addr: string | Multiaddr | Buffer) {
     if (!(this instanceof Multiaddr)) {
@@ -448,3 +448,5 @@ export class Multiaddr {
     return other
   }
 }
+
+export { Multiaddr }

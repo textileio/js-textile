@@ -49,6 +49,5 @@
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2",
     "ws": "^7.2.1"
-  },
-  "gitHead": "4e74ac2be9d2829fbfa5d1a78ead7d0d1f99c996"
+  }
 }
