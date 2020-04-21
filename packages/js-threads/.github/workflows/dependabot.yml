@@ -13,4 +13,4 @@ jobs:
       - uses: reviewdog/action-misspell@v1
         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.github_token }}
