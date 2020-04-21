@@ -1,13 +1,17 @@
-name: Auto approve
+name: Auto-approve
 on:
   pull_request:
     branches:
       - master
 
- jobs:
-   auto-approve:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: hmarr/auto-approve-action@v2.0.0
-         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
-         with:
+jobs:
+  auto-approve:
+    name: Auto-approve
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+    steps:
+      - uses: hmarr/auto-approve-action@v2.0.0
+      - uses: reviewdog/action-misspell@v1
+        if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+        with:
+          github_token: ${{ secrets.github_token }}
