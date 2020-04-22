@@ -65,7 +65,7 @@
     "@types/datastore-level": "^0.14.0",
     "@types/interface-datastore": "^0.8.0",
     "@types/json-schema": "^7.0.4",
-    "@types/sinon": "^7.5.2",
+    "@types/sinon": "^9.0.0",
     "@types/to-json-schema": "^0.2.0",
     "@types/url-parse": "^1.4.3",
     "@types/uuid": "^3.4.7",
