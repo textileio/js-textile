@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import uuid from 'uuid'
+import { ulid } from 'ulid'
 import * as mingo from 'mingo'
 import { Datastore, MemoryDatastore } from 'interface-datastore'
 import { collect } from 'streaming-iterables'
@@ -139,14 +139,14 @@ describe('Collection', () => {
 
       it('should create an entity with a predefined id', async () => {
         const Person = setupCollection(store)
-        const ID = uuid()
+        const ID = ulid()
         const person = new Person({ ID, name: 'Hans', age: 12 })
         expect(person.toJSON()).to.have.ownProperty('ID', ID)
       })
 
       it('should not overwrite an existing entity', async () => {
         const Person = setupCollection(store)
-        const ID = uuid()
+        const ID = ulid()
         try {
           await Person.insert({ ID, name: 'Hans', age: 12 })
           const person = new Person({ ID, name: 'Hans', age: 12 }) // No error yet

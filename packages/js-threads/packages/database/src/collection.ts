@@ -1,6 +1,6 @@
 import { Datastore, Key, MemoryDatastore, Query } from 'interface-datastore'
 import Ajv, { ValidateFunction, ValidationError } from 'ajv'
-import uuid from 'uuid'
+import { ulid } from 'ulid'
 import { reduce } from 'streaming-iterables'
 import * as mingo from 'mingo'
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
@@ -225,7 +225,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
     const c = this
     // Hacky function that gives us a nice ux for creating entities.
     const self = function Doc(instance: T) {
-      if (!instance.ID) instance.ID = uuid()
+      if (!instance.ID) instance.ID = ulid()
       if (!c.validator(instance) && c.validator.errors) {
         throw new ValidationError(c.validator.errors)
       }
@@ -247,7 +247,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
   save(...entities: T[]) {
     const batch = this.child.batch()
     for (const instance of entities) {
-      if (!instance.ID) instance.ID = uuid()
+      if (!instance.ID) instance.ID = ulid()
       if (!this.validator(instance) && this.validator.errors) {
         throw new ValidationError(this.validator.errors)
       }
@@ -280,7 +280,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
     try {
       const batch = this.child.batch()
       for (const instance of instances) {
-        if (!instance.ID) instance.ID = uuid()
+        if (!instance.ID) instance.ID = ulid()
         const key = new Key(instance.ID)
         if (await this.child.has(key)) {
           throw existingKeyError

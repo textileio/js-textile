@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { MemoryDatastore, Key } from 'interface-datastore'
 import { collect } from 'streaming-iterables'
-import uuid from 'uuid'
+import { ulid } from 'ulid'
 import { Dispatcher } from '../dispatcher'
 import { JsonPatchStore } from './jsonpatch'
 
@@ -31,7 +31,7 @@ describe('JsonPatchStore', () => {
       })
     })
 
-    store.put(new Key('bar'), { ID: uuid(), hello: 'world' }).then(() => {
+    store.put(new Key('bar'), { ID: ulid(), hello: 'world' }).then(() => {
       collect(mStore.query({})).then(mRes => {
         collect(store.query({})).then(nRes => {
           expect(nRes).to.have.length(1)
