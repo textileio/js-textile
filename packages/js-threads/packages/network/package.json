@@ -25,7 +25,7 @@
     "@textile/threads-network-client": "^0.1.4",
     "@types/node": "^13.9.2",
     "cids": "^0.7.3",
-    "datastore-core": "^0.7.0",
+    "datastore-core": "^1.0.0",
     "interface-datastore": "^0.8.0",
     "libp2p-crypto": "^0.17.2",
     "loglevel": "^1.6.6",
