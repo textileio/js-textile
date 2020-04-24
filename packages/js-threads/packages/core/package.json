@@ -31,7 +31,7 @@
     "@types/bs58": "^4.0.1",
     "@types/multiaddr": "^7.2.0",
     "@types/varint": "^5.0.0",
-    "cids": "^0.7.3",
+    "cids": "^0.8.0",
     "multiaddr": "^7.2.1",
     "peer-id": "^0.13.9",
     "rimraf": "^3.0.0",
