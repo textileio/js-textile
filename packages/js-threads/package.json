@@ -39,7 +39,7 @@
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
     "touch": "^3.1.0",
-    "ts-loader": "^6.2.1",
+    "ts-loader": "^7.0.2",
     "ts-node": "^8.5.4",
     "typedoc": "^0.15.3",
     "typedoc-plugin-lerna-packages": "^0.2.2",
