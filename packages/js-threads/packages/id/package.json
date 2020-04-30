@@ -28,7 +28,7 @@
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
     "@types/node": "^13.9.2",
-    "multibase": "^0.6.0",
+    "multibase": "^0.7.0",
     "varint": "^5.0.0"
   }
 }
