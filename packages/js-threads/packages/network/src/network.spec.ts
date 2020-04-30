@@ -4,6 +4,7 @@
 
 import { randomBytes } from 'libp2p-crypto'
 import { expect } from 'chai'
+import nextTick from 'next-tick'
 import PeerId from 'peer-id'
 import { keys } from 'libp2p-crypto'
 import {
@@ -14,6 +15,7 @@ import {
   Multiaddr,
   ThreadKey,
   ThreadToken,
+  Libp2pCryptoIdentity,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '@textile/threads-network-client'
@@ -39,7 +41,7 @@ function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
 describe('Network...', () => {
   let client: Network
   before(async () => {
-    const identity = await ed25519.generateKeyPair()
+    const identity = await Libp2pCryptoIdentity.fromRandom()
     client = new Network(new MemoryDatastore(), new Client({ host: proxyAddr1 }), identity)
     const token = await client.getToken(identity)
     expect(token).to.not.be.undefined
@@ -66,7 +68,7 @@ describe('Network...', () => {
       const addr = threadAddr(hostAddr, hostID, info1)
       const client2 = new Client({ host: proxyAddr2 })
       // Create temporary identity
-      const identity = await ed25519.generateKeyPair()
+      const identity = await Libp2pCryptoIdentity.fromRandom()
       const token2 = await client2.getToken(identity)
       const info2 = await client2.addThread(addr, { threadKey: info1.key, token: token2 })
       expect(info2.id.toString()).to.equal(info1.id.toString())
@@ -187,7 +189,7 @@ describe('Network...', () => {
         info = await createThread(client)
         await client.addReplicator(info.id, peerAddr)
         // Create temporary identity
-        const identity = await ed25519.generateKeyPair()
+        const identity = await Libp2pCryptoIdentity.fromRandom()
         token2 = await client2.getToken(identity)
       })
 
@@ -200,7 +202,7 @@ describe('Network...', () => {
             if (err) throw new Error(`unexpected error: ${err.toString()}`)
             if (rcount >= 2) {
               res.close()
-              done()
+              nextTick(done)
             }
           },
           [info.id],

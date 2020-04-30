@@ -13,7 +13,7 @@ import {
   ThreadToken,
   Multiaddr,
   Identity,
-  randomIdentity,
+  Libp2pCryptoIdentity,
 } from '@textile/threads-core'
 import { EventBus } from './eventbus'
 import { Collection, JSONSchema, Config } from './collection'
@@ -127,7 +127,7 @@ export class Database extends EventEmitter2 {
     const db = new Database(datastore, options)
     if (!db.network.token) {
       // If we didn't supply an identity upon init, try to create a random one now.
-      await db.network.getToken(db.network.identity ?? (await randomIdentity()))
+      await db.network.getToken(db.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()))
     }
     const info = await db.network.addThread(addr, { threadKey })
     await db.open({ ...options, threadID: info.id })
@@ -192,7 +192,9 @@ export class Database extends EventEmitter2 {
     }
     if (!this.network.token) {
       // If we didn't supply an identity upon init, try to create a random one now.
-      await this.network.getToken(this.network.identity ?? (await randomIdentity()))
+      await this.network.getToken(
+        this.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()),
+      )
     }
     await this.child.open()
     const idKey = metaKey.child(new Key('threadid'))

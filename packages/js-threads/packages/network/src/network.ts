@@ -53,7 +53,7 @@ export class Network implements Interface {
   /**
    * getHostID returns the network's (remote) host peer ID.
    */
-  async getHostID() {
+  async getHostID(): Promise<PeerId> {
     return this.client.getHostID()
   }
 
@@ -148,7 +148,11 @@ export class Network implements Interface {
    * @param addr The multiaddress of the replicator peer.
    * @param opts Thread options.
    */
-  async addReplicator(id: ThreadID, addr: Multiaddr, opts: ThreadOptions = { token: this.token }) {
+  async addReplicator(
+    id: ThreadID,
+    addr: Multiaddr,
+    opts: ThreadOptions = { token: this.token },
+  ): Promise<PeerId> {
     return this.client.addReplicator(id, addr, opts)
   }
 

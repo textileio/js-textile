@@ -4,6 +4,7 @@ export * from '@textile/threads-id'
 export * from '@textile/multiaddr'
 export * from './thread'
 export * from './network'
+export * from './identity'
 export { Block } from './ipld'
 
 export const marshalKey = (key: PublicKey | PrivateKey) => {

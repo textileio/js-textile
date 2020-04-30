@@ -1,7 +1,14 @@
 import CID from 'cids'
 import log from 'loglevel'
-import { Block, Event, EventNode, LogRecord, RecordNode } from '@textile/threads-core'
-import { PrivateKey, PublicKey } from 'libp2p-crypto'
+import {
+  Block,
+  Event,
+  EventNode,
+  LogRecord,
+  RecordNode,
+  Identity,
+  Public,
+} from '@textile/threads-core'
 import { Options, defaultOptions, encodeBlock, decodeBlock } from './coding'
 
 const logger = log.getLogger('encoding:record')
@@ -20,12 +27,12 @@ export interface CreateRecordConfig {
   /**
    * The private key to use for signing.
    */
-  privKey: PrivateKey
+  privKey: Identity
 
   /**
    * The public key of the Record author.
    */
-  pubKey: PublicKey
+  pubKey: Public
 
   /**
    * The symmetric key to use for encrypting the record body.

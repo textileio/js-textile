@@ -14,6 +14,7 @@ import {
   ThreadKey,
   ThreadToken,
   Identity,
+  Libp2pCryptoIdentity,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '.'
@@ -40,7 +41,7 @@ describe('Network Client...', () => {
   let identity: Identity
   before(async () => {
     client = new Client({ host: proxyAddr1 })
-    identity = await ed25519.generateKeyPair()
+    identity = await Libp2pCryptoIdentity.fromRandom()
     token = await client.getToken(identity)
   })
   describe('Basic...', () => {
@@ -65,7 +66,7 @@ describe('Network Client...', () => {
       const addr = threadAddr(hostAddr, hostID, info1)
       const client2 = new Client({ host: proxyAddr2 })
       // Create temporary identity
-      const identity = await ed25519.generateKeyPair()
+      const identity = await Libp2pCryptoIdentity.fromRandom()
       const token2 = await client2.getToken(identity)
       try {
         const info2 = await client2.addThread(addr, { threadKey: info1.key, token: token2 })
@@ -182,7 +183,7 @@ describe('Network Client...', () => {
         info = await createThread(client, token)
         await client.addReplicator(info.id, peerAddr, { token })
         // Create temporary identity
-        const identity = await ed25519.generateKeyPair()
+        const identity = await Libp2pCryptoIdentity.fromRandom()
         token2 = await client2.getToken(identity)
       })
 

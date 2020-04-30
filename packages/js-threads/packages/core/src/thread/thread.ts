@@ -50,25 +50,6 @@ export interface ThreadInfo {
 }
 
 /**
- * Identity represents an entity capable of signing a message.
- * This is a simple 'private key' interface that must be capable of returning the associated public key for
- * verification. In many cases, this will just be a private key, but callers can use any setup that suits their needs.
- * The interface is currently modeled after libp2p-crypto PrivateKey.
- */
-export type Identity = Pick<PrivateKey, 'sign' | 'public'>
-
-/**
- * Create a random Ed25519 PrivateKey to be used as an Identity.
- */
-export function randomIdentity() {
-  return keys.supportedKeys.ed25519.generateKeyPair()
-}
-
-export function publicKeyToString(key: PublicKey) {
-  return multibase.encode('base32', key.bytes).toString()
-}
-
-/**
  * ThreadToken is a concrete type for a JWT token string, which provides a claim to an identity.
  * It is a base64 encoded string.
  * @todo: We don't need to create or verify these on the client (yet).

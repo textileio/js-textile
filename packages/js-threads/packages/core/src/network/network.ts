@@ -2,14 +2,8 @@ import PeerId from 'peer-id'
 import CID from 'cids'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import {
-  ThreadInfo,
-  ThreadOptions,
-  NewThreadOptions,
-  ThreadToken,
-  Identity,
-  LogID,
-} from '../thread'
+import { ThreadInfo, ThreadOptions, NewThreadOptions, ThreadToken, LogID } from '../thread'
+import { Identity } from '../identity'
 import { ThreadRecord, LogRecord } from './record'
 
 export interface Closer {

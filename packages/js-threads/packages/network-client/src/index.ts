@@ -134,7 +134,7 @@ export class Client implements Network {
         }
       })
       const req = new pb.GetTokenRequest()
-      req.setKey(identity.public.bytes.toString('base64'))
+      req.setKey(identity.public.toString())
       client.start(this.config._wrapMetadata())
       client.send(req)
       // client.finishSend()

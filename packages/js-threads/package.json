@@ -1,7 +1,7 @@
 {
   "name": "@textile/threads",
-  "version": "0.1.14",
-  "description": "Typescript implementation of Textile's Threads Protocol",
+  "version": "0.1.15",
+  "description": "Typescript/Javascript implementation of Textile's Threads Protocol",
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
