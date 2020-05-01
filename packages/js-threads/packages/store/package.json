@@ -24,7 +24,6 @@
     "async-rwlock": "^1.1.1",
     "cbor-sync": "^1.0.4",
     "datastore-core": "^1.0.0",
-    "delta-crdts": "^0.10.3",
     "fast-json-patch": "^3.0.0-1",
     "interface-datastore": "^0.8.0",
     "lexicographic-integer": "^1.1.0",
