@@ -149,6 +149,13 @@ There are also a number of other recommended packages that will make working wit
 npm i --save interface-datastore datastore-level buffer 
 ```
 
+If you are running `js-threads` in an environment that does not support WebSockets by default (such as nodejs), be sure to include it explicitly using something like the following at the top of your script or module:
+
+```javascript
+// 'Hack' to get WebSocket in the global namespace on nodejs
+global.WebSocket = require('isomorphic-ws')
+```
+
 ## Usage
 
 The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide several excellent examples of using the various components of `js-threads`. Additionally, there are a growing list of [examples](https://github.com/textileio/js-threads/tree/master/examples) available. Complete usage examples (with authentication etc) will be added soon. In the mean time, the following end-to-end example of exchanging data between two peers provides a good idea of the APIs that developers can expect to encounter when working with Threads:
