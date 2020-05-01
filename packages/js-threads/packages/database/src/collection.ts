@@ -2,7 +2,8 @@ import { Datastore, Key, MemoryDatastore, Query } from 'interface-datastore'
 import Ajv, { ValidateFunction, ValidationError } from 'ajv'
 import { ulid } from 'ulid'
 import { reduce } from 'streaming-iterables'
-import * as mingo from 'mingo'
+import { Query as MingoQuery } from 'mingo/query'
+import { resolve } from 'mingo/util'
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
 import { Dispatcher, Instance, JsonPatchStore } from '@textile/threads-store'
 import { FilterQuery } from './query'
@@ -10,18 +11,6 @@ import { FilterQuery } from './query'
 export { FilterQuery }
 
 export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7
-
-// Resolve the value of the field (dot separated) on the given object
-// @todo: The mingo types are incorrect here... so we hack around those a bit.
-// Alternative: const dot = (obj: any, path: string) => path.split('.').reduce((o, i) => o[i], obj)
-const dot = (mingo as any)._internal().resolve
-
-// Setup the key field for our collection
-// @todo: The mingo types are incorrect here:
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-mingo.setup({ key: 'ID' })
 
 export const existingKeyError = new Error('Existing key')
 
@@ -88,14 +77,14 @@ export class Document<T extends Instance = any> {
    * Remove this Instance (by id) from its parent collection.
    */
   remove() {
-    return this._collection.delete(this._data.ID)
+    return this._collection.delete(this._data._id)
   }
 
   /**
    * Check if this Instance (by id) exists in its parent collection.
    */
   exists() {
-    return this._collection.has(this._data.ID)
+    return this._collection.has(this._data._id)
   }
 
   /**
@@ -147,7 +136,7 @@ export class ReadonlyCollection<T extends Instance = any> {
   }
 
   /**
-   * Find an Instance by ID
+   * Find an Instance by _id
    * @param id The Instance id.
    */
   async findById(id: string) {
@@ -169,14 +158,14 @@ export class ReadonlyCollection<T extends Instance = any> {
    */
   find(query?: FilterQuery<T>, options: FindOptions<T> = {}) {
     // @todo: The mingo types are incorrect here... so we hack around those a bit.
-    const m: mingo.default.Query = new (mingo as any).Query(query || {})
+    const m: MingoQuery = new MingoQuery(query || {}, { idKey: '_id' })
     const filters: Query.Filter<T>[] = [({ value }) => m.test(value)]
     const orders: Query.Order<T>[] = []
     if (options.sort) {
       for (const [key, value] of Object.entries(options.sort)) {
         orders.push(items =>
           items.sort((a, b) => {
-            return cmp(dot(a.value, key), dot(b.value, key), value || 1)
+            return cmp(resolve(a.value, key), resolve(b.value, key), value || 1)
           }),
         )
       }
@@ -225,7 +214,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
     const c = this
     // Hacky function that gives us a nice ux for creating entities.
     const self = function Doc(instance: T) {
-      if (!instance.ID) instance.ID = ulid()
+      if (!instance._id) instance._id = ulid()
       if (!c.validator(instance) && c.validator.errors) {
         throw new ValidationError(c.validator.errors)
       }
@@ -247,11 +236,11 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
   save(...entities: T[]) {
     const batch = this.child.batch()
     for (const instance of entities) {
-      if (!instance.ID) instance.ID = ulid()
+      if (!instance._id) instance._id = ulid()
       if (!this.validator(instance) && this.validator.errors) {
         throw new ValidationError(this.validator.errors)
       }
-      batch.put(new Key(instance.ID), instance)
+      batch.put(new Key(instance._id), instance)
     }
     return batch.commit()
   }
@@ -280,8 +269,8 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
     try {
       const batch = this.child.batch()
       for (const instance of instances) {
-        if (!instance.ID) instance.ID = ulid()
-        const key = new Key(instance.ID)
+        if (!instance._id) instance._id = ulid()
+        const key = new Key(instance._id)
         if (await this.child.has(key)) {
           throw existingKeyError
         }

@@ -8,7 +8,7 @@ import { Store, safeGet } from './store'
  * Instance is any object with an ID field.
  */
 export interface Instance {
-  ID: string
+  _id: string
   [others: string]: any
 }
 

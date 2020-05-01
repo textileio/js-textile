@@ -19,7 +19,7 @@ import { threadAddr } from './utils'
 const level = require('level')
 
 interface DummyInstance {
-  ID: string
+  _id: string
   name: string
   counter: number
 }
@@ -35,20 +35,20 @@ async function runListenersComplexUseCase(los: string[]) {
   const store = new MemoryDatastore()
   const db = new Database(store)
   const Collection1 = await db.newCollectionFromObject<DummyInstance>('Collection1', {
-    ID: '',
+    _id: '',
     name: '',
     counter: 0,
   })
 
   const Collection2 = await db.newCollectionFromObject<DummyInstance>('Collection2', {
-    ID: '',
+    _id: '',
     name: '',
     counter: 0,
   })
 
   // Create some instance *before* any listener, just to test that it doesn't appear on a
   // listener's "stream".
-  const i1 = new Collection1({ ID: 'id-i1', name: 'Textile1' })
+  const i1 = new Collection1({ _id: 'id-i1', name: 'Textile1' })
   await i1.save()
   await delay(1000)
 
@@ -65,11 +65,11 @@ async function runListenersComplexUseCase(los: string[]) {
   await i1.save()
 
   // Collection1 create i2
-  const i2 = new Collection1({ ID: 'id-i2', name: 'Textile2' })
+  const i2 = new Collection1({ _id: 'id-i2', name: 'Textile2' })
   await i2.save()
 
   // Collection2 create j1
-  const j1 = new Collection2({ ID: 'id-j1', name: 'Textile3' })
+  const j1 = new Collection2({ _id: 'id-j1', name: 'Textile3' })
   await j1.save()
 
   // Collection1 save i1
@@ -86,13 +86,13 @@ async function runListenersComplexUseCase(los: string[]) {
   await j1.save()
 
   // Collection1 delete i1
-  await Collection1.delete(i1.ID)
+  await Collection1.delete(i1._id)
 
   // Collection2 delete j1 (use alternate API)
   await j1.remove()
 
   // Collection2 delete i2
-  await Collection1.delete(i2.ID)
+  await Collection1.delete(i2._id)
 
   db.removeAllListeners()
   await db.close()
@@ -125,7 +125,7 @@ describe('Database', () => {
       }
       // Create a new collection
       const Dummy1 = await d1.newCollectionFromObject<DummyInstance>('dummy', {
-        ID: '',
+        _id: '',
         name: '',
         counter: 0,
       })
@@ -147,7 +147,7 @@ describe('Database', () => {
       })
       // Create parallel collection
       const Dummy2 = await d2.newCollectionFromObject<DummyInstance>('dummy', {
-        ID: '',
+        _id: '',
         name: '',
         counter: 0,
       })
@@ -157,7 +157,7 @@ describe('Database', () => {
       await dummy1.save()
 
       await delay(6000)
-      const dummy2 = await Dummy2.findById(dummy1.ID)
+      const dummy2 = await Dummy2.findById(dummy1._id)
       expect(dummy2.name).to.equal(dummy1.name)
       expect(dummy2.counter).to.equal(dummy1.counter)
       await d1.close()
@@ -186,7 +186,7 @@ describe('Database', () => {
       await db.open({ threadID: id })
 
       await db.newCollectionFromObject<DummyInstance>('dummy', {
-        ID: '',
+        _id: '',
         name: '',
         counter: 0,
       })

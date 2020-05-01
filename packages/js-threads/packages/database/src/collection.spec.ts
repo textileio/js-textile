@@ -12,7 +12,7 @@ const personSchema: JSONSchema = {
   type: 'object',
 
   properties: {
-    ID: {
+    _id: {
       description: 'The unique identifier for a person',
       type: 'string',
     },
@@ -29,18 +29,18 @@ const personSchema: JSONSchema = {
     },
   },
 
-  required: ['ID', 'name', 'age'],
+  required: ['_id', 'name', 'age'],
 }
 
 describe('Collection', () => {
   it('basic', async () => {
     interface Info {
-      ID: string
+      _id: string
       other?: number
       thing: string
     }
     const Thing = new Collection<Info>('things', {})
-    const data: Info = { ID: '123', thing: 'one' }
+    const data: Info = { _id: '123', thing: 'one' }
     const thing1 = new Thing(data)
     expect(thing1.thing).to.equal('one')
     thing1.other = 1
@@ -57,10 +57,10 @@ describe('Collection', () => {
       expect(err).to.equal(existingKeyError)
     }
     await Thing.insert(
-      { ID: '', other: -1, thing: 'five' },
-      { ID: '', other: 2, thing: 'two' },
-      { ID: '', other: 3, thing: 'three' },
-      { ID: '', other: 4, thing: 'four' },
+      { _id: '', other: -1, thing: 'five' },
+      { _id: '', other: 2, thing: 'two' },
+      { _id: '', other: 3, thing: 'three' },
+      { _id: '', other: 4, thing: 'four' },
     )
     const all = await collect(
       Thing.find({ $or: [{ other: { $gt: 1 } }, { thing: 'one' }] }, { sort: { other: -1 } }),
@@ -71,13 +71,13 @@ describe('Collection', () => {
 
   describe('complex', () => {
     type Person = {
-      ID: string
+      _id: string
       name: string
       age: number
     }
 
     const defaultPerson: Person = Object.freeze({
-      ID: '',
+      _id: '',
       name: 'Lucas',
       age: 7,
     })
@@ -107,9 +107,9 @@ describe('Collection', () => {
         await Person.insert(copyPerson(), copyPerson(), copyPerson())
         const person = copyPerson()
         await new Person(person).save()
-        await Person.delete(person.ID)
+        await Person.delete(person._id)
         // Should modify the object in-place
-        expect(person.ID).to.not.equal('')
+        expect(person._id).to.not.equal('')
         expect(await collect(Person.find({}))).to.have.length(3)
       })
     })
@@ -119,14 +119,14 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person1 = copyPerson()
         await Person.insert(person1)
-        const exists = await Person.has(person1.ID)
-        const obj = await Person.findById(person1.ID)
+        const exists = await Person.has(person1._id)
+        const obj = await Person.findById(person1._id)
         expect(exists).to.be.true
-        expect(obj).to.have.ownProperty('ID', person1.ID)
+        expect(obj).to.have.ownProperty('_id', person1._id)
         const person2 = new Person(copyPerson())
-        expect(await Person.has(person2.ID)).to.be.false
+        expect(await Person.has(person2._id)).to.be.false
         await person2.save()
-        expect(await Person.has(person2.ID)).to.be.true
+        expect(await Person.has(person2._id)).to.be.true
       })
 
       it('should create multiple entities (variadic arguments w/ type checking) at once', async () => {
@@ -134,22 +134,22 @@ describe('Collection', () => {
         const person = copyPerson()
         await Person.insert(person, copyPerson(), copyPerson())
         expect(await collect(Person.find({}))).to.have.length(3)
-        expect(await Person.has(person.ID)).to.be.true
+        expect(await Person.has(person._id)).to.be.true
       })
 
       it('should create an entity with a predefined id', async () => {
         const Person = setupCollection(store)
-        const ID = ulid()
-        const person = new Person({ ID, name: 'Hans', age: 12 })
-        expect(person.toJSON()).to.have.ownProperty('ID', ID)
+        const _id = ulid()
+        const person = new Person({ _id, name: 'Hans', age: 12 })
+        expect(person.toJSON()).to.have.ownProperty('_id', _id)
       })
 
       it('should not overwrite an existing entity', async () => {
         const Person = setupCollection(store)
-        const ID = ulid()
+        const _id = ulid()
         try {
-          await Person.insert({ ID, name: 'Hans', age: 12 })
-          const person = new Person({ ID, name: 'Hans', age: 12 }) // No error yet
+          await Person.insert({ _id, name: 'Hans', age: 12 })
+          const person = new Person({ _id, name: 'Hans', age: 12 }) // No error yet
           await Person.insert(person) // This works because our encoder checks for toJSON
           throw new Error('should not create already existing instance')
         } catch (err) {
@@ -164,7 +164,7 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await person.save()
         await Person.readTransaction(async r => {
-          expect(await r.has(person.ID)).to.be.true
+          expect(await r.has(person._id)).to.be.true
         })
       })
 
@@ -173,7 +173,7 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await Person.writeTransaction(async w => {
           await w.insert(person)
-          expect(await w.has(person.ID)).to.be.true
+          expect(await w.has(person._id)).to.be.true
         })
       })
     })
@@ -183,7 +183,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = copyPerson()
         await Person.insert(person)
-        expect(await Person.has(person.ID)).to.be.true
+        expect(await Person.has(person._id)).to.be.true
         expect(await Person.has('blah')).to.be.false
 
         const person2 = new Person(copyPerson())
@@ -197,7 +197,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        expect(await Promise.all(persons.map(p => Person.has(p.ID)))).to.deep.equal([
+        expect(await Promise.all(persons.map(p => Person.has(p._id)))).to.deep.equal([
           true,
           true,
           true,
@@ -215,7 +215,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
         await person.save()
-        const found = await Person.findById(person.ID)
+        const found = await Person.findById(person._id)
         expect(found).to.deep.equal(person.toJSON())
         try {
           await Person.findById('blah')
@@ -229,7 +229,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        expect(await Promise.all(persons.map(p => Person.findById(p.ID)))).to.deep.equal(persons)
+        expect(await Promise.all(persons.map(p => Person.findById(p._id)))).to.deep.equal(persons)
         try {
           await Promise.all(['foo', 'bar', 'baz'].map(p => Person.findById(p)))
           throw new Error('should throw on invalid id')
@@ -244,23 +244,23 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
         await person.save()
-        expect(await Person.has(person.ID)).to.be.true
-        await Person.delete(person.ID)
-        expect(await Person.has(person.ID)).to.be.false
+        expect(await Person.has(person._id)).to.be.true
+        await Person.delete(person._id)
+        expect(await Person.has(person._id)).to.be.false
         await Person.delete('blah') // Should not throw here, fails gracefully
 
         await person.save()
-        expect(await Person.has(person.ID)).to.be.true
+        expect(await Person.has(person._id)).to.be.true
         await person.remove()
-        expect(await Person.has(person.ID)).to.be.false
+        expect(await Person.has(person._id)).to.be.false
       })
 
       it('should delete multiple entities', async () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        const ids = persons.map(p => p.ID)
-        expect(await Promise.all(persons.map(p => Person.has(p.ID)))).to.deep.equal([
+        const ids = persons.map(p => p._id)
+        expect(await Promise.all(persons.map(p => Person.has(p._id)))).to.deep.equal([
           true,
           true,
           true,
@@ -278,7 +278,7 @@ describe('Collection', () => {
         await person.save()
         person.name = 'Mod' // ;)
         await person.save()
-        expect(await Person.findById(person.ID)).to.haveOwnProperty('name', 'Mod')
+        expect(await Person.findById(person._id)).to.haveOwnProperty('name', 'Mod')
       })
 
       it('should save/update multiple entities', async () => {
@@ -292,7 +292,7 @@ describe('Collection', () => {
       })
       it('should also save/update a non-existant entity', async () => {
         const Person = setupCollection(store)
-        await Person.save({ ID: '', name: 'nothing', age: 55 })
+        await Person.save({ _id: '', name: 'nothing', age: 55 })
         expect(await collect(Person.find())).to.have.length(1)
       })
     })
@@ -301,9 +301,9 @@ describe('Collection', () => {
       it('should support simple queries', async () => {
         const Person = setupCollection(store)
         const people: Person[] = [
-          { ID: '', name: 'Lucas', age: 7 },
-          { ID: '', name: 'Clyde', age: 99 },
-          { ID: '', name: 'Duke', age: 2 },
+          { _id: '', name: 'Lucas', age: 7 },
+          { _id: '', name: 'Clyde', age: 99 },
+          { _id: '', name: 'Duke', age: 2 },
         ]
         await Person.insert(...people)
         const query: FilterQuery<Person> = {
@@ -321,13 +321,13 @@ describe('Collection', () => {
       it('should support complex queries', async () => {
         const Person = setupCollection(store)
         const people: Person[] = [
-          { ID: '', name: 'Lucas', age: 56 },
-          { ID: '', name: 'Clyde', age: 55 },
-          { ID: '', name: 'Mike', age: 52 },
-          { ID: '', name: 'Micheal', age: 52 },
-          { ID: '', name: 'Duke', age: 2 },
-          { ID: '', name: 'Michelle', age: 2 },
-          { ID: '', name: 'Michelangelo', age: 55 },
+          { _id: '', name: 'Lucas', age: 56 },
+          { _id: '', name: 'Clyde', age: 55 },
+          { _id: '', name: 'Mike', age: 52 },
+          { _id: '', name: 'Micheal', age: 52 },
+          { _id: '', name: 'Duke', age: 2 },
+          { _id: '', name: 'Michelle', age: 2 },
+          { _id: '', name: 'Michelangelo', age: 55 },
         ]
         await Person.insert(...people)
         const query: FilterQuery<Person> = {
@@ -359,7 +359,7 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await person.save()
         await Person.readTransaction(async c => {
-          expect(await c.has(person.ID)).to.be.true
+          expect(await c.has(person._id)).to.be.true
         })
       })
 
@@ -368,7 +368,7 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await person.save()
         await Person.readTransaction(async c => {
-          const found = await c.findById(person.ID)
+          const found = await c.findById(person._id)
           expect(found).to.deep.equal(person.toJSON())
           // await c.insert(person) // Compiler won't let us!
         })
@@ -403,7 +403,7 @@ describe('Collection', () => {
         await Person.writeTransaction(async w => {
           const person = new Person(copyPerson())
           await w.insert(person)
-          await w.delete(person.ID)
+          await w.delete(person._id)
         })
         expect(count).to.equal(2)
       })
@@ -417,7 +417,7 @@ describe('Collection', () => {
           try {
             // Start a deadlock...
             await Person.readTransaction(async r => {
-              await r.findById(person.ID) // Won't ever run
+              await r.findById(person._id) // Won't ever run
             }, 2000)
             throw new Error('should not be able to aquire this lock')
           } catch (err) {

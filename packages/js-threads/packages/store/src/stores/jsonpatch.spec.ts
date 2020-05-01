@@ -31,7 +31,7 @@ describe('JsonPatchStore', () => {
       })
     })
 
-    store.put(new Key('bar'), { ID: ulid(), hello: 'world' }).then(() => {
+    store.put(new Key('bar'), { _id: ulid(), hello: 'world' }).then(() => {
       collect(mStore.query({})).then(mRes => {
         collect(store.query({})).then(nRes => {
           expect(nRes).to.have.length(1)
