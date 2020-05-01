@@ -1,3 +1,12 @@
+---
+name: RFC
+about: Request for comment
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 - Feature Name: (fill me in with a unique ident, `my_awesome_feature`)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - RFC PR: [textileio/js-threads#0000](https://github.com/textileio/js-threads/pull)
