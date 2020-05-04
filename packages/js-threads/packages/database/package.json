@@ -70,6 +70,7 @@
     "browser-or-node": "^1.2.1",
     "delay": "^4.3.0",
     "isomorphic-ws": "^4.0.1",
+    "ws": "^7.2.1",
     "level": "^6.0.1",
     "rimraf": "^3.0.0",
     "sinon": "^9.0.0",

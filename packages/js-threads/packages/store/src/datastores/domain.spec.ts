@@ -5,7 +5,7 @@ import { DomainDatastore } from './domain'
 
 describe('DomainDatastore', () => {
   const prefixes = ['abc', '']
-  prefixes.forEach(prefix =>
+  prefixes.forEach((prefix) =>
     it(`basic '${prefix}'`, async () => {
       const mStore = new MemoryDatastore()
       const store = new DomainDatastore(mStore, new Key(prefix))
@@ -17,11 +17,11 @@ describe('DomainDatastore', () => {
         'foo/barb',
         'foo/bar/bazb',
         'foo/bar/baz/barb',
-      ].map(s => new Key(s))
+      ].map((s) => new Key(s))
 
-      await Promise.all(keys.map(key => store.put(key, Buffer.from(key.toString()))))
-      const nResults = Promise.all(keys.map(key => store.get(key)))
-      const mResults = Promise.all(keys.map(key => mStore.get(new Key(prefix).child(key))))
+      await Promise.all(keys.map((key) => store.put(key, Buffer.from(key.toString()))))
+      const nResults = Promise.all(keys.map((key) => store.get(key)))
+      const mResults = Promise.all(keys.map((key) => mStore.get(new Key(prefix).child(key))))
       const results = await Promise.all([nResults, mResults])
       const mRes = await collect(mStore.query({}))
       const nRes = await collect(store.query({}))
@@ -40,7 +40,7 @@ describe('DomainDatastore', () => {
     }),
   )
 
-  prefixes.forEach(prefix => {
+  prefixes.forEach((prefix) => {
     describe('interface-datastore', () => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('interface-datastore/src/tests')({

@@ -37,7 +37,7 @@ describe('KeyBook', () => {
     expect(que!.bytes).to.deep.equal(privKey!.bytes)
 
     const logs = await kb.logs(tid)
-    const same = Array.from(logs).map(l => log.equals(l))
+    const same = Array.from(logs).map((l) => log.equals(l))
     expect(same.every(Boolean)).to.be.true
   })
   it('PubKey', async () => {
@@ -60,7 +60,7 @@ describe('KeyBook', () => {
     expect(que!.bytes).to.deep.equal(privKey!.public.bytes)
 
     const logs = await kb.logs(tid)
-    const same = Array.from(logs).map(l => log.equals(l))
+    const same = Array.from(logs).map((l) => log.equals(l))
     expect(same.every(Boolean)).to.be.true
   })
   it('ReadKey', async () => {

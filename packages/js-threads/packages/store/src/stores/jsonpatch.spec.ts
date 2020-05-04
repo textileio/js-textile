@@ -18,7 +18,7 @@ describe('JsonPatchStore', () => {
     })
   })
 
-  it('basic', done => {
+  it('basic', (done) => {
     const mStore = new MemoryDatastore()
     const store = new JsonPatchStore(mStore, new Key('test'), new Dispatcher())
 
@@ -32,8 +32,8 @@ describe('JsonPatchStore', () => {
     })
 
     store.put(new Key('bar'), { _id: ulid(), hello: 'world' }).then(() => {
-      collect(mStore.query({})).then(mRes => {
-        collect(store.query({})).then(nRes => {
+      collect(mStore.query({})).then((mRes) => {
+        collect(store.query({})).then((nRes) => {
           expect(nRes).to.have.length(1)
           expect(mRes).to.have.length(1)
         })

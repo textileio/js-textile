@@ -183,13 +183,13 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
   async dispatch(...actions: Action<Event<A>>[]) {
     if (this.dispatcher === undefined) return
     const events = await Promise.all(
-      actions.map(async event => {
+      actions.map(async (event) => {
         const value = await event()
         const key = this.prefix.child(new Key(value.id))
         return { key, value }
       }),
     )
-    this.emit('events', ...events.map(event => event.value))
+    this.emit('events', ...events.map((event) => event.value))
     return this.dispatcher.dispatch(...events)
   }
 
