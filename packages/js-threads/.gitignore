@@ -96,6 +96,7 @@ local.properties
 *.keystore
 *.iml
 .nyc_output
+**/stats.json
 
 # Buck
 buck-out/

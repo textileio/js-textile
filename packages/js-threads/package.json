@@ -5,10 +5,11 @@
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
-    "pretest": "npm run bootstrap && npm run lint",
     "bootstrap": "lerna bootstrap",
     "compile": "lerna run compile",
     "build": "lerna run build",
+    "build:node": "lerna run build:node --stream",
+    "build:browser": "lerna run build:browser --stream",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser",
     "test:node": "TS_NODE_FILES=true mocha --exit",
@@ -46,6 +47,8 @@
     "typedoc": "^0.15.3",
     "typedoc-plugin-lerna-packages": "^0.2.2",
     "typescript": "^3.7.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
     "ws": "^7.2.3"
   },
   "husky": {

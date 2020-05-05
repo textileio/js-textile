@@ -13,7 +13,9 @@
   "scripts": {
     "prepublish": "npm run build",
     "prebuild": "npm run clean",
-    "build": "npm run compile",
+    "build": "npm run build:node && npm run build:browser",
+    "build:node": "npm run compile",
+    "build:browser": "webpack --mode production --config ../../webpack.config.js",
     "compile": "tsc -b tsconfig.json",
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup  src/**/*.spec.ts --webpack-config ../../webpack.test.js"

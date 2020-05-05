@@ -233,7 +233,7 @@ export class Database extends EventEmitter2 {
     }
     await this.eventBus.start(this.threadID)
     this.eventBus.on('record', this.onRecord.bind(this))
-    this.network.pullThread(this.threadID) // Don't await
+    if (this.threadID) this.network.pullThread(this.threadID) // Don't await
   }
 
   /**
