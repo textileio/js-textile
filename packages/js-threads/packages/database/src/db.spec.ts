@@ -74,7 +74,7 @@ async function runListenersComplexUseCase(los: string[]) {
 
   // Collection1 save i1
   // Collection1 save i2
-  await Collection1.writeTransaction(async c => {
+  await Collection1.writeTransaction(async (c) => {
     i1.counter = 30
     i2.counter = 11
     await c.save(i1, i2)
@@ -111,7 +111,7 @@ async function runListenersComplexUseCase(los: string[]) {
 
 describe('Database', () => {
   describe.skip('end to end test', () => {
-    it('should allow paired peers to exchange updates', async function() {
+    it('should allow paired peers to exchange updates', async function () {
       if (isBrowser) return this.skip()
       // @todo This test is probably too slow for CI, but should run just fine locally
       // Should probably just skip it (https://stackoverflow.com/a/48121978) in CI
@@ -173,7 +173,7 @@ describe('Database', () => {
       })
     })
 
-    it('should work with a persistent database and custom options', async function() {
+    it('should work with a persistent database and custom options', async function () {
       if (isBrowser) return this.skip()
       const datastore = new LevelDatastore(tmp)
       if (datastore) await (datastore as any).db.clear()
@@ -312,6 +312,17 @@ describe('Database', () => {
         { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
       ]
       assertEvents(actions, expected)
+    })
+  })
+  describe('Basic', () => {
+    it('should return valid addrs and keys for sharing', async () => {
+      const store = new MemoryDatastore()
+      const db = new Database(store)
+      const threadID = ThreadID.fromRandom()
+      await db.open({ threadID })
+      const info = await db.getInfo()
+      expect(info?.addrs?.size).to.be.greaterThan(1)
+      expect(info?.key).to.not.be.undefined
     })
   })
 })

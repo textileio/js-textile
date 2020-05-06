@@ -59,12 +59,12 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
     const rawId = Buffer.from(log.id as string, 'base64')
     const pid = PeerId.createFromBytes(rawId)
     // @todo: Currently it looks like private key unmarshaling isn't compatible between Go and JS?
-    // const pkBytes = Buffer.from(log.privkey as string, 'base64')
+    // const pkBytes = Buffer.from(log.privkey as string)
     // const privKey = await keys.unmarshalPrivateKey(pkBytes)
     const logInfo: LogInfo = {
       id: pid,
       addrs: new Set(
-        log.addrsList.map(addr => new Multiaddr(Buffer.from(addr as string, 'base64'))),
+        log.addrsList.map((addr) => new Multiaddr(Buffer.from(addr as string, 'base64'))),
       ),
       head: log.head ? new CID(Buffer.from(log.head as string, 'base64')) : undefined,
       pubKey: keys.unmarshalPublicKey(Buffer.from(log.pubkey as string, 'base64')),
@@ -72,10 +72,14 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject) {
     }
     logs.add(logInfo)
   }
+  const addrs = new Set(
+    proto.addrsList.map((addr) => new Multiaddr(Buffer.from(addr as string, 'base64'))),
+  )
   const threadInfo: ThreadInfo = {
     id,
     key,
     logs,
+    addrs,
   }
   return threadInfo
 }
@@ -125,7 +129,7 @@ export class Client implements Network {
           token = message.getToken()
         }
       })
-      client.onEnd(code => {
+      client.onEnd((code) => {
         client.close()
         if (code === grpc.Code.OK) {
           resolve(token)
@@ -313,7 +317,7 @@ export class Client implements Network {
     opts?: ThreadOptions,
   ) {
     logger.debug('making subscribe request')
-    const ids = threads.map(thread => thread.toBytes())
+    const ids = threads.map((thread) => thread.toBytes())
     const request = new pb.SubscribeRequest()
     request.setThreadidsList(ids)
     const keys = new Map<ThreadID, Uint8Array | undefined>() // replicator key cache
@@ -366,7 +370,7 @@ export class Client implements Network {
         request: req,
         host: this.config.host,
         metadata: this.config._wrapMetadata({ Authorization: `Bearer ${token}` }),
-        onEnd: res => {
+        onEnd: (res) => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {
             if (message) {

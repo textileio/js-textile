@@ -242,15 +242,9 @@ export class Database extends EventEmitter2 {
   async getInfo() {
     if (this.threadID !== undefined) {
       const info = await this.network.getThread(this.threadID)
-      const hostID = await this.network.getHostID()
-      // This is the only address we know about... and the port is wrong
-      const hostAddr = Multiaddr.fromNodeAddress(parse(this.network.client.config.host), 'tcp')
-      const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
-      const ta = new Multiaddr(`/thread/${info.id.toString()}`)
-      const full = hostAddr.encapsulate(pa.encapsulate(ta))
       return {
-        dbKey: info.key,
-        addresses: [full.toString()],
+        key: info.key,
+        addrs: info.addrs,
       }
     }
   }

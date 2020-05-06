@@ -3,6 +3,7 @@ import { ThreadID } from '@textile/threads-id'
 import multibase from 'multibase'
 import { LogInfo } from './log'
 import { ThreadKey } from './key'
+import { Multiaddr } from '@textile/multiaddr'
 
 // Thread protocol version
 const version = '0.0.1'
@@ -47,6 +48,11 @@ export interface ThreadInfo {
    * Symmetric encryption keys.
    */
   key?: ThreadKey
+
+  /**
+   * The thread addrs.
+   */
+  addrs?: Set<Multiaddr>
 }
 
 /**
