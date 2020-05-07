@@ -34,12 +34,18 @@ export interface ContextKeys {
   ['x-textile-api-key']?: string
 
   /**
-   * Authorization token for interacting with remote APIs,
+   * Authorization token for interacting with remote APIs.
    */
   authorization?: string
 
-  // @todo: Add docs here
+  /**
+   * API signature used to authenticate with remote APIs.
+   */
   ['x-textile-api-sig']?: string
+
+  /**
+   * Raw message (date as ISO string) used to generate API signature.
+   */
   ['x-textile-api-sig-msg']?: string
 
   /**
@@ -55,6 +61,11 @@ export interface ContextKeys {
    * Whether to enable debugging output during gRPC calls.
    */
   debug?: boolean
+
+  /**
+   * Extras
+   */
+  [key: string]: any
 }
 
 /**
@@ -89,45 +100,63 @@ export class Context implements Config {
     return this._context['debug']
   }
 
+  set(key: keyof ContextKeys, value?: any) {
+    this._context[key] = value
+    return this
+  }
+
+  get(key: keyof ContextKeys) {
+    return this._context[key]
+  }
+
   withSession(value?: string) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['x-textile-session']: value })
+    this._context['x-textile-session'] = value
+    return this
   }
 
   withThread(value?: ThreadID) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['x-textile-thread']: value.toString() })
+    this._context['x-textile-thread'] = value.toString()
+    return this
   }
 
   withThreadName(value?: string) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['x-textile-thread-name']: value })
+    this._context['x-textile-thread-name'] = value
+    return this
   }
 
   withOrg(value?: string) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['x-textile-org']: value })
+    this._context['x-textile-org'] = value
+    return this
   }
 
   withToken(value?: string) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['authorization']: `bearer ${value}` })
+    this._context['authorization'] = `bearer ${value}`
+    return this
   }
 
   withAPIKey(value?: string) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ['x-textile-api-key']: value })
+    this._context['x-textile-api-key'] = value
+    return
   }
 
   withAPISig(value?: { sig: string; msg: string }) {
     if (value === undefined) return this
     const { sig, msg } = value
-    return Context.fromJSON({ ...this._context, ['x-textile-api-sig-msg']: msg, ['x-textile-api-sig']: sig })
+    this._context['x-textile-api-sig-msg'] = msg
+    this._context['x-textile-api-sig'] = sig
+    return this
   }
 
   withContext(value?: Context) {
     if (value === undefined) return this
-    return Context.fromJSON({ ...this._context, ...value._context })
+    this._context = value._context
+    return this
   }
 
   toJSON() {
@@ -142,15 +171,5 @@ export class Context implements Config {
     const ctx = new Context()
     ctx._context = json
     return ctx
-  }
-
-  // @todo: Drop these in favor of toJSON() once other clients make the switch
-  _wrapMetadata(values?: Record<string, any>) {
-    return { ...values, ...this.toJSON() }
-  }
-
-  // @todo: Drop these in favor of toJSON() once other clients make the switch
-  _wrapBrowserHeaders(values: grpc.Metadata): grpc.Metadata {
-    return values
   }
 }

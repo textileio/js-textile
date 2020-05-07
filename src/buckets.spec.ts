@@ -25,7 +25,8 @@ describe('Buckets...', () => {
   let fileSize: number
   before(async () => {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
-    ctx = ctx.withSession(user.user?.session).withThreadName('buckets')
+    // Add a session token and specify the thread name to use
+    ctx.withSession(user.user?.session).withThreadName('buckets')
     const id = ThreadID.fromRandom()
     const db = new Client(ctx)
     await db.newDB(id.toBytes())
