@@ -57,77 +57,7 @@ Want something specific? Take a look at our [contributor guide](#contributing) f
 
 ### Overview
 
-Underlying the Threads Database are a number of ideas and technologies, which are outlined in detail in the [Threads whitepaper](https://github.com/textileio/papers). These components are all housed within this [mono-repo](https://en.wikipedia.org/wiki/Monorepo), and include a set of [core modules](./packages/core) for creating Thread identities and keys (`@textile/threads-core`), as well as tooling for data [encryption and encoding](./packages/encoding) (`@textile/threads-encoding`), networking (with support for [local](./packages/network) (`@textile/threads-network`) and [remote](./packages/network-client) (`@textile/threads-network-client`) key management), and a local-first, event-sourced [storage layer](./packages/store) (`@textile/threads-store`).
-
-### Details
-
-A Thread-based Database is tied to a single Thread (with associated Thread ID). A Database is an Event Emitter (in the Nodejs sense), and Listeners can subscribe to Events using 'wildcard' syntax via the [EventEmitter2](https://github.com/EventEmitter2/EventEmitter2) library. For example, you can do something like (note the mongoose-like syntax):
-
-```typescript
-import { Database } from '@textile/threads-database'
-const db = new Database(...)
-const Collection1 = await db.newCollectionFromObject('Collection1', {
-  ID: '',
-  name: '',
-  counter: 0,
-})
-
-// This will listen to any and all event types on Collection1
-db.on('Collection1.**', update => {
-  console.log(update)
-})
-
-const thing = new Collection1({ ID: 'id-i1', name: 'Textile1' })
-await thing.save()  
-```
-
-To handle different data structures, a Database contains Collections, each of which are defined by a [json-schema.org](https://json-schema.org) schema. These schemas define the 'shape' of Collection Instances. Collections implement a Store with [JSON Patch](https://github.com/Starcounter-Jack/JSON-Patch) semantics by default, but will be made to support other types (CRDT-driven documents for instance) in the future (some of which are already under active development). Ultimately, a Collection is a Store with a set of APIs to make it feel like a *local database table*. For example, there are Collection- and Instance-level APIs to work with data:
-
-```typescript
-const i1 = new Collection1({ ID: 'id-i1', name: 'Textile1' }) // This is not yet persisted
-await i1.save() // Save changes
-
-// Modify the `i1` instance
-i1.name = 'Textile0'
-await i1.save() // Save changes
-
-// Modify it again
-i1.name = 'Blah'
-i1.counter = 33
-
-// Save it from the Collection
-await Collection1.save(i1)
-
-// Delete it from the Collection
-await Collection1.delete(i1.ID)
-```
-
-Plus a bunch more APIs you'd expect, like `insert`, `findOne`, `has`, etc.. It also supports Mongodb/Mongoose style search (`find`), which returns an [AsyncIterator]() that consumers can use:
-
-```typescript
-const Thing = new Collection<Info>('things', {}) // Anything goes schema
-await Thing.insert(
-  { ID: '', other: -1, thing: 'five' },
-  { ID: '', other: 2, thing: 'two' },
-  { ID: '', other: 3, thing: 'three' },
-  { ID: '', other: 4, thing: 'four' },
-)
-
-const all = Thing.find({ $or: [{ other: { $gt: 1 } }, { thing: 'one' }] }, { sort: { other: -1 } })
-for await (const { key, value } of all) {
-    console.log(value)
-}
-```
-
-Collections also support (basic) read and write Transactions. These are lockable, key-based 'states' that you can put the Collection into, so that anything else that wants to write to the Collection must _await_ for the Transaction to complete. Transactions do not yet provide isolation, though they do provide atomic update semantics.
-
-Any mutations on a Collections (which are essentially [aggregate roots] in the CQRS-sense), are dispatched via the Database's Dispatcher. There is one Dispatcher per Database in practice, and all Collections receive all updates, so their Reducer is responsible for taking appropriate action. The Dispatcher is then responsible for 1) persisting the event, and 2) calling the Collections' Reducer methods. At this point, the entire process can work entirely 'offline'. This design supports 'offline first' applications that may not have connections to a remote Peer for networking.
-
-Networking is supported via the Event Bus. The Event Bus has two core components, a network Watcher (for observing updates from the Network layer) and a persistent Queue (for pushing updates to the Network layer). Essentially, the Event Bus subscribes to Events on the Database's Thread from the Network layer, and dispatches them via the Dispatcher to the Collections. From there, the behavior is identical to a 'local' Event.
-
-Conversely, for Events generated locally on the Collections, these are pushed onto the Event Bus's Queue by the corresponding Collection (after a successful dispatch process), and they will attempt to send the update out via the Network layer. The queue is persistent in the case of the app being offline. It will attempt to send the updates, with exponential back-off in the case of failures. At the moment, it will make 5 attempts before giving up and moving on to the next Event (in the background). After it has processed its Queue, it will try any skipped events again (and again). The Event Queue will continue to process events and flush them to the Network layer as long as there are new events coming in. Upon app restart, the Queue will restart from the top, so that (say) a page refresh would potentially lead to re-connecting to the remote Peer and processing local events again.
-
-All of the above is backed by a single (or multiple, depending on how a developer wants to use them) Datastore. By using the Datastore interface, we can support any backend that supports the abstract-leveldown interface (which includes leveldb, mongo, sqlite, memory, and many more). Other backends could be implemented by implementing the Datastore interface for them.
+Underlying the Threads Database are a number of ideas and technologies, which are outlined in detail in the [Threads whitepaper](https://github.com/textileio/papers). These components are all housed within this [mono-repo](https://en.wikipedia.org/wiki/Monorepo), and include a set of [core modules](./packages/core) for creating Thread identities and keys (`@textile/threads-core`), as well as tooling for data [encryption and encoding](./packages/encoding) (`@textile/threads-encoding`), networking (with support for [local](./packages/network) (`@textile/threads-network`) and [remote](./packages/network-client) (`@textile/threads-network-client`) key management), and a local-first, event-sourced [storage layer](./packages/store) (`@textile/threads-store`). There are also two entry points for running Threads DB, including a [local-first Javascript _module_](./packages/database) (`@textile/threads-database`), and a [remote-only, Javascript _client_](./packages/client) (`@textile/threads-client`).
 
 ## Install
 
@@ -149,79 +79,16 @@ There are also a number of other recommended packages that will make working wit
 npm i --save interface-datastore datastore-level buffer 
 ```
 
-If you are running `js-threads` in an environment that does not support WebSockets by default (such as nodejs), be sure to include it explicitly using something like the following at the top of your script or module:
+If you are running `js-threads` in an environment that does not support [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) by default (such as Node), be sure to include it explicitly using something like the following at the top of your script or module:
 
 ```javascript
-// 'Hack' to get WebSocket in the global namespace on nodejs
+// Add WebSocket to the global namespace on Node
 global.WebSocket = require('isomorphic-ws')
 ```
 
 ## Usage
 
-The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide several excellent examples of using the various components of `js-threads`. Additionally, there are a growing list of [examples](https://github.com/textileio/js-threads/tree/master/examples) available. Complete usage examples (with authentication etc) will be added soon. In the mean time, the following end-to-end example of exchanging data between two peers provides a good idea of the APIs that developers can expect to encounter when working with Threads:
-
-```typescript
-import { Multiaddr, ThreadID, Variant } from '@textile/threads-core'
-import { Database } from '@textile/threads-database'
-import { DomainDatastore } from '@textile/threads-store'
-import { MemoryDatastore, Key } from 'interface-datastore'
-import LevelDatastore from 'datastore-level'
-
-interface DummyEntity {
-  ID: string
-  name: string
-  counter: number
-}
-
-// Peer 1: Create db1, register a collection, create and update an instance.
-const d1 = new Database(...)
-await d1.open()
-const id1 = d1.threadID
-if (id1 === undefined) {
-throw new Error('should not be invalid thread id')
-}
-// Create a new collection
-const Dummy1 = await d1.newCollectionFromObject<DummyEntity>('dummy', {
-  ID: '',
-  name: '',
-  counter: 0,
-})
-
-// Get peer1 database information (addr, id, keys, etc)
-const dbInfo = await d1.dbInfo()
-
-// Peer 2: Create a completely parallel db2, which will sync with the previous one and should
-// have the same state of dummy. This one will be manually 'built' from sub-components,
-// just to show how it can be done!
-const info = await d1.service.getThread(id1)
-const datastore = new MemoryDatastore()
-const client = new Client({ host: 'http://127.0.0.1:6207' })
-const service = new Network(new DomainDatastore(datastore, new Key('service')), client)
-const test = await service.getHostID()
-const d2 = await Database.fromAddress(dbInfo.addr, info.key, datastore, {
-  service,
-})
-// Create parallel collection
-const Dummy2 = await d2.newCollectionFromObject<DummyEntity>('dummy', {
-    ID: '',
-    name: '',
-    counter: 0,
-})
-
-const dummy1 = new Dummy1({ name: 'Textile', counter: 0 })
-dummy1.counter += 42
-await dummy1.save()
-
-// wait about 5 seconds?
-
-const dummy2 = await Dummy2.findById(dummy1.ID)
-console.log(dummy2.name === dummy1.name)
-console.log(dummy2.counter === dummy1.counter)
-await d1.close()
-await d2.close()
-```
-
-That's it! Two completely separate MongoDB style database instances, syncing encrypted and signed data across the network!
+The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide tests that use the various components of `js-threads`, and provide useful examples to explore. Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available. Complete usage examples (with authentication etc) will be added soon.
 
 ## Authentication
 
