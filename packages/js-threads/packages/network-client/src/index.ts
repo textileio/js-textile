@@ -107,6 +107,10 @@ export class Client implements Network {
     grpc.setDefaultTransport(this.config.transport)
   }
 
+  /**
+   * Obtain a token for interacting with the remote network API.
+   * @param identity The generic identity to use for signing and validation.
+   */
   async getToken(identity: Identity) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
       host: this.config.host,

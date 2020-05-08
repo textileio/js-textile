@@ -3,6 +3,7 @@
  * @module @textile/threads-client/models
  */
 import { grpc } from '@improbable-eng/grpc-web'
+import { Context } from '@textile/context'
 import {
   CreateRequest,
   SaveRequest,
@@ -14,7 +15,7 @@ import {
   WriteTransactionRequest,
   WriteTransactionReply,
 } from '@textile/threads-client-grpc/api_pb'
-import { Config } from './config'
+import { ThreadID } from '@textile/threads-id'
 import { Instance, InstanceList, QueryJSON } from './query'
 import { Transaction } from './Transaction'
 
@@ -23,9 +24,9 @@ import { Transaction } from './Transaction'
  */
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
   constructor(
-    protected readonly config: Config,
+    protected readonly context: Context,
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>,
-    protected readonly dbID: Buffer,
+    protected readonly dbID: ThreadID,
     protected readonly modelName: string,
   ) {
     super(client, dbID, modelName)
@@ -35,11 +36,11 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    */
   public async start() {
     const startReq = new StartTransactionRequest()
-    startReq.setDbid(this.dbID)
+    startReq.setDbid(this.dbID.toBytes())
     startReq.setCollectionname(this.modelName)
     const req = new WriteTransactionRequest()
     req.setStarttransactionrequest(startReq)
-    const metadata = this.config.toJSON()
+    const metadata = JSON.parse(JSON.stringify(this.context))
     this.client.start(metadata)
     this.client.send(req)
   }

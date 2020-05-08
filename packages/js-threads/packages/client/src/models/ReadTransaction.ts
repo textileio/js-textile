@@ -11,18 +11,19 @@ import {
   ReadTransactionRequest,
   ReadTransactionReply,
 } from '@textile/threads-client-grpc/api_pb'
+import { Context } from '@textile/context'
+import { ThreadID } from '@textile/threads-id'
 import { Transaction } from './Transaction'
 import { Instance, InstanceList, QueryJSON } from './query'
-import { Config } from './config'
 
 /**
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
  */
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
   constructor(
-    protected readonly config: Config,
+    protected readonly context: Context,
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>,
-    protected readonly dbID: Buffer,
+    protected readonly dbID: ThreadID,
     protected readonly modelName: string,
   ) {
     super(client, dbID, modelName)
@@ -32,11 +33,11 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
    */
   public async start() {
     const startReq = new StartTransactionRequest()
-    startReq.setDbid(this.dbID)
+    startReq.setDbid(this.dbID.toBytes())
     startReq.setCollectionname(this.modelName)
     const req = new ReadTransactionRequest()
     req.setStarttransactionrequest(startReq)
-    const metadata = this.config.toJSON()
+    const metadata = JSON.parse(JSON.stringify(this.context))
     this.client.start(metadata)
     this.client.send(req)
   }

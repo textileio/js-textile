@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 ;(global as any).WebSocket = require('isomorphic-ws')
 
-import { Libp2pCryptoIdentity } from '@textile/threads-core'
-
 import { expect } from 'chai'
 import { Where, ReadTransaction, WriteTransaction } from './models'
 import { Client, ThreadID } from './index'
@@ -54,14 +52,13 @@ const createPerson = (): Person => {
 }
 
 describe('Client', function () {
-  const threadId = ThreadID.fromRandom()
-  const dbID = threadId.toBytes()
+  const dbID = ThreadID.fromRandom()
   let dbKey: string
   let dbAddr: string
   describe('.newDB', () => {
     it('response should succeed', async () => {
-      const identity = await Libp2pCryptoIdentity.fromRandom()
-      await client.getToken(identity)
+      // Calling getToken without an explicit identity will create a default random PKI pair
+      await client.getToken()
       await client.newDB(dbID)
     })
   })

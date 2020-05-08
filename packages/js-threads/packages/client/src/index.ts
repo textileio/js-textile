@@ -7,13 +7,12 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { API, APIGetToken } from '@textile/threads-client-grpc/api_pb_service'
 import * as pb from '@textile/threads-client-grpc/api_pb'
 import nextTick from 'next-tick'
-import { Identity } from '@textile/threads-core'
+import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
+import { Context } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
-  Config,
-  defaultConfig,
   QueryJSON,
   Instance,
   InstanceList,
@@ -25,7 +24,7 @@ import {
 } from './models'
 
 export { ThreadID }
-export { Config, Instance, QueryJSON, defaultConfig }
+export { Instance, QueryJSON }
 export { Query, Where }
 
 /**
@@ -34,18 +33,37 @@ export { Query, Where }
  *  It is a wrapper around Textile's 'DB' API, which is defined here: https://github.com/textileio/go-threads/blob/master/api/pb/api.proto.
  */
 export class Client {
+  public serviceHost: string
+  public rpcOptions: grpc.RpcOptions
   /**
-   * Client creates a new gRPC client instance.
-   * @param config A set of configuration settings to control the client.
+   * Creates a new gRPC client instance for accessing the Textile Threads API.
+   * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public config: Config = defaultConfig) {
-    grpc.setDefaultTransport(this.config.transport ?? grpc.WebsocketTransport())
+  constructor(public context: Context = new Context('http://127.0.0.1:6007')) {
+    this.serviceHost = context.host
+    this.rpcOptions = {
+      transport: context.transport,
+      debug: context.debug,
+    }
+    // If we have a default here, use it. Otherwise, rely on specific calls
+    this.rpcOptions.transport && grpc.setDefaultTransport(this.rpcOptions.transport)
   }
 
-  async getToken(identity: Identity) {
+  /**
+   * Obtain a token for interacting with the remote network API.
+   * @param identity The generic identity to use for signing and validation.
+   * @param ctx Context object containing web-gRPC headers and settings.
+   * @note If an identity is not provided, a random PKI identity is used. This might not be what you want!
+   * It is not easy/possible to migrate identities after the fact. Please supply an identity argument if
+   * you wish to persist/retrieve user data later.
+   */
+  async getToken(identity?: Identity, ctx?: Context) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
-      host: this.config.host ?? '',
+      host: this.serviceHost,
+      transport: this.rpcOptions.transport,
+      debug: this.rpcOptions.debug,
     })
+    const ident = identity ?? (await Libp2pCryptoIdentity.fromRandom())
     return new Promise<string>((resolve, reject) => {
       let token: string
       client.onMessage(async (message: pb.GetTokenReply) => {
@@ -53,7 +71,7 @@ export class Client {
           const challenge = message.getChallenge()
           let sig: Buffer = Buffer.from('')
           try {
-            sig = await identity.sign(Buffer.from(challenge as string))
+            sig = await ident.sign(Buffer.from(challenge as string))
           } catch (err) {
             reject(err)
           }
@@ -67,14 +85,16 @@ export class Client {
       client.onEnd((code) => {
         client.close()
         if (code === grpc.Code.OK) {
+          this.context.withToken(token)
           resolve(token)
         } else {
           reject(new Error(code.toString()))
         }
       })
       const req = new pb.GetTokenRequest()
-      req.setKey(identity.public.toString())
-      client.start(this.config.toJSON())
+      req.setKey(ident.public.toString())
+      const metadata = JSON.parse(JSON.stringify(this.context.withContext(ctx)))
+      client.start(metadata)
       client.send(req)
       // client.finishSend()
     })
@@ -83,12 +103,16 @@ export class Client {
   /**
    * newDB creates a new store on the remote node.
    * @param dbID the ID of the database
+   * @param ctx Context object containing web-gRPC headers and settings.
    */
-  public async newDB(dbID: Buffer) {
+  public async newDB(dbID?: ThreadID, ctx?: Context) {
+    // If we have an id, use it, otherwise, check the context, otherwise, create a new random one
+    const id = dbID ?? ThreadID.fromBytes(ctx?.get('x-textile-thread')) ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
-    req.setDbid(dbID)
+    req.setDbid(id.toBytes())
     await this.unary(API.NewDB, req)
-    return
+    this.context.withThread && this.context.withThread(id)
+    return id
   }
 
   /**
@@ -98,12 +122,12 @@ export class Client {
    * @param name The human-readable name for the model.
    * @param schema The actual json-schema.org compatible schema object.
    */
-  public async newCollection(dbID: Buffer, name: string, schema: any) {
+  public async newCollection(dbID: ThreadID, name: string, schema: any) {
     const req = new pb.NewCollectionRequest()
     const config = new pb.CollectionConfig()
     config.setName(name)
     config.setSchema(Buffer.from(JSON.stringify(schema)))
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setConfig(config)
     await this.unary(API.NewCollection, req)
     return
@@ -144,9 +168,9 @@ export class Client {
    * getDBInfo returns invite 'links' unseful for inviting other peers to join a given store/thread.
    * @param dbID the ID of the database
    */
-  public async getDBInfo(dbID: Buffer) {
+  public async getDBInfo(dbID: ThreadID) {
     const req = new pb.GetDBInfoRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     const res = (await this.unary(API.GetDBInfo, req)) as pb.GetDBInfoReply.AsObject
     const invites: Array<{ address: string; key: string }> = []
     for (const addr of res.addrsList) {
@@ -167,9 +191,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects.
    */
-  public async create(dbID: Buffer, collectionName: string, values: any[]) {
+  public async create(dbID: ThreadID, collectionName: string, values: any[]) {
     const req = new pb.CreateRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
@@ -186,9 +210,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
    */
-  public async save(dbID: Buffer, collectionName: string, values: any[]) {
+  public async save(dbID: ThreadID, collectionName: string, values: any[]) {
     const req = new pb.SaveRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
@@ -208,9 +232,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to delete.
    */
-  public async delete(dbID: Buffer, collectionName: string, IDs: string[]) {
+  public async delete(dbID: ThreadID, collectionName: string, IDs: string[]) {
     const req = new pb.DeleteRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceidsList(IDs)
     await this.unary(API.Delete, req)
@@ -223,9 +247,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to check for.
    */
-  public async has(dbID: Buffer, collectionName: string, IDs: string[]) {
+  public async has(dbID: ThreadID, collectionName: string, IDs: string[]) {
     const req = new pb.HasRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceidsList(IDs)
     const res = (await this.unary(API.Has, req)) as pb.HasReply.AsObject
@@ -238,9 +262,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param query The object that describes the query. User Query class or primitive QueryJSON type.
    */
-  public async find<T = any>(dbID: Buffer, collectionName: string, query: QueryJSON) {
+  public async find<T = any>(dbID: ThreadID, collectionName: string, query: QueryJSON) {
     const req = new pb.FindRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     // @todo: Find a more isomorphic way to do this base64 round-trip
     req.setQueryjson(Buffer.from(JSON.stringify(query)).toString('base64'))
@@ -259,9 +283,9 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(dbID: Buffer, collectionName: string, ID: string) {
+  public async findByID<T = any>(dbID: ThreadID, collectionName: string, ID: string) {
     const req = new pb.FindByIDRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceid(ID)
     const res = (await this.unary(API.FindByID, req)) as pb.FindByIDReply.AsObject
@@ -276,11 +300,13 @@ export class Client {
    * @param dbID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public readTransaction(dbID: Buffer, collectionName: string): ReadTransaction {
+  public readTransaction(dbID: ThreadID, collectionName: string): ReadTransaction {
     const client = grpc.client(API.ReadTransaction, {
-      host: this.config.host ?? '',
+      host: this.serviceHost,
+      transport: this.rpcOptions.transport,
+      debug: this.rpcOptions.debug,
     }) as grpc.Client<pb.ReadTransactionRequest, pb.ReadTransactionReply>
-    return new ReadTransaction(this.config, client, dbID, collectionName)
+    return new ReadTransaction(this.context, client, dbID, collectionName)
   }
 
   /**
@@ -288,11 +314,13 @@ export class Client {
    * @param dbID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public writeTransaction(dbID: Buffer, collectionName: string): WriteTransaction {
+  public writeTransaction(dbID: ThreadID, collectionName: string): WriteTransaction {
     const client = grpc.client(API.WriteTransaction, {
-      host: this.config.host ?? '',
+      host: this.serviceHost,
+      transport: this.rpcOptions.transport,
+      debug: this.rpcOptions.debug,
     }) as grpc.Client<pb.WriteTransactionRequest, pb.WriteTransactionReply>
-    return new WriteTransaction(this.config, client, dbID, collectionName)
+    return new WriteTransaction(this.context, client, dbID, collectionName)
   }
 
   /**
@@ -303,12 +331,12 @@ export class Client {
    * @param callback The callback to call on each update to the given instance.
    */
   public listen<T = any>(
-    dbID: Buffer,
+    dbID: ThreadID,
     filters: Filter[],
     callback: (reply?: Instance<T>, err?: Error) => void,
   ) {
     const req = new pb.ListenRequest()
-    req.setDbid(dbID)
+    req.setDbid(dbID.toBytes())
     for (const filter of filters) {
       const requestFilter = new pb.ListenRequest.Filter()
       if (filter.instanceID) {
@@ -343,10 +371,13 @@ export class Client {
       req.addFilters(requestFilter)
     }
 
+    const metadata = JSON.parse(JSON.stringify(this.context))
     const res = grpc.invoke(API.Listen, {
-      host: this.config.host ?? '',
+      host: this.serviceHost,
+      transport: this.rpcOptions.transport,
+      debug: this.rpcOptions.debug,
       request: req,
-      metadata: this.config.toJSON(),
+      metadata,
       onMessage: (rec: pb.ListenReply) => {
         const ret: Instance<T> = {
           instance: JSON.parse(Buffer.from(rec.getInstance_asU8()).toString()),
@@ -368,11 +399,14 @@ export class Client {
     TResponse extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<TRequest, TResponse>
   >(methodDescriptor: M, req: TRequest) {
+    const metadata = JSON.parse(JSON.stringify(this.context))
     return new Promise((resolve, reject) => {
       grpc.unary(methodDescriptor, {
+        transport: this.rpcOptions.transport,
+        debug: this.rpcOptions.debug,
         request: req,
-        host: this.config.host ?? '',
-        metadata: this.config.toJSON(),
+        host: this.serviceHost,
+        metadata,
         onEnd: (res) => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {
