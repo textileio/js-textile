@@ -2,11 +2,13 @@ import { Datastore, Key, MemoryDatastore, Query } from 'interface-datastore'
 import Ajv, { ValidateFunction, ValidationError } from 'ajv'
 import { ulid } from 'ulid'
 import { reduce } from 'streaming-iterables'
-import { Query as MingoQuery } from 'mingo/query'
-import { resolve } from 'mingo/util'
+import { Query as MingoQuery } from 'mingo'
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
 import { Dispatcher, Instance, JsonPatchStore } from '@textile/threads-store'
 import { FilterQuery } from './query'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { resolve } = require('mingo/util')
 
 export { FilterQuery }
 

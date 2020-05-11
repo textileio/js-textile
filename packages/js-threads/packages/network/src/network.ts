@@ -13,6 +13,7 @@ import {
   ThreadID,
   ThreadRecord,
   ThreadOptions,
+  ThreadInfo,
   Identity,
   NewThreadOptions,
 } from '@textile/threads-core'
@@ -74,7 +75,7 @@ export class Network implements Interface {
       logKey: logInfo.pubKey,
       token: opts?.token ?? this.token,
     }
-    const info = await this.client.createThread(id, newOpts)
+    const info: ThreadInfo = await this.client.createThread(id, newOpts)
     // Now we want to store or create read key
     info.key = new ThreadKey(threadKey.service, threadKey.read || randomBytes(32))
     logger.debug('caching thread + log information')
@@ -98,7 +99,7 @@ export class Network implements Interface {
       logKey: logInfo.pubKey,
       token: opts?.token ?? this.token,
     }
-    const info = await this.client.addThread(addr, newOpts)
+    const info: ThreadInfo = await this.client.addThread(addr, newOpts)
     // Now we want to store full key information
     info.key = threadKey
     logger.debug('caching thread + log information')
