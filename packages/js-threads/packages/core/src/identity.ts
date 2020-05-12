@@ -5,6 +5,14 @@ export function publicKeyToString(key: PublicKey) {
   return multibase.encode('base32', keys.marshalPublicKey(key)).toString()
 }
 
+export function privateKeyToString(key: PrivateKey) {
+  return multibase.encode('base32', keys.marshalPrivateKey(key)).toString()
+}
+
+export function privateKeyFromString(str: string) {
+  return keys.unmarshalPrivateKey(multibase.decode(str))
+}
+
 export interface Public {
   verify(data: Buffer, sig: Buffer): Promise<boolean>
   toString(): string
@@ -71,5 +79,20 @@ export class Libp2pCryptoIdentity implements Identity {
    */
   static async fromRandom() {
     return new Libp2pCryptoIdentity(await keys.supportedKeys.ed25519.generateKeyPair())
+  }
+
+  /**
+   * Returns base32 encoded private key representation.
+   */
+  toString() {
+    return privateKeyToString(this.key)
+  }
+
+  /**
+   * Creates key key from base32 encoded string representation
+   * @param str
+   */
+  static async fromString(str: string) {
+    return new Libp2pCryptoIdentity(await privateKeyFromString(str))
   }
 }
