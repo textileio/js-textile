@@ -74,7 +74,6 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // All good
-      ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id)
