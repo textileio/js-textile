@@ -260,7 +260,6 @@ describe('Users...', () => {
         ctx = ctx.withToken(tok)
       })
       it('should then create a db for the bucket', async () => {
-        ctx = ctx.withThreadName('my-buckets')
         const id = ThreadID.fromRandom()
         const db = new Client(ctx)
         await db.newDB(id)
