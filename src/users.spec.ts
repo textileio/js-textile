@@ -193,7 +193,7 @@ describe('Users...', () => {
       ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
       
-      await db.newDB(id, ctx)
+      await db.newDB(id, ctx.withThreadName('foo'))
       res = await client.listThreads(ctx)
       expect(res.listList).to.have.length(1)
       expect(res.listList[0].name).to.equal('foo')
