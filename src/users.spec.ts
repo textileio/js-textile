@@ -189,7 +189,6 @@ describe('Users...', () => {
       let res = await client.listThreads(ctx)
       expect(res.listList).to.have.length(0)
       // Got one
-      ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
       
       await db.newDB(id, ctx.withThreadName('foo'))
