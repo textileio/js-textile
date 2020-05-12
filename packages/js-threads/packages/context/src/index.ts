@@ -175,27 +175,38 @@ export class Context {
 
   withContext(value?: Context) {
     if (value === undefined) return this
-    this._context = value._context
+    // Spread to copy rather than reference
+    this._context = value.toJSON()
     return this
   }
 
   toJSON() {
-    return this._context
+    // Strip out transport. @todo: phase out transport out entirely
+    const { transport, ...context } = this._context
+    return context
   }
 
   toMetadata() {
     return new grpc.Metadata(this.toJSON())
   }
 
-  static fromJSON(json: ContextKeys) {
+  static fromJSON(
+    json: ContextKeys,
+    host: HostString = defaultHost,
+    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
+    debug = false,
+  ) {
     const ctx = new Context()
     ctx._context = json
+    ctx._context['host'] = host
+    ctx._context['transport'] = transport
+    ctx._context['debug'] = debug
     return ctx
   }
 
-  async withUserKey(key?: KeyInfo) {
+  async withUserKey(key?: KeyInfo, date?: Date) {
     if (key === undefined) return this
-    const sig = await createAPISig(key.secret) // Defaults to 1 minute from now
+    const sig = await createAPISig(key.secret, date)
     return this.withAPIKey(key.key).withAPISig(sig)
   }
 }
