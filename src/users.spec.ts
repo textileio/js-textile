@@ -76,7 +76,7 @@ describe('Users...', () => {
       // All good
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
-      await db.newDB(id)
+      await db.newDB(id, ctx.withThreadName('foo'))
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
