@@ -76,11 +76,7 @@ describe('Users...', () => {
       // All good
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
-<<<<<<< HEAD
       await db.newDB(id, ctx.withThreadName('foo'))
-=======
-      await db.newDB(id)
->>>>>>> chore(deps): adds external context dep
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
@@ -199,10 +195,14 @@ describe('Users...', () => {
       const id = ThreadID.fromRandom()
       
 <<<<<<< HEAD
+<<<<<<< HEAD
       await db.newDB(id, ctx.withThreadName('foo'))
 =======
       await db.newDB(id, ctx)
 >>>>>>> chore(deps): adds external context dep
+=======
+      await db.newDB(id, ctx.withThreadName('foo'))
+>>>>>>> Update src/users.spec.ts
       res = await client.listThreads(ctx)
       expect(res.listList).to.have.length(1)
       expect(res.listList[0].name).to.equal('foo')
