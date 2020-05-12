@@ -262,7 +262,7 @@ describe('Users...', () => {
       it('should then create a db for the bucket', async () => {
         const id = ThreadID.fromRandom()
         const db = new Client(ctx)
-        await db.newDB(id)
+        await db.newDB(id, ctx.withThreadName('my-buckets'))
         ctx = ctx.withThread(id)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
