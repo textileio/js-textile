@@ -10,7 +10,7 @@ import { expect } from 'chai'
 import { Client } from '@textile/threads-client'
 import { Libp2pCryptoIdentity } from '@textile/threads-core'
 import { isBrowser } from 'browser-or-node'
-import { Context } from './context'
+import { Context } from '@textile/context'
 import { Users } from './users'
 import { signUp, createKey, createAPISig } from './utils'
 import { Buckets } from './buckets'
@@ -77,7 +77,7 @@ describe('Users...', () => {
       ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
-      await db.newDB(id.toBytes())
+      await db.newDB(id)
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
@@ -109,10 +109,8 @@ describe('Users...', () => {
       // All good
       ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
-      // Update existing db config directly as it doesn't yet directly support Context API on method calls
-      db.config = ctx
-      // @todo: In the near future, this should be `await db.newDB(id, ctx)`
-      await db.newDB(id.toBytes())
+      
+      await db.newDB(id, ctx)
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
@@ -167,7 +165,7 @@ describe('Users...', () => {
       // Got one
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
-      await db.newDB(id.toBytes())
+      await db.newDB(id)
       res = await client.listThreads(ctx)
       expect(res.listList).to.have.length(1)
     })
@@ -194,10 +192,8 @@ describe('Users...', () => {
       // Got one
       ctx = ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
-      // Update existing db config directly as it doesn't yet directly support Context API on method calls
-      db.config = ctx
-      // @todo: In the near future, this should be `await db.newDB(id, ctx)`
-      await db.newDB(id.toBytes())
+      
+      await db.newDB(id, ctx)
       res = await client.listThreads(ctx)
       expect(res.listList).to.have.length(1)
       expect(res.listList[0].name).to.equal('foo')
@@ -223,8 +219,7 @@ describe('Users...', () => {
         const db = new Client(ctx)
         ctx = ctx.withThreadName('my-buckets')
         const id = ThreadID.fromRandom()
-        db.config = ctx
-        await db.newDB(id.toBytes())
+        await db.newDB(id, ctx)
         ctx = ctx.withThread(id)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
@@ -273,7 +268,7 @@ describe('Users...', () => {
         ctx = ctx.withThreadName('my-buckets')
         const id = ThreadID.fromRandom()
         const db = new Client(ctx)
-        await db.newDB(id.toBytes())
+        await db.newDB(id)
         ctx = ctx.withThread(id)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
