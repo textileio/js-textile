@@ -108,11 +108,7 @@ describe('Users...', () => {
       // All good
       const id = ThreadID.fromRandom()
       
-<<<<<<< HEAD
       await db.newDB(id, ctx.withThreadName('foo'))
-=======
-      await db.newDB(id, ctx)
->>>>>>> chore(deps): adds external context dep
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
@@ -229,9 +225,12 @@ describe('Users...', () => {
         const id = ThreadID.fromRandom()
         await db.newDB(id, ctx)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         ctx = ctx.withThread(id)
 >>>>>>> chore(deps): adds external context dep
+=======
+>>>>>>> Update src/users.spec.ts
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
       it('should then initialize a new bucket in the db and push to it', async function () {
