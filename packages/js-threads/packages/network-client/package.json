@@ -42,7 +42,7 @@
   ],
   "devDependencies": {
     "@types/next-tick": "^1.0.0",
-    "@types/node": "^13.9.2",
+    "@types/node": "^14.0.1",
     "isomorphic-ws": "^4.0.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2",
