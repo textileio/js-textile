@@ -11,7 +11,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build:node",
     "prebuild": "npm run clean",
     "build": "npm run build:node && npm run build:browser",
     "build:node": "npm run compile",
@@ -22,7 +23,6 @@
   "repository": "github:textileio/js-threads",
   "devDependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/threads-id": "^0.0.5",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
@@ -32,6 +32,7 @@
     }
   ],
   "dependencies": {
+    "@textile/threads-id": "^0.0.5",
     "@types/multibase": "^0.6.0",
     "fast-sha256": "^1.3.0",
     "multibase": "^0.7.0"

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { ulid } from 'ulid'
-import * as mingo from 'mingo'
+import mingo from 'mingo'
 import { Datastore, MemoryDatastore } from 'interface-datastore'
 import { collect } from 'streaming-iterables'
 import { Collection, existingKeyError, JSONSchema, FilterQuery } from './collection'
@@ -163,7 +163,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
         await person.save()
-        await Person.readTransaction(async r => {
+        await Person.readTransaction(async (r) => {
           expect(await r.has(person._id)).to.be.true
         })
       })
@@ -171,7 +171,7 @@ describe('Collection', () => {
       it('should create a write transaction', async () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
-        await Person.writeTransaction(async w => {
+        await Person.writeTransaction(async (w) => {
           await w.insert(person)
           expect(await w.has(person._id)).to.be.true
         })
@@ -197,12 +197,12 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        expect(await Promise.all(persons.map(p => Person.has(p._id)))).to.deep.equal([
+        expect(await Promise.all(persons.map((p) => Person.has(p._id)))).to.deep.equal([
           true,
           true,
           true,
         ])
-        expect(await Promise.all(['foo', 'bar', 'baz'].map(p => Person.has(p)))).to.deep.equal([
+        expect(await Promise.all(['foo', 'bar', 'baz'].map((p) => Person.has(p)))).to.deep.equal([
           false,
           false,
           false,
@@ -229,9 +229,9 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        expect(await Promise.all(persons.map(p => Person.findById(p._id)))).to.deep.equal(persons)
+        expect(await Promise.all(persons.map((p) => Person.findById(p._id)))).to.deep.equal(persons)
         try {
-          await Promise.all(['foo', 'bar', 'baz'].map(p => Person.findById(p)))
+          await Promise.all(['foo', 'bar', 'baz'].map((p) => Person.findById(p)))
           throw new Error('should throw on invalid id')
         } catch (err) {
           expect(err.toString()).to.equal('Error: Not Found')
@@ -259,14 +259,18 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        const ids = persons.map(p => p._id)
-        expect(await Promise.all(persons.map(p => Person.has(p._id)))).to.deep.equal([
+        const ids = persons.map((p) => p._id)
+        expect(await Promise.all(persons.map((p) => Person.has(p._id)))).to.deep.equal([
           true,
           true,
           true,
         ])
         await Person.delete(...ids)
-        expect(await Promise.all(ids.map(p => Person.has(p)))).to.deep.equal([false, false, false])
+        expect(await Promise.all(ids.map((p) => Person.has(p)))).to.deep.equal([
+          false,
+          false,
+          false,
+        ])
         await Person.delete('foo', 'bar', 'baz') // Should not error
       })
     })
@@ -285,10 +289,10 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const persons = [copyPerson(), copyPerson(), copyPerson()]
         await Person.insert(...persons)
-        persons.forEach(p => p.age++)
+        persons.forEach((p) => p.age++)
         await Person.save(...persons)
         const array = await collect(Person.find({}))
-        expect(array.map(p => p.value.age)).to.deep.equal([8, 8, 8])
+        expect(array.map((p) => p.value.age)).to.deep.equal([8, 8, 8])
       })
       it('should also save/update a non-existant entity', async () => {
         const Person = setupCollection(store)
@@ -349,7 +353,7 @@ describe('Collection', () => {
         expect(last?.value.age).to.be.lessThan(56)
         expect(await collect(Person.find())).to.have.length(7)
         // Use mingo directly, should also return 3 (sanity check)
-        expect((mingo as any).find(people, query).count()).to.equal(3)
+        expect(mingo.find(people, query).count()).to.equal(3)
       })
     })
 
@@ -358,7 +362,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
         await person.save()
-        await Person.readTransaction(async c => {
+        await Person.readTransaction(async (c) => {
           expect(await c.has(person._id)).to.be.true
         })
       })
@@ -367,7 +371,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         const person = new Person(copyPerson())
         await person.save()
-        await Person.readTransaction(async c => {
+        await Person.readTransaction(async (c) => {
           const found = await c.findById(person._id)
           expect(found).to.deep.equal(person.toJSON())
           // await c.insert(person) // Compiler won't let us!
@@ -379,10 +383,10 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await person.save()
         const t1 = Date.now()
-        await Person.readTransaction(async c => {
+        await Person.readTransaction(async (c) => {
           try {
             // Start a deadlock...
-            await Person.writeTransaction(async w => {
+            await Person.writeTransaction(async (w) => {
               await w.insert(person) // Won't ever run
             }, 2000)
             throw new Error('should not be able to aquire this lock')
@@ -400,7 +404,7 @@ describe('Collection', () => {
         const Person = setupCollection(store)
         let count = 0
         Person.child.on('events', () => count++)
-        await Person.writeTransaction(async w => {
+        await Person.writeTransaction(async (w) => {
           const person = new Person(copyPerson())
           await w.insert(person)
           await w.delete(person._id)
@@ -413,10 +417,10 @@ describe('Collection', () => {
         const person = new Person(copyPerson())
         await person.save()
         const t1 = Date.now()
-        await Person.writeTransaction(async w => {
+        await Person.writeTransaction(async (w) => {
           try {
             // Start a deadlock...
-            await Person.readTransaction(async r => {
+            await Person.readTransaction(async (r) => {
               await r.findById(person._id) // Won't ever run
             }, 2000)
             throw new Error('should not be able to aquire this lock')

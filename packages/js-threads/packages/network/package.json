@@ -11,7 +11,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build:node",
     "prebuild": "npm run clean",
     "build": "npm run build:node && npm run build:browser",
     "build:node": "npm run compile",
@@ -22,6 +23,7 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
+    "@textile/context": "^0.2.0",
     "@textile/threads-core": "^0.1.7",
     "@textile/threads-encoding": "^0.1.7",
     "@textile/threads-network-client": "^0.2.0",
@@ -42,6 +44,9 @@
     },
     {
       "path": "../network-client"
+    },
+    {
+      "path": "../context"
     }
   ],
   "devDependencies": {

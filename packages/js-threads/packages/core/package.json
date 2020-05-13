@@ -11,7 +11,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build:node",
     "prebuild": "npm run clean",
     "build": "npm run build:node && npm run build:browser",
     "build:node": "npm run compile",
@@ -35,7 +36,6 @@
     "@types/varint": "^5.0.0",
     "cids": "^0.8.0",
     "multiaddr": "^7.2.1",
-    "peer-id": "^0.13.9",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },

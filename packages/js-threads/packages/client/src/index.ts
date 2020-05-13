@@ -106,8 +106,7 @@ export class Client {
    * @param ctx Context object containing web-gRPC headers and settings.
    */
   public async newDB(dbID?: ThreadID, ctx?: Context) {
-    // If we have an id, use it, otherwise, check the context, otherwise, create a new random one
-    const id = dbID ?? ThreadID.fromBytes(ctx?.get('x-textile-thread')) ?? ThreadID.fromRandom()
+    const id = dbID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
     req.setDbid(id.toBytes())
     await this.unary(API.NewDB, req)

@@ -2,7 +2,7 @@ import PeerId from 'peer-id'
 import CID from 'cids'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import { ThreadInfo, ThreadOptions, NewThreadOptions, ThreadToken, LogID } from '../thread'
+import { ThreadInfo, NewThreadOptions, LogID } from '../thread'
 import { Identity } from '../identity'
 import { ThreadRecord, LogRecord } from './record'
 
@@ -23,7 +23,7 @@ export interface Network {
    * getToken returns a signed token representing an identity.
    * @param identity The thread identity.
    */
-  getToken(identity: Identity): Promise<ThreadToken>
+  getToken(identity: Identity): Promise<string>
 
   /**
    * createThread with credentials.
@@ -44,66 +44,54 @@ export interface Network {
   /**
    * getThread with credentials.
    * @param id The Thread ID.
-   * @param opts Thread options.
    */
-  getThread(id: ThreadID, opts?: ThreadOptions): Promise<ThreadInfo>
+  getThread(id: ThreadID): Promise<ThreadInfo>
 
   /**
    * pullThread for new records.
    * @param id The Thread ID.
-   * @param opts Thread options.
    */
-  pullThread(id: ThreadID, opts?: ThreadOptions): Promise<void>
+  pullThread(id: ThreadID): Promise<void>
 
   /**
    * deleteThread with id.
    * @param id The Thread ID.
-   * @param opts Thread options.
    */
-  deleteThread(id: ThreadID, opts?: ThreadOptions): Promise<void>
+  deleteThread(id: ThreadID): Promise<void>
 
   /**
    * addReplicator to a thread.
    * @param id The Thread ID.
    * @param addr The multiaddress of the replicator peer.
-   * @param opts Thread options.
    */
-  addReplicator(id: ThreadID, addr: Multiaddr, opts?: ThreadOptions): Promise<PeerId>
+  addReplicator(id: ThreadID, addr: Multiaddr): Promise<PeerId>
 
   /**
    * createRecord from body.
    * @param id The Thread ID.
    * @param body The body to add as content.
-   * @param opts Thread options.
    */
-  createRecord(id: ThreadID, body: any, opts?: ThreadOptions): Promise<ThreadRecord | undefined>
+  createRecord(id: ThreadID, body: any): Promise<ThreadRecord | undefined>
 
   /**
    * addRecord to the given log.
    * @param id The Thread ID.
    * @param logID The Log ID.
    * @param rec The log record to add.
-   * @param opts Thread options.
    */
-  addRecord(id: ThreadID, logID: LogID, rec: LogRecord, opts?: ThreadOptions): Promise<void>
+  addRecord(id: ThreadID, logID: LogID, rec: LogRecord): Promise<void>
 
   /**
    * GetRecord returns the record at cid.
    * @param id The Thread ID.
    * @param rec The record's CID.
-   * @param opts Thread options.
    */
-  getRecord(id: ThreadID, rec: CID, opts?: ThreadOptions): Promise<LogRecord>
+  getRecord(id: ThreadID, rec: CID): Promise<LogRecord>
 
   /**
    * subscribe to new record events in the given threads.
    * @param cb The callback to call on each new thread record.
    * @param threads A (variadic) set of threads to subscribe to.
-   * @param opts Thread options.
    */
-  subscribe(
-    cb: (rec?: ThreadRecord, err?: Error) => void,
-    threads?: ThreadID[],
-    opts?: ThreadOptions,
-  ): Closer
+  subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, threads?: ThreadID[]): Closer
 }

@@ -98,10 +98,10 @@ export class Context {
   constructor(
     // To comply with Config interface
     host: HostString = defaultHost,
-    // To comply with Config interface
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
     // For testing and debugging purposes.
     debug = false,
+    // To comply with Config interface
+    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
   ) {
     this._context['host'] = host
     this._context['transport'] = transport
@@ -193,14 +193,15 @@ export class Context {
   static fromJSON(
     json: ContextKeys,
     host: HostString = defaultHost,
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
     debug = false,
+    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
   ) {
+    const newContext = { ...json }
+    newContext['host'] = host
+    newContext['transport'] = transport
+    newContext['debug'] = debug
     const ctx = new Context()
-    ctx._context = json
-    ctx._context['host'] = host
-    ctx._context['transport'] = transport
-    ctx._context['debug'] = debug
+    ctx._context = newContext
     return ctx
   }
 

@@ -1,12 +1,11 @@
 /* eslint-disable import/first */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 ;(global as any).WebSocket = require('isomorphic-ws')
+
+import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 
 import { expect } from 'chai'
 import { Where, ReadTransaction, WriteTransaction } from './models'
 import { Client, ThreadID } from './index'
-
-const client = new Client()
 
 const personSchema = {
   $id: 'https://example.com/person.schema.json',
@@ -55,6 +54,13 @@ describe('Client', function () {
   const dbID = ThreadID.fromRandom()
   let dbKey: string
   let dbAddr: string
+  let identity: Identity
+  const client = new Client()
+
+  before(async () => {
+    identity = await Libp2pCryptoIdentity.fromRandom()
+  })
+
   describe('.newDB', () => {
     it('response should succeed', async () => {
       // Calling getToken without an explicit identity will create a default random PKI pair
@@ -298,6 +304,18 @@ describe('Client', function () {
       expect(find).to.not.be.undefined
       const found = find.instancesList
       expect(found).to.have.length(7)
+    })
+  })
+
+  describe('Restart', () => {
+    it('Should handle a whole new "restart" of the client', async () => {
+      const newClient = new Client()
+      const person = createPerson()
+      await newClient.getToken(identity)
+      const created = await newClient.create(dbID, 'Person', [person])
+      const got = await newClient.findByID(dbID, 'Person', created[0])
+      expect(got.instance).to.haveOwnProperty('_id', created[0])
+      expect(got.instance).to.haveOwnProperty('firstName', 'Adam')
     })
   })
 })

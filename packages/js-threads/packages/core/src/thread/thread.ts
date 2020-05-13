@@ -1,9 +1,9 @@
 import { PrivateKey, PublicKey, keys } from 'libp2p-crypto'
 import { ThreadID } from '@textile/threads-id'
 import multibase from 'multibase'
+import { Multiaddr } from '@textile/multiaddr'
 import { LogInfo } from './log'
 import { ThreadKey } from './key'
-import { Multiaddr } from '@textile/multiaddr'
 
 // Thread protocol version
 const version = '0.0.1'
@@ -55,24 +55,7 @@ export interface ThreadInfo {
   addrs?: Set<Multiaddr>
 }
 
-/**
- * ThreadToken is a concrete type for a JWT token string, which provides a claim to an identity.
- * It is a base64 encoded string.
- * @todo: We don't need to create or verify these on the client (yet).
- */
-export type ThreadToken = string
-
-/**
- * ThreadOptions stores options for creating / adding a thread.
- */
-export interface ThreadOptions {
-  /**
-   * Token stores the thread token for authorizing a new Thread.
-   */
-  token?: ThreadToken
-}
-
-export interface NewThreadOptions extends ThreadOptions {
+export interface NewThreadOptions {
   /**
    * Set of symmetric encryption keys.Can be generated with Key.fromRandom().
    */

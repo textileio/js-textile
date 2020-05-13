@@ -35,7 +35,7 @@ class ThreadID {
     if (v.length < 2) {
       throw new Error('id too short')
     }
-    const data = multibase.decode(v)
+    const data = Buffer.from(multibase.decode(v))
     return ThreadID.fromBytes(data)
   }
 
@@ -95,7 +95,7 @@ class ThreadID {
    * The output of bytes can be parsed back into an ID with fromBytes.
    */
   toBytes(): Buffer {
-    return this.buf
+    return Buffer.from(this.buf)
   }
 
   /**

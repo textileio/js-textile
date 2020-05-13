@@ -1,6 +1,5 @@
 import toJsonSchema from 'to-json-schema'
 import cbor from 'cbor-sync'
-import parse from 'url-parse'
 import { Network, Client } from '@textile/threads-network'
 import { EventEmitter2 } from 'eventemitter2'
 import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
@@ -10,11 +9,11 @@ import {
   ThreadRecord,
   ThreadInfo,
   ThreadKey,
-  ThreadToken,
   Multiaddr,
   Identity,
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
+import LevelDatastore from 'datastore-level'
 import { EventBus } from './eventbus'
 import { Collection, JSONSchema, Config } from './collection'
 import { createThread, decodeRecord, Cache } from './utils'
@@ -27,16 +26,8 @@ export interface InitOptions {
   dispatcher?: Dispatcher
   eventBus?: EventBus
   network?: Network
-  /**
-   * An optional identity to use for creating records in the database.
-   * @see @textile/network for details.
-   */
+  // An optional identity to use for creating records in the database.
   identity?: Identity
-  /**
-   * An optional token to use for remote calls from this database.
-   * @see @textile/network for details.
-   */
-  token?: ThreadToken
 }
 
 export interface StartOptions {
@@ -48,11 +39,6 @@ export interface StartOptions {
    * An array of Collection Config objects to use when initializing the Database
    */
   collections?: Config[]
-  /**
-   * An optional token to use for remote calls from this database.
-   * @see @textile/network for details.
-   */
-  token?: ThreadToken
 }
 
 export class Database extends EventEmitter2 {
@@ -84,10 +70,13 @@ export class Database extends EventEmitter2 {
 
   /**
    * Database creates a new database using the provided thread.
-   * @param datastore The primary datastore, and is used to partition out stores as sub-domains.
+   * @param datastore The primary datastore, and is used to partition out collections as sub-domains.
    * @param options A set of database options.
    */
-  constructor(datastore: Datastore<any>, options: InitOptions = {}) {
+  constructor(
+    datastore: Datastore<any> = new LevelDatastore('threads.db'),
+    options: InitOptions = {},
+  ) {
     super({ wildcard: true })
     this.child = new DomainDatastore(datastore, new Key('db'))
     this.dispatcher =
@@ -95,7 +84,6 @@ export class Database extends EventEmitter2 {
     // Only if someone _doesn't_ provide a Network, which they should do in most realistic scenarios.
     if (options.network === undefined) {
       const client = new Client() // @todo: Maybe we should use different defaults here?
-      client.config.session = options.token
       this.network = new Network(
         new DomainDatastore(datastore, new Key('network')),
         client,
@@ -125,10 +113,8 @@ export class Database extends EventEmitter2 {
     options: InitOptions = {},
   ) {
     const db = new Database(datastore, options)
-    if (!db.network.token) {
-      // If we didn't supply an identity upon init, try to create a random one now.
-      await db.network.getToken(db.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()))
-    }
+    // Grab token,if our client already has a token, we'll just pull the cached value here.
+    await db.network.getToken(db.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()))
     const info = await db.network.addThread(addr, { threadKey })
     await db.open({ ...options, threadID: info.id })
     return db
@@ -186,16 +172,8 @@ export class Database extends EventEmitter2 {
    * @param options A set of options to configure the setup and usage of the underlying database.
    */
   async open(options: StartOptions = {}) {
-    // Check that we have a valid token
-    if (options.token) {
-      this.network.token = options.token
-    }
-    if (!this.network.token) {
-      // If we didn't supply an identity upon init, try to create a random one now.
-      await this.network.getToken(
-        this.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()),
-      )
-    }
+    // If we didn't supply an identity upon init, try to create a random one now.
+    await this.network.getToken(this.network.identity ?? (await Libp2pCryptoIdentity.fromRandom()))
     await this.child.open()
     const idKey = metaKey.child(new Key('threadid'))
     const hasExisting = await this.child.has(idKey)

@@ -159,13 +159,14 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param options Additional options to control query operation.
    */
   find(query?: FilterQuery<T>, options: FindOptions<T> = {}) {
-    // @todo: The mingo types are incorrect here... so we hack around those a bit.
-    const m: MingoQuery = new MingoQuery(query || {}, { idKey: '_id' })
+    const qry = query || {}
+    qry.constructor = Object // Hack around some strange es issues in some JS envs
+    const m: MingoQuery = new MingoQuery(qry, { idKey: '_id' })
     const filters: Query.Filter<T>[] = [({ value }) => m.test(value)]
     const orders: Query.Order<T>[] = []
     if (options.sort) {
       for (const [key, value] of Object.entries(options.sort)) {
-        orders.push(items =>
+        orders.push((items) =>
           items.sort((a, b) => {
             return cmp(resolve(a.value, key), resolve(b.value, key), value || 1)
           }),
