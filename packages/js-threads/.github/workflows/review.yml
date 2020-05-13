@@ -53,4 +53,4 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Run Commitsar
-        uses: docker://outillage/commitsar
+        uses: docker://aevea/commitsar
