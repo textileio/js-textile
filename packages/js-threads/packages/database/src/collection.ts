@@ -159,8 +159,13 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param options Additional options to control query operation.
    */
   find(query?: FilterQuery<T>, options: FindOptions<T> = {}) {
-    const qry = query || {}
-    qry.constructor = Object // Hack around some strange es issues in some JS envs
+    // @fixme(github.com/kofrasa/mingo/issues/141) Hack around some strange es issues in some JS envs
+    const qry: FilterQuery<T> = query || {}
+    Object.keys(qry).forEach((key: keyof T) => {
+      if (typeof qry[key] === 'object' && !Array.isArray(qry[key])) {
+        qry[key] = Object.assign(new Object(), qry[key])
+      }
+    })
     const m: MingoQuery = new MingoQuery(qry, { idKey: '_id' })
     const filters: Query.Filter<T>[] = [({ value }) => m.test(value)]
     const orders: Query.Order<T>[] = []
