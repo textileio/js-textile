@@ -1,6 +1,6 @@
 {
   "name": "@textile/multiaddr",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -35,7 +35,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@textile/threads-id": "^0.0.6",
+    "@textile/threads-id": "^0.0.7",
     "@types/multibase": "^0.6.0",
     "bs58": "^4.0.1",
     "cids": "^0.8.0",

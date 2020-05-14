@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-network-client",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -24,9 +24,9 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/context": "^0.2.1",
-    "@textile/threads-core": "^0.1.8",
-    "@textile/threads-encoding": "^0.1.8",
+    "@textile/context": "^0.2.2",
+    "@textile/threads-core": "^0.1.9",
+    "@textile/threads-encoding": "^0.1.9",
     "@textile/threads-net-grpc": "^0.1.16",
     "cids": "^0.8.0",
     "libp2p-crypto": "^0.17.2",
