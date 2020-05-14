@@ -168,7 +168,7 @@ export class Database extends EventEmitter2 {
    * database was already bootstrapped on a thread, it will continue using that thread. In the
    * opposite case, it will create a new thread. If threadID is provided, and the database was
    * not bootstrapped on an existing thread, it will attempt to use the provided threadID,
-   * otherwise, a thread id mismatch error is thrown.
+   * otherwise, a "thread id mismatch" error is thrown.
    * @param options A set of options to configure the setup and usage of the underlying database.
    */
   async open(options: StartOptions = {}) {
