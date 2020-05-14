@@ -62,7 +62,7 @@ class ThreadID {
     if (id.length < 16) {
       throw new Error('random component too small.')
     }
-    return new ThreadID(data)
+    return new ThreadID(Buffer.from(data))
   }
 
   /**
