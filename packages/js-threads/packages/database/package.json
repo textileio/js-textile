@@ -78,5 +78,6 @@
     "sinon": "^9.0.0",
     "typescript": "^3.7.2",
     "ws": "^7.2.1"
-  }
+  },
+  "gitHead": "96e5860e65b6d8def85d2f3551601208abb5cee9"
 }
