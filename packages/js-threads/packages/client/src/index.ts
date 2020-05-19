@@ -23,9 +23,7 @@ import {
   ReadTransaction,
 } from './models'
 
-export { ThreadID }
-export { Instance, QueryJSON }
-export { Query, Where }
+export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON, ThreadID }
 
 /**
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
