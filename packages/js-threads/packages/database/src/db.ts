@@ -12,6 +12,7 @@ import {
   Multiaddr,
   Identity,
   Libp2pCryptoIdentity,
+  LogInfo,
 } from '@textile/threads-core'
 import LevelDatastore from 'datastore-level'
 import { EventBus } from './eventbus'
@@ -121,7 +122,7 @@ export class Database extends EventEmitter2 {
   }
 
   @Cache({ duration: 1800000 })
-  async ownLogInfo() {
+  async ownLogInfo(): Promise<LogInfo | undefined> {
     return this.threadID && this.network.getOwnLog(this.threadID, false)
   }
 
