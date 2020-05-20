@@ -53,7 +53,7 @@ jobs:
       run: npm install
 
     - name: Boostrap
-      run: npm rub bootstrap
+      run: npm run bootstrap
 
     - name: Build Browser
       run: |
