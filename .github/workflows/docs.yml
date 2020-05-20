@@ -34,6 +34,9 @@ jobs:
     - name: Install
       run: npm install
 
+    - name: Boostrap
+      run: npm rub bootstrap
+
     - name: Docs
       run: npm run docs
 
