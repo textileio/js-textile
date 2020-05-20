@@ -229,7 +229,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
       return new Document(c, instance) as Document<T> & T
     }
     Object.setPrototypeOf(self, this.constructor.prototype)
-    Object.getOwnPropertyNames(this).forEach(p => {
+    Object.getOwnPropertyNames(this).forEach((p) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       Object.defineProperty(self, p, Object.getOwnPropertyDescriptor(this, p)!)
     })
