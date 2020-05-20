@@ -65,7 +65,7 @@ describe('Buckets...', () => {
 
   it('should push data from filesystem on node', async function () {
     if (isBrowser) return this.skip()
-    const pth = path.join(__dirname, "../../..", "testdata");
+    const pth = path.join(__dirname, '../../..', 'testdata')
     fileSize = fs.statSync(path.join(pth, 'file1.jpg')).size
     let stream = fs.createReadStream(path.join(pth, 'file1.jpg'))
     const rootKey = buck.root?.key || ''
