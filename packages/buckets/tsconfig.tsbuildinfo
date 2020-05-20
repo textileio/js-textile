@@ -201,79 +201,9 @@
         "signature": "cd6efb9467a8b6338ece2e2855e37765700f2cd061ca54b01b33878cf5c7677e",
         "affectsGlobalScope": true
       },
-      "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts": {
-        "version": "6a6748ca91b5eb81eab427e155796272419e13dc9813eb5be47021e196d1ffdd",
-        "signature": "6a6748ca91b5eb81eab427e155796272419e13dc9813eb5be47021e196d1ffdd",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/browser-headers/dist/typings/index.d.ts": {
-        "version": "5c320490a9754c2d42b81a28e788f36c8bc9a724d29872ef5b2014ca59e99dcf",
-        "signature": "5c320490a9754c2d42b81a28e788f36c8bc9a724d29872ef5b2014ca59e99dcf",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": {
-        "version": "704a47dc13cb122b628fc8dab4892d36f0a93e29640263231b145a526b032eb6",
-        "signature": "704a47dc13cb122b628fc8dab4892d36f0a93e29640263231b145a526b032eb6",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": {
-        "version": "90e7cf086f91180cbd49378561e237230f9c7527bba178ad3e9a63570d60f712",
-        "signature": "90e7cf086f91180cbd49378561e237230f9c7527bba178ad3e9a63570d60f712",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": {
-        "version": "ccfbdb2a9828e55972c66692237ba4741b5dbbbe8df080097fa4231dcd2bce22",
-        "signature": "ccfbdb2a9828e55972c66692237ba4741b5dbbbe8df080097fa4231dcd2bce22",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": {
-        "version": "46eaf4d9174822fbe2c7265b91046767231572491e7dd478150686b60ad1920a",
-        "signature": "46eaf4d9174822fbe2c7265b91046767231572491e7dd478150686b60ad1920a",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": {
-        "version": "d002f6fe9761cb0b30bfd8246a7f85a23cc58dc1edd02fc425957d162a540179",
-        "signature": "d002f6fe9761cb0b30bfd8246a7f85a23cc58dc1edd02fc425957d162a540179",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": {
-        "version": "8c05a53961aa8431ee7cf9d443fe1b91118ea41281f28e3c47933f8145330652",
-        "signature": "8c05a53961aa8431ee7cf9d443fe1b91118ea41281f28e3c47933f8145330652",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": {
-        "version": "4c7591fbb64c360af397ac032528087e8a7f4e2d8fe827af6cbcffd5d6fff24f",
-        "signature": "4c7591fbb64c360af397ac032528087e8a7f4e2d8fe827af6cbcffd5d6fff24f",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": {
-        "version": "6c7dd5759a869b467642150e39c37d0747a478bbd60f9808952d7010c86586e9",
-        "signature": "6c7dd5759a869b467642150e39c37d0747a478bbd60f9808952d7010c86586e9",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": {
-        "version": "a26adde8511ded8520e47aa5b47c210ac501f18ce9bd95fdd08a29fadf1b6f95",
-        "signature": "a26adde8511ded8520e47aa5b47c210ac501f18ce9bd95fdd08a29fadf1b6f95",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": {
-        "version": "e6e9145873e31e2940e152980fd179f299c4d9c9a2d87177f9e21e970a563c60",
-        "signature": "e6e9145873e31e2940e152980fd179f299c4d9c9a2d87177f9e21e970a563c60",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": {
-        "version": "b952aba3d7d2a0d75691b0960c13050480ca10853bde722195f836a70497b741",
-        "signature": "b952aba3d7d2a0d75691b0960c13050480ca10853bde722195f836a70497b741",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": {
-        "version": "cbd9300b9ecdeede59ababdd54ebb70a2ddc4657a4711d642a1f9a11f463f24a",
-        "signature": "cbd9300b9ecdeede59ababdd54ebb70a2ddc4657a4711d642a1f9a11f463f24a",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": {
-        "version": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
-        "signature": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
+      "../../node_modules/@types/browser-or-node/index.d.ts": {
+        "version": "1ae7d42f9feacb810e963bac477c104b638d0b6dd669edfdb8d02f96101f7242",
+        "signature": "1ae7d42f9feacb810e963bac477c104b638d0b6dd669edfdb8d02f96101f7242",
         "affectsGlobalScope": false
       },
       "./node_modules/@types/node/globals.d.ts": {
@@ -531,84 +461,94 @@
         "signature": "d522314e80ed71b57e3c2939d3c9594eaae63a4adf028559e6574f6b270b0fee",
         "affectsGlobalScope": false
       },
-      "../buckets/node_modules/@types/multibase/index.d.ts": {
+      "./node_modules/@types/multibase/index.d.ts": {
         "version": "b5228eb523f47d91d9793a01a9d5f222585d7cc424425a45770ddd2c88d73818",
         "signature": "b5228eb523f47d91d9793a01a9d5f222585d7cc424425a45770ddd2c88d73818",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@textile/threads-id/dist/index.d.ts": {
-        "version": "b9d01748a8eb4501868fd97e32010dff54a8e4658a944329f494b1e6feaadf14",
-        "signature": "b9d01748a8eb4501868fd97e32010dff54a8e4658a944329f494b1e6feaadf14",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@textile/context/dist/index.d.ts": {
-        "version": "50783c0ca5737e154bf56c86fa0d84e8092f8d2deddb814ca592743fdf219642",
-        "signature": "50783c0ca5737e154bf56c86fa0d84e8092f8d2deddb814ca592743fdf219642",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@types/google-protobuf/index.d.ts": {
-        "version": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
-        "signature": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts": {
-        "version": "514a29d03ec7e5f43a58afb687d21a18aab2246d0d15bb76c0bb1a250bbf4cdc",
-        "signature": "514a29d03ec7e5f43a58afb687d21a18aab2246d0d15bb76c0bb1a250bbf4cdc",
-        "affectsGlobalScope": false
-      },
-      "../buckets/node_modules/cids/src/index.d.ts": {
-        "version": "252c3cdb52c5f0ea469325f60eeab9eeb4d4ac3b5521761b95a05b8c6e7f5822",
-        "signature": "252c3cdb52c5f0ea469325f60eeab9eeb4d4ac3b5521761b95a05b8c6e7f5822",
-        "affectsGlobalScope": false
-      },
-      "../buckets/dist/buckets.d.ts": {
-        "version": "6f7c730f2e8e5b95ac94c197351ee73f09582b1ec565b93c019e8e0fa803eb40",
-        "signature": "6f7c730f2e8e5b95ac94c197351ee73f09582b1ec565b93c019e8e0fa803eb40",
-        "affectsGlobalScope": false
-      },
-      "../buckets/dist/index.d.ts": {
-        "version": "35d75da947907612abe0796e7059050af355538d12c87a669f066bd1bba64037",
-        "signature": "35d75da947907612abe0796e7059050af355538d12c87a669f066bd1bba64037",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/loglevel/index.d.ts": {
-        "version": "a555a1ddc62608ed7fc967e7d7a39dc95d53838b4c82dd7167fde53375c41685",
-        "signature": "a555a1ddc62608ed7fc967e7d7a39dc95d53838b4c82dd7167fde53375c41685",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@types/google-protobuf/index.d.ts": {
-        "version": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
-        "signature": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@textile/users-grpc/users_pb.d.ts": {
-        "version": "800a11810a69b8c0c2edfe7e12a7497d0441c661751daa8b44ff2a0501b48766",
-        "signature": "800a11810a69b8c0c2edfe7e12a7497d0441c661751daa8b44ff2a0501b48766",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": {
-        "version": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
-        "signature": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@textile/users-grpc/users_pb_service.d.ts": {
-        "version": "0aab240de97c549b75f2010b4b7049467c7192601add97eeeb25c708cfe1077c",
-        "signature": "0aab240de97c549b75f2010b4b7049467c7192601add97eeeb25c708cfe1077c",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@textile/hub-grpc/hub_pb.d.ts": {
-        "version": "9687ef4e0430e43704e5726006dc9edbb3fb99e08cdd9b98056f2079d9b7db8e",
-        "signature": "9687ef4e0430e43704e5726006dc9edbb3fb99e08cdd9b98056f2079d9b7db8e",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts": {
-        "version": "3df427e25a5f602bd5b1ebaafaab2bf80bd5d2285afc972096c9b37c0806820a",
-        "signature": "3df427e25a5f602bd5b1ebaafaab2bf80bd5d2285afc972096c9b37c0806820a",
         "affectsGlobalScope": false
       },
       "./node_modules/@textile/threads-id/dist/index.d.ts": {
         "version": "b9d01748a8eb4501868fd97e32010dff54a8e4658a944329f494b1e6feaadf14",
         "signature": "b9d01748a8eb4501868fd97e32010dff54a8e4658a944329f494b1e6feaadf14",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/chai/index.d.ts": {
+        "version": "1df845885d8bd29132f67f47b7a64ec35f4b83962274ee9fb38ae40a82305a72",
+        "signature": "1df845885d8bd29132f67f47b7a64ec35f4b83962274ee9fb38ae40a82305a72",
+        "affectsGlobalScope": true
+      },
+      "./node_modules/browser-headers/dist/typings/browserheaders.d.ts": {
+        "version": "6a6748ca91b5eb81eab427e155796272419e13dc9813eb5be47021e196d1ffdd",
+        "signature": "6a6748ca91b5eb81eab427e155796272419e13dc9813eb5be47021e196d1ffdd",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/browser-headers/dist/typings/index.d.ts": {
+        "version": "5c320490a9754c2d42b81a28e788f36c8bc9a724d29872ef5b2014ca59e99dcf",
+        "signature": "5c320490a9754c2d42b81a28e788f36c8bc9a724d29872ef5b2014ca59e99dcf",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": {
+        "version": "704a47dc13cb122b628fc8dab4892d36f0a93e29640263231b145a526b032eb6",
+        "signature": "704a47dc13cb122b628fc8dab4892d36f0a93e29640263231b145a526b032eb6",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": {
+        "version": "90e7cf086f91180cbd49378561e237230f9c7527bba178ad3e9a63570d60f712",
+        "signature": "90e7cf086f91180cbd49378561e237230f9c7527bba178ad3e9a63570d60f712",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": {
+        "version": "ccfbdb2a9828e55972c66692237ba4741b5dbbbe8df080097fa4231dcd2bce22",
+        "signature": "ccfbdb2a9828e55972c66692237ba4741b5dbbbe8df080097fa4231dcd2bce22",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": {
+        "version": "46eaf4d9174822fbe2c7265b91046767231572491e7dd478150686b60ad1920a",
+        "signature": "46eaf4d9174822fbe2c7265b91046767231572491e7dd478150686b60ad1920a",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": {
+        "version": "d002f6fe9761cb0b30bfd8246a7f85a23cc58dc1edd02fc425957d162a540179",
+        "signature": "d002f6fe9761cb0b30bfd8246a7f85a23cc58dc1edd02fc425957d162a540179",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": {
+        "version": "8c05a53961aa8431ee7cf9d443fe1b91118ea41281f28e3c47933f8145330652",
+        "signature": "8c05a53961aa8431ee7cf9d443fe1b91118ea41281f28e3c47933f8145330652",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": {
+        "version": "4c7591fbb64c360af397ac032528087e8a7f4e2d8fe827af6cbcffd5d6fff24f",
+        "signature": "4c7591fbb64c360af397ac032528087e8a7f4e2d8fe827af6cbcffd5d6fff24f",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": {
+        "version": "6c7dd5759a869b467642150e39c37d0747a478bbd60f9808952d7010c86586e9",
+        "signature": "6c7dd5759a869b467642150e39c37d0747a478bbd60f9808952d7010c86586e9",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": {
+        "version": "a26adde8511ded8520e47aa5b47c210ac501f18ce9bd95fdd08a29fadf1b6f95",
+        "signature": "a26adde8511ded8520e47aa5b47c210ac501f18ce9bd95fdd08a29fadf1b6f95",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": {
+        "version": "e6e9145873e31e2940e152980fd179f299c4d9c9a2d87177f9e21e970a563c60",
+        "signature": "e6e9145873e31e2940e152980fd179f299c4d9c9a2d87177f9e21e970a563c60",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": {
+        "version": "b952aba3d7d2a0d75691b0960c13050480ca10853bde722195f836a70497b741",
+        "signature": "b952aba3d7d2a0d75691b0960c13050480ca10853bde722195f836a70497b741",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": {
+        "version": "cbd9300b9ecdeede59ababdd54ebb70a2ddc4657a4711d642a1f9a11f463f24a",
+        "signature": "cbd9300b9ecdeede59ababdd54ebb70a2ddc4657a4711d642a1f9a11f463f24a",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": {
+        "version": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
+        "signature": "4f280418eab75d5dc7a6cdf8b92cc22e1d5d01c0f169d8882c559a86211f272b",
         "affectsGlobalScope": false
       },
       "./node_modules/libp2p-crypto/src/index.d.ts": {
@@ -701,6 +641,11 @@
         "signature": "a21c6b1696e951e8de5d8dee0ff37d17cd10ff9a3cceeb9b3e47c7643bb16bc9",
         "affectsGlobalScope": false
       },
+      "./node_modules/@types/google-protobuf/index.d.ts": {
+        "version": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
+        "signature": "4b01408cdb1db38c20781ea1ef3c106eb180994734293ed10888bcf7c50f3de5",
+        "affectsGlobalScope": false
+      },
       "./node_modules/@textile/threads-client-grpc/api_pb.d.ts": {
         "version": "c7e3ce0c1fbdf0239ad942cdfbf29cc7173ce822609ad316ca241c5b21543760",
         "signature": "c7e3ce0c1fbdf0239ad942cdfbf29cc7173ce822609ad316ca241c5b21543760",
@@ -731,14 +676,79 @@
         "signature": "c44af1c19eaddce7ca3c5764d4ab678f9ea895462679a5d02b3dd11dd988e184",
         "affectsGlobalScope": false
       },
-      "./src/users.ts": {
-        "version": "5f29b9d9b8f7651029656d97579a41a6bd82f00b7a168f5873159fab87f0d064",
-        "signature": "80a95dba36d69ff9435fda50592968bfd81f87c68405bee4894c839021b7b8e2",
+      "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts": {
+        "version": "514a29d03ec7e5f43a58afb687d21a18aab2246d0d15bb76c0bb1a250bbf4cdc",
+        "signature": "514a29d03ec7e5f43a58afb687d21a18aab2246d0d15bb76c0bb1a250bbf4cdc",
         "affectsGlobalScope": false
       },
-      "./src/index.ts": {
-        "version": "0a8ed0df599fb0b65703baf6ff7891e0422e7c51c6db1469d1aa97b38bdf85c0",
-        "signature": "09ef0f480819b19e3e9136a92d026d9931fce9ca7ea3c79ad6af37feb67e92b5",
+      "./node_modules/loglevel/index.d.ts": {
+        "version": "a555a1ddc62608ed7fc967e7d7a39dc95d53838b4c82dd7167fde53375c41685",
+        "signature": "a555a1ddc62608ed7fc967e7d7a39dc95d53838b4c82dd7167fde53375c41685",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@textile/buckets-grpc/buckets_pb_service.d.ts": {
+        "version": "f8650bc4f12c343379c5cab7976a5746392e9f8b25f127f08ecfb09962564d07",
+        "signature": "f8650bc4f12c343379c5cab7976a5746392e9f8b25f127f08ecfb09962564d07",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/common.d.ts": {
+        "version": "125ddddbb8caefa5b6573e667049b2cd4e0be2024ded2fe53175165d17e4b930",
+        "signature": "125ddddbb8caefa5b6573e667049b2cd4e0be2024ded2fe53175165d17e4b930",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/adapters/multicast.d.ts": {
+        "version": "40a6c2cc264149ab2d354e679a20ed543c5c9fc3fd5d6f278766bdb5e61177d3",
+        "signature": "40a6c2cc264149ab2d354e679a20ed543c5c9fc3fd5d6f278766bdb5e61177d3",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/deferred.d.ts": {
+        "version": "4f798f9556739516b6c9bec310996bb126258cd5d08e0a55085554768235b115",
+        "signature": "4f798f9556739516b6c9bec310996bb126258cd5d08e0a55085554768235b115",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/linkedqueue.d.ts": {
+        "version": "a8252ae73bd2a6e311043f440f28fd47b232c408102cd3b7c1362779a2bb35e7",
+        "signature": "a8252ae73bd2a6e311043f440f28fd47b232c408102cd3b7c1362779a2bb35e7",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/adapters/channel.d.ts": {
+        "version": "e392fe559ba813ff8bd723fe12a6a0b52db77b45bf20452924cee9ea36339f74",
+        "signature": "e392fe559ba813ff8bd723fe12a6a0b52db77b45bf20452924cee9ea36339f74",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/adapters/lastresult.d.ts": {
+        "version": "b9afdc35979e270a6d26faa5d89ab9ab8da9f7c9ac51b63694cda2070e053f36",
+        "signature": "b9afdc35979e270a6d26faa5d89ab9ab8da9f7c9ac51b63694cda2070e053f36",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/fromdom.d.ts": {
+        "version": "f3f41d9fb0555b935b038fc1fe3487acdc59ade24d0fbefd28e45ff3fb396c58",
+        "signature": "f3f41d9fb0555b935b038fc1fe3487acdc59ade24d0fbefd28e45ff3fb396c58",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/fromemitter.d.ts": {
+        "version": "4ea00456cdc0248ce746e4aa3a0fc169ae3565b6bfd6354eed4bdd4c42d75021",
+        "signature": "4ea00456cdc0248ce746e4aa3a0fc169ae3565b6bfd6354eed4bdd4c42d75021",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/queueable/dist/types/index.d.ts": {
+        "version": "d8e9afd64de2cbae51b18ab5af149f4f86f98ac9b184baa578041f1a1adf1e38",
+        "signature": "d8e9afd64de2cbae51b18ab5af149f4f86f98ac9b184baa578041f1a1adf1e38",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/buffer/index.d.ts": {
+        "version": "ef18cbf1d8374576e3db03ff33c2c7499845972eb0c4adf87392949709c5e160",
+        "signature": "ef18cbf1d8374576e3db03ff33c2c7499845972eb0c4adf87392949709c5e160",
+        "affectsGlobalScope": false
+      },
+      "./src/normalize.ts": {
+        "version": "2b0ebf468205840ec90f4a2a77560cac318bcc969b01c8e17b977ca73280506d",
+        "signature": "ca47e76273d4963148b05ea3b6858d9660575fe124c86a4431ccd48fd0449b6b",
+        "affectsGlobalScope": false
+      },
+      "./src/buckets.ts": {
+        "version": "1155f2e0601d384daf73037afe79f4baeae9329b703e9f710ceb139e778f2ccb",
+        "signature": "6f7c730f2e8e5b95ac94c197351ee73f09582b1ec565b93c019e8e0fa803eb40",
         "affectsGlobalScope": false
       },
       "./node_modules/axios/index.d.ts": {
@@ -756,29 +766,29 @@
         "signature": "4c754320a6ff1e7ab0214c7ce852d236f33ed7b8540d611094f1ba663bfd1ef1",
         "affectsGlobalScope": false
       },
-      "./node_modules/@types/multibase/index.d.ts": {
-        "version": "b5228eb523f47d91d9793a01a9d5f222585d7cc424425a45770ddd2c88d73818",
-        "signature": "b5228eb523f47d91d9793a01a9d5f222585d7cc424425a45770ddd2c88d73818",
+      "./node_modules/@textile/hub-grpc/hub_pb.d.ts": {
+        "version": "9687ef4e0430e43704e5726006dc9edbb3fb99e08cdd9b98056f2079d9b7db8e",
+        "signature": "9687ef4e0430e43704e5726006dc9edbb3fb99e08cdd9b98056f2079d9b7db8e",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts": {
+        "version": "3df427e25a5f602bd5b1ebaafaab2bf80bd5d2285afc972096c9b37c0806820a",
+        "signature": "3df427e25a5f602bd5b1ebaafaab2bf80bd5d2285afc972096c9b37c0806820a",
         "affectsGlobalScope": false
       },
       "./src/spec.util.ts": {
-        "version": "d8d706d9c2a40bcfabf27fce2e8a088533c617bf9b246fdca5f5c18d20ac2f03",
-        "signature": "cca6a0dc85e8b4ecedfdf939f241f53de26b92f2a979e0e739a60aa7b4d41288",
+        "version": "f0738c99105a2c61506cc8d0095233031b5a2d8c518ff635c2f65325c1001de4",
+        "signature": "7151aef63f78c820fe3e137ceace575052775970a689b14e7943876ef6a9198f",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@types/chai/index.d.ts": {
-        "version": "1df845885d8bd29132f67f47b7a64ec35f4b83962274ee9fb38ae40a82305a72",
-        "signature": "1df845885d8bd29132f67f47b7a64ec35f4b83962274ee9fb38ae40a82305a72",
-        "affectsGlobalScope": true
-      },
-      "../../node_modules/@types/browser-or-node/index.d.ts": {
-        "version": "1ae7d42f9feacb810e963bac477c104b638d0b6dd669edfdb8d02f96101f7242",
-        "signature": "1ae7d42f9feacb810e963bac477c104b638d0b6dd669edfdb8d02f96101f7242",
-        "affectsGlobalScope": false
-      },
-      "./src/users.spec.ts": {
-        "version": "10cfd6a0814a707cfa618857353d6e7e0cc6811d1c055f9ee5ae7328b1060810",
+      "./src/buckets.spec.ts": {
+        "version": "23c133c5d1de9d87c04a63c36348416a5168288b437f6eef8f1cf0c516b4de20",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "affectsGlobalScope": false
+      },
+      "./src/index.ts": {
+        "version": "5bc5efc35e893fd444955a1e4672259420d19abfa297889a3695f15902bdc5cc",
+        "signature": "35d75da947907612abe0796e7059050af355538d12c87a669f066bd1bba64037",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/mocha/index.d.ts": {
@@ -846,230 +856,154 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "../buckets/dist/buckets.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "../buckets/dist/index.d.ts": [
-        "../buckets/dist/buckets.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": [
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/context/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/threads-id/dist/index.d.ts": [
-        "../buckets/node_modules/@types/multibase/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@types/google-protobuf/index.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@types/multibase/index.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/browser-headers/dist/typings/index.d.ts": [
-        "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/cids/src/index.d.ts": [
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/index.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/index.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts": [
+        "./node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@textile/buckets-grpc/buckets_pb_service.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/context/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/hub-grpc/hub_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/google-protobuf/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
         "./node_modules/@textile/hub-grpc/hub_pb.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -1091,18 +1025,18 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client-grpc/api_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/google-protobuf/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client/dist/models/index.d.ts",
         "./node_modules/@textile/threads-core/dist/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -1124,32 +1058,32 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/readtransaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client-grpc/api_pb.d.ts",
         "./node_modules/@textile/threads-client/dist/models/query.d.ts",
         "./node_modules/@textile/threads-client/dist/models/transaction.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/transaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/writetransaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client-grpc/api_pb.d.ts",
         "./node_modules/@textile/threads-client/dist/models/query.d.ts",
         "./node_modules/@textile/threads-client/dist/models/transaction.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -1164,12 +1098,12 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/index.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/identity.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@textile/threads-core/dist/network/index.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -1178,20 +1112,20 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/ipld.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/event.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/index.d.ts": [
         "./node_modules/@textile/threads-core/dist/network/event.d.ts",
@@ -1203,27 +1137,27 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/network.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/identity.d.ts",
         "./node_modules/@textile/threads-core/dist/network/record.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/record.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@textile/threads-core/dist/network/event.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/index.d.ts": [
@@ -1243,20 +1177,20 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/log.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/libp2p-crypto/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/thread.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/key.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/log.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -1264,26 +1198,11 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-id/dist/index.d.ts": [
-        "../buckets/node_modules/@types/multibase/index.d.ts",
+        "./node_modules/@types/multibase/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "./node_modules/@textile/users-grpc/users_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "./node_modules/@textile/users-grpc/users_pb_service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "./node_modules/@textile/users-grpc/users_pb.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@types/google-protobuf/index.d.ts": [
@@ -1702,6 +1621,25 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
+      "./node_modules/browser-headers/dist/typings/browserheaders.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/browser-headers/dist/typings/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/browserheaders.d.ts"
+      ],
+      "./node_modules/buffer/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
       "./node_modules/cids/src/index.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -1734,12 +1672,82 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/peer-id/src/index.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/libp2p-crypto/src/index.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/channel.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts",
+        "./node_modules/queueable/dist/types/deferred.d.ts",
+        "./node_modules/queueable/dist/types/linkedqueue.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/lastresult.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/multicast.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/common.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/deferred.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/fromdom.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/fromemitter.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/adapters/channel.d.ts",
+        "./node_modules/queueable/dist/types/adapters/lastresult.d.ts",
+        "./node_modules/queueable/dist/types/adapters/multicast.d.ts",
+        "./node_modules/queueable/dist/types/deferred.d.ts",
+        "./node_modules/queueable/dist/types/fromdom.d.ts",
+        "./node_modules/queueable/dist/types/fromemitter.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/linkedqueue.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/typescript/lib/lib.dom.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -1981,19 +1989,55 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "./src/index.ts": [
-        "../buckets/dist/index.d.ts",
+      "./src/buckets.spec.ts": [
+        "../../node_modules/@types/browser-or-node/index.d.ts",
+        "../../node_modules/@types/chai/index.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
+        "./node_modules/@textile/threads-client/dist/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./src/buckets.ts",
+        "./src/spec.util.ts"
+      ],
+      "./src/buckets.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb_service.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
-        "./src/users.ts"
+        "./node_modules/cids/src/index.d.ts",
+        "./node_modules/loglevel/index.d.ts",
+        "./node_modules/queueable/dist/types/index.d.ts",
+        "./src/normalize.ts"
+      ],
+      "./src/index.ts": [
+        "./node_modules/@textile/context/dist/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./src/buckets.ts"
+      ],
+      "./src/normalize.ts": [
+        "./node_modules/@types/node/buffer.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
       ],
       "./src/spec.util.ts": [
-        "../buckets/dist/index.d.ts",
-        "../buckets/node_modules/@types/multibase/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/hub-grpc/hub_pb.d.ts",
         "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts",
+        "./node_modules/@types/multibase/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -2001,35 +2045,6 @@
         "./node_modules/axios/index.d.ts",
         "./node_modules/delay/index.d.ts",
         "./node_modules/fast-sha256/sha256.d.ts"
-      ],
-      "./src/users.spec.ts": [
-        "../../node_modules/@types/browser-or-node/index.d.ts",
-        "../../node_modules/@types/chai/index.d.ts",
-        "../buckets/dist/index.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "./node_modules/@textile/hub-grpc/hub_pb.d.ts",
-        "./node_modules/@textile/threads-core/dist/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./src/spec.util.ts",
-        "./src/users.ts"
-      ],
-      "./src/users.ts": [
-        "../buckets/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts",
-        "./node_modules/@textile/threads-client/dist/index.d.ts",
-        "./node_modules/@textile/users-grpc/users_pb.d.ts",
-        "./node_modules/@textile/users-grpc/users_pb_service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/loglevel/index.d.ts"
       ]
     },
     "exportedModulesMap": {
@@ -2057,230 +2072,154 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "../buckets/dist/buckets.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "../buckets/dist/index.d.ts": [
-        "../buckets/dist/buckets.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": [
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/context/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@textile/threads-id/dist/index.d.ts": [
-        "../buckets/node_modules/@types/multibase/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@types/google-protobuf/index.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/@types/multibase/index.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts": [
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/browser-headers/dist/typings/index.d.ts": [
-        "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "../buckets/node_modules/cids/src/index.d.ts": [
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
-        "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/index.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/index.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts": [
+        "./node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/@textile/buckets-grpc/buckets_pb_service.d.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/context/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/hub-grpc/hub_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/google-protobuf/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
         "./node_modules/@textile/hub-grpc/hub_pb.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2302,18 +2241,18 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client-grpc/api_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
+        "./node_modules/@types/google-protobuf/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/index.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client/dist/models/index.d.ts",
         "./node_modules/@textile/threads-core/dist/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -2335,32 +2274,32 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/readtransaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client-grpc/api_pb.d.ts",
         "./node_modules/@textile/threads-client/dist/models/query.d.ts",
         "./node_modules/@textile/threads-client/dist/models/transaction.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/transaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-client/dist/models/writetransaction.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "../buckets/node_modules/@textile/context/dist/index.d.ts",
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/threads-client-grpc/api_pb.d.ts",
         "./node_modules/@textile/threads-client/dist/models/query.d.ts",
         "./node_modules/@textile/threads-client/dist/models/transaction.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -2375,12 +2314,12 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/index.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/identity.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@textile/threads-core/dist/network/index.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -2389,20 +2328,20 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/ipld.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/event.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/index.d.ts": [
         "./node_modules/@textile/threads-core/dist/network/event.d.ts",
@@ -2414,27 +2353,27 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/network.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/identity.d.ts",
         "./node_modules/@textile/threads-core/dist/network/record.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/index.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/network/record.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/threads-core/dist/ipld.d.ts",
         "./node_modules/@textile/threads-core/dist/network/event.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/index.d.ts": [
@@ -2454,20 +2393,20 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/log.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/libp2p-crypto/src/index.d.ts",
         "./node_modules/peer-id/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-core/dist/thread/thread.d.ts": [
-        "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@textile/multiaddr/dist/index.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/key.d.ts",
         "./node_modules/@textile/threads-core/dist/thread/log.d.ts",
+        "./node_modules/@textile/threads-id/dist/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
@@ -2475,26 +2414,11 @@
         "./node_modules/libp2p-crypto/src/index.d.ts"
       ],
       "./node_modules/@textile/threads-id/dist/index.d.ts": [
-        "../buckets/node_modules/@types/multibase/index.d.ts",
+        "./node_modules/@types/multibase/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/ts3.7/index.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "./node_modules/@textile/users-grpc/users_pb.d.ts": [
-        "../buckets/node_modules/@types/google-protobuf/index.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
-      ],
-      "./node_modules/@textile/users-grpc/users_pb_service.d.ts": [
-        "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-        "./node_modules/@textile/users-grpc/users_pb.d.ts",
-        "./node_modules/@types/node/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/fs.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/@types/google-protobuf/index.d.ts": [
@@ -2913,6 +2837,25 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
+      "./node_modules/browser-headers/dist/typings/browserheaders.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/browser-headers/dist/typings/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/browser-headers/dist/typings/browserheaders.d.ts"
+      ],
+      "./node_modules/buffer/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
       "./node_modules/cids/src/index.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2945,12 +2888,82 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/peer-id/src/index.d.ts": [
-        "../buckets/node_modules/cids/src/index.d.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./node_modules/cids/src/index.d.ts",
         "./node_modules/libp2p-crypto/src/index.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/channel.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts",
+        "./node_modules/queueable/dist/types/deferred.d.ts",
+        "./node_modules/queueable/dist/types/linkedqueue.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/lastresult.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/adapters/multicast.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/common.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/deferred.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/fromdom.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/fromemitter.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/ts3.7/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/common.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/index.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/queueable/dist/types/adapters/channel.d.ts",
+        "./node_modules/queueable/dist/types/adapters/lastresult.d.ts",
+        "./node_modules/queueable/dist/types/adapters/multicast.d.ts",
+        "./node_modules/queueable/dist/types/deferred.d.ts",
+        "./node_modules/queueable/dist/types/fromdom.d.ts",
+        "./node_modules/queueable/dist/types/fromemitter.d.ts"
+      ],
+      "./node_modules/queueable/dist/types/linkedqueue.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
       ],
       "./node_modules/typescript/lib/lib.dom.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -3192,18 +3205,19 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
+      "./src/buckets.ts": [
+        "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+        "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
+        "./node_modules/cids/src/index.d.ts"
+      ],
       "./src/index.ts": [
-        "../buckets/dist/index.d.ts",
-        "./src/users.ts"
+        "./node_modules/@textile/context/dist/index.d.ts",
+        "./src/buckets.ts"
       ],
       "./src/spec.util.ts": [
-        "../buckets/dist/index.d.ts",
+        "./node_modules/@textile/context/dist/index.d.ts",
         "./node_modules/@textile/hub-grpc/hub_pb.d.ts"
-      ],
-      "./src/users.ts": [
-        "../buckets/dist/index.d.ts",
-        "./node_modules/@textile/threads-client/dist/index.d.ts",
-        "./node_modules/@textile/users-grpc/users_pb.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -3211,30 +3225,21 @@
       "../../node_modules/@types/chai/index.d.ts",
       "../../node_modules/@types/events/index.d.ts",
       "../../node_modules/@types/mocha/index.d.ts",
-      "../buckets/dist/buckets.d.ts",
-      "../buckets/dist/index.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
-      "../buckets/node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
-      "../buckets/node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
-      "../buckets/node_modules/@textile/context/dist/index.d.ts",
-      "../buckets/node_modules/@textile/threads-id/dist/index.d.ts",
-      "../buckets/node_modules/@types/google-protobuf/index.d.ts",
-      "../buckets/node_modules/@types/multibase/index.d.ts",
-      "../buckets/node_modules/browser-headers/dist/typings/browserheaders.d.ts",
-      "../buckets/node_modules/browser-headers/dist/typings/index.d.ts",
-      "../buckets/node_modules/cids/src/index.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/client.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/code.d.ts",
       "./node_modules/@improbable-eng/grpc-web/dist/typings/index.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/invoke.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/message.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/metadata.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/service.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/fetch.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/http.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/http/xhr.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/transport.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/transports/websocket/websocket.d.ts",
+      "./node_modules/@improbable-eng/grpc-web/dist/typings/unary.d.ts",
+      "./node_modules/@textile/buckets-grpc/buckets_pb.d.ts",
+      "./node_modules/@textile/buckets-grpc/buckets_pb_service.d.ts",
       "./node_modules/@textile/context/dist/index.d.ts",
       "./node_modules/@textile/hub-grpc/hub_pb.d.ts",
       "./node_modules/@textile/hub-grpc/hub_pb_service.d.ts",
@@ -3259,8 +3264,6 @@
       "./node_modules/@textile/threads-core/dist/thread/log.d.ts",
       "./node_modules/@textile/threads-core/dist/thread/thread.d.ts",
       "./node_modules/@textile/threads-id/dist/index.d.ts",
-      "./node_modules/@textile/users-grpc/users_pb.d.ts",
-      "./node_modules/@textile/users-grpc/users_pb_service.d.ts",
       "./node_modules/@types/google-protobuf/index.d.ts",
       "./node_modules/@types/multibase/index.d.ts",
       "./node_modules/@types/node/async_hooks.d.ts",
@@ -3314,12 +3317,24 @@
       "./node_modules/@types/node/worker_threads.d.ts",
       "./node_modules/@types/node/zlib.d.ts",
       "./node_modules/axios/index.d.ts",
+      "./node_modules/browser-headers/dist/typings/browserheaders.d.ts",
+      "./node_modules/browser-headers/dist/typings/index.d.ts",
+      "./node_modules/buffer/index.d.ts",
       "./node_modules/cids/src/index.d.ts",
       "./node_modules/delay/index.d.ts",
       "./node_modules/fast-sha256/sha256.d.ts",
       "./node_modules/libp2p-crypto/src/index.d.ts",
       "./node_modules/loglevel/index.d.ts",
       "./node_modules/peer-id/src/index.d.ts",
+      "./node_modules/queueable/dist/types/adapters/channel.d.ts",
+      "./node_modules/queueable/dist/types/adapters/lastresult.d.ts",
+      "./node_modules/queueable/dist/types/adapters/multicast.d.ts",
+      "./node_modules/queueable/dist/types/common.d.ts",
+      "./node_modules/queueable/dist/types/deferred.d.ts",
+      "./node_modules/queueable/dist/types/fromdom.d.ts",
+      "./node_modules/queueable/dist/types/fromemitter.d.ts",
+      "./node_modules/queueable/dist/types/index.d.ts",
+      "./node_modules/queueable/dist/types/linkedqueue.d.ts",
       "./node_modules/typescript/lib/lib.dom.d.ts",
       "./node_modules/typescript/lib/lib.es2015.collection.d.ts",
       "./node_modules/typescript/lib/lib.es2015.core.d.ts",
@@ -3360,10 +3375,11 @@
       "./node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "./node_modules/typescript/lib/lib.esnext.promise.d.ts",
       "./node_modules/typescript/lib/lib.esnext.string.d.ts",
+      "./src/buckets.spec.ts",
+      "./src/buckets.ts",
       "./src/index.ts",
-      "./src/spec.util.ts",
-      "./src/users.spec.ts",
-      "./src/users.ts"
+      "./src/normalize.ts",
+      "./src/spec.util.ts"
     ]
   },
   "version": "3.9.3"
