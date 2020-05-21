@@ -4,7 +4,10 @@
   "mode": "modules",
   "out": "docs",
   "include": "src/",
-  "exclude": ["**/*.spec.ts", "**/node_modules/**"],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/node_modules/**"
+  ],
   "gitRevision": "master",
   "excludePrivate": true,
   "excludeNotExported": true,

@@ -30,7 +30,12 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
-    "@typescript-eslint/no-unused-vars": [0, {"argsIgnorePattern": "^_"}],
+    "@typescript-eslint/no-unused-vars": [
+      0,
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "no-undefined": 0,
     "default-case": 0,
     "import/no-absolute-path": 2,

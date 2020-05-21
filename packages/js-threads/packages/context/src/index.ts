@@ -17,6 +17,10 @@ type KeyInfo = {
   type: 0 | 1
 }
 
+export const expirationError = new Error(
+  'Context expired. Consider calling withUserKey or withAPISig to refresh.',
+)
+
 export const createAPISig = async (
   secret: string,
   date: Date = new Date(Date.now() + 1000 * 60),
@@ -183,6 +187,10 @@ export class Context {
   toJSON() {
     // Strip out transport. @todo: phase out transport out entirely
     const { transport, ...context } = this._context
+    const msg = context['x-textile-api-sig-msg']
+    if (msg && new Date(msg) <= new Date()) {
+      throw expirationError
+    }
     return context
   }
 
