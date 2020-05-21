@@ -30,7 +30,6 @@
     "@types/bs58": "^4.0.1",
     "@types/multiaddr": "^7.2.0",
     "@types/varint": "^5.0.0",
-    "multiaddr": "^7.2.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },

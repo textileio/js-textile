@@ -1,11 +1,11 @@
 {
   "name": "@textile/threads",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Typescript/Javascript implementation of Textile's Threads Protocol",
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna run clean && lerna bootstrap",
     "compile": "lerna run compile",
     "build": "lerna run build",
     "build:node": "lerna run build:node --stream",

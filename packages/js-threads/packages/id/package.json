@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
-    "@types/node": "^14.0.1",
     "multibase": "^0.7.0",
     "varint": "^5.0.0"
   }
