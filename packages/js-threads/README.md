@@ -130,7 +130,7 @@ npm run compile
 
 This project utilises lerna's 'independent' release mode. So each time you run `lerna publish`, it will check for local updates and determine which packages have changed and need publishing. To do this locally, follow these steps:
 
-1. Ensure you are on a clean master branch (we only want to release from master). If you have to, run `lerna clean && lerna bootstrap` to get to a clean state.
+1. Ensure you are on a clean master branch (we only want to release from master). If you have to, run `lerna clean && lerna bootstrap` to get to a clean state. If this produces new changes, then make sure you commit these (or reject them) before proceeding.
 2. Ensure that webpack and webpack-cli are available. Ideally, install these globally. It is also a good idea to have typescript available globally. `npm i -g webpack webpack-cli typescript`
 3. Ensure your git config does not specify signed tags. The `lerna` cli tool does not seem to be able to handle these at this time.
 4. Ensure you are logged in to an npmjs.org account that has permission to publish to the @textile org/scope.
