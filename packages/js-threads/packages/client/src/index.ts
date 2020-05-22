@@ -4,8 +4,8 @@
  */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { grpc } from '@improbable-eng/grpc-web'
-import { API, APIGetToken } from '@textile/threads-client-grpc/api_pb_service'
-import * as pb from '@textile/threads-client-grpc/api_pb'
+import { API, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
+import * as pb from '@textile/threads-client-grpc/threads_pb'
 import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'

@@ -10,7 +10,7 @@ import {
   StartTransactionRequest,
   ReadTransactionRequest,
   ReadTransactionReply,
-} from '@textile/threads-client-grpc/api_pb'
+} from '@textile/threads-client-grpc/threads_pb'
 import { Context } from '@textile/context'
 import { ThreadID } from '@textile/threads-id'
 import { Transaction } from './Transaction'

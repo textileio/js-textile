@@ -20,8 +20,8 @@ import {
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
 import { Context, ContextKeys } from '@textile/context'
-import * as pb from '@textile/threads-net-grpc/api_pb'
-import { API, APIGetToken } from '@textile/threads-net-grpc/api_pb_service'
+import * as pb from '@textile/threads-net-grpc/threadsnet_pb'
+import { API, APIGetToken } from '@textile/threads-net-grpc/threadsnet_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
 import nextTick from 'next-tick'
 

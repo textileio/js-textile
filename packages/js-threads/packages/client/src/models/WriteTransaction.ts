@@ -14,7 +14,7 @@ import {
   StartTransactionRequest,
   WriteTransactionRequest,
   WriteTransactionReply,
-} from '@textile/threads-client-grpc/api_pb'
+} from '@textile/threads-client-grpc/threads_pb'
 import { ThreadID } from '@textile/threads-id'
 import { Instance, InstanceList, QueryJSON } from './query'
 import { Transaction } from './Transaction'
