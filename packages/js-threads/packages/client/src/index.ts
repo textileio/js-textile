@@ -10,7 +10,7 @@ import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import { Context } from '@textile/context'
+import { Context, Provider } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
   QueryJSON,
@@ -37,7 +37,7 @@ export class Client {
    * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public context: Context = new Context('http://127.0.0.1:6007')) {
+  constructor(public context: Context = new Provider()) {
     this.serviceHost = context.host
     this.rpcOptions = {
       transport: context.transport,

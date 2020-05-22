@@ -19,7 +19,7 @@ import {
   Identity,
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
-import { Context, ContextKeys } from '@textile/context'
+import { Context, ContextKeys, Provider } from '@textile/context'
 import * as pb from '@textile/threads-net-grpc/threadsnet_pb'
 import { API, APIGetToken } from '@textile/threads-net-grpc/threadsnet_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
@@ -85,15 +85,11 @@ export class Client implements Network {
    */
   public serviceHost: string
   public rpcOptions: grpc.RpcOptions
-
   /**
-   * Client creates a new gRPC client instance.
+   * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public context: Context | ContextKeys = new Context('http://127.0.0.1:6007')) {
-    if (!(context instanceof Context)) {
-      this.context = Context.fromJSON(context)
-    }
+  constructor(public context: Context = new Provider('http://127.0.0.1:6007')) {
     this.serviceHost = context.host
     this.rpcOptions = {
       transport: context.transport,

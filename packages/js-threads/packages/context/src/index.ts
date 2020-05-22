@@ -92,10 +92,29 @@ export interface ContextKeys {
   [key: string]: any
 }
 
+export interface Context {
+  host: HostString
+  debug: boolean
+  transport: grpc.TransportFactory
+  withSession(value?: string): Context
+  withThread(value?: ThreadID): Context
+  withThreadName(value?: string): Context
+  withOrg(value?: string): Context
+  withToken(value?: string): Context
+  withAPIKey(value?: string): Context
+  withAPISig(value?: { sig: string; msg: string }): Context
+  withContext(value?: Context): Context
+  toJSON(): any
+  toMetadata(): grpc.Metadata
+  withUserKey(key?: KeyInfo, date?: Date): Promise<Context>
+  set(key: keyof ContextKeys, value?: any): Context
+  get(key: keyof ContextKeys): any
+}
+
 /**
- * Context provides context management for gRPC credentials and config settings.
+ * Provider provides context management for gRPC credentials and config settings.
  */
-export class Context {
+export class Provider implements Context {
   // Internal context variables
   private _context: Partial<Record<keyof ContextKeys, any>> = {}
 
@@ -208,7 +227,7 @@ export class Context {
     newContext['host'] = host
     newContext['transport'] = transport
     newContext['debug'] = debug
-    const ctx = new Context()
+    const ctx = new Provider()
     ctx._context = newContext
     return ctx
   }

@@ -15,7 +15,7 @@ import {
   Identity,
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
-import { Context } from '@textile/context'
+import { Provider } from '@textile/context'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Client } from '.'
 
@@ -40,7 +40,7 @@ describe('Network Client...', () => {
   let token: string
   let identity: Identity
   before(async () => {
-    client = new Client(new Context(proxyAddr1))
+    client = new Client(new Provider(proxyAddr1))
     identity = await Libp2pCryptoIdentity.fromRandom()
     token = await client.getToken(identity)
   })
@@ -64,7 +64,7 @@ describe('Network Client...', () => {
       const info1 = await createThread(client)
       const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
       const addr = threadAddr(hostAddr, hostID, info1)
-      const client2 = new Client(new Context(proxyAddr2))
+      const client2 = new Client(new Provider(proxyAddr2))
       // Create temporary identity
       const identity = await Libp2pCryptoIdentity.fromRandom()
       const token2 = await client2.getToken(identity)
@@ -101,7 +101,7 @@ describe('Network Client...', () => {
     })
 
     it('should add a replicator to a thread', async () => {
-      const client2 = new Client(new Context(proxyAddr2))
+      const client2 = new Client(new Provider(proxyAddr2))
       const hostID2 = await client2.getHostID()
       const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
 
@@ -176,7 +176,7 @@ describe('Network Client...', () => {
 
       before(async function () {
         this.timeout(5000)
-        client2 = new Client(new Context(proxyAddr2))
+        client2 = new Client(new Provider(proxyAddr2))
         const hostID2 = await client2.getHostID()
         const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
         const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))

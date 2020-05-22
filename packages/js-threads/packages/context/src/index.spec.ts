@@ -1,9 +1,9 @@
 import { expect } from 'chai'
-import { Context, expirationError } from './index'
+import { Provider, Context, expirationError } from './index'
 
 describe('Context', () => {
   it('should throw an exception when working with an expired msg', async () => {
-    const context = new Context()
+    const context: Context = new Provider()
     try {
       context.withAPISig({
         sig: 'fake',
