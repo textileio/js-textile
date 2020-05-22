@@ -114,7 +114,7 @@ npm run test:node
 npm run test:browser
 ```
 
-Similarly, you can compile the Typescript-based sub-packages to Javascript all at once:
+Similarly, you can compile the Typescript-based sub-packages to Javascript all at once. This will also build the browser bundles via webpack:
 
 ```bash
 npm run build
@@ -125,6 +125,18 @@ This project also uses incremental Typescript builds, so to take advantage of th
 ```shell script
 npm run compile
 ```
+
+## Releasing
+
+This project utilises lerna's 'independent' release mode. So each time you run `lerna publish`, it will check for local updates and determine which packages have changed and need publishing. To do this locally, follow these steps:
+
+1. Ensure you are on a clean master branch (we only want to release from master). If you have to, run `lerna clean && lerna bootstrap` to get to a clean state.
+2. Ensure that webpack and webpack-cli are available. Ideally, install these globally. It is also a good idea to have typescript available globally. `npm i -g webpack webpack-cli typescript`
+3. Ensure your git config does not specify signed tags. The `lerna` cli tool does not seem to be able to handle these at this time.
+4. Ensure you are logged in to an npmjs.org account that has permission to publish to the @textile org/scope.
+5. Run `lerna publish`, and sit back and wait. Ideally, this will go off without a hitch.
+
+If it fails after creating tags and/or pushing the version updates to git, but before the actual npm publish completes, you should be able to 'recover' by running `lerna publish from-package`, which will attempt to publish new releases based on the versions available on npmjs.org. If it failed before or during tag creation, you might have to use something like `git reset --hard HEAD~1` to reset the last commit, followed by `git push --force --follow-tags` (if it was pushed to remote already), **but check that the right commit was reverted first**.
 
 See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other things you can do to make working across multiple packages easier. 
 
