@@ -138,7 +138,7 @@ This project utilises lerna's 'independent' release mode. So each time you run `
 
 If it fails after creating tags and/or pushing the version updates to git, but before the actual npm publish completes, you should be able to 'recover' by running `lerna publish from-package`, which will attempt to publish new releases based on the versions available on npmjs.org. If it failed before or during tag creation, you might have to use something like `git reset --hard HEAD~1` to reset the last commit, followed by `git push --force --follow-tags` (if it was pushed to remote already), **but check that the right commit was reverted first**.
 
-See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other things you can do to make working across multiple packages easier. 
+See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other things you can do to make working across multiple packages easier. **Note**: If you are using `lerna` commands directly (as opposed to the ones wrapped in the package.json scripts), you'll want to install `lerna` globally to make your life easier: `npm i -g lerna`.
 
 ## API
 
