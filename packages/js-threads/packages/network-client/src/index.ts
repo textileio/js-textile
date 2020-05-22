@@ -104,55 +104,80 @@ export class Client implements Network {
   }
 
   /**
-   * Obtain a token for interacting with the remote network API.
-   * @param identity The generic identity to use for signing and validation.
-   * @param ctx Context object containing web-gRPC headers and settings.
-   * @note If an identity is not provided, a random PKI identity is used. This might not be what you want!
-   * It is not easy/possible to migrate identities after the fact. Please supply an identity argument if
-   * you wish to persist/retrieve user data later.
+   * Create a random user identity.
    */
-  async getToken(identity?: Identity, ctx?: Context) {
+  static async randomIdentity() {
+    return Libp2pCryptoIdentity.fromRandom()
+  }
+
+  /**
+   * Obtain a token for interacting with the remote API.
+   * @param identity A user identity to use for creating records in the database. A random identity
+   * can be created with `Client.randomIdentity(), however, it is not easy/possible to migrate
+   * identities after the fact. Please store or otherwise persist any identity information if
+   * you wish to retrieve user data later, or use an external identity provider.
+   * @param ctx Context object containing web-gRPC headers and settings.
+   */
+  async getToken(identity: Identity, ctx?: Context) {
+    return this.getTokenChallenge(
+      identity.public.toString(),
+      async (challenge: Buffer) => {
+        return identity.sign(challenge)
+      },
+      ctx,
+    )
+  }
+
+  /**
+   * Obtain a token for interacting with the remote API.
+   * @param publicKey The public key of a user identity to use for creating records in the database.
+   * A random identity can be created with `Client.randomIdentity(), however, it is not
+   * easy/possible to migrate identities after the fact. Please store or otherwise persist any
+   * identity information if you wish to retrieve user data later, or use an external identity
+   * provider.
+   * @param callback A callback function that takes a `challenge` argument and returns a signed
+   * message using the input challenge and the private key associated with `publicKey`.
+   * @param ctx Context object containing web-gRPC headers and settings.
+   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
+   */
+  async getTokenChallenge(
+    publicKey: string,
+    callback: (challenge: Buffer) => Buffer | Promise<Buffer>,
+    ctx?: Context,
+  ) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
     })
-    const ident = identity ?? (await Libp2pCryptoIdentity.fromRandom())
     return new Promise<string>((resolve, reject) => {
-      let token: string
+      let token = ''
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
-          const challenge = message.getChallenge()
-          let sig: Buffer = Buffer.from('')
-          try {
-            if (identity) {
-              sig = await identity.sign(Buffer.from(challenge as string))
-            }
-          } catch (err) {
-            reject(err)
-          }
+          const challenge = Buffer.from(message.getChallenge() as string)
+          const signature = await callback(challenge)
           const req = new pb.GetTokenRequest()
-          req.setSignature(sig)
+          req.setSignature(signature)
           client.send(req)
+          client.finishSend()
         } else if (message.hasToken()) {
           token = message.getToken()
         }
       })
-      client.onEnd((code) => {
+      client.onEnd((code: grpc.Code, message: string, _trailers: grpc.Metadata) => {
         client.close()
         if (code === grpc.Code.OK) {
           this.context.withToken(token)
           resolve(token)
         } else {
-          reject(new Error(code.toString()))
+          reject(new Error(message))
         }
       })
       const req = new pb.GetTokenRequest()
-      req.setKey(ident.public.toString())
-      const metadata = JSON.parse(JSON.stringify(this.context.withContext(ctx)))
+      req.setKey(publicKey)
+      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
       client.start(metadata)
       client.send(req)
-      // client.finishSend()
     })
   }
 

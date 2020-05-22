@@ -63,8 +63,7 @@ describe('Client', function () {
 
   describe('.newDB', () => {
     it('response should succeed', async () => {
-      // Calling getToken without an explicit identity will create a default random PKI pair
-      await client.getToken()
+      await client.getToken(identity)
       await client.newDB(dbID)
     })
   })
