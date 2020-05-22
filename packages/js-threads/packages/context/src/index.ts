@@ -1,5 +1,4 @@
 import { grpc } from '@improbable-eng/grpc-web'
-import { ThreadID } from '@textile/threads-id'
 import { HMAC } from 'fast-sha256'
 import multibase from 'multibase'
 
@@ -97,7 +96,7 @@ export interface Context {
   debug: boolean
   transport: grpc.TransportFactory
   withSession(value?: string): Context
-  withThread(value?: ThreadID): Context
+  withThread(value?: string): Context
   withThreadName(value?: string): Context
   withOrg(value?: string): Context
   withToken(value?: string): Context
@@ -158,7 +157,7 @@ export class Provider implements Context {
     return this
   }
 
-  withThread(value?: ThreadID) {
+  withThread(value?: string) {
     if (value === undefined) return this
     this._context['x-textile-thread'] = value.toString()
     return this

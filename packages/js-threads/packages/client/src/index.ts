@@ -135,7 +135,7 @@ export class Client {
     const req = new pb.NewDBRequest()
     req.setDbid(id.toBytes())
     await this.unary(API.NewDB, req)
-    this.context.withThread && this.context.withThread(id)
+    this.context.withThread && this.context.withThread(id.toString())
     return id
   }
 
