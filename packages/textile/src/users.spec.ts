@@ -56,7 +56,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.toString().includes("expired")).to.be.true
+        expect(err.toString().includes('expired')).to.be.true
       }
     })
     it('should handle account keys', async () => {
@@ -148,7 +148,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.toString().includes("expired")).to.be.true
+        expect(err.toString().includes('expired')).to.be.true
       }
     })
     it('should handle account keys', async () => {
