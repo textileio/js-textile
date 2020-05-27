@@ -40,5 +40,6 @@
     "rimraf": "^3.0.0",
     "streaming-iterables": "^4.1.2",
     "typescript": "^3.7.2"
-  }
+  },
+  "gitHead": "1e3fb240a50a8128fe285c0ed444286d87c996b2"
 }

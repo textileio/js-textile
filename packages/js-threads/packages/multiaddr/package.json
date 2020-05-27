@@ -40,5 +40,6 @@
     "cids": "^0.8.0",
     "multiaddr": "^7.4.2",
     "varint": "^5.0.0"
-  }
+  },
+  "gitHead": "1e3fb240a50a8128fe285c0ed444286d87c996b2"
 }

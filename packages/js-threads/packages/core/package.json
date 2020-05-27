@@ -50,5 +50,6 @@
     "multibase": "^0.7.0",
     "peer-id": "^0.13.11",
     "varint": "^5.0.0"
-  }
+  },
+  "gitHead": "1e3fb240a50a8128fe285c0ed444286d87c996b2"
 }
