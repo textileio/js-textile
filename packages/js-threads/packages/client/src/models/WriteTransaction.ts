@@ -3,7 +3,7 @@
  * @module @textile/threads-client/models
  */
 import { grpc } from '@improbable-eng/grpc-web'
-import { Context } from '@textile/context'
+import { ContextInterface } from '@textile/context'
 import {
   CreateRequest,
   SaveRequest,
@@ -24,7 +24,7 @@ import { Transaction } from './Transaction'
  */
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
   constructor(
-    protected readonly context: Context,
+    protected readonly context: ContextInterface,
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>,
     protected readonly dbID: ThreadID,
     protected readonly modelName: string,

@@ -11,7 +11,7 @@ import {
   ReadTransactionRequest,
   ReadTransactionReply,
 } from '@textile/threads-client-grpc/threads_pb'
-import { Context } from '@textile/context'
+import { ContextInterface } from '@textile/context'
 import { ThreadID } from '@textile/threads-id'
 import { Transaction } from './Transaction'
 import { Instance, InstanceList, QueryJSON } from './query'
@@ -21,7 +21,7 @@ import { Instance, InstanceList, QueryJSON } from './query'
  */
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
   constructor(
-    protected readonly context: Context,
+    protected readonly context: ContextInterface,
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>,
     protected readonly dbID: ThreadID,
     protected readonly modelName: string,

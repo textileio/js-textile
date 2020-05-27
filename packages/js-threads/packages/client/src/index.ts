@@ -10,7 +10,7 @@ import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import { Context, Provider } from '@textile/context'
+import { ContextInterface, Context } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
   QueryJSON,
@@ -37,7 +37,7 @@ export class Client {
    * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public context: Context = new Provider()) {
+  constructor(public context: ContextInterface = new Context()) {
     this.serviceHost = context.host
     this.rpcOptions = {
       transport: context.transport,
@@ -62,7 +62,7 @@ export class Client {
    * you wish to retrieve user data later, or use an external identity provider.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async getToken(identity: Identity, ctx?: Context) {
+  async getToken(identity: Identity, ctx?: ContextInterface) {
     return this.getTokenChallenge(
       identity.public.toString(),
       async (challenge: Buffer) => {
@@ -87,7 +87,7 @@ export class Client {
   async getTokenChallenge(
     publicKey: string,
     callback: (challenge: Buffer) => Buffer | Promise<Buffer>,
-    ctx?: Context,
+    ctx?: ContextInterface,
   ) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
       host: this.serviceHost,
@@ -130,7 +130,7 @@ export class Client {
    * @param dbID the ID of the database
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  public async newDB(dbID?: ThreadID, ctx?: Context) {
+  public async newDB(dbID?: ThreadID, ctx?: ContextInterface) {
     const id = dbID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
     req.setDbid(id.toBytes())

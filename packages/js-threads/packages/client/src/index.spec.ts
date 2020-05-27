@@ -4,7 +4,7 @@
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 
 import { expect } from 'chai'
-import { Provider } from '@textile/context'
+import { Context } from '@textile/context'
 import { Where, ReadTransaction, WriteTransaction } from './models'
 import { Client, ThreadID } from './index'
 
@@ -56,7 +56,7 @@ describe('Client', function () {
   let dbKey: string
   let dbAddr: string
   let identity: Identity
-  const client = new Client(new Provider('http://127.0.0.1:6007'))
+  const client = new Client(new Context('http://127.0.0.1:6007'))
 
   before(async () => {
     identity = await Libp2pCryptoIdentity.fromRandom()
@@ -309,7 +309,7 @@ describe('Client', function () {
 
   describe('Restart', () => {
     it('Should handle a whole new "restart" of the client', async () => {
-      const newClient = new Client(new Provider('http://127.0.0.1:6007'))
+      const newClient = new Client(new Context('http://127.0.0.1:6007'))
       const person = createPerson()
       await newClient.getToken(identity)
       const created = await newClient.create(dbID, 'Person', [person])

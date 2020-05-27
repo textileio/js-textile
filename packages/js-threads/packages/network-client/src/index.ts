@@ -19,7 +19,7 @@ import {
   Identity,
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
-import { Context, ContextKeys, Provider } from '@textile/context'
+import { ContextInterface, ContextKeys, Context } from '@textile/context'
 import * as pb from '@textile/threads-net-grpc/threadsnet_pb'
 import { API, APIGetToken } from '@textile/threads-net-grpc/threadsnet_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
@@ -89,7 +89,7 @@ export class Client implements Network {
    * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public context: Context = new Provider('http://127.0.0.1:6007')) {
+  constructor(public context: ContextInterface = new Context('http://127.0.0.1:6007')) {
     this.serviceHost = context.host
     this.rpcOptions = {
       transport: context.transport,
@@ -114,7 +114,7 @@ export class Client implements Network {
    * you wish to retrieve user data later, or use an external identity provider.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async getToken(identity: Identity, ctx?: Context) {
+  async getToken(identity: Identity, ctx?: ContextInterface) {
     return this.getTokenChallenge(
       identity.public.toString(),
       async (challenge: Buffer) => {
@@ -139,7 +139,7 @@ export class Client implements Network {
   async getTokenChallenge(
     publicKey: string,
     callback: (challenge: Buffer) => Buffer | Promise<Buffer>,
-    ctx?: Context,
+    ctx?: ContextInterface,
   ) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
       host: this.serviceHost,
@@ -181,7 +181,7 @@ export class Client implements Network {
    * getHostID returns the network's (remote) host peer ID.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async getHostID(ctx?: Context) {
+  async getHostID(ctx?: ContextInterface) {
     logger.debug('making get host ID request')
     const req = new pb.GetHostIDRequest()
     const res: pb.GetHostIDReply = await this.unary(API.GetHostID, req, ctx)
@@ -198,7 +198,7 @@ export class Client implements Network {
    * network will be unable to write records (but it can return records).
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async createThread(id: ThreadID, opts: NewThreadOptions, ctx?: Context) {
+  async createThread(id: ThreadID, opts: NewThreadOptions, ctx?: ContextInterface) {
     logger.debug('making create thread request')
     const keys = getThreadKeys(opts)
     const req = new pb.CreateThreadRequest()
@@ -214,7 +214,7 @@ export class Client implements Network {
    * @param opts The set of keys to use when adding the Thread.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async addThread(addr: Multiaddr, opts: NewThreadOptions, ctx?: Context) {
+  async addThread(addr: Multiaddr, opts: NewThreadOptions, ctx?: ContextInterface) {
     logger.debug('making add thread request')
     const keys = getThreadKeys(opts)
     const req = new pb.AddThreadRequest()
@@ -229,7 +229,7 @@ export class Client implements Network {
    * @param id The Thread ID.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async getThread(id: ThreadID, ctx?: Context) {
+  async getThread(id: ThreadID, ctx?: ContextInterface) {
     logger.debug('making get thread request')
     const req = new pb.GetThreadRequest()
     req.setThreadid(id.toBytes())
@@ -242,7 +242,7 @@ export class Client implements Network {
    * @param id The Thread ID.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async pullThread(id: ThreadID, ctx?: Context) {
+  async pullThread(id: ThreadID, ctx?: ContextInterface) {
     logger.debug('making pull thread request')
     const req = new pb.PullThreadRequest()
     req.setThreadid(id.toBytes())
@@ -255,7 +255,7 @@ export class Client implements Network {
    * @param id The Thread ID.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async deleteThread(id: ThreadID, ctx?: Context) {
+  async deleteThread(id: ThreadID, ctx?: ContextInterface) {
     logger.debug('making delete thread request')
     const req = new pb.DeleteThreadRequest()
     req.setThreadid(id.toBytes())
@@ -269,7 +269,7 @@ export class Client implements Network {
    * @param addr The multiaddress of the replicator peer.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async addReplicator(id: ThreadID, addr: Multiaddr, ctx?: Context) {
+  async addReplicator(id: ThreadID, addr: Multiaddr, ctx?: ContextInterface) {
     logger.debug('making add replicator request')
     const req = new pb.AddReplicatorRequest()
     req.setThreadid(id.toBytes())
@@ -286,7 +286,7 @@ export class Client implements Network {
    * @param body The body to add as content.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async createRecord(id: ThreadID, body: any, ctx?: Context) {
+  async createRecord(id: ThreadID, body: any, ctx?: ContextInterface) {
     logger.debug('making create record request')
     const info = await this.getThread(id, ctx)
     const block = Block.encoder(body, 'dag-cbor').encode()
@@ -304,7 +304,7 @@ export class Client implements Network {
    * @param rec The log record to add.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord, ctx?: Context) {
+  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord, ctx?: ContextInterface) {
     logger.debug('making add record request')
     const prec = recordToProto(rec)
     const req = new pb.AddRecordRequest()
@@ -326,7 +326,7 @@ export class Client implements Network {
    * @param rec The record's CID.
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  async getRecord(id: ThreadID, rec: CID, ctx?: Context) {
+  async getRecord(id: ThreadID, rec: CID, ctx?: ContextInterface) {
     logger.debug('making get record request')
     const info = await this.getThread(id, ctx)
     if (info.key === undefined) throw new Error('Missing thread keys')
@@ -348,7 +348,7 @@ export class Client implements Network {
   subscribe(
     cb: (rec?: ThreadRecord, err?: Error) => void,
     threads: ThreadID[] = [],
-    ctx?: Context,
+    ctx?: ContextInterface,
   ): grpc.Request {
     logger.debug('making subscribe request')
     const ids = threads.map((thread) => thread.toBytes())
@@ -401,7 +401,7 @@ export class Client implements Network {
     R extends grpc.ProtobufMessage,
     T extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<R, T>
-  >(methodDescriptor: M, req: R, context?: Context): Promise<T> {
+  >(methodDescriptor: M, req: R, context?: ContextInterface): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const creds = this.context.withContext(context)
       grpc.unary(methodDescriptor, {

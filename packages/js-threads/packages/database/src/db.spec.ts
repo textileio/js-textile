@@ -10,7 +10,7 @@ import delay from 'delay'
 import { isBrowser } from 'browser-or-node'
 import { Key } from 'interface-datastore'
 import { DomainDatastore, Dispatcher, Update, Op } from '@textile/threads-store'
-import { Network, Client, Provider } from '@textile/threads-network'
+import { Network, Client, Context } from '@textile/threads-network'
 import { MemoryDatastore } from 'interface-datastore'
 import { Database, mismatchError } from './db'
 import { EventBus } from './eventbus'
@@ -142,7 +142,7 @@ describe('Database', () => {
       // have the same state of dummy.
       const info = await d1.network.getThread(id1)
       const datastore = new MemoryDatastore()
-      const client = new Client(new Provider('http://127.0.0.1:6207'))
+      const client = new Client(new Context('http://127.0.0.1:6207'))
       const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
       const d2 = new Database(datastore, { network })
       const ident2 = await Database.randomIdentity()
