@@ -14,7 +14,10 @@
     "test": "npm run test:node && npm run test:browser",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
+    "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
+    "textile:update": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "docs": "typedoc && touch ./docs/.nojekyll"
+    ,"ci": "if [ $(npm run textile:check | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;"
   },
   "author": "Textile <contact@textile.io>",
   "license": "MIT",
@@ -38,6 +41,7 @@
     "husky": "^4.2.5",
     "lerna": "^3.19.0",
     "mocha": "^7.1.1",
+    "npm-check-updates": "^6.0.1",
     "nyc": "^15.0.0",
     "polendina": "^1.0.0",
     "prettier": "^2.0.5",
