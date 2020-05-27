@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-core",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -41,8 +41,8 @@
   },
   "dependencies": {
     "@ipld/block": "^4.0.0",
-    "@textile/multiaddr": "^0.0.9",
-    "@textile/threads-id": "^0.0.9",
+    "@textile/multiaddr": "^0.0.10",
+    "@textile/threads-id": "^0.1.0",
     "@types/multibase": "^0.6.0",
     "bs58": "^4.0.1",
     "libp2p-crypto": "^0.17.2",
