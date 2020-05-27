@@ -78,4 +78,4 @@ jobs:
        - name: Display
          run: npm run textile:check
        - name: Check
-         run: if [ $(npm run textile:check | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;
+         run: if [ $(lerna exec -- npx ncu '/^@textile/.*$/' | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;
