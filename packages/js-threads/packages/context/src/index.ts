@@ -2,6 +2,9 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { HMAC } from 'fast-sha256'
 import multibase from 'multibase'
 
+/**
+ * The set of host strings used by any gPRC clients.
+ */
 type HostString =
   | 'https://api.textile.io:3447'
   | 'https://api.staging.textile.io:3447'
@@ -9,10 +12,21 @@ type HostString =
   | string
 export const defaultHost: HostString = 'https://api.textile.io:3447'
 
+/**
+ * Interface describing the required shape of input user group/account keys.
+ */
 type KeyInfo = {
+  /**
+   * API key. Can be embedded/shared within an app.
+   */
   key: string
+  /**
+   * User group/account secret. Should not be embedded/shared publicly.
+   */
   secret: string
-  // ACCOUNT, USER
+  /**
+   * Key type. One of ACCOUNT or USER
+   */
   type: 0 | 1
 }
 
@@ -20,6 +34,16 @@ export const expirationError = new Error(
   'Context expired. Consider calling withUserKey or withAPISig to refresh.',
 )
 
+/**
+ * Generate an authorization signature and message.
+ * By default, this will use a Date one minute from `Date.now` as the message. Subsequent calls to
+ * the gRPC APIs will throw (or return an authorization error) if the message date has passed.
+ * @note This function is provided for app developers, but it should NOT be used client-side,
+ * as it requires a key secret.
+ * @param secret The key secret to generate the signature. See KeyInfo for details.
+ * @param date An optinal future Date to use as signature message. Once `date` has passed, this
+ * authorization signature and message will expire. Defaults to one minute from `Date.now`.
+ */
 export const createAPISig = async (
   secret: string,
   date: Date = new Date(Date.now() + 1000 * 60),
@@ -32,13 +56,16 @@ export const createAPISig = async (
   return { sig, msg }
 }
 
+/**
+ * Interface describing the set of default context keys.
+ */
 export interface ContextKeys {
   /**
-   * Thread name. Specifies a mapping between human-readable name and a Thread ID.
+   * Thread name. Specifies a mapping between human-readable name and a ThreadID.
    */
   ['x-textile-thread-name']?: string
   /**
-   * Thread ID as a string. Should be generated with `ThreadID.toString()` method.
+   * ThreadID as a string. Should be generated with `ThreadID.toString()` method.
    */
   ['x-textile-thread']?: string
   /**
@@ -52,7 +79,7 @@ export interface ContextKeys {
   ['x-textile-org']?: string
 
   /**
-   * API key. Used for user authentication.
+   * API key. Used for user group/account authentication.
    */
   ['x-textile-api-key']?: string
 
@@ -72,9 +99,10 @@ export interface ContextKeys {
   ['x-textile-api-sig-msg']?: string
 
   /**
-   * The service host address/url. Defaults to https://hub.textile.io.
+   * The service host address/url. Defaults to https://api.textile.io.
    */
   host?: HostString
+
   /**
    * The transport to use for gRPC calls. Defaults to web-sockets.
    */
@@ -86,44 +114,106 @@ export interface ContextKeys {
   debug?: boolean
 
   /**
-   * Extras
+   * ContextKeys may also contain any number of additional custom keys.
    */
   [key: string]: any
 }
 
+/**
+ * Interface describing the required methods for a full Context.
+ * Users of Context may only require a subset of these methods, in which case, they should
+ * specify their own interface, ensuring that Context is able to satisfy it.
+ */
 export interface Context {
+  /**
+   * The service host address/url. Defaults to https://api.textile.io.
+   */
   host: HostString
+  /**
+   * Whether to enable debugging output during gRPC calls.
+   */
   debug: boolean
+  /**
+   * The transport to use for gRPC calls. Defaults to web-sockets.
+   */
   transport: grpc.TransportFactory
+  /**
+   * Set the session key. Used for various session contexts.
+   */
   withSession(value?: string): Context
+  /**
+   * Set the thread ID as a string. Should be generated with `ThreadID.toString()` method.
+   */
   withThread(value?: string): Context
+  /**
+   * Set the thread name. Specifies a mapping between human-readable name and a ThreadID.
+   */
   withThreadName(value?: string): Context
+  /**
+   * Set the org slug/name. Used for various org session operations.
+   */
   withOrg(value?: string): Context
+  /**
+   * Set the authorization token for interacting with remote APIs.
+   */
   withToken(value?: string): Context
+  /**
+   * Set the API key. Used for user group/account authentication.
+   */
   withAPIKey(value?: string): Context
+  /**
+   * Set the API signature used to authenticate with remote APIs.
+   */
   withAPISig(value?: { sig: string; msg: string }): Context
-  withContext(value?: Context): Context
-  toJSON(): any
-  toMetadata(): grpc.Metadata
+  /**
+   * Compute the API signature and message.
+   * @param key User group/account key information.
+   * @param date Optional future Date for computing the authorization signature.
+   */
   withUserKey(key?: KeyInfo, date?: Date): Promise<Context>
+  /**
+   * Merge another context with this one.
+   */
+  withContext(value?: Context): Context
+  /**
+   * Export this context to a JS Object useful for exporting to JSON.
+   */
+  toJSON(): any
+  /**
+   * Export this context as gRPC Metadata.
+   */
+  toMetadata(): grpc.Metadata
+  /**
+   * Set arbitrary key/value context pairs.
+   * @param key The key to set.
+   * @param value The value to specify under `key`.
+   */
   set(key: keyof ContextKeys, value?: any): Context
+  /**
+   * Get arbitrary key/value context pairs.
+   * @param key The key to get.
+   */
   get(key: keyof ContextKeys): any
 }
 
 /**
  * Provider provides context management for gRPC credentials and config settings.
+ * It is the default implementation for the Context interface.
  */
 export class Provider implements Context {
   // Internal context variables
   private _context: Partial<Record<keyof ContextKeys, any>> = {}
 
+  /**
+   * Construct a new Provider object.
+   * @param host The remote gRPC host. This input exists to comply with the Config interface.
+   * @param debug For testing and debugging purposes.
+   * @param transport To comply with Config interface. Should be left as websocket transport.
+   */
   constructor(
-    // To comply with Config interface
     host: HostString = defaultHost,
-    // For testing and debugging purposes.
     debug = false,
-    // To comply with Config interface
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
+    transport = grpc.WebsocketTransport(),
   ) {
     this._context['host'] = host
     this._context['transport'] = transport
@@ -195,6 +285,12 @@ export class Provider implements Context {
     return this
   }
 
+  async withUserKey(key?: KeyInfo, date?: Date) {
+    if (key === undefined) return this
+    const sig = await createAPISig(key.secret, date)
+    return this.withAPIKey(key.key).withAPISig(sig)
+  }
+
   withContext(value?: Context) {
     if (value === undefined) return this
     // Spread to copy rather than reference
@@ -216,6 +312,13 @@ export class Provider implements Context {
     return new grpc.Metadata(this.toJSON())
   }
 
+  /**
+   * Import various Context API properties from JSON.
+   * @param json The JSON object.
+   * @param host Optional host string.
+   * @param debug Optional debug setting.
+   * @param transport Optional transport option.
+   */
   static fromJSON(
     json: ContextKeys,
     host: HostString = defaultHost,
@@ -229,11 +332,5 @@ export class Provider implements Context {
     const ctx = new Provider()
     ctx._context = newContext
     return ctx
-  }
-
-  async withUserKey(key?: KeyInfo, date?: Date) {
-    if (key === undefined) return this
-    const sig = await createAPISig(key.secret, date)
-    return this.withAPIKey(key.key).withAPISig(sig)
   }
 }
