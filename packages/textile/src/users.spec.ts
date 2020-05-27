@@ -9,7 +9,7 @@ import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Buckets } from '@textile/buckets'
-import { Context, Provider } from '@textile/context'
+import { Context, Provider, expirationError } from '@textile/context'
 import { isBrowser } from 'browser-or-node'
 import { signUp, createKey, createAPISig } from './spec.util'
 import { Client } from './users'
@@ -56,7 +56,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.toString().includes('expired')).to.be.true
+        expect(err).to.equal(expirationError)
       }
     })
     it('should handle account keys', async () => {
@@ -148,7 +148,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.toString().includes('expired')).to.be.true
+        expect(err).to.equal(expirationError)
       }
     })
     it('should handle account keys', async () => {
