@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
