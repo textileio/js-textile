@@ -7,7 +7,11 @@ import multibase, { name as Name } from 'multibase'
  * It is formed by a Version, a Variant, and a random number of a given length.
  */
 class ThreadID {
-  constructor(private buf: Buffer) {}
+  // @todo: Move Buffer -> Uint8Array where possible
+  readonly buf: Buffer
+  constructor(buf: Uint8Array) {
+    this.buf = Buffer.from(buf)
+  }
   /**
    * fromRandom creates a new random ID object.
    * @param variant The Thread variant to use. @see Variant
@@ -31,11 +35,11 @@ class ThreadID {
    *    <version><variant><random-number>
    * @param v The input encoded Thread ID.
    */
-  static fromString(v: string | Buffer) {
+  static fromString(v: string | Uint8Array) {
     if (v.length < 2) {
       throw new Error('id too short')
     }
-    const data = Buffer.from(multibase.decode(v))
+    const data = multibase.decode(Buffer.from(v))
     return ThreadID.fromBytes(data)
   }
 
@@ -47,7 +51,7 @@ class ThreadID {
    * expect multibase-encoded data. fromBytes accepts the output of ID.bytes().
    * @param data The input Thread ID bytes.
    */
-  static fromBytes(data: Buffer) {
+  static fromBytes(data: Uint8Array) {
     let copy = Buffer.from(data)
     const version = decode(copy)
     if (version != 1) {

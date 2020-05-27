@@ -10,7 +10,7 @@ import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import { ContextInterface, Context } from '@textile/context'
+import { ContextInterface, Context, UserAuth } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
   QueryJSON,
@@ -45,6 +45,15 @@ export class Client {
     }
     // If we have a default here, use it. Otherwise, rely on specific calls
     this.rpcOptions.transport && grpc.setDefaultTransport(this.rpcOptions.transport)
+  }
+
+  /**
+   * Create a new gRPC client instance from a supplied user auth object.
+   * Assumes all default gRPC setttings. For custimization options, use a context object directly.
+   * @param auth The user auth object.
+   */
+  static withUserAuth(auth: UserAuth) {
+    return new Client(Context.fromUserAuth(auth))
   }
 
   /**
