@@ -7,7 +7,8 @@
     "./coding": "./coding/browser"
   },
   "files": [
-    "dist/**/!(*.spec).js?(.map)"
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
   ],
   "publishConfig": {
     "access": "public"
