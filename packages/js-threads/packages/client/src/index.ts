@@ -10,7 +10,7 @@ import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
-import { ContextInterface, Context, UserAuth } from '@textile/context'
+import { ContextInterface, Context, UserAuth, defaultHost } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
   QueryJSON,
@@ -52,8 +52,9 @@ export class Client {
    * Assumes all default gRPC setttings. For custimization options, use a context object directly.
    * @param auth The user auth object.
    */
-  static withUserAuth(auth: UserAuth) {
-    return new Client(Context.fromUserAuth(auth))
+  static withUserAuth(auth: UserAuth, host = defaultHost, debug = false) {
+    const context = Context.fromUserAuth(auth, host, debug)
+    return new Client(context)
   }
 
   /**
