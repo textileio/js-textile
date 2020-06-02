@@ -113,7 +113,8 @@ async function runListenersComplexUseCase(los: string[]) {
 describe('Database', () => {
   describe('end to end test', () => {
     it('should allow paired peers to exchange updates', async function () {
-      if (isBrowser) return this.skip()
+      if (isBrowser) return this.skip() // Don't run in browser
+      if (process.env.CI) return this.skip() // Don't run in CI (too slow)
       // @todo This test is probably too slow for CI, but should run just fine locally
       // Should probably just skip it (https://stackoverflow.com/a/48121978) in CI
       // Peer 1: Create db1, register a collection, create and update an instance.
