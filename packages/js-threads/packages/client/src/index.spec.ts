@@ -35,6 +35,15 @@ const personSchema = {
   },
 }
 
+// Minimal schema representation
+const schema2 = {
+  properties: {
+    _id: { type: 'string' },
+    fullName: { type: 'string' },
+    age: { type: 'integer', minimum: 0 },
+  },
+}
+
 interface Person {
   _id: string
   firstName: string
@@ -60,20 +69,76 @@ describe('Client', function () {
 
   before(async () => {
     identity = await Libp2pCryptoIdentity.fromRandom()
+    await client.getToken(identity)
+    await client.newDB(dbID, 'test')
   })
 
-  describe('.newDB', () => {
-    it('response should succeed', async () => {
-      await client.getToken(identity)
-      await client.newDB(dbID)
-    })
-  })
-  describe('.newCollection', () => {
-    it('response should be defined and be an empty object', async () => {
+  describe('Collections', () => {
+    it('newCollection should work and create an empty object', async () => {
       const register = await client.newCollection(dbID, 'Person', personSchema)
       expect(register).to.be.undefined
     })
+    it('newCollectionFromObject should create new collections from input objects', async () => {
+      const register = await client.newCollectionFromObject(dbID, 'FromObject', {
+        _id: '',
+        these: 'can',
+        all: 83,
+        values: ['that', 'arent', 'already'],
+        specified: true,
+      })
+      expect(register).to.be.undefined
+    })
+
+    it('updateCollection should update an existing collection', async () => {
+      await client.updateCollection(dbID, 'FromObject', schema2, [
+        {
+          path: 'age',
+          unique: false,
+        },
+      ])
+      await client.create(dbID, 'FromObject', [
+        {
+          _id: '',
+          fullName: 'Madonna',
+          age: 0,
+        },
+      ])
+    })
+
+    it('getCollectionIndexes should list valid collection indexes', async () => {
+      const list = await client.getCollectionIndexes(dbID, 'FromObject')
+      expect(list).to.have.length(2)
+    })
+
+    it('deleteCollection should delete an existing collection', async () => {
+      await client.deleteCollection(dbID, 'FromObject')
+      try {
+        await client.create(dbID, 'FromObject', [
+          {
+            _id: 'blah',
+            nothing: 'weve',
+            seen: 84,
+          },
+        ])
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err.toString()).to.include('collection not found')
+      }
+    })
   })
+
+  describe('.listDBs', () => {
+    it('should list the correct number of dbs with the correct name', async () => {
+      const id2 = ThreadID.fromRandom()
+      const name2 = 'db2'
+      await client.newDB(id2, name2)
+      const list = await client.listDBs()
+      expect(Object.keys(list).length).to.be.greaterThan(1)
+      expect(list[dbID.toString()]).to.have.ownProperty('name', 'test')
+      expect(list[id2.toString()]).to.have.ownProperty('name', name2)
+    })
+  })
+
   describe('.getDBInfo', () => {
     it('response should be defined and be an array of strings', async () => {
       const invites = await client.getDBInfo(dbID)
@@ -83,6 +148,23 @@ describe('Client', function () {
       dbKey = invites[0].key
       dbAddr = invites[0].address
       expect(invites).to.not.be.empty
+    })
+  })
+
+  describe('.deleteDB', () => {
+    it('should cleanly delete a database', async () => {
+      const id = ThreadID.fromRandom()
+      await client.newDB(id)
+      const before = Object.keys(await client.listDBs()).length
+      await client.deleteDB(id)
+      const after = Object.keys(await client.listDBs()).length
+      expect(before).to.equal(after + 1)
+      try {
+        await client.getDBInfo(id)
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err.toString()).to.include('db not found')
+      }
     })
   })
 
@@ -96,6 +178,7 @@ describe('Client', function () {
       }
     })
   })
+
   describe('.create', () => {
     it('response should contain a JSON parsable instancesList', async () => {
       const instances = await client.create(dbID, 'Person', [createPerson()])

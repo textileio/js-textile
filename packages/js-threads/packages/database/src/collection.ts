@@ -7,8 +7,11 @@ import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
 import { Dispatcher, Instance, JsonPatchStore } from '@textile/threads-store'
 import { FilterQuery } from './query'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { resolve } = require('mingo/util')
+export const resolve = (object: any, path: string, defaultValue?: any) =>
+  path
+    .split(/[\.\[\]\'\"]/)
+    .filter((p) => p)
+    .reduce((o, p) => (o ? o[p] : defaultValue), object)
 
 export { FilterQuery }
 

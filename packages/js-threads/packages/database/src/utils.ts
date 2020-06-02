@@ -64,10 +64,10 @@ export function Cache(params: CacheOptions = {}) {
     value = val
   }
 
-  return function(_target: any, _propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+  return function (_target: any, _propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     originalFunc = descriptor.value
 
-    descriptor.value = function() {
+    descriptor.value = function () {
       const now = new Date()
       if (value && cacheUntil && cacheUntil > now) {
         switch (funcType) {
@@ -82,7 +82,7 @@ export function Cache(params: CacheOptions = {}) {
 
       if (result instanceof Promise) {
         funcType = 'promise'
-        return result.then(value => {
+        return result.then((value) => {
           cacheValue(value, now)
           return value
         })

@@ -41,17 +41,19 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.4.1",
     "@textile/multiaddr": "^0.0.11",
-    "@textile/threads-client-grpc": "^0.1.18",
+    "@textile/threads-client-grpc": "^0.1.19",
     "@textile/threads-core": "^0.1.13",
     "@textile/threads-id": "^0.1.1",
     "@types/google-protobuf": "^3.7.2",
     "bs58": "^4.0.1",
     "cids": "^0.8.0",
     "google-protobuf": "^3.10.0",
-    "next-tick": "^1.1.0"
+    "next-tick": "^1.1.0",
+    "to-json-schema": "^0.2.5"
   },
   "devDependencies": {
     "@types/bs58": "^4.0.1",
+    "@types/to-json-schema": "^0.2.0",
     "@types/multibase": "^0.6.0",
     "@types/next-tick": "^1.0.0",
     "isomorphic-ws": "^4.0.1",

@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module @textile/threads-client
  */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { grpc } from '@improbable-eng/grpc-web'
 import { API, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
 import * as pb from '@textile/threads-client-grpc/threads_pb'
@@ -10,6 +9,7 @@ import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
+import toJsonSchema from 'to-json-schema'
 import { ContextInterface, Context, UserAuth, defaultHost } from '@textile/context'
 import { encode, decode } from 'bs58'
 import {
@@ -25,10 +25,17 @@ import {
 
 export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON, ThreadID }
 
+export interface CollectionConfig {
+  name: string
+  schema: any
+  indexes: pb.Index.AsObject
+}
+
 /**
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
  * This client library can be used to interact with a local or remote Textile gRPC-service
- *  It is a wrapper around Textile's 'DB' API, which is defined here: https://github.com/textileio/go-threads/blob/master/api/pb/api.proto.
+ * It is a wrapper around Textile's 'DB' API, which is defined here:
+ * https://github.com/textileio/go-threads/blob/master/api/pb/api.proto.
  */
 export class Client {
   public serviceHost: string
@@ -140,31 +147,151 @@ export class Client {
    * @param dbID the ID of the database
    * @param ctx Context object containing web-gRPC headers and settings.
    */
-  public async newDB(dbID?: ThreadID, ctx?: ContextInterface) {
+  public async newDB(dbID?: ThreadID, name?: string) {
     const id = dbID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
     req.setDbid(id.toBytes())
+    if (name !== undefined) req.setName(name)
     await this.unary(API.NewDB, req)
-    this.context.withThread && this.context.withThread(id.toString())
+    this.context.withThread(id.toString())
     return id
   }
 
   /**
-   * newCollection registers a new model schema under the given name on the remote node.
-   * The schema must be a valid json-schema.org schema, and can be a JSON string or Javascript object.
-   * @param dbID the ID of the database
-   * @param name The human-readable name for the model.
-   * @param schema The actual json-schema.org compatible schema object.
+   * Deletes an entire DB.
+   * @param dbID the ID of the database.
    */
-  public async newCollection(dbID: ThreadID, name: string, schema: any) {
+  public async deleteDB(dbID: ThreadID) {
+    const req = new pb.DeleteDBRequest()
+    req.setDbid(dbID.toBytes())
+    await this.unary(API.DeleteDB, req)
+    return
+  }
+
+  /**
+   * Lists all known DBs.
+   */
+  public async listDBs() {
+    const req = new pb.ListDBsRequest()
+    const res = (await this.unary(API.ListDBs, req)) as pb.ListDBsReply.AsObject
+    const dbs: Record<string, pb.GetDBInfoReply.AsObject | undefined> = {}
+    for (const db of res.dbsList) {
+      const id = ThreadID.fromBytes(Buffer.from(db.dbid as string, 'base64')).toString()
+      dbs[id] = db.info
+    }
+    return dbs
+  }
+
+  /**
+   * newCollection registers a new collection schema under the given name.
+   * The schema must be a valid json-schema.org schema, and can be a JSON string or object.
+   * @param dbID the ID of the database
+   * @param name The human-readable name for the collection.
+   * @param schema The actual json-schema.org compatible schema object.
+   * @param indexes A set of index definitions for indexing instance fields.
+   */
+  public async newCollection(
+    dbID: ThreadID,
+    name: string,
+    schema: any,
+    indexes?: pb.Index.AsObject[],
+  ) {
     const req = new pb.NewCollectionRequest()
     const config = new pb.CollectionConfig()
     config.setName(name)
     config.setSchema(Buffer.from(JSON.stringify(schema)))
+    const idx: pb.Index[] = []
+    for (const item of indexes ?? []) {
+      const index = new pb.Index()
+      index.setPath(item.path)
+      index.setUnique(item.unique)
+      idx.push(index)
+    }
+    config.setIndexesList(idx)
     req.setDbid(dbID.toBytes())
     req.setConfig(config)
     await this.unary(API.NewCollection, req)
     return
+  }
+
+  /**
+   * newCollectionFromObject creates and registers a new collection under the given name.
+   * The input object must be serializable to JSON, and contain only json-schema.org types.
+   * @param dbID the ID of the database
+   * @param name The human-readable name for the collection.
+   * @param obj The actual object to attempt to extract a schema from.
+   * @param indexes A set of index definitions for indexing instance fields.
+   */
+  public async newCollectionFromObject(
+    dbID: ThreadID,
+    name: string,
+    obj: any,
+    indexes?: pb.Index.AsObject[],
+  ) {
+    const schema = toJsonSchema(obj)
+    return this.newCollection(dbID, name, schema, indexes)
+  }
+
+  /**
+   * updateCollection updates an existing collection.
+   * Currenrly, updates can include name and schema.
+   * @todo Allow update of indexing information.
+   * @param dbID the ID of the database
+   * @param name The human-readable name for the collection.
+   * @param config The new collection configuration values to use when updating.
+   */
+  public async updateCollection(
+    dbID: ThreadID,
+    name: string,
+    schema: any,
+    indexes?: pb.Index.AsObject[],
+  ) {
+    const req = new pb.UpdateCollectionRequest()
+    const conf = new pb.CollectionConfig()
+    conf.setName(name)
+    conf.setSchema(Buffer.from(JSON.stringify(schema)))
+    const idx: pb.Index[] = []
+    for (const item of indexes ?? []) {
+      const index = new pb.Index()
+      index.setPath(item.path)
+      index.setUnique(item.unique)
+      idx.push(index)
+    }
+    conf.setIndexesList(idx)
+    req.setDbid(dbID.toBytes())
+    req.setConfig(conf)
+    await this.unary(API.UpdateCollection, req)
+    return
+  }
+
+  /**
+   * deleteCollection deletes an existing collection.
+   * @param dbID the ID of the database.
+   * @param name The human-readable name for the collection.
+   * @param schema The actual json-schema.org compatible schema object.
+   */
+  public async deleteCollection(dbID: ThreadID, name: string) {
+    const req = new pb.DeleteCollectionRequest()
+    req.setDbid(dbID.toBytes())
+    req.setName(name)
+    await this.unary(API.DeleteCollection, req)
+    return
+  }
+
+  /**
+   * getCollectionIndexes returns an existing collection's indexes.
+   * @param dbID the ID of the database.
+   * @param name The human-readable name for the collection.
+   */
+  public async getCollectionIndexes(dbID: ThreadID, name: string) {
+    const req = new pb.GetCollectionIndexesRequest()
+    req.setDbid(dbID.toBytes())
+    req.setName(name)
+    const res = (await this.unary(
+      API.GetCollectionIndexes,
+      req,
+    )) as pb.GetCollectionIndexesReply.AsObject
+    return res.indexesList
   }
 
   /**
