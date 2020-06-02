@@ -45,12 +45,12 @@ describe('Context', () => {
     const context: ContextInterface = new Context()
     context.withAPISig({
       sig: 'fake',
-      // Create msg that will be valid for 0.5 second
-      msg: new Date(Date.now() + 500).toUTCString(),
+      // Create msg that will be valid for 1 second
+      msg: new Date(Date.now() + 1000).toUTCString(),
     })
     const json = context.toJSON()
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-    await sleep(600)
+    await sleep(1000)
 
     try {
       const context = Context.fromJSON(json)
