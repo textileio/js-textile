@@ -75,6 +75,7 @@ describe('Users...', () => {
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id, 'foo')
+      client.context.withThreadName('foo')
       const res = await client.getThread('foo')
       expect(res.name).to.equal('foo')
     })
@@ -107,6 +108,7 @@ describe('Users...', () => {
       }
       // All good
       const id = ThreadID.fromRandom()
+      db.context.withThreadName('foo')
       await db.newDB(id, 'foo')
       const res = await client.getThread('foo')
       expect(res.name).to.equal('foo')
@@ -189,6 +191,7 @@ describe('Users...', () => {
       expect(res.listList).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
+      ctx.withThreadName('foo')
       await db.newDB(id, 'foo')
       res = await client.listThreads()
       expect(res.listList).to.have.length(1)
@@ -211,6 +214,7 @@ describe('Users...', () => {
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-api-sig')
       }).timeout(3000)
       it('should then create a db for the bucket', async () => {
+        ctx.withThreadName('my-buckets')
         const db = new Client(ctx)
         const id = ThreadID.fromRandom()
         await db.newDB(id, 'my-buckets')
@@ -231,6 +235,7 @@ describe('Users...', () => {
         expect(root).to.not.be.undefined
 
         // We should have a thread named "my-buckets"
+        ctx.withThreadName('my-buckets')
         const users = new Client(ctx)
         const res = await users.getThread('my-buckets')
         expect(res.id).to.deep.equal(ctx.toJSON()['x-textile-thread'])
