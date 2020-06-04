@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-client",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -39,10 +39,10 @@
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/context": "^0.4.1",
+    "@textile/context": "^0.4.2",
     "@textile/multiaddr": "^0.0.11",
     "@textile/threads-client-grpc": "^0.1.19",
-    "@textile/threads-core": "^0.1.13",
+    "@textile/threads-core": "^0.1.14",
     "@textile/threads-id": "^0.1.1",
     "@types/google-protobuf": "^3.7.2",
     "bs58": "^4.0.1",
@@ -53,9 +53,9 @@
   },
   "devDependencies": {
     "@types/bs58": "^4.0.1",
-    "@types/to-json-schema": "^0.2.0",
     "@types/multibase": "^0.6.0",
     "@types/next-tick": "^1.0.0",
+    "@types/to-json-schema": "^0.2.0",
     "isomorphic-ws": "^4.0.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2",
