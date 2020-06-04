@@ -75,9 +75,9 @@ describe('Users...', () => {
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id, 'foo')
-      const list = await client.listDBs()
-      expect(Object.keys(list).length).to.be.greaterThan(1)
-      expect(list[id.toString()]).to.have.ownProperty('name', 'foo')
+
+      const res = await client.getThread('foo', ctx)
+      expect(res.name).to.equal('foo')
     })
 
     it('should handle users keys', async () => {
