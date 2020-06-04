@@ -88,7 +88,9 @@ global.WebSocket = require('isomorphic-ws')
 
 ## Usage
 
-The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide tests that use the various components of `js-threads`, and provide useful examples to explore. Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available. Complete usage examples (with authentication etc) will be added soon.
+The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide tests that use the various components of `js-threads`, and provide useful examples to explore. Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available.
+
+For the most comprehensive docs, see https://docs.textile.io
 
 ## Authentication
 

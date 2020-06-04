@@ -70,7 +70,7 @@ export interface StartOptions {
   threadID?: ThreadID
 }
 
-export class Database extends EventEmitter2 implements DatabaseSettings {
+export class Database implements DatabaseSettings {
   /**
    * Collections is a map of collections (database tables)
    */
@@ -97,6 +97,16 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
   public threadID?: ThreadID
 
   /**
+   * The event emitter that can be used by subscribers to follow database updates.
+   * Event names are structured as <collection>.<id>.<type>, and they support 'wildcard'
+   * matching, so `emitter.many(['foo', '*', Op.Type.Delete], callback)` will match all
+   * delete operations on the 'foo' collection. Similarly, `emitter.on('foo.**', callback)` will
+   * match all event types on the 'foo' collection. To observe a given instance, try
+   * `emitter.on('foo.${instance._id}', callback)`. See EventEmitter2 docs for further details.
+   */
+  public emitter: EventEmitter2 = new EventEmitter2({ wildcard: true })
+
+  /**
    * Database creates a new database using the provided thread.
    * @param datastore The primary datastore or a name for a datastore.
    * It is used to partition out "sub-domains" for collections.
@@ -104,7 +114,6 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
    * These are used to control the operation of the underlying database.
    */
   constructor(store: Datastore<any> | string, options: Partial<DatabaseSettings> = {}) {
-    super({ wildcard: true })
     const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
     this.child = new DomainDatastore(datastore, new Key('db'))
     this.dispatcher =
@@ -209,6 +218,7 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
     if (hasExisting) {
       throw mismatchError
     }
+    // @todo: When adding a new thread, use identity for log key...
     const info = await this.network.addThread(addr, { threadKey })
     await this.child.put(idKey, info.id.toBytes())
     this.threadID = info.id
@@ -221,7 +231,7 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
   }
 
   /**
-   * Open the database.
+   * Open (and start) the database.
    * Opens the underlying datastore if not already open, and enables the dispatcher and
    * underlying services (event bus, network network, etc).
    * @param identity An identity to use for creating records in the database. A random identity
@@ -243,6 +253,7 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
       if (hasExisting) {
         this.threadID = ThreadID.fromBytes(await this.child.get(idKey))
       } else {
+        // @todo: When creating a new thread, use identity for log key...
         const info = await createThread(this.network)
         await this.child.put(idKey, info.id.toBytes())
         this.threadID = info.id
@@ -334,7 +345,7 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
       if (update.type !== undefined) {
         event.push(update.type.toString())
       }
-      this.emit(event, update)
+      this.emitter.emit(event, update)
     }
   }
 

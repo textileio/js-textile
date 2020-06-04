@@ -11,7 +11,7 @@ const logger = log.getLogger('store:eventbus')
 
 const retryOpts: Options = {
   retries: 5,
-  onRetry: err => logger.warn(`create record failed (${err.message}), retrying...`),
+  onRetry: (err) => logger.warn(`create record failed (${err.message}), retrying...`),
 }
 
 export type Events = {

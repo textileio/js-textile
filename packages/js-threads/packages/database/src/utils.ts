@@ -8,7 +8,7 @@ import {
 } from '@textile/threads-core'
 import { Network } from '@textile/threads-network'
 import { decodeBlock } from '@textile/threads-encoding'
-import { keys } from 'libp2p-crypto'
+import { keys, PublicKey, PrivateKey } from 'libp2p-crypto'
 
 const ed25519 = keys.supportedKeys.ed25519
 
@@ -26,10 +26,10 @@ export function decodeRecord<T = any>(rec: ThreadRecord, info: ThreadInfo) {
 export async function createThread(
   network: Network,
   id: ThreadID = ThreadID.fromRandom(ThreadID.Variant.Raw, 32),
+  key?: PrivateKey | PublicKey,
 ) {
   const threadKey = ThreadKey.fromRandom(true)
-  // @todo: Let users/developers provide their own keys here.
-  const logKey = await ed25519.generateKeyPair()
+  const logKey = key ?? (await ed25519.generateKeyPair())
   return network.createThread(id, { threadKey, logKey })
 }
 

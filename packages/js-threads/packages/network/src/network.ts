@@ -172,7 +172,7 @@ export class Network implements Interface {
     // Use supplied identity if available, otherwise, default to log private key
     // Using log private key assumes the log owner is also the identity owner, which might not always be the case.
     // In most cases, there _will_ be an available identity because it is required for `getToken`.
-    const pubKey = this.identity?.public ?? logInfo.privKey.public
+    const pubKey = this.identity?.public ?? logInfo.pubKey ?? logInfo.privKey.public
     const record = await createRecord(event, {
       privKey: logInfo.privKey,
       servKey: info.key.service,
