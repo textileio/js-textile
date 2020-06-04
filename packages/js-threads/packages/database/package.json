@@ -13,6 +13,9 @@
   "license": "MIT",
   "references": [
     {
+      "path": "../context"
+    },
+    {
       "path": "../core"
     },
     {
@@ -37,6 +40,7 @@
     "test:browser": "npx polendina --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
+    "@textile/context": "^0.4.1",
     "@textile/threads-core": "^0.1.13",
     "@textile/threads-encoding": "^0.1.13",
     "@textile/threads-network": "^0.3.6",

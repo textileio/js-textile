@@ -1,6 +1,7 @@
 import toJsonSchema from 'to-json-schema'
 import cbor from 'cbor-sync'
 import { Network, Client } from '@textile/threads-network'
+import { Context, UserAuth, defaultHost } from '@textile/context'
 import { EventEmitter2 } from 'eventemitter2'
 import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
 import { Datastore, Key } from 'interface-datastore'
@@ -117,6 +118,27 @@ export class Database extends EventEmitter2 implements DatabaseSettings {
     this.eventBus =
       options.eventBus ??
       new EventBus(new DomainDatastore(this.child, new Key('eventbus')), this.network)
+  }
+
+  /**
+   * Create a new network connected instance from a supplied user auth object.
+   * @param auth The user auth object.
+   */
+  static withUserAuth(
+    auth: UserAuth,
+    store: Datastore,
+    options?: Partial<DatabaseSettings>,
+    host = defaultHost,
+    debug = false,
+  ) {
+    const context = Context.fromUserAuth(auth, host, debug)
+    const client = new Client(context)
+    const network = new Network(store, client)
+    const opts: Partial<DatabaseSettings> = {
+      ...options,
+      network,
+    }
+    return new Database(store, opts)
   }
 
   @Cache({ duration: 1800000 })
