@@ -16,12 +16,12 @@ export class Transaction<
   /**
    * Transaction creates a new transaction for the given store using the given model.
    * @param client The gRPC client to use for the transaction.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param modelName The human-readable name for the model.
    */
   constructor(
     protected readonly client: grpc.Client<TRequest, TResponse>,
-    protected readonly dbID: ThreadID,
+    protected readonly threadID: ThreadID,
     protected readonly modelName: string,
   ) {}
 

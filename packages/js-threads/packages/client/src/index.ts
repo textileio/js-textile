@@ -153,26 +153,26 @@ export class Client {
 
   /**
    * newDB creates a new store on the remote node.
-   * @param dbID the ID of the database
-   * @param ctx Context object containing web-gRPC headers and settings.
+   * @param threadID the ID of the database
+   * @param name The human-readable name for the database
    */
-  public async newDB(dbID?: ThreadID, name?: string) {
-    const id = dbID ?? ThreadID.fromRandom()
+  public async newDB(threadID?: ThreadID, name?: string) {
+    const dbID = threadID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
-    req.setDbid(id.toBytes())
+    req.setDbid(dbID.toBytes())
     if (name !== undefined) req.setName(name)
     await this.unary(API.NewDB, req)
-    this.context.withThread(id.toString())
-    return id
+    this.context.withThread(dbID.toString())
+    return dbID
   }
 
   /**
    * Deletes an entire DB.
-   * @param dbID the ID of the database.
+   * @param threadID the ID of the database.
    */
-  public async deleteDB(dbID: ThreadID) {
+  public async deleteDB(threadID: ThreadID) {
     const req = new pb.DeleteDBRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     await this.unary(API.DeleteDB, req)
     return
   }
@@ -194,13 +194,13 @@ export class Client {
   /**
    * newCollection registers a new collection schema under the given name.
    * The schema must be a valid json-schema.org schema, and can be a JSON string or object.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param name The human-readable name for the collection.
    * @param schema The actual json-schema.org compatible schema object.
    * @param indexes A set of index definitions for indexing instance fields.
    */
   public async newCollection(
-    dbID: ThreadID,
+    threadID: ThreadID,
     name: string,
     schema: any,
     indexes?: pb.Index.AsObject[],
@@ -217,7 +217,7 @@ export class Client {
       idx.push(index)
     }
     config.setIndexesList(idx)
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setConfig(config)
     await this.unary(API.NewCollection, req)
     return
@@ -226,31 +226,31 @@ export class Client {
   /**
    * newCollectionFromObject creates and registers a new collection under the given name.
    * The input object must be serializable to JSON, and contain only json-schema.org types.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param name The human-readable name for the collection.
    * @param obj The actual object to attempt to extract a schema from.
    * @param indexes A set of index definitions for indexing instance fields.
    */
   public async newCollectionFromObject(
-    dbID: ThreadID,
+    threadID: ThreadID,
     name: string,
     obj: any,
     indexes?: pb.Index.AsObject[],
   ) {
     const schema = toJsonSchema(obj)
-    return this.newCollection(dbID, name, schema, indexes)
+    return this.newCollection(threadID, name, schema, indexes)
   }
 
   /**
    * updateCollection updates an existing collection.
    * Currenrly, updates can include name and schema.
    * @todo Allow update of indexing information.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param name The human-readable name for the collection.
    * @param config The new collection configuration values to use when updating.
    */
   public async updateCollection(
-    dbID: ThreadID,
+    threadID: ThreadID,
     name: string,
     schema: any,
     indexes?: pb.Index.AsObject[],
@@ -267,7 +267,7 @@ export class Client {
       idx.push(index)
     }
     conf.setIndexesList(idx)
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setConfig(conf)
     await this.unary(API.UpdateCollection, req)
     return
@@ -275,13 +275,13 @@ export class Client {
 
   /**
    * deleteCollection deletes an existing collection.
-   * @param dbID the ID of the database.
+   * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
    * @param schema The actual json-schema.org compatible schema object.
    */
-  public async deleteCollection(dbID: ThreadID, name: string) {
+  public async deleteCollection(threadID: ThreadID, name: string) {
     const req = new pb.DeleteCollectionRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setName(name)
     await this.unary(API.DeleteCollection, req)
     return
@@ -289,12 +289,12 @@ export class Client {
 
   /**
    * getCollectionIndexes returns an existing collection's indexes.
-   * @param dbID the ID of the database.
+   * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
    */
-  public async getCollectionIndexes(dbID: ThreadID, name: string) {
+  public async getCollectionIndexes(threadID: ThreadID, name: string) {
     const req = new pb.GetCollectionIndexesRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setName(name)
     const res = (await this.unary(
       API.GetCollectionIndexes,
@@ -336,11 +336,11 @@ export class Client {
 
   /**
    * getDBInfo returns invite 'links' unseful for inviting other peers to join a given store/thread.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    */
-  public async getDBInfo(dbID: ThreadID) {
+  public async getDBInfo(threadID: ThreadID) {
     const req = new pb.GetDBInfoRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     const res = (await this.unary(API.GetDBInfo, req)) as pb.GetDBInfoReply.AsObject
     const invites: Array<{ address: string; key: string }> = []
     for (const addr of res.addrsList) {
@@ -357,13 +357,13 @@ export class Client {
 
   /**
    * Creates a new model instance in the given store.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects.
    */
-  public async create(dbID: ThreadID, collectionName: string, values: any[]) {
+  public async create(threadID: ThreadID, collectionName: string, values: any[]) {
     const req = new pb.CreateRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
@@ -376,13 +376,13 @@ export class Client {
 
   /**
    * Saves changes to an existing model instance in the given store.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
    */
-  public async save(dbID: ThreadID, collectionName: string, values: any[]) {
+  public async save(threadID: ThreadID, collectionName: string, values: any[]) {
     const req = new pb.SaveRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
@@ -398,13 +398,13 @@ export class Client {
 
   /**
    * Deletes an existing model instance from the given store.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to delete.
    */
-  public async delete(dbID: ThreadID, collectionName: string, IDs: string[]) {
+  public async delete(threadID: ThreadID, collectionName: string, IDs: string[]) {
     const req = new pb.DeleteRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceidsList(IDs)
     await this.unary(API.Delete, req)
@@ -413,13 +413,13 @@ export class Client {
 
   /**
    * has checks whether a given instance exists in the given store.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to check for.
    */
-  public async has(dbID: ThreadID, collectionName: string, IDs: string[]) {
+  public async has(threadID: ThreadID, collectionName: string, IDs: string[]) {
     const req = new pb.HasRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceidsList(IDs)
     const res = (await this.unary(API.Has, req)) as pb.HasReply.AsObject
@@ -428,13 +428,13 @@ export class Client {
 
   /**
    * find queries the store for entities matching the given query parameters.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param query The object that describes the query. User Query class or primitive QueryJSON type.
    */
-  public async find<T = any>(dbID: ThreadID, collectionName: string, query: QueryJSON) {
+  public async find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON) {
     const req = new pb.FindRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     // @todo: Find a more isomorphic way to do this base64 round-trip
     req.setQueryjson(Buffer.from(JSON.stringify(query)).toString('base64'))
@@ -449,13 +449,13 @@ export class Client {
 
   /**
    * findByID queries the store for the id of an instance.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(dbID: ThreadID, collectionName: string, ID: string) {
+  public async findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string) {
     const req = new pb.FindByIDRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceid(ID)
     const res = (await this.unary(API.FindByID, req)) as pb.FindByIDReply.AsObject
@@ -467,46 +467,46 @@ export class Client {
 
   /**
    * readTransaction creates a new read-only transaction object. See ReadTransaction for details.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public readTransaction(dbID: ThreadID, collectionName: string): ReadTransaction {
+  public readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction {
     const client = grpc.client(API.ReadTransaction, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
     }) as grpc.Client<pb.ReadTransactionRequest, pb.ReadTransactionReply>
-    return new ReadTransaction(this.context, client, dbID, collectionName)
+    return new ReadTransaction(this.context, client, threadID, collectionName)
   }
 
   /**
    * writeTransaction creates a new writeable transaction object. See WriteTransaction for details.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public writeTransaction(dbID: ThreadID, collectionName: string): WriteTransaction {
+  public writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction {
     const client = grpc.client(API.WriteTransaction, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
     }) as grpc.Client<pb.WriteTransactionRequest, pb.WriteTransactionReply>
-    return new WriteTransaction(this.context, client, dbID, collectionName)
+    return new WriteTransaction(this.context, client, threadID, collectionName)
   }
 
   /**
    * listen opens a long-lived connection with a remote node, running the given callback on each new update to the given instance.
    * The return value is a `close` function, which cleanly closes the connection with the remote node.
-   * @param dbID the ID of the database
+   * @param threadID the ID of the database
    * @param filters contains an array of Filters
    * @param callback The callback to call on each update to the given instance.
    */
   public listen<T = any>(
-    dbID: ThreadID,
+    threadID: ThreadID,
     filters: Filter[],
     callback: (reply?: Instance<T>, err?: Error) => void,
   ) {
     const req = new pb.ListenRequest()
-    req.setDbid(dbID.toBytes())
+    req.setDbid(threadID.toBytes())
     for (const filter of filters) {
       const requestFilter = new pb.ListenRequest.Filter()
       if (filter.instanceID) {

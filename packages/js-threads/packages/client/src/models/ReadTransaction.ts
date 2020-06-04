@@ -23,17 +23,17 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
   constructor(
     protected readonly context: ContextInterface,
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>,
-    protected readonly dbID: ThreadID,
+    protected readonly threadID: ThreadID,
     protected readonly modelName: string,
   ) {
-    super(client, dbID, modelName)
+    super(client, threadID, modelName)
   }
   /**
    * start begins the transaction. All operations between start and end will be applied as a single transaction upon a call to end.
    */
   public async start() {
     const startReq = new StartTransactionRequest()
-    startReq.setDbid(this.dbID.toBytes())
+    startReq.setDbid(this.threadID.toBytes())
     startReq.setCollectionname(this.modelName)
     const req = new ReadTransactionRequest()
     req.setStarttransactionrequest(startReq)
