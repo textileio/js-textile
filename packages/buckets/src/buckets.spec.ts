@@ -27,7 +27,7 @@ describe('Buckets...', () => {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     const id = ThreadID.fromRandom()
     const db = new Client(ctx.withSession(user.user?.session).withThreadName('buckets'))
-    await db.newDB(id, ctx.withThread(id.toString()))
+    await db.newDB(id)
   })
 
   it('should init a new bucket', async () => {
