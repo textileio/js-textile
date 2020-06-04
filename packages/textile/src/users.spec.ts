@@ -72,11 +72,11 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // All good
+      ctx.withThreadName('foo')
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id, 'foo')
       ctx.withThread(id.toString())
-      ctx.withThreadName('foo')
       const res = await client.getThread('foo', ctx)
       expect(res.name).to.equal('foo')
     })
