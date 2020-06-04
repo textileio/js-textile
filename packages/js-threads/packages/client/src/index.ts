@@ -163,6 +163,7 @@ export class Client {
     if (name !== undefined) req.setName(name)
     await this.unary(API.NewDB, req)
     this.context.withThread(dbID.toString())
+    if (name !== undefined) this.context.withThreadName(name)
     return dbID
   }
 
