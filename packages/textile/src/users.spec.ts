@@ -18,7 +18,7 @@ import { Client } from './users'
 const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
-const sessionSecret = 'textilesession'
+const sessionSecret = 'hubsession'
 
 describe('Users...', () => {
   describe('getThread', () => {
@@ -266,6 +266,8 @@ describe('Users...', () => {
       }).timeout(3000)
 
       it('should then create a db for the bucket', async function () {
+        // @todo https://github.com/textileio/js-threads/pull/263 should fix this...
+        users.context.withThreadName('my-buckets')
         await users.newDB(ThreadID.fromRandom(), 'my-buckets')
         expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
@@ -273,7 +275,6 @@ describe('Users...', () => {
       it('should then initialize a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
         // Initialize a new bucket in the db from the user context
-        ctx.withThreadName('my-buckets')
         const buckets = new Buckets(users.context)
         const buck = await buckets.init('mybuck')
         expect(buck.root?.name).to.equal('mybuck')

@@ -32,7 +32,6 @@
     "@textile/buckets": "^0.1.1",
     "@textile/buckets-grpc": "^1.0.7",
     "@textile/context": "^0.4.2",
-    "@textile/hub-grpc": "^1.0.7",
     "@textile/threads-client": "^0.6.1",
     "@textile/threads-id": "^0.1.1",
     "@textile/users-grpc": "^1.0.7",
@@ -41,6 +40,7 @@
     "queueable": "^4.1.4"
   },
   "devDependencies": {
+    "@textile/hub-grpc": "^1.0.7",
     "@textile/threads-core": "^0.1.14",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
