@@ -26,7 +26,7 @@ describe('Users...', () => {
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
-      this.timeout(3000)
+      this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
     })
@@ -125,7 +125,7 @@ describe('Users...', () => {
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
-      this.timeout(3000)
+      this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
     })
