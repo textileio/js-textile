@@ -30,7 +30,7 @@ describe('Users...', () => {
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
     })
-    it('should handle bad keys', async () => {
+    it('should handle bad user group keys', async () => {
       // No key
       try {
         await client.getThread('foo', ctx)
