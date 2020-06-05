@@ -273,7 +273,7 @@ describe('Users...', () => {
       it('should then initialize a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
         // Initialize a new bucket in the db from the user context
-        users.context.withThreadName('my-buckets')
+        ctx.withThreadName('my-buckets')
         const buckets = new Buckets(users.context)
         const buck = await buckets.init('mybuck')
         expect(buck.root?.name).to.equal('mybuck')
