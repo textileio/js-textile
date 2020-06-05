@@ -16,18 +16,19 @@ import { signUp } from './spec.util'
 const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
-const sessionSecret = 'textilesession'
+const sessionSecret = 'hubsession'
 
 describe('Buckets...', () => {
   const ctx = new Context(addrApiurl, undefined)
   const client = new Buckets(ctx)
   let buck: InitReply.AsObject
   let fileSize: number
+
   before(async () => {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     const id = ThreadID.fromRandom()
     const db = new Client(ctx.withSession(user.user?.session).withThreadName('buckets'))
-    await db.newDB(id, ctx.withThread(id.toString()))
+    await db.newDB(id)
   })
 
   it('should init a new bucket', async () => {
@@ -60,7 +61,7 @@ describe('Buckets...', () => {
     expect(res.root).to.not.be.undefined
     expect(res.item?.isdir).to.be.true
     // @todo: Should we rename itemsList to just be items?
-    expect(res.item?.itemsList).to.have.length(0)
+    expect(res.item?.itemsList).to.have.length(1) // Includes .textileseed
   })
 
   it('should push data from filesystem on node', async function () {
@@ -87,7 +88,7 @@ describe('Buckets...', () => {
     // Root dir
     const rep = await client.listPath(rootKey, '')
     expect(rep.item?.isdir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(2)
+    expect(rep.item?.itemsList).to.have.length(3) // Includes .textileseed
   })
 
   it('should push data from file API in browser', async function () {
@@ -118,7 +119,7 @@ describe('Buckets...', () => {
     // Root dir
     const rep = await client.listPath(rootKey, '')
     expect(rep.item?.isdir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(2)
+    expect(rep.item?.itemsList).to.have.length(3)
   })
 
   it('should list (nested) files within a bucket', async () => {
@@ -168,7 +169,7 @@ describe('Buckets...', () => {
       expect(err).to.not.equal(wrongError)
     }
     let list = await client.listPath(rootKey, '')
-    expect(list.item?.itemsList).to.have.length(2)
+    expect(list.item?.itemsList).to.have.length(3) // Includes .textileseed
     await client.removePath(rootKey, 'path')
     try {
       await client.listPath(rootKey, 'path')
@@ -177,7 +178,7 @@ describe('Buckets...', () => {
       expect(err).to.not.equal(wrongError)
     }
     list = await client.listPath(rootKey, '')
-    expect(list.item?.itemsList).to.have.length(1)
+    expect(list.item?.itemsList).to.have.length(2) // Includes .textileseed
   })
 
   it('should list bucket links', async () => {

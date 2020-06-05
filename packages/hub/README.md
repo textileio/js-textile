@@ -14,59 +14,21 @@ Join us on our [public Slack channel](https://slack.textile.io/) for news, discu
 
 ## Table of Contents
 
--   [Install](#install)
--   [Usage](#usage)
--   [Contributing](#contributing)
--   [Changelog](#changelog)
--   [License](#license)
+- [js-textile](#js-textile)
+  - [Table of Contents](#table-of-contents)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [Changelog](#changelog)
+  - [License](#license)
 
 ## Install
 
-`npm install @textile/textile`
+`npm install @textile/hub`
 
 ## Usage
 
-`@textile/textile` provides access to Textile APIs in apps based on a Project Token. For details on getting an app token, see [textileio/textile](https://github.com/textileio/textile) or join the [Textile Slack](https://slack.textile.io).
-
-### Threads APIs
-
-Textile provides remote threads APIs your app can use.
-
-- token: a project token from your textile project
-- deviceId: a unique ID (uuid) for this user in your app
-
-```js
-import {API} from '@textile/textile'
-import {Client} from '@textile/threads-client'
-
-const api = new API({
-    token: '<project token>',
-    deviceId: '<user id>'
-})
-await api.start()
-
-const client = new Client(api.threadsConfig)
-const newStore = client.newStore()
-```
-
-### Developing threads with local deamon
-
-Requires you run the Threads daemon (`threadsd`) on localhost. See [instructions here](https://github.com/textileio/go-threads).
-
-```js
-import {API} from '@textile/textile'
-import {Client} from '@textile/threads-client'
-
-const api = new API({
-    token: '<project token>',
-    deviceId: '<user id>',
-    dev: true
-})
-await api.start()
-
-const client = new Client(api.threadsConfig)
-const newStore = client.newStore()
-```
+`@textile/hub` provides access to Textile APIs in apps based on a Project Token. For details on getting an app token, see [textileio/textile](https://github.com/textileio/textile) or join the [Textile Slack](https://slack.textile.io).
 
 ## Contributing
 

@@ -23,13 +23,13 @@ module.exports = {
     extensions,
     symlinks: false,
     alias: {
-      '@textile/textile': path.resolve(__dirname, 'packages/textile'),
+      '@textile/hub': path.resolve(__dirname, 'packages/hub'),
     },
   },
   output: {
     filename: './[name].js',
     path: path.resolve(process.cwd(), 'dist'),
-    library: 'textile',
+    library: 'hub',
     libraryTarget: 'var',
   },
   optimization: {

@@ -18,7 +18,7 @@ import { Client } from './users'
 const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
-const sessionSecret = 'textilesession'
+const sessionSecret = 'hubsession'
 
 describe('Users...', () => {
   describe('getThread', () => {
@@ -26,12 +26,15 @@ describe('Users...', () => {
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
-      this.timeout(3000)
+      this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
     })
-    it('should handle bad keys', async () => {
-      // No key
+    it('should handle bad user group keys', async () => {
+      /**
+       * No key will fail with unauthorized since a key is the minimum
+       * authorization
+       */
       try {
         await client.getThread('foo', ctx)
         throw wrongError
@@ -39,7 +42,11 @@ describe('Users...', () => {
         expect(err).to.not.equal(wrongError)
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
-      // No key signature
+      /**
+       * No key signature
+       * This will fail with NotFound due to it needing to know the key's
+       * security status before it knows if it's authorized or not.
+       */
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'ACCOUNT')
       try {
@@ -47,7 +54,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+        expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
       const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
@@ -74,7 +81,7 @@ describe('Users...', () => {
       // All good
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
-      await db.newDB(id, ctx.withThreadName('foo'))
+      await db.newDB(id, 'foo')
       const res = await client.getThread('foo')
       expect(res.name).to.equal('foo')
     })
@@ -107,7 +114,7 @@ describe('Users...', () => {
       }
       // All good
       const id = ThreadID.fromRandom()
-      await db.newDB(id, ctx.withThreadName('foo'))
+      await db.newDB(id, 'foo')
       const res = await client.getThread('foo')
       expect(res.name).to.equal('foo')
     })
@@ -118,7 +125,7 @@ describe('Users...', () => {
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
-      this.timeout(3000)
+      this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
     })
@@ -131,17 +138,18 @@ describe('Users...', () => {
         expect(err).to.not.equal(wrongError)
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
-      // No key signature
+      /**
+       * No key signature will pass because default security is null
+       */
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'ACCOUNT')
       try {
         await client.listThreads(ctx.withAPIKey(key.key))
         throw wrongError
       } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+        expect(err).to.equal(wrongError)
       }
-      // Old key signature
+      // Old key signature will fail
       const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
       try {
         await client.listThreads(ctx.withAPISig(sig))
@@ -189,7 +197,7 @@ describe('Users...', () => {
       expect(res.listList).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
-      await db.newDB(id, ctx.withThreadName('foo'))
+      await db.newDB(id, 'foo')
       res = await client.listThreads()
       expect(res.listList).to.have.length(1)
       expect(res.listList[0].name).to.equal('foo')
@@ -213,7 +221,7 @@ describe('Users...', () => {
       it('should then create a db for the bucket', async () => {
         const db = new Client(ctx)
         const id = ThreadID.fromRandom()
-        await db.newDB(id, ctx.withThreadName('my-buckets'))
+        await db.newDB(id, 'my-buckets')
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
       it('should then initialize a new bucket in the db and push to it', async function () {
@@ -237,6 +245,7 @@ describe('Users...', () => {
       })
     })
     context('a developer with a user', function () {
+      this.timeout(5000)
       const ctx = new Context(addrApiurl, undefined)
       let dev: SignupReply.AsObject
       let users: Client
@@ -260,7 +269,8 @@ describe('Users...', () => {
       }).timeout(3000)
 
       it('should then create a db for the bucket', async function () {
-        await users.newDB(ThreadID.fromRandom(), users.context.withThreadName('my-buckets'))
+        // @todo https://github.com/textileio/js-threads/pull/263 should fix this...
+        await users.newDB(ThreadID.fromRandom(), 'my-buckets')
         expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
 
@@ -277,6 +287,10 @@ describe('Users...', () => {
         const rootKey = buck.root?.key || ''
         const { root } = await buckets.pushPath(rootKey, 'dir1/file1.jpg', stream)
         expect(root).to.not.be.undefined
+
+        // Ensure context is set properly
+        expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
+        expect(users.context.get('x-textile-thread-name')).to.equal('my-buckets')
 
         // We should have a thread named "my-buckets"
         const res = await users.getThread('my-buckets')
