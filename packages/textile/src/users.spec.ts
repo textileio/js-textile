@@ -31,7 +31,10 @@ describe('Users...', () => {
       if (user) dev = user
     })
     it('should handle bad user group keys', async () => {
-      // No key
+      /**
+       * No key will fail with unauthorized since a key is the minimum
+       * authorization
+       */
       try {
         await client.getThread('foo', ctx)
         throw wrongError
@@ -39,7 +42,11 @@ describe('Users...', () => {
         expect(err).to.not.equal(wrongError)
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
-      // No key signature
+      /**
+       * No key signature
+       * This will fail with NotFound due to it needing to know the key's
+       * security status before it knows if it's authorized or not.
+       */
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'ACCOUNT')
       try {
@@ -47,7 +54,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+        expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
       const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
@@ -134,17 +141,18 @@ describe('Users...', () => {
         expect(err).to.not.equal(wrongError)
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
-      // No key signature
+      /**
+       * No key signature will pass because default security is null
+       */
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'ACCOUNT')
       try {
         await client.listThreads(ctx.withAPIKey(key.key))
         throw wrongError
       } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+        expect(err).to.equal(wrongError)
       }
-      // Old key signature
+      // Old key signature will fail
       const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
       try {
         await client.listThreads(ctx.withAPISig(sig))

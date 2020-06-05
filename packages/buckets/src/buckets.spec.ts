@@ -119,7 +119,7 @@ describe('Buckets...', () => {
     // Root dir
     const rep = await client.listPath(rootKey, '')
     expect(rep.item?.isdir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(2)
+    expect(rep.item?.itemsList).to.have.length(3)
   })
 
   it('should list (nested) files within a bucket', async () => {
