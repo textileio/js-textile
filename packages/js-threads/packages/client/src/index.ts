@@ -70,7 +70,8 @@ export class Client {
    */
   static async withUserKey(key: KeyInfo, host = defaultHost, debug = false) {
     const context = new Context(host, debug)
-    return await context.withUserKey(key)
+    await context.withUserKey(key)
+    return new Client(context)
   }
 
   /**
