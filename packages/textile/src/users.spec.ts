@@ -285,6 +285,10 @@ describe('Users...', () => {
         const { root } = await buckets.pushPath(rootKey, 'dir1/file1.jpg', stream)
         expect(root).to.not.be.undefined
 
+        // Ensure context is set properly
+        expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
+        expect(users.context.get('x-textile-thread-name')).to.equal('my-buckets')
+
         // We should have a thread named "my-buckets"
         const res = await users.getThread('my-buckets')
         expect(res.id).to.deep.equal(users.context.toJSON()['x-textile-thread'])
