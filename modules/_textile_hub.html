@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@textile/textile | Textile</title>
+	<title>@textile/hub | Textile</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_textile_textile.html">@textile/textile</a>
+					<a href="_textile_hub.html">@textile/hub</a>
 				</li>
 			</ul>
-			<h1>Module @textile/textile</h1>
+			<h1>Module @textile/hub</h1>
 		</div>
 	</div>
 </header>
@@ -83,55 +83,24 @@
 						<h2>Table of Contents</h2>
 					</a>
 					<ul>
-						<li><a href="#install">Install</a></li>
-						<li><a href="#usage">Usage</a></li>
-						<li><a href="#contributing">Contributing</a></li>
-						<li><a href="#changelog">Changelog</a></li>
-						<li><a href="#license">License</a></li>
+						<li><a href="#js-textile">js-textile</a><ul>
+								<li><a href="#table-of-contents">Table of Contents</a></li>
+								<li><a href="#install">Install</a></li>
+								<li><a href="#usage">Usage</a></li>
+								<li><a href="#contributing">Contributing</a></li>
+								<li><a href="#changelog">Changelog</a></li>
+								<li><a href="#license">License</a></li>
+							</ul>
+						</li>
 					</ul>
 					<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 						<h2>Install</h2>
 					</a>
-					<p><code>npm install @textile/textile</code></p>
+					<p><code>npm install @textile/hub</code></p>
 					<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 						<h2>Usage</h2>
 					</a>
-					<p><code>@textile/textile</code> provides access to Textile APIs in apps based on a Project Token. For details on getting an app token, see <a href="https://github.com/textileio/textile">textileio/textile</a> or join the <a href="https://slack.textile.io">Textile Slack</a>.</p>
-					<a href="#threads-apis" id="threads-apis" style="color: inherit; text-decoration: none;">
-						<h3>Threads APIs</h3>
-					</a>
-					<p>Textile provides remote threads APIs your app can use.</p>
-					<ul>
-						<li>token: a project token from your textile project</li>
-						<li>deviceId: a unique ID (uuid) for this user in your app</li>
-					</ul>
-					<pre><code class="language-js"><span class="hljs-keyword">import</span> {API} <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/textile'</span>
-<span class="hljs-keyword">import</span> {Client} <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/threads-client'</span>
-
-<span class="hljs-keyword">const</span> api = <span class="hljs-keyword">new</span> API({
-    <span class="hljs-attr">token</span>: <span class="hljs-string">'&lt;project token&gt;'</span>,
-    <span class="hljs-attr">deviceId</span>: <span class="hljs-string">'&lt;user id&gt;'</span>
-})
-<span class="hljs-keyword">await</span> api.start()
-
-<span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> Client(api.threadsConfig)
-<span class="hljs-keyword">const</span> newStore = client.newStore()</code></pre>
-					<a href="#developing-threads-with-local-deamon" id="developing-threads-with-local-deamon" style="color: inherit; text-decoration: none;">
-						<h3>Developing threads with local deamon</h3>
-					</a>
-					<p>Requires you run the Threads daemon (<code>threadsd</code>) on localhost. See <a href="https://github.com/textileio/go-threads">instructions here</a>.</p>
-					<pre><code class="language-js"><span class="hljs-keyword">import</span> {API} <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/textile'</span>
-<span class="hljs-keyword">import</span> {Client} <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/threads-client'</span>
-
-<span class="hljs-keyword">const</span> api = <span class="hljs-keyword">new</span> API({
-    <span class="hljs-attr">token</span>: <span class="hljs-string">'&lt;project token&gt;'</span>,
-    <span class="hljs-attr">deviceId</span>: <span class="hljs-string">'&lt;user id&gt;'</span>,
-    <span class="hljs-attr">dev</span>: <span class="hljs-literal">true</span>
-})
-<span class="hljs-keyword">await</span> api.start()
-
-<span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> Client(api.threadsConfig)
-<span class="hljs-keyword">const</span> newStore = client.newStore()</code></pre>
+					<p><code>@textile/hub</code> provides access to Textile APIs in apps based on a Project Token. For details on getting an app token, see <a href="https://github.com/textileio/textile">textileio/textile</a> or join the <a href="https://slack.textile.io">Textile Slack</a>.</p>
 					<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
 						<h2>Contributing</h2>
 					</a>
@@ -165,7 +134,7 @@
 						<a href="_textile_buckets.html">@textile/buckets</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_textile_textile.html">@textile/textile</a>
+						<a href="_textile_hub.html">@textile/hub</a>
 					</li>
 				</ul>
 			</nav>
