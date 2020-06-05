@@ -33,7 +33,7 @@
     "@textile/buckets-grpc": "^1.0.3",
     "@textile/context": "^0.4.1",
     "@textile/hub-grpc": "^1.0.3",
-    "@textile/threads-client": "^0.5.1",
+    "@textile/threads-client": "^0.6.1",
     "@textile/threads-id": "^0.1.1",
     "@textile/users-grpc": "^1.0.3",
     "cids": "^0.8.0",
