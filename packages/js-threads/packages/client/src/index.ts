@@ -160,10 +160,13 @@ export class Client {
     const dbID = threadID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
     req.setDbid(dbID.toBytes())
-    if (name !== undefined) req.setName(name)
+    if (name !== undefined) {
+      this.context.withThreadName(name)
+      req.setName(name)
+    }
     await this.unary(API.NewDB, req)
+    // Update our context with out new thread id
     this.context.withThread(dbID.toString())
-    if (name !== undefined) this.context.withThreadName(name)
     return dbID
   }
 
