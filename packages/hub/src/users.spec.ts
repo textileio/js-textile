@@ -270,7 +270,6 @@ describe('Users...', () => {
 
       it('should then create a db for the bucket', async function () {
         // @todo https://github.com/textileio/js-threads/pull/263 should fix this...
-        users.context.withThreadName('my-buckets')
         await users.newDB(ThreadID.fromRandom(), 'my-buckets')
         expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
