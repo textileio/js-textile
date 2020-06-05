@@ -245,6 +245,7 @@ describe('Users...', () => {
       })
     })
     context('a developer with a user', function () {
+      this.timeout(5000)
       const ctx = new Context(addrApiurl, undefined)
       let dev: SignupReply.AsObject
       let users: Client

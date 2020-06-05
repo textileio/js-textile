@@ -1,5 +1,5 @@
 {
-  "name": "@textile/textile",
+  "name": "@textile/hub",
   "version": "0.0.0",
   "description": "JS lib for interacting with Textile APIs.",
   "scripts": {
@@ -12,8 +12,8 @@
     "test": "npm run test:node && npm run test:browser",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
-    "textile:check": "lerna exec -- npx ncu '/^@textile\/.*$/'",
-    "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile\/.*$/'",
+    "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
+    "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "docs": "typedoc && touch ./docs/.nojekyll"
   },
   "nyc": {
