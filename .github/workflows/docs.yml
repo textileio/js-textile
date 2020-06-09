@@ -43,9 +43,13 @@ jobs:
     - name: Docs
       run: npm run docs
 
+    - name: Copy
+      run: |
+          mkdir pub
+          cp -r docs/* pub/
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v2
       env:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: docs
+        PUBLISH_DIR: pub
