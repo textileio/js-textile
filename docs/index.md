@@ -8,5 +8,5 @@
 
 |  Package | Description |
 |  --- | --- |
-|  [@textile/hub](./hub.md) | Here is some info that i want in the header |
+|  [@textile/hub](./hub.md) | A web-gRPC wrapper client for communicating with the web-gRPC enabled Textile ThreadDB &amp; Buckets APIs. |
 

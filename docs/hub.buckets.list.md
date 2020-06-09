@@ -16,9 +16,20 @@ list(ctx?: ContextInterface): Promise<pb.Root.AsObject[]>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  ctx | ContextInterface | Context object containing web-gRPC headers and settings. |
+|  ctx | ContextInterface |  |
 
 <b>Returns:</b>
 
 Promise&lt;pb.Root.AsObject\[\]&gt;
+
+## Example
+
+Find an existing Bucket
+
+```
+const roots = await buckets.list();
+const existing = roots.find((bucket) => bucket.name === 'files')
+
+```
+\`
 

@@ -4,17 +4,25 @@
 
 ## hub package
 
-Here is some info that i want in the header
+A web-gRPC wrapper client for communicating with the web-gRPC enabled Textile ThreadDB &amp; Buckets APIs.
 
 ## Classes
 
 |  Class | Description |
 |  --- | --- |
 |  [Buckets](./hub.buckets.md) | Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API. |
+|  [Client](./hub.client.md) | Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile's 'DB' API, which is defined here: https://github.com/textileio/go-threads/blob/master/api/pb/api.proto. |
+|  [ThreadID](./hub.threadid.md) | ThreadID represents a self-describing Thread identifier. It is formed by a Version, a Variant, and a random number of a given length. |
 
 ## Interfaces
 
 |  Interface | Description |
 |  --- | --- |
 |  [PushPathResult](./hub.pushpathresult.md) |  |
+
+## Namespaces
+
+|  Namespace | Description |
+|  --- | --- |
+|  [ThreadID](./hub.threadid.md) |  |
 

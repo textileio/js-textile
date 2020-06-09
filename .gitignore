@@ -29,6 +29,7 @@ node_modules/
 .pnp.js
 
 # Build Outputs
+markdown
 **/out.*
 **/*.out
 **/*.out.*

@@ -12,6 +12,27 @@ Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled
 export declare class Buckets 
 ```
 
+## Example 1
+
+Initialize a the Bucket API
+
+```
+import { Buckets } from '@textile/hub'
+
+const buckets = Buckets.withUserAuth(auth)
+
+```
+
+## Example 2
+
+Find an existing Bucket
+
+```
+const roots = await buckets.list();
+const existing = roots.find((bucket) => bucket.name === 'files')
+
+```
+
 ## Constructors
 
 |  Constructor | Modifiers | Description |
