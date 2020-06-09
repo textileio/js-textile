@@ -1,11 +1,19 @@
-# `buckets`
+# @textile/buckets
 
-> TODO: description
+**Info**
 
-## Usage
+You should use the `@textile/hub` library to integrate buckets into your application.
 
+**Install**
+
+```js
+npm install --save git@github.com:textileio/js-textile.git
 ```
-const buckets = require('buckets');
 
-// TODO: DEMONSTRATE API
+**Usage**
+
+```js
+import { Buckets } from '@textile/hub'
 ```
+
+[Read the docs](https://textileio.github.io/js-textile/).

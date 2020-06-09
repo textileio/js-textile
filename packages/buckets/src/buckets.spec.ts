@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module @textile/hub
+ */
 /* eslint-disable import/first */
 ;(global as any).WebSocket = require('isomorphic-ws')
 

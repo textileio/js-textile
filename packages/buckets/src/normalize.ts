@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module @textile/hub
+ */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Buffer } from 'buffer'
 

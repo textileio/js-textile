@@ -18,6 +18,5 @@
   "moduleResolution": "node",
   "preserveConstEnums": true,
   "stripInternal": true,
-  "module": "commonjs",
-  "mdHideSources": true
+  "module": "commonjs"
 }
