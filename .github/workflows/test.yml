@@ -56,9 +56,9 @@ jobs:
     - name: Boostrap
       run: npm run bootstrap
 
-    - name: Build Browser
+    - name: Build All
       run: |
-           npm run build:browser
+           npm run build
 
     - name: Test Node
       run: |
@@ -67,7 +67,3 @@ jobs:
     - name: Test Browser
       run: |
            npm run test:browser
-
-    - name: Build Docs
-      run: |
-           npm run docs
