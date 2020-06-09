@@ -2,13 +2,12 @@ import log from 'loglevel'
 import * as pb from '@textile/users-grpc/users_pb'
 import { APIClient } from '@textile/users-grpc/users_pb_service'
 import { ServiceError } from '@textile/hub-grpc/hub_pb_service'
-import { Context } from '@textile/context'
+import { Context, UserAuth, KeyInfo } from '@textile/context'
 import { ThreadID } from '@textile/threads-id'
 import { Client } from '@textile/threads-client'
 
 const logger = log.getLogger('users')
 
-// Module augmentation to add methods to Peer from core
 declare module '@textile/threads-client' {
   interface Client {
     getThread(name: string, ctx?: Context): Promise<pb.GetThreadReply.AsObject>
@@ -16,12 +15,6 @@ declare module '@textile/threads-client' {
   }
 }
 
-/**
- * Returns a Thread by name.
- * @param name The name of the Thread.
- * @param ctx Context containing gRPC headers and settings.
- * These will be merged with any internal credentials.
- */
 Client.prototype.getThread = async function (name: string, ctx?: Context) {
   logger.debug('get thread request')
   const client = new APIClient(this.serviceHost, {
@@ -77,4 +70,7 @@ Client.prototype.listThreads = async function (ctx?: Context) {
   })
 }
 
-export { Client }
+/**
+ * Clients is a web-gRPC wrapper client for communicating with the web-gRPC enabled Threads API.
+ */
+export { Client, UserAuth, KeyInfo }

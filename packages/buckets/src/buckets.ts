@@ -21,6 +21,20 @@ export interface PushPathResult {
 
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
+ * @example
+ * Initialize a the Bucket API
+ * ```
+ * import { Buckets } from '@textile/hub'
+ *
+ * const buckets = Buckets.withUserAuth(auth)
+ * ```
+ *
+ * @example
+ * Find an existing Bucket
+ * ```
+ * const roots = await buckets.list();
+ * const existing = roots.find((bucket) => bucket.name === 'files')
+ * ```
  */
 export class Buckets {
   public serviceHost: string
@@ -71,7 +85,12 @@ export class Buckets {
 
   /**
    * Returns a list of all bucket roots.
-   * @param ctx Context object containing web-gRPC headers and settings.
+   * @example
+   * Find an existing Bucket
+   * ```
+   * const roots = await buckets.list();
+   * const existing = roots.find((bucket) => bucket.name === 'files')
+   * ````
    */
   async list(ctx?: ContextInterface) {
     logger.debug('list request')

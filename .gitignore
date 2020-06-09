@@ -1,3 +1,7 @@
+# Untracked docs changes
+docs/hub*.md
+docs/index.md
+
 # System Files
 **/.DS_Store
 
@@ -7,6 +11,7 @@
 **/*.cpuprofile
 **/*.heapsnapshot
 **/*.threads*
+temp
 
 # Editor Files
 .c9/
@@ -28,6 +33,7 @@ node_modules/
 .pnp.js
 
 # Build Outputs
+markdown
 **/out.*
 **/*.out
 **/*.out.*
@@ -40,7 +46,6 @@ coffee/
 es5/
 es2015/
 esnext/
-docs/
 tsconfig.tsbuildinfo
 
 # Caches
