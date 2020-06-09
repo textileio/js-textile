@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "description": "JS lib for interacting with Textile APIs.",
   "scripts": {
+    "tt": "api-documenter markdown --input-folder=temp --output-folder docs",
+    "build:api": " api-extractor run --local --verbose",
+    "build:lerna": "lerna run build",
     "bootstrap": "lerna bootstrap",
     "compile": "lerna run compile",
-    "build": "lerna run build",
+    "build": "npm run build:lerna && npm run build:api",
     "build:node": "lerna run build:node --stream",
     "build:browser": "lerna run build:browser --stream",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
@@ -14,7 +17,9 @@
     "test:browser": "lerna run --stream test:browser",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
     "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
-    "docs": "typedoc && touch ./docs/.nojekyll"
+    "jdoc": "jsdoc",
+    "docs": "typedoc --plugin && touch ./docs/.nojekyll",
+    "docu": "typedoc --plugin typedoc-plugin-markdown --theme docusaurus2"
   },
   "nyc": {
     "extension": [
@@ -50,6 +55,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@microsoft/api-documenter": "^7.8.10",
+    "@microsoft/api-extractor": "^7.8.10",
     "@types/browser-or-node": "^1.2.0",
     "@types/chai": "^4.2.5",
     "@types/mocha": "^7.0.1",
@@ -64,6 +71,7 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "isomorphic-ws": "^4.0.1",
+    "jsdoc": "^3.6.4",
     "lerna": "^3.19.0",
     "mocha": "^7.2.0",
     "npm-check-updates": "^6.0.1",

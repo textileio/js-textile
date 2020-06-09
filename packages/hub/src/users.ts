@@ -18,7 +18,7 @@ declare module '@textile/threads-client' {
 
 /**
  * Returns a Thread by name.
- * 
+ *
  * @param name The name of the Thread.
  * @param ctx Context containing gRPC headers and settings.
  * These will be merged with any internal credentials.

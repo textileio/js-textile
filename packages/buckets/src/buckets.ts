@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module @textile/hub
- */
 import log from 'loglevel'
 import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'

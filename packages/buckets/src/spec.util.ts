@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module @textile/hub
- */
 import axios from 'axios'
 import delay from 'delay'
 import { HMAC } from 'fast-sha256'
