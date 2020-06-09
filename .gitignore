@@ -41,7 +41,6 @@ coffee/
 es5/
 es2015/
 esnext/
-docs/
 tsconfig.tsbuildinfo
 
 # Caches
