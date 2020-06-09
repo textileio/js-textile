@@ -13,16 +13,21 @@
   <script>
     window.$docsify = {
       name: '@textile/hub',
-      repo: 'textileio/js-textile',
-      basePath: 'js-textile',
+      basePath: basePath,
       loadSidebar: true,
       auto2top: true,
       relativePath: true,
       hideSidebar: false,
-      themeColor: '#2935ff'
+      themeColor: '#2935ff',
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md'
+      },
+      homepage: 'README.md',
+      search: 'auto',
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-markdown.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.min.js"></script>
