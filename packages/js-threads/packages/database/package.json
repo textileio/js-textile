@@ -26,6 +26,9 @@
     },
     {
       "path": "../encoding"
+    },
+    {
+      "path": "../security"
     }
   ],
   "scripts": {
@@ -41,6 +44,7 @@
   },
   "dependencies": {
     "@textile/context": "^0.4.3",
+    "@textile/security": "^0.1.0",
     "@textile/threads-core": "^0.1.15",
     "@textile/threads-encoding": "^0.1.15",
     "@textile/threads-network": "^0.4.1",

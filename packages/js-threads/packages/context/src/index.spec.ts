@@ -1,5 +1,6 @@
 import { expect } from 'chai'
-import { Context, ContextInterface, expirationError } from './index'
+import { expirationError } from '@textile/security'
+import { Context, ContextInterface } from './index'
 
 describe('Context', () => {
   let validJson = {}

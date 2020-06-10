@@ -10,7 +10,8 @@ import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
 import toJsonSchema from 'to-json-schema'
-import { ContextInterface, Context, UserAuth, defaultHost, KeyInfo } from '@textile/context'
+import { ContextInterface, Context, defaultHost } from '@textile/context'
+import { UserAuth, KeyInfo } from '@textile/security'
 import { encode, decode } from 'bs58'
 import {
   QueryJSON,

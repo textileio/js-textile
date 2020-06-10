@@ -4,7 +4,8 @@
 
 import path from 'path'
 import { expect } from 'chai'
-import { Context, UserAuth } from '@textile/context'
+import { Context } from '@textile/context'
+import { UserAuth } from '@textile/security'
 import { Multiaddr, ThreadID } from '@textile/threads-core'
 import LevelDatastore from 'datastore-level'
 import delay from 'delay'
