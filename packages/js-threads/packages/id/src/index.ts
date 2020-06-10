@@ -3,21 +3,37 @@ import randomBytes from '@consento/sync-randombytes'
 import multibase, { name as Name } from 'multibase'
 
 /**
+ * Variant denotes Thread variant. Currently only two variants are supported.
+ */
+export enum Variant {
+  Raw = 0x55,
+  AccessControlled = 0x70, // Supports access control lists
+}
+
+/**
  * ThreadID represents a self-describing Thread identifier.
  * It is formed by a Version, a Variant, and a random number of a given length.
  */
-class ThreadID {
+export class ThreadID {
   // @todo: Move Buffer -> Uint8Array where possible
   readonly buf: Buffer
   constructor(buf: Uint8Array) {
     this.buf = Buffer.from(buf)
   }
+
+  /**
+   * Versions. Currently only V1 is supported.
+   */
+  static V1 = 0x01
+
+  static Variant = Variant
+
   /**
    * fromRandom creates a new random ID object.
    * @param variant The Thread variant to use. @see Variant
    * @param size The size of the random component to use. Defaults to 32 bytes.
    */
-  static fromRandom(variant: ThreadID.Variant = ThreadID.Variant.Raw, size = 32) {
+  static fromRandom(variant: Variant = ThreadID.Variant.Raw, size = 32) {
     // two 8 bytes (max) numbers plus random bytes
     const bytes = Buffer.concat([
       Buffer.from(encode(ThreadID.V1)),
@@ -140,21 +156,3 @@ class ThreadID {
     }
   }
 }
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-namespace ThreadID {
-  /**
-   * Versions. Currently only V1 is supported.
-   */
-  export const V1 = 0x01
-
-  /**
-   * Variant denotes Thread variant. Currently only two variants are supported.
-   */
-  export enum Variant {
-    Raw = 0x55,
-    AccessControlled = 0x70, // Supports access control lists
-  }
-}
-
-export { ThreadID }
