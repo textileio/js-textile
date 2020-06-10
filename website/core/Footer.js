@@ -48,7 +48,13 @@ class Footer extends React.Component {
             </a>
           </div>
           <div>
-            <h5>Community</h5>
+            <h5>Resources</h5>
+            <a
+              href="https://docs.textile.io/"
+              target="_blank"
+              rel="noreferrer noopener">
+              All Documentation
+            </a>
             <a
               href="https://slack.textile.io/"
               target="_blank"
@@ -56,15 +62,14 @@ class Footer extends React.Component {
               Project Slack
             </a>
             <a
-              href="https://twitter.com/textileio"
+              href="https://blog.textile.io/"
               target="_blank"
               rel="noreferrer noopener">
-              Twitter
+              Blog
             </a>
           </div>
           <div>
             <h5>More</h5>
-            <a href="https://blog.textile.io/">Blog</a>
             <a href="https://github.com/textileio">GitHub</a>
             <a
               className="github-button"

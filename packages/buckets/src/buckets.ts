@@ -10,6 +10,9 @@ import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
 
+/**
+ * The expected result format from pushing a path to a bucket
+ */
 export interface PushPathResult {
   path: {
     path: string
@@ -67,14 +70,21 @@ export class Buckets {
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
     const context = new Context(host, debug)
-    await context.withUserKey(key)
+    await context.withKeyInfo(key)
     return new Buckets(context)
   }
 
   /**
    * Initializes a new bucket.
+   * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
    * @param ctx Context object containing web-gRPC headers and settings.
+   * @example
+   * Initialize a Bucket called "app-name-file"
+   * ```tyepscript
+   * const buckets = Buckets.withUserAuth(auth)
+   * const created = await buckets.init('app-name-files');
+   * ```
    */
   async init(name: string, ctx?: ContextInterface) {
     logger.debug('init request')
@@ -87,10 +97,10 @@ export class Buckets {
   /**
    * Returns a list of all bucket roots.
    * @example
-   * Find an existing Bucket
+   * Find an existing Bucket named "app-name-files"
    * ```typescript
    * const roots = await buckets.list();
-   * const existing = roots.find((bucket) => bucket.name === 'files')
+   * const existing = roots.find((bucket) => bucket.name === 'app-name-files')
    * ````
    */
   async list(ctx?: ContextInterface) {
@@ -104,6 +114,15 @@ export class Buckets {
    * Returns a list of bucket links.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param ctx Context object containing web-gRPC headers and settings.
+   * @example
+   * Generate the HTTP, IPNS, and IPFS links for a Bucket
+   * ```tyepscript
+   * const buckets = Buckets.withUserAuth(auth)
+   * const created = await buckets.init('app-name-files');
+   * const bucketKey = created.root.key;
+   * const links = buckets.links(bucketKey)
+   * console.log(links)
+   * ```
    */
   async links(key: string, ctx?: ContextInterface) {
     logger.debug('link request')
@@ -163,7 +182,18 @@ export class Buckets {
    * @param input The input file/stream/object.
    * @param ctx Context object containing web-gRPC headers and settings.
    * @param opts Options to control response stream. Currently only supports a progress function.
-   * @note This will return the resolved path and the bucket's new root path.
+   * @remarks
+   * This will return the resolved path and the bucket's new root path.
+   * @example
+   * Push a file to the root of a bucket
+   * ```tyepscript
+   * const buckets = Buckets.withUserAuth(auth)
+   * const created = await buckets.init('app-name-files');
+   * const bucketKey = created.root.key;
+   * const file = { path: '/index.html', content: Buffer.from(webpage) }
+   * const raw = await buckets.pushPath(bucketKey!, 'index.html', file)
+   * console.log(raw)
+   * ```
    */
   async pushPath(
     key: string,

@@ -8,12 +8,15 @@ export interface File {
   [key: string]: any
 }
 
-// This function comes from https://github.com/ipfs/js-ipfs-utils/blob/master/src/files/normalise-input.js
-
-/*
- * Transform one of:
+/**
+ * Transform types
  *
- * ```
+ * @remarks
+ * This function comes from {@link https://github.com/ipfs/js-ipfs-utils/blob/master/src/files/normalise-input.js}
+ * @example
+ * Supported types
+ * ```yaml
+ * // INPUT TYPES
  * Bytes (Buffer|ArrayBuffer|TypedArray) [single file]
  * Bloby (Blob|File) [single file]
  * String [single file]
@@ -42,12 +45,12 @@ export interface File {
  * AsyncIterable<{ path, content: Iterable<Number> }> [multiple files]
  * AsyncIterable<{ path, content: Iterable<Bytes> }> [multiple files]
  * AsyncIterable<{ path, content: AsyncIterable<Bytes> }> [multiple files]
- * ```
- * Into:
  *
- * ```
+ * // OUTPUT
  * AsyncIterable<{ path, content: AsyncIterable<Buffer> }>
  * ```
+ *
+ * @public
  *
  * @param {Object} input
  * @return AsyncInterable<{ path, content: AsyncIterable<Buffer> }>

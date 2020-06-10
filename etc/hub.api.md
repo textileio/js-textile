@@ -44,8 +44,8 @@ export class Buckets {
     rpcOptions: grpc.RpcOptions;
     // (undocumented)
     serviceHost: string;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
     static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Buckets;
-    static withUserKey(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
 }
 
 // @public
@@ -89,17 +89,17 @@ export class Client {
     // (undocumented)
     serviceHost: string;
     updateCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Client;
-    static withUserKey(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     // Warning: (ae-forgotten-export) The symbol "WriteTransaction" needs to be exported by the entry point index.d.ts
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
 // @public
-export const createAPISig: (secret: string, date?: Date) => Promise<APISig>;
+export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
-export const createUserAuth: (key: string, secret: string, date?: Date, token?: string | undefined) => Promise<UserAuth>;
+export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
 
 // @public
 export const expirationError: Error;
@@ -111,7 +111,7 @@ export type KeyInfo = {
     type: 0 | 1;
 };
 
-// @public (undocumented)
+// @public
 export interface PushPathResult {
     // (undocumented)
     path: {

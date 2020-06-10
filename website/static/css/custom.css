@@ -10,6 +10,10 @@ body {
   font-family: $mainFont;
 }
 
+.headerTitleWithLogo {
+  font-weight: 200;
+}
+
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
 }
 

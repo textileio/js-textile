@@ -76,13 +76,13 @@ const siteConfig = {
   twitterImage: 'img/hex.svg',
   onPageNav: 'separate',
   cleanUrl: true,
-  scrollToTop: true,
+  scrollToTop: false,
   scrollToTopOptions: {
-    zIndex: 100,
+    zIndex: 10,
   },
   enableUpdateTime: true,
   enableUpdateBy: true,
-  docsSideNavCollapsible: false,
+  docsSideNavCollapsible: true,
 }
 
 module.exports = siteConfig

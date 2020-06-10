@@ -1,7 +1,5 @@
 # Untracked docs changes
-docs/index.md
-docs/README.md
-docs/hub*.md
+docs
 
 # System Files
 **/.DS_Store

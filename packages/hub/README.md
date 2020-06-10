@@ -93,6 +93,8 @@ const db = Client.withUserAuth(auth)
 
 Threads client to access remote threads, generate token and more.
 
+[Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.client).
+
 **List Threads**
 
 ```typescript
@@ -140,6 +142,8 @@ const ids = await db.create(threadId!, 'Astronaut', [
 ### Bucket Client
 
 Create, manage, and publish user and account Buckets.
+
+[Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.buckets).
 
 **[Read the full set of methods](../classes/_textile_buckets.buckets-1.html)**
 

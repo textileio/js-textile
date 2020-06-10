@@ -70,7 +70,7 @@ describe('Users...', () => {
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withUserKey(key)
+      await ctx.withAPIKey(key.key).withKeyInfo(key)
       // Not found
       try {
         await client.getThread('foo')
@@ -93,7 +93,7 @@ describe('Users...', () => {
       client.context = ctx
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withUserKey(key)
+      await ctx.withAPIKey(key.key).withKeyInfo(key)
       // No token
       try {
         await client.getThread('foo')
@@ -163,7 +163,7 @@ describe('Users...', () => {
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl, undefined)
       const key = await createKey(tmp.withSession(dev.session), 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withUserKey(key)
+      await ctx.withAPIKey(key.key).withKeyInfo(key)
       // Empty
       let res = await client.listThreads()
       expect(res.listList).to.have.length(0)
@@ -181,7 +181,7 @@ describe('Users...', () => {
       client.context = ctx
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withUserKey(key)
+      await ctx.withAPIKey(key.key).withKeyInfo(key)
       // No token
       try {
         await client.listThreads()
@@ -216,7 +216,7 @@ describe('Users...', () => {
         // @note This should be done using the cli
         ctx.withSession(dev.session)
         const key = await createKey(ctx, 'ACCOUNT')
-        await ctx.withAPIKey(key.key).withUserKey(key)
+        await ctx.withAPIKey(key.key).withKeyInfo(key)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-api-sig')
       }).timeout(3000)
       it('should then create a db for the bucket', async () => {
@@ -262,7 +262,7 @@ describe('Users...', () => {
         // for demo purposes here to show that it can also use custom identities
         const identity = await Libp2pCryptoIdentity.fromRandom()
         // We also explicitly specify a custom context here, which could be omitted as it uses reasonable defaults
-        const userContext = await new Context(addrApiurl).withUserKey(key)
+        const userContext = await new Context(addrApiurl).withKeyInfo(key)
         // In the app, we simply create a new user from the provided user key, signing is done automatically
         users = new Client(userContext)
         await users.getToken(identity)

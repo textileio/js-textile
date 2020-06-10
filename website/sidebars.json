@@ -1,22 +1,15 @@
 {
   "docs": {
-    "Hub": ["index", "hub"],
-    "ThreadDB": [
-      "hub.client",
-      {
-        "type": "subcategory",
-        "label": "Methods",
-        "ids": [
-          "hub.buckets.init"
-        ]
-      }
-    ],
+    "Getting Started": ["index", "hub"],
     "Buckets": [
       "hub.buckets",
       {
         "type": "subcategory",
         "label": "Methods",
+        "collapse": true,
         "ids": [
+          "hub.buckets.withuserauth",
+          "hub.buckets.withkeyinfo",
           "hub.buckets.init",
           "hub.buckets.links",
           "hub.buckets.list",
@@ -24,9 +17,40 @@
           "hub.buckets.pullpath",
           "hub.buckets.pushpath",
           "hub.buckets.remove",
-          "hub.buckets.removepath",
-          "hub.buckets.withuserauth",
-          "hub.buckets.withKeyInfo"
+          "hub.buckets.removepath"
+        ]
+      }
+    ],
+    "ThreadDB": [
+      "hub.client",
+      {
+        "type": "subcategory",
+        "label": "Methods",
+        "ids": [
+          "hub.client.withuserauth",
+          "hub.client.withkeyinfo",
+          "hub.client.gettoken",
+          "hub.client.gettokenchallenge",
+          "hub.client.newdb",
+          "hub.client.listdbs",
+          "hub.client.deletedb",
+          "hub.client.getdbinfo",
+          "hub.client.newdbfromaddr",
+          "hub.client.randomidentity",
+          "hub.client.listen",
+          "hub.client.newcollection",
+          "hub.client.newcollectionfromobject",
+          "hub.client.deletecollection",
+          "hub.client.updatecollection",
+          "hub.client.getcollectionindexes",
+          "hub.client.create",
+          "hub.client.save",
+          "hub.client.delete",
+          "hub.client.find",
+          "hub.client.findbyid",
+          "hub.client.has",
+          "hub.client.readtransaction",
+          "hub.client.writetransaction"
         ]
       }
     ],

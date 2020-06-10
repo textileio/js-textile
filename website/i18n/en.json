@@ -47,6 +47,9 @@
       "hub.buckets.servicehost": {
         "title": "Buckets.serviceHost property"
       },
+      "hub.buckets.withkeyinfo": {
+        "title": "Buckets.withKeyInfo() method"
+      },
       "hub.buckets.withuserauth": {
         "title": "Buckets.withUserAuth() method"
       },
@@ -131,6 +134,9 @@
       "hub.client.updatecollection": {
         "title": "Client.updateCollection() method"
       },
+      "hub.client.withkeyinfo": {
+        "title": "Client.withKeyInfo() method"
+      },
       "hub.client.withuserauth": {
         "title": "Client.withUserAuth() method"
       },
@@ -141,10 +147,10 @@
         "title": "Client.writeTransaction() method"
       },
       "hub.createapisig": {
-        "title": "createAPISig variable"
+        "title": "createAPISig() function"
       },
       "hub.createuserauth": {
-        "title": "createUserAuth variable"
+        "title": "createUserAuth() function"
       },
       "hub.expirationerror": {
         "title": "expirationError variable"
@@ -215,9 +221,9 @@
     },
     "links": {},
     "categories": {
-      "Hub": "Hub",
-      "ThreadDB": "ThreadDB",
+      "Getting Started": "Getting Started",
       "Buckets": "Buckets",
+      "ThreadDB": "ThreadDB",
       "Other Types & Methods": "Other Types & Methods"
     }
   },
