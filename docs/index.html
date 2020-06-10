@@ -13,14 +13,13 @@
   <script>
     window.$docsify = {
       name: '@textile/hub',
-      basePath: basePath,
-      loadSidebar: true,
+      loadSidebar: 'sidebar.md',
+      hideSidebar: false,
       auto2top: true,
       relativePath: true,
-      hideSidebar: false,
       themeColor: '#2935ff',
       alias: {
-        '/.*/_sidebar.md': '/_sidebar.md'
+        '/.*/sidebar.md': '/sidebar.md'
       },
       homepage: 'README.md',
       search: 'auto',
