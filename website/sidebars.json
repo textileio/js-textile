@@ -1,0 +1,42 @@
+{
+  "docs": {
+    "Hub": ["index", "hub"],
+    "ThreadDB": [
+      "hub.client",
+      {
+        "type": "subcategory",
+        "label": "Methods",
+        "ids": [
+          "hub.buckets.init"
+        ]
+      }
+    ],
+    "Buckets": [
+      "hub.buckets",
+      {
+        "type": "subcategory",
+        "label": "Methods",
+        "ids": [
+          "hub.buckets.init",
+          "hub.buckets.links",
+          "hub.buckets.list",
+          "hub.buckets.listpath",
+          "hub.buckets.pullpath",
+          "hub.buckets.pushpath",
+          "hub.buckets.remove",
+          "hub.buckets.removepath",
+          "hub.buckets.withuserauth",
+          "hub.buckets.withKeyInfo"
+        ]
+      }
+    ],
+    "Other Types & Methods": [
+      "hub.threadid",
+      "hub.createuserauth",
+      "hub.createapisig",
+      "hub.userauth",
+      "hub.apisig",
+      "hub.keyinfo"
+    ]
+  }
+}
