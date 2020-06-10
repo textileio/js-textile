@@ -66,7 +66,7 @@ const keyInfo: KeyInfo = {
   type: 1,
 }
 
-const db = await Client.withUserKey(keyInfo)
+const db = await Client.withKeyInfo(keyInfo)
 ```
 
 **User Account Auth**

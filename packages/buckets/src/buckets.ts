@@ -4,7 +4,8 @@ import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { Channel } from 'queueable'
 import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface, Context, UserAuth, defaultHost, KeyInfo } from '@textile/context'
+import { ContextInterface, Context, defaultHost } from '@textile/context'
+import { UserAuth, KeyInfo } from '@textile/security'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -23,7 +24,7 @@ export interface PushPathResult {
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
  * @example
  * Initialize a the Bucket API
- * ```
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const buckets = Buckets.withUserAuth(auth)
@@ -31,7 +32,7 @@ export interface PushPathResult {
  *
  * @example
  * Find an existing Bucket
- * ```
+ * ```typescript
  * const roots = await buckets.list();
  * const existing = roots.find((bucket) => bucket.name === 'files')
  * ```
@@ -64,7 +65,7 @@ export class Buckets {
    * Create a new gRPC client Bucket instance from a supplied key and secret
    * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
    */
-  static async withUserKey(key: KeyInfo, host = defaultHost, debug = false) {
+  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
     const context = new Context(host, debug)
     await context.withUserKey(key)
     return new Buckets(context)
@@ -87,7 +88,7 @@ export class Buckets {
    * Returns a list of all bucket roots.
    * @example
    * Find an existing Bucket
-   * ```
+   * ```typescript
    * const roots = await buckets.list();
    * const existing = roots.find((bucket) => bucket.name === 'files')
    * ````
