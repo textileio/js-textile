@@ -125,7 +125,7 @@ export interface ContextInterface {
    * @param key User group/account key information.
    * @param date Optional future Date for computing the authorization signature.
    */
-  withUserKey(key?: KeyInfo, date?: Date): Promise<ContextInterface>
+  withKeyInfo(key?: KeyInfo, date?: Date): Promise<ContextInterface>
   /**
    * Merge another context with this one.
    */
@@ -251,7 +251,7 @@ export class Context implements ContextInterface {
     return this
   }
 
-  async withUserKey(key?: KeyInfo, date?: Date) {
+  async withKeyInfo(key?: KeyInfo, date?: Date) {
     if (key === undefined) return this
     const sig = await createAPISig(key.secret, date)
     return this.withAPIKey(key.key).withAPISig(sig)
