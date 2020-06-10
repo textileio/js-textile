@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
-
 
 jobs:
 
@@ -51,8 +47,6 @@ jobs:
       run: |
           mkdir pub
           cp -r docs/* pub/
-          ls -a pub
-
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v2
       env:
