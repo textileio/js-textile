@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-encoding",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "main": "dist/index",
   "types": "dist/index",
   "browser": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@ipld/block": "^4.0.0",
-    "@textile/threads-core": "^0.1.15",
+    "@textile/threads-core": "^0.1.16",
     "@types/node": "^14.0.1",
     "cids": "^0.8.0",
     "libp2p-crypto": "^0.17.2",
