@@ -22,7 +22,7 @@
       - [remove](hub.buckets.remove.md)
       - [removePath](hub.buckets.removepath.md)
       - [withUserAuth](hub.buckets.withuserauth.md)
-      - [withUserKey](hub.buckets.withuserkey.md)
+      - [withKeyInfo](hub.buckets.withKeyInfo.md)
   - Other Types & Methods
     - [ThreadIDs](hub.threadid.md)
     - [createUserAuth](hub.createuserauth.md)
