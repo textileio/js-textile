@@ -145,8 +145,6 @@ Create, manage, and publish user and account Buckets.
 
 [Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.buckets).
 
-**[Read the full set of methods](../classes/_textile_buckets.buckets-1.html)**
-
 **Create a new Bucket client**
 
 ```typescript
