@@ -10,8 +10,12 @@ body {
   font-family: $mainFont;
 }
 
+.fixedHeaderContainer header .headerTitleWithLogo {
+  font-size: 1em;
+}
 .headerTitleWithLogo {
-  font-weight: 200;
+  font-weight: 400;
+  padding-left: 10px;
 }
 
 .toc .toggleNav .navGroup .navGroupCategoryTitle {
