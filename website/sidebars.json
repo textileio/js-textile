@@ -1,0 +1,66 @@
+{
+  "docs": {
+    "Getting Started": ["index", "hub"],
+    "Buckets": [
+      "hub.buckets",
+      {
+        "type": "subcategory",
+        "label": "Methods",
+        "collapse": true,
+        "ids": [
+          "hub.buckets.withuserauth",
+          "hub.buckets.withkeyinfo",
+          "hub.buckets.init",
+          "hub.buckets.links",
+          "hub.buckets.list",
+          "hub.buckets.listpath",
+          "hub.buckets.pullpath",
+          "hub.buckets.pushpath",
+          "hub.buckets.remove",
+          "hub.buckets.removepath"
+        ]
+      }
+    ],
+    "ThreadDB": [
+      "hub.client",
+      {
+        "type": "subcategory",
+        "label": "Methods",
+        "ids": [
+          "hub.client.withuserauth",
+          "hub.client.withkeyinfo",
+          "hub.client.gettoken",
+          "hub.client.gettokenchallenge",
+          "hub.client.newdb",
+          "hub.client.listdbs",
+          "hub.client.deletedb",
+          "hub.client.getdbinfo",
+          "hub.client.newdbfromaddr",
+          "hub.client.randomidentity",
+          "hub.client.listen",
+          "hub.client.newcollection",
+          "hub.client.newcollectionfromobject",
+          "hub.client.deletecollection",
+          "hub.client.updatecollection",
+          "hub.client.getcollectionindexes",
+          "hub.client.create",
+          "hub.client.save",
+          "hub.client.delete",
+          "hub.client.find",
+          "hub.client.findbyid",
+          "hub.client.has",
+          "hub.client.readtransaction",
+          "hub.client.writetransaction"
+        ]
+      }
+    ],
+    "Other Types & Methods": [
+      "hub.threadid",
+      "hub.createuserauth",
+      "hub.createapisig",
+      "hub.userauth",
+      "hub.apisig",
+      "hub.keyinfo"
+    ]
+  }
+}

@@ -8,16 +8,20 @@ import CID from 'cids';
 import { ContextInterface } from '@textile/context';
 import { grpc } from '@improbable-eng/grpc-web';
 import { Identity } from '@textile/threads-core';
-import { KeyInfo } from '@textile/context';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { name as name_2 } from 'multibase';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import * as pb_2 from '@textile/buckets-grpc/buckets_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
-import { UserAuth } from '@textile/context';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
+
+// @public
+export type APISig = {
+    sig: string;
+    msg: string;
+};
 
 // @public
 export class Buckets {
@@ -40,8 +44,8 @@ export class Buckets {
     rpcOptions: grpc.RpcOptions;
     // (undocumented)
     serviceHost: string;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
     static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Buckets;
-    static withUserKey(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
 }
 
 // @public
@@ -85,13 +89,29 @@ export class Client {
     // (undocumented)
     serviceHost: string;
     updateCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Client;
-    static withUserKey(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     // Warning: (ae-forgotten-export) The symbol "WriteTransaction" needs to be exported by the entry point index.d.ts
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
-// @public (undocumented)
+// @public
+export function createAPISig(secret: string, date?: Date): Promise<APISig>;
+
+// @public
+export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
+
+// @public
+export const expirationError: Error;
+
+// @public
+export type KeyInfo = {
+    key: string;
+    secret: string;
+    type: 0 | 1;
+};
+
+// @public
 export interface PushPathResult {
     // (undocumented)
     path: {
@@ -111,26 +131,28 @@ export class ThreadID {
     readonly buf: Buffer;
     equals(o: ThreadID): boolean;
     static fromBytes(data: Uint8Array): ThreadID;
-    static fromRandom(variant?: ThreadID.Variant, size?: number): ThreadID;
+    static fromRandom(variant?: Variant, size?: number): ThreadID;
     static fromString(v: string | Uint8Array): ThreadID;
     static getEncoding(v: string): string;
     isDefined(): boolean;
     toBytes(): Buffer;
     toString(base?: name_2): string;
+    static V1: number;
+    // Warning: (ae-forgotten-export) The symbol "Variant" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    static Variant: typeof Variant;
     variant(): number;
     version(): number;
 }
 
-// @public (undocumented)
-export namespace ThreadID {
-    const V1 = 1;
-    export enum Variant {
-        // (undocumented)
-        AccessControlled = 112,
-        // (undocumented)
-        Raw = 85
-    }
-}
+// @public
+export type UserAuth = {
+    key: string;
+    sig: string;
+    msg: string;
+    token?: string;
+};
 
 
 ```

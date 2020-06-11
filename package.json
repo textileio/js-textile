@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "description": "JS lib for interacting with Textile APIs.",
   "scripts": {
-    "docs:markdown": "api-documenter markdown --input-folder=temp",
-    "docs:html": "npm run docs:markdown && cp -r markdown/* docs/ && cp packages/hub/README.md ./docs/",
-    "docs": "api-extractor run --local --verbose && npm run docs:markdown && npm run docs:html",
+    "docs": "node build/make-docs.js && mkdir -p docs && cp -r markdown/* docs/",
+    "serve:docs": "npm run docs && cd website && npm run start",
+    "build:docs": "npm run docs && cd website && npm install && npm run build",
+    "api-documenter": "api-documenter markdown --input-folder=temp",
     "bootstrap": "lerna bootstrap",
     "compile": "lerna run compile",
     "build": "lerna run build",

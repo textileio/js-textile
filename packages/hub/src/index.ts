@@ -5,4 +5,5 @@
 
 export { ThreadID } from '@textile/threads-id'
 export * from '@textile/buckets'
+export * from '@textile/security'
 export { Client } from './users'
