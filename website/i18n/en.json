@@ -53,9 +53,6 @@
       "hub.buckets.withuserauth": {
         "title": "Buckets.withUserAuth() method"
       },
-      "hub.buckets.withuserkey": {
-        "title": "Buckets.withUserKey() method"
-      },
       "hub.client._constructor_": {
         "title": "Client.(constructor)"
       },
@@ -139,9 +136,6 @@
       },
       "hub.client.withuserauth": {
         "title": "Client.withUserAuth() method"
-      },
-      "hub.client.withuserkey": {
-        "title": "Client.withUserKey() method"
       },
       "hub.client.writetransaction": {
         "title": "Client.writeTransaction() method"

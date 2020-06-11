@@ -46,7 +46,8 @@ jobs:
     - name: Copy
       run: |
           mkdir pages
-          cp -r website/build/\@textile/hub/ pages/
+          cp -r website/build/\@textile/hub/* pages/
+          touch pages/.nojekyll
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v2
       env:
