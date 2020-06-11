@@ -38,10 +38,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/textileio/js-textile.git"
+    "url": "https://github.com/textileio/js-hub.git"
   },
   "bugs": {
-    "url": "https://github.com/textileio/js-textile/issues"
+    "url": "https://github.com/textileio/js-hub/issues"
   },
   "keywords": [
     "textile",

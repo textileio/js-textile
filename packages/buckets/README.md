@@ -7,7 +7,7 @@ You should use the `@textile/hub` library to integrate buckets into your applica
 **Install**
 
 ```js
-npm install --save git@github.com:textileio/js-textile.git
+npm install --save git@github.com:textileio/js-hub.git
 ```
 
 **Usage**
@@ -16,4 +16,4 @@ npm install --save git@github.com:textileio/js-textile.git
 import { Buckets } from '@textile/hub'
 ```
 
-[Read the docs](https://textileio.github.io/js-textile/).
+[Read the docs](https://textileio.github.io/js-hub/).
