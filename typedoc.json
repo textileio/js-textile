@@ -1,6 +1,6 @@
 {
   "readme": "./README.md",
-  "name": "Textile",
+  "name": "@textile/hub",
   "mode": "modules",
   "out": "docs",
   "lib": [
