@@ -71,19 +71,23 @@
 <p>There are two commonly used object types for passing authentication parameters to the Hub library: <code>UserAuth</code> and <code>KeyInfo</code>.</p>
 <h4><a class="anchor" aria-hidden="true" id="userauth"></a><a href="#userauth" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>UserAuth</h4>
 <p><code>UserAuth</code> objects can be generated to provide Hub API access to your users inside of your application. Review the tutorial linked above on setting up a UserAuth providing endpoint.</p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">interface</span> UserAuth {
-  msg: &lt;api msg&gt;,
-  sig: &lt;api sig&gt;,
-  token: &lt;user msg&gt;,
-  key: &lt;user group key&gt;,
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+
+<span class="hljs-keyword">const</span> auth: UserAuth = {
+  msg: <span class="hljs-string">'&lt;api msg&gt;'</span>,
+  sig: <span class="hljs-string">'&lt;api sig&gt;'</span>,
+  token: <span class="hljs-string">'&lt;user msg&gt;'</span>,
+  key: <span class="hljs-string">'&lt;api key&gt;'</span>,
 }
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="keyinfo"></a><a href="#keyinfo" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>KeyInfo</h4>
 <p>The <code>KeyInfo</code> object holds your API secret and so should never be used in an insecure environment (such as in an application). These methods can be used with user group keys (<code>type = 0</code>) or account keys (<code>type = 1</code>).</p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">interface</span> KeyInfo {
-  key: &lt;api key&gt;,
-  secret: &lt;api secret&gt;,
-  <span class="hljs-keyword">type</span>: &lt;api key <span class="hljs-keyword">type</span>&gt;,
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { KeyInfo } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+
+<span class="hljs-keyword">const</span> auth: KeyInfo = {
+  key: <span class="hljs-string">'&lt;api key&gt;'</span>,
+  secret: <span class="hljs-string">'&lt;api secret&gt;'</span>,
+  <span class="hljs-keyword">type</span>: <span class="hljs-number">0</span> <span class="hljs-comment">// &lt;api key type&gt;</span>
 }
 </code></pre>
 <h4><a class="anchor" aria-hidden="true" id="examples"></a><a href="#examples" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Examples</h4>
@@ -91,113 +95,126 @@
 <p>Create a database client using the Textile Hub and account keys.</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Client, KeyInfo } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-keyword">const</span> keyInfo: KeyInfo = {
-  key: process.env.ACCOUNT_API_KEY,
-  secret: process.env.ACCOUNT_API_SECRET,
-  <span class="hljs-keyword">type</span>: <span class="hljs-number">1</span>,
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">start</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">const</span> keyInfo: KeyInfo = {
+    key: <span class="hljs-string">'&lt;api key&gt;'</span>,
+    secret: <span class="hljs-string">'&lt;api secret&gt;'</span>,
+    <span class="hljs-keyword">type</span>: <span class="hljs-number">1</span>,
+  }
+  <span class="hljs-keyword">const</span> client = <span class="hljs-keyword">await</span> Client.withKeyInfo(keyInfo)
 }
-
-<span class="hljs-keyword">const</span> db = <span class="hljs-keyword">await</span> Client.withKeyInfo(keyInfo)
 </code></pre>
 <p><strong>User Account Auth</strong></p>
 <p>Create a database client using the Textile Hub and user group keys.</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Client, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-comment">/**
- * msg, sig, and token all must be provided by a secure gateway.
- */</span>
-<span class="hljs-keyword">const</span> auth: UserAuth = {
-  msg: msg,
-  sig: sig,
-  token: token,
-  key: process.env.USER_API_KEY,
-};
-
-<span class="hljs-keyword">const</span> db = Client.withUserAuth(auth)
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">start</span> (<span class="hljs-params">auth: UserAuth</span>) </span>{
+  <span class="hljs-keyword">const</span> client = Client.withUserAuth(auth)
+}
 </code></pre>
 <h3><a class="anchor" aria-hidden="true" id="threaddb-client"></a><a href="#threaddb-client" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>ThreadDB Client</h3>
 <p>Threads client to access remote threads, generate token and more.</p>
 <p><a href="https://textileio.github.io/js-hub/docs/hub.client">Read the full client docs here</a>.</p>
 <p><strong>List Threads</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">const</span> threads = <span class="hljs-keyword">await</span> db.listThreads()
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Client } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">list</span> (<span class="hljs-params">client: Client</span>) </span>{
+  <span class="hljs-keyword">const</span> threads = <span class="hljs-keyword">await</span> client.listThreads()
+}
 </code></pre>
 <p><strong>Create a thread</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { ThreadID } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Client, ThreadID } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-comment">/**
- * Setup a new ThreadID and Database
- */</span>
-threadId = ThreadID.fromRandom();
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">start</span> (<span class="hljs-params">client: Client, schema: <span class="hljs-built_in">any</span></span>) </span>{
+  <span class="hljs-comment">/**
+   * Setup a new ThreadID and Database
+   */</span>
+  <span class="hljs-keyword">const</span> threadId = ThreadID.fromRandom();
 
-<span class="hljs-comment">/**
- * Each new ThreadID requires a `newDB` call.
- */</span>
-<span class="hljs-keyword">await</span> db.newDB(threadId)
+  <span class="hljs-comment">/**
+   * Each new ThreadID requires a `newDB` call.
+   */</span>
+  <span class="hljs-keyword">await</span> client.newDB(threadId)
 
-<span class="hljs-comment">/**
- * We add our first Collection to the DB for any schema.
- */</span>
-<span class="hljs-keyword">await</span> db.newCollection(threadId, <span class="hljs-string">'Astronaut'</span>, astronautSchema);
+  <span class="hljs-comment">/**
+   * We add our first Collection to the DB for any schema.
+   */</span>
+  <span class="hljs-keyword">await</span> client.newCollection(threadId, <span class="hljs-string">'Astronaut'</span>, schema);
+}
 </code></pre>
 <p><strong>Insert data</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-comment">/**
- * Add a new Astronaut
- * 
- * Our Thread contains the Astronaut Collection, so you just need
- * to add a new astronaut that matches the expected schema.
- * 
- * If you run this app many times, you'll notice many Buzz Aldrin
- * entries in your ThreadDB, each with a unique ID.
- */</span>
-<span class="hljs-keyword">const</span> ids = <span class="hljs-keyword">await</span> db.create(threadId!, <span class="hljs-string">'Astronaut'</span>, [
-  jsonAstronaut,
-]);
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Client, ThreadID } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createEntity</span> (<span class="hljs-params">client: Client, threadId: ThreadID, jsonData: <span class="hljs-built_in">any</span></span>) </span>{
+  <span class="hljs-comment">/**
+   * Add a new Astronaut
+   * 
+   * Our Thread contains the Astronaut Collection, so you just need
+   * to add a new astronaut that matches the expected schema.
+   * 
+   * If you run this app many times, you'll notice many Buzz Aldrin
+   * entries in your ThreadDB, each with a unique ID.
+   */</span>
+  <span class="hljs-keyword">const</span> ids = <span class="hljs-keyword">await</span> client.create(threadId, <span class="hljs-string">'Astronaut'</span>, [
+    jsonData,
+  ]);
+}
 </code></pre>
 <h3><a class="anchor" aria-hidden="true" id="bucket-client"></a><a href="#bucket-client" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Bucket Client</h3>
 <p>Create, manage, and publish user and account Buckets.</p>
 <p><a href="https://textileio.github.io/js-hub/docs/hub.buckets">Read the full client docs here</a>.</p>
 <p><strong>Create a new Bucket client</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
 <span class="hljs-comment">/**
  * Create a Bucket client instance with the same auth
  * methods used for threads
  */</span>
-<span class="hljs-keyword">const</span> buckets = Buckets.withUserAuth(auth)
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">start</span> (<span class="hljs-params">auth: UserAuth</span>) </span>{
+  <span class="hljs-keyword">const</span> buckets = Buckets.withUserAuth(auth)
+}
 </code></pre>
 <p><strong>Read existing Buckets</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-comment">/**
- * List existing Buckets
- */</span>
-<span class="hljs-keyword">const</span> roots = <span class="hljs-keyword">await</span> buckets.list();
-<span class="hljs-keyword">const</span> existing = roots.find(<span class="hljs-function">(<span class="hljs-params">bucket</span>) =&gt;</span> bucket.name === <span class="hljs-string">'files'</span>)
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-comment">/**
- * If a Bucket named 'files' already existed for this user, use it.
- * If not, create one now.
- */</span>
-<span class="hljs-keyword">let</span> bucketKey = <span class="hljs-string">''</span>
-<span class="hljs-keyword">if</span> (existing) {
-  bucketKey = existing.key;
-} <span class="hljs-keyword">else</span> {
-  <span class="hljs-keyword">const</span> created = <span class="hljs-keyword">await</span> buckets.init(<span class="hljs-string">'files'</span>);
-  bucketKey = created.root!.key;
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">run</span> (<span class="hljs-params">buckets: Buckets</span>) </span>{
+  <span class="hljs-comment">/**
+   * List existing Buckets
+   */</span>
+  <span class="hljs-keyword">const</span> roots = <span class="hljs-keyword">await</span> buckets.list();
+  <span class="hljs-keyword">const</span> existing = roots.find(<span class="hljs-function">(<span class="hljs-params">bucket</span>) =&gt;</span> bucket.name === <span class="hljs-string">'files'</span>)
+
+  <span class="hljs-comment">/**
+   * If a Bucket named 'files' already existed for this user, use it.
+   * If not, create one now.
+   */</span>
+  <span class="hljs-keyword">let</span> bucketKey = <span class="hljs-string">''</span>
+  <span class="hljs-keyword">if</span> (existing) {
+    bucketKey = existing.key;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">const</span> created = <span class="hljs-keyword">await</span> buckets.init(<span class="hljs-string">'files'</span>);
+    bucketKey = created.root ? created.root.key : <span class="hljs-string">''</span>
+  }
+  <span class="hljs-keyword">return</span> bucketKey
 }
 </code></pre>
 <p><strong>Add files to Buckets</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-comment">/**
- * Add a simple file Buffer
- * 
- * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
- * 
- * We add the file as index.html so that we can render it right in the browser afterwards.
- */</span>
-<span class="hljs-keyword">const</span> file = { path: <span class="hljs-string">'/index.html'</span>, content: Buffer.from(webpage) }
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-comment">/**
- * Push the file to the root of the Files Bucket.
- */</span>
-<span class="hljs-keyword">const</span> raw = <span class="hljs-keyword">await</span> buckets.pushPath(bucketKey!, <span class="hljs-string">'index.html'</span>, file)
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span> (<span class="hljs-params">buckets: Buckets, webpage: <span class="hljs-built_in">string</span>, bucketKey: <span class="hljs-built_in">string</span></span>) </span>{
+  <span class="hljs-comment">/**
+   * Add a simple file Buffer
+   * 
+   * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
+   * 
+   * We add the file as index.html so that we can render it right in the browser afterwards.
+   */</span>
+  <span class="hljs-keyword">const</span> file = { path: <span class="hljs-string">'/index.html'</span>, content: Buffer.from(webpage) }
 
+  <span class="hljs-comment">/**
+   * Push the file to the root of the Files Bucket.
+   */</span>
+  <span class="hljs-keyword">const</span> raw = <span class="hljs-keyword">await</span> buckets.pushPath(bucketKey, <span class="hljs-string">'index.html'</span>, file)
+}
 </code></pre>
 </span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/js-hub/docs/hub"><span>Package Overview</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#introduction">Introduction</a><ul class="toc-headings"><li><a href="#install">Install</a></li></ul></li><li><a href="#usage">Usage</a><ul class="toc-headings"><li><a href="#authentication">Authentication</a></li><li><a href="#threaddb-client">ThreadDB Client</a></li><li><a href="#bucket-client">Bucket Client</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/js-hub/" class="nav-home"><img src="/js-hub/img/hex.svg" alt="Hub JS Package" width="66" height="58"/></a><div><h5>Docs</h5><a href="/js-hub/docs/index">Getting Started</a><a href="/js-hub/docs/hub.client">ThreadDB</a><a href="/js-hub/docs/hub.buckets">Buckets</a></div><div><h5>Resources</h5><a href="https://docs.textile.io/" target="_blank" rel="noreferrer noopener">All Documentation</a><a href="https://slack.textile.io/" target="_blank" rel="noreferrer noopener">Project Slack</a><a href="https://blog.textile.io/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/textileio">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/textileio/js-threads/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/textileio" class="twitter-follow-button">Follow @textileio</a></div></div></section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
