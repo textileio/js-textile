@@ -24,7 +24,7 @@ import {
   ReadTransaction,
 } from './models'
 
-export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON, ThreadID }
+export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON }
 
 export interface CollectionConfig {
   name: string
@@ -59,6 +59,14 @@ export class Client {
    * Create a new gRPC client instance from a supplied user auth object.
    * Assumes all default gRPC setttings. For custimization options, use a context object directly.
    * @param auth The user auth object.
+   * @example
+   * ```typescript
+   * import {UserAuth, Client} from '@textile/threads'
+   *
+   * async function create (auth: UserAuth) {
+   *   return await Client.withUserAuth(auth)
+   * }
+   * ```
    */
   static withUserAuth(auth: UserAuth, host = defaultHost, debug = false) {
     const context = Context.fromUserAuth(auth, host, debug)
@@ -68,6 +76,14 @@ export class Client {
   /**
    * Create a new gRPC client instance from a supplied key and secret
    * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
+   * @example
+   * ```typescript
+   * import {KeyInfo, Client} from '@textile/threads'
+   *
+   * async function create (keyInfo: KeyInfo) {
+   *   return await Client.withKeyInfo(keyInfo)
+   * }
+   * ```
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
     const context = new Context(host, debug)
@@ -77,6 +93,15 @@ export class Client {
 
   /**
    * Create a random user identity.
+   * @example
+   * ```typescript
+   * import {Client} from '@textile/threads'
+   *
+   * async function newIdentity () {
+   *   const user = await Client.randomIdentity()
+   *   return user
+   * }
+   * ```
    */
   static async randomIdentity() {
     return Libp2pCryptoIdentity.fromRandom()
@@ -89,6 +114,16 @@ export class Client {
    * identities after the fact. Please store or otherwise persist any identity information if
    * you wish to retrieve user data later, or use an external identity provider.
    * @param ctx Context object containing web-gRPC headers and settings.
+   * @example
+   * ```typescript
+   * import {Client, Identity} from '@textile/threads'
+   *
+   * async function newToken (client: Client, user: Identity) {
+   *   // Token is added to the client connection at the same time
+   *   const token = await client.getToken(user)
+   *   return token
+   * }
+   * ```
    */
   async getToken(identity: Identity, ctx?: ContextInterface) {
     return this.getTokenChallenge(
@@ -157,6 +192,15 @@ export class Client {
    * newDB creates a new store on the remote node.
    * @param threadID the ID of the database
    * @param name The human-readable name for the database
+   * @example
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function createDB (client: Client) {
+   *   const thread: ThreadID = await client.newDB()
+   *   return thread
+   * }
+   * ```
    */
   public async newDB(threadID?: ThreadID, name?: string) {
     const dbID = threadID ?? ThreadID.fromRandom()
@@ -175,6 +219,15 @@ export class Client {
   /**
    * Deletes an entire DB.
    * @param threadID the ID of the database.
+   * @example
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function deleteDB (client: Client, thread: ThreadID) {
+   *   await client.deleteDB(thread)
+   *   return
+   * }
+   * ```
    */
   public async deleteDB(threadID: ThreadID) {
     const req = new pb.DeleteDBRequest()
@@ -236,6 +289,18 @@ export class Client {
    * @param name The human-readable name for the collection.
    * @param obj The actual object to attempt to extract a schema from.
    * @param indexes A set of index definitions for indexing instance fields.
+   * @example
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function fromObject (client: Client, thread: ThreadID, name: string, obj: any) {
+   *   await client.newCollectionFromObject(thread, name, obj)
+   *   return
+   * }
+   *
+   * // Example object
+   * // const person = {name: 'Buzz', missions: 3}
+   * ```
    */
   public async newCollectionFromObject(
     threadID: ThreadID,
@@ -284,6 +349,18 @@ export class Client {
    * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
    * @param schema The actual json-schema.org compatible schema object.
+   * @example
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function deleteCollection (client: Client, thread: ThreadID, name: string) {
+   *   await client.deleteCollection(thread, name)
+   *   return
+   * }
+   *
+   * // Example object
+   * // const person = {name: 'Buzz', missions: 3}
+   * ```
    */
   public async deleteCollection(threadID: ThreadID, name: string) {
     const req = new pb.DeleteCollectionRequest()

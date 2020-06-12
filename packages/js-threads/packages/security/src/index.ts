@@ -16,7 +16,7 @@ import multibase from 'multibase'
  * @example
  * Import
  * ```typescript
- * import {UserAuth} from '@textile/hub';
+ * import {UserAuth} from '@textile/threads';
  * ```
  * @param {string} key - API key. Can be embedded/shared within an app.
  * @param {string} sig - The signature of the authentication message.
@@ -36,7 +36,7 @@ export type UserAuth = {
  * @example
  * Import
  * ```typescript
- * import {KeyInfo} from '@textile/hub';
+ * import {KeyInfo} from '@textile/threads';
  * ```
  * @param {string} key - API key. Can be embedded/shared within an app.
  * @param {string} secret - User group/account secret. Should not be embedded/shared publicly.
@@ -63,7 +63,7 @@ export type KeyInfo = {
  * @example
  * Import
  * ```typescript
- * import {APISig} from '@textile/hub';
+ * import {APISig} from '@textile/threads';
  * ```
  * @param {string} sig - The signature of the authentication message.
  * @param {string} msg - The authentication message.
@@ -81,9 +81,12 @@ export type APISig = {
  * @example
  * Basic usage
  * ```typescript
- * import {createAPISig, APISig} from '@textile/hub'
+ * import {createAPISig, APISig} from '@textile/threads'
  *
- * const sig: APISig = createAPISig(USER_API_KEY)
+ * async function sign (key: string) {
+ *   const sig: APISig = await createAPISig(key)
+ *   return sig
+ * }
  * ```
  * @param {string} secret - The key secret to generate the signature. See KeyInfo for details.
  * @param {Date} date - An optional future Date to use as signature message. Once `date` has passed, this
@@ -111,19 +114,15 @@ export async function createAPISig(
  * @example
  * Create a new UserAuth
  * ```typescript
- * import {createAPISig, Client, KeyInfo, UserAuth} from '@textile/hub';
+ * import {createUserAuth, KeyInfo, UserAuth} from '@textile/threads';
  *
- * // The first step is to create a basic session with your user group keys. See KeyInfo type.
- * const keyInfo: KeyInfo = {
- *   key: USER_API_KEY,
- *   secret: USER_API_SECRET,
- *   type: 0,
+ * async function auth (keyInfo: KeyInfo) {
+ *   // Create an expiration and create a signature. 60s or less is recommended.
+ *   const expiration = new Date(Date.now() + 60 * 1000)
+ *   // Generate a new UserAuth
+ *   const userAuth: UserAuth = await createUserAuth(keyInfo.key, keyInfo.secret, expiration)
+ *   return userAuth
  * }
- * const db = await Client.withKeyInfo(keyInfo)
- *
- * // Create an expiration and create a signature. 60s or less is recommended.
- * const expiration = new Date(Date.now() + 60 * seconds)
- * const userAuth: UserAuth = await createUserAuth(USER_API_KEY, USER_API_SECRET, expiration)
  * ```
  *
  * @param {string} key - The API key secret to generate the signature. See KeyInfo for details.

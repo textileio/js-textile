@@ -1,12 +1,20 @@
 {
   "readme": "./README.md",
-  "name": "Threads",
+  "name": "@textile/threads",
   "mode": "modules",
   "out": "docs",
-  "include": "src/",
   "exclude": [
     "**/*.spec.ts",
     "**/node_modules/**"
+  ],
+  "lernaExclude": [
+    "@textile/context",
+    "@textile/multiaddr",
+    "@textile/threads-core",
+    "@textile/threads-encoding",
+    "@textile/threads-network",
+    "@textile/threads-network-client",
+    "@textile/threads-store"
   ],
   "gitRevision": "master",
   "excludePrivate": true,
@@ -17,6 +25,5 @@
   "moduleResolution": "node",
   "preserveConstEnums": true,
   "stripInternal": true,
-  "module": "commonjs",
-  "mdHideSources": true
+  "module": "commonjs"
 }

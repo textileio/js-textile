@@ -1,0 +1,59 @@
+{
+  "name": "@textile/threads",
+  "version": "0.1.0",
+  "description": "Components for building with Threads Database and Client.",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build:node",
+    "prebuild": "npm run clean",
+    "build": "npm run build:node && npm run build:browser",
+    "build:node": "npm run compile",
+    "build:browser": "webpack --mode production --config ../../webpack.config.js",
+    "compile": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
+  },
+  "repository": "github:textileio/js-threads",
+  "devDependencies": {
+    "@improbable-eng/grpc-web": "^0.12.0",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "@textile/security": "^0.1.2",
+    "@textile/threads-client": "^0.6.5",
+    "@textile/threads-core": "^0.1.17",
+    "@textile/threads-database": "^0.4.3",
+    "@textile/threads-id": "^0.1.4",
+    "@types/multibase": "^0.6.0",
+    "fast-sha256": "^1.3.0",
+    "multibase": "^1.0.0"
+  },
+  "author": "Textile",
+  "license": "MIT",
+  "references": [
+    {
+      "path": "../id"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../security"
+    },
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../client"
+    }
+  ]
+}

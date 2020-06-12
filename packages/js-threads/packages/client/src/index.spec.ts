@@ -5,8 +5,9 @@ import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
 
 import { expect } from 'chai'
 import { Context } from '@textile/context'
+import { ThreadID } from '@textile/threads-id'
 import { Where, ReadTransaction, WriteTransaction } from './models'
-import { Client, ThreadID } from './index'
+import { Client } from './index'
 
 const personSchema = {
   $id: 'https://example.com/person.schema.json',

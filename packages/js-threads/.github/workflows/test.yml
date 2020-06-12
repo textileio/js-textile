@@ -75,3 +75,6 @@ jobs:
 
     - name: Compile Browser
       run: npm run build:browser
+
+    - name: Test Examples
+      run: npm run test:docs
