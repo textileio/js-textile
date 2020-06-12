@@ -24,14 +24,20 @@ If you think you've found a bug in Threads, please file a Github issue. Take a l
 
 ## Table of Contents
 
-- [Background](#background)
-- [Install](#install)
-- [Usage](#usage)
-- [Developing](#developing)
-- [API](#api)
-- [Maintainers](#maintainers)
-- [Contributing](#contributing)
-- [License](#license)
+- [Textile's Threads protocol & database _(js-threads)_](#textiles-threads-protocol--database-js-threads)
+  - [Using Threads](#using-threads)
+  - [Getting help](#getting-help)
+  - [Background](#background)
+    - [Overview](#overview)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [Authentication](#authentication)
+  - [Developing](#developing)
+  - [Releasing](#releasing)
+  - [API](#api)
+  - [Maintainers](#maintainers)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Background
 
@@ -61,7 +67,13 @@ Underlying the Threads Database are a number of ideas and technologies, which ar
 
 ## Install
 
-`js-threads` is implemented as a series of sub-packages, all managed within the js-threads repo. Each package is separately published to npm, so that developers can pick and choose which components of `js-threads` they want to consume. For example, to install the low-level network APIs along with the encoding/encryption tooling:
+`js-threads` is implemented as a series of sub-packages, all managed within the js-threads repo. In general, you can get most of what you need by simply installing and using the `@textile/threads` library.
+
+```shell script
+npm install --save @textile/threads
+```
+
+Each package is separately published to npm, so that developers can pick and choose which components of `js-threads` they want to consume. For example, to install the low-level network APIs along with the encoding/encryption tooling:
 
 ```shell script
 npm install --save @textile/threads-network @textile/threads-encoding
@@ -94,7 +106,7 @@ For the most comprehensive docs, see https://docs.textile.io
 
 ## Authentication
 
-Textile also provides remote Threads APIs you can use when developing your app. See [`@textile/textile`](https://github.com/textileio/js-textile) (or [docs.textile.io](https://docs.textile.io)) for details on authenticating with these APIs, and how to set up your own local development peer.
+Textile also provides remote Threads APIs you can use when developing your app. See [`@textile/hub`](https://github.com/textileio/js-hub) (or [docs.textile.io](https://docs.textile.io)) for details on authenticating with these APIs, and how to set up your own local development peer.
 
 ## Developing
 

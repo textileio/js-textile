@@ -18,53 +18,71 @@ npm install @textile/threads-client
 
 **create a threads client**
 
-```js
-import {Client} from '@textile/threads-client'
+```typescript
+import {Client} from '@textile/threads'
 
-client = new Client()
+const client = new Client()
 ```
 
-**create a threads client using Textile APIs**
+**create a threads client using Textile Hub APIs**
 
-```js
-import {API} from '@textile/textile'
-import {Client} from '@textile/threads-client'
-
-const api = new API({
-    token: '<project token>',
-    deviceId: '<user id>'
-})
-await api.start()
-
-const client = new Client(api.threadsConfig)
-```
-
+[Read the full Hub API documentation](https://textileio.github.io/js-hub/docs).
 
 **create a store**
 
-```js
-const store = await client.newDB()
-await client.newCollection(store.id, 'Folder2P', schema)
+```typescript
+import {Client, Identity, ThreadID, UserAuth} from '@textile/threads'
+
+async function newToken (client: Client, user: Identity) {
+  const token = await client.getToken(user)
+  return token
+}
+
+async function createDB (client: Client) {
+  const thread: ThreadID = await client.newDB()
+  return thread
+}
+
+async function collectionFromObject (client: Client, thread: ThreadID, name: string, obj: any) {
+  await client.newCollectionFromObject(thread, name, obj)
+  return
+}
+
+async function setup (auth: UserAuth) {
+  const user = await Client.randomIdentity()
+
+  const client = await Client.withUserAuth(auth)
+
+  const token = await newToken(client, user)
+  
+  const thread = await createDB(client)
+
+  const astronaut = {name: 'Buzz', missions: 3}
+  await collectionFromObject(client, thread, 'astronauts', astronaut)
+}
 ```
 
 **get all instances**
 
-```js
-const found = await client.find(this.finderID, 'Folder2P', {})
-console.debug('found:', found.instancesList.length)
-this.folders = found.instancesList.map((instance) => instance).map((obj) => {
-  return new YourModel(obj)
-})
+```typescript
+import {Client, ThreadID} from '@textile/threads'
+async function findEntity (client: Client, threadId: ThreadID, collection: string) {
+  const found = await client.find(threadId, collection, {})
+  console.debug('found:', found.instancesList.length)
+}
 ```
 
 **add an instance**
 
-```js
+```typescript
+import {Client, ThreadID} from '@textile/threads'
 // matches YourModel and schema
-const created = await client.instanceCreate(this.finderID, 'Folder2', [{
-  some: 'data',
-  numbers: [1, 2, 3]
-}])
+async function create (client: Client, threadId: ThreadID, collection: string) {
+  const created = await client.create(threadId, collection, [{
+    some: 'data',
+    numbers: [1, 2, 3]
+  }])
+}
 ```
 
 ## React Native
