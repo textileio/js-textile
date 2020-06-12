@@ -70,4 +70,5 @@ jobs:
 
     - name: Test Examples
       run: |
+           npm run docs
            npm run test:docs
