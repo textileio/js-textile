@@ -1,5 +1,7 @@
 # Untracked docs changes
 docs
+tsdoc-metadata.json
+etc
 
 # System Files
 **/.DS_Store

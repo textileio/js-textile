@@ -39,8 +39,6 @@ This project is a work in progress. As such, there's a few things you can do rig
 -   **Take a look at the code**. Contributions here that would be most helpful are **top-level comments** about how it should look based on your understanding. Again, the more eyes the better.
 -   **Add tests**. There can never be enough tests.
 
-Before you get started, be sure to read our [contributors guide](./CONTRIBUTING.md) and our [contributor covenant code of conduct](./CODE_OF_CONDUCT.md).
-
 ## Changelog
 
 [Changelog is published to Releases.](https://github.com/textileio/js-hub/releases)

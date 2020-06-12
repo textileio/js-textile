@@ -4,8 +4,7 @@
   "description": "JS lib for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
-    "docs:test": "./scripts/convert-signatures && typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
-    "docs": "node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && npm run docs:test",
+    "docs": "node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && npm run test:docs",
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",
@@ -14,7 +13,8 @@
     "build:node": "lerna run build:node --stream",
     "build:browser": "lerna run build:browser --stream",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
-    "test": "npm run test:node && npm run test:browser",
+    "test": "npm run test:node && npm run test:browser && run test:docs",
+    "test:docs": "./scripts/convert-signatures && typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
@@ -56,6 +56,7 @@
   "devDependencies": {
     "@microsoft/api-documenter": "^7.8.10",
     "@microsoft/api-extractor": "^7.8.10",
+    "@textile/threads": "^0.1.2",
     "@types/browser-or-node": "^1.2.0",
     "@types/chai": "^4.2.5",
     "@types/mocha": "^7.0.1",
