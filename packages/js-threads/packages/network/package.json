@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-network",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -24,10 +24,10 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
-    "@textile/context": "^0.4.5",
-    "@textile/threads-core": "^0.1.17",
-    "@textile/threads-encoding": "^0.1.17",
-    "@textile/threads-network-client": "^0.5.3",
+    "@textile/context": "^0.4.6",
+    "@textile/threads-core": "^0.1.18",
+    "@textile/threads-encoding": "^0.1.18",
+    "@textile/threads-network-client": "^0.5.4",
     "@types/node": "^14.0.1",
     "cids": "^0.8.0",
     "datastore-core": "^1.0.0",
