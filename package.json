@@ -4,7 +4,7 @@
   "description": "JS lib for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
-    "docs": "node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && npm run test:docs",
+    "docs": "node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",
@@ -14,7 +14,7 @@
     "build:browser": "lerna run build:browser --stream",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser && run test:docs",
-    "test:docs": "./scripts/convert-signatures && typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
+    "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
