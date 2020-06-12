@@ -28,16 +28,23 @@ export interface PushPathResult {
  * @example
  * Initialize a the Bucket API
  * ```typescript
- * import { Buckets } from '@textile/hub'
+ * import { Buckets, UserAuth } from '@textile/hub'
  *
- * const buckets = Buckets.withUserAuth(auth)
+ * const init = async (auth: UserAuth) => {
+ *     const buckets = Buckets.withUserAuth(auth)
+ *     return buckets
+ * }
  * ```
  *
  * @example
  * Find an existing Bucket
  * ```typescript
- * const roots = await buckets.list();
- * const existing = roots.find((bucket) => bucket.name === 'files')
+ * import { Buckets } from '@textile/hub'
+ *
+ * const exists = async (buckets: Buckets, bucketName: string) => {
+ *     const roots = await buckets.list();
+ *     return roots.find((bucket) => bucket.name === bucketName)
+ * }
  * ```
  */
 export class Buckets {
@@ -82,8 +89,11 @@ export class Buckets {
    * @example
    * Initialize a Bucket called "app-name-file"
    * ```tyepscript
-   * const buckets = Buckets.withUserAuth(auth)
-   * const created = await buckets.init('app-name-files');
+   * import { Buckets } from '@textile/hub'
+   *
+   * const init = async (buckets: Buckets, bucketName: string) => {
+   *     return buckets.init(bucketName)
+   * }
    * ```
    */
   async init(name: string, ctx?: ContextInterface) {
@@ -99,8 +109,12 @@ export class Buckets {
    * @example
    * Find an existing Bucket named "app-name-files"
    * ```typescript
-   * const roots = await buckets.list();
-   * const existing = roots.find((bucket) => bucket.name === 'app-name-files')
+   * import { Buckets } from '@textile/hub'
+   *
+   * const exists = async (buckets: Buckets) => {
+   *     const roots = await buckets.list();
+   *     return roots.find((bucket) => bucket.name ===  "app-name-files")
+   * }
    * ````
    */
   async list(ctx?: ContextInterface) {
@@ -117,11 +131,17 @@ export class Buckets {
    * @example
    * Generate the HTTP, IPNS, and IPFS links for a Bucket
    * ```tyepscript
-   * const buckets = Buckets.withUserAuth(auth)
-   * const created = await buckets.init('app-name-files');
-   * const bucketKey = created.root.key;
-   * const links = buckets.links(bucketKey)
-   * console.log(links)
+   * import { Buckets } from '@textile/hub'
+   *
+   * const getLinks = async (buckets: Buckets) => {
+   *    const links = buckets.links(bucketKey)
+   *    return links.ipfs
+   * }
+   *
+   * const getIpfs = async (buckets: Buckets) => {
+   *    const links = buckets.links(bucketKey)
+   *    return links.ipfs
+   * }
    * ```
    */
   async links(key: string, ctx?: ContextInterface) {
@@ -187,12 +207,12 @@ export class Buckets {
    * @example
    * Push a file to the root of a bucket
    * ```tyepscript
-   * const buckets = Buckets.withUserAuth(auth)
-   * const created = await buckets.init('app-name-files');
-   * const bucketKey = created.root.key;
-   * const file = { path: '/index.html', content: Buffer.from(webpage) }
-   * const raw = await buckets.pushPath(bucketKey!, 'index.html', file)
-   * console.log(raw)
+   * import { Buckets } from '@textile/hub'
+   *
+   * const pushFile = async (content: string, bucketKey: string) => {
+   *    const file = { path: '/index.html', content: Buffer.from(content) }
+   *    return await buckets.pushPath(bucketKey!, 'index.html', file)
+   * }
    * ```
    */
   async pushPath(

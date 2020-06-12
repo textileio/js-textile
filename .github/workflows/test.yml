@@ -67,3 +67,8 @@ jobs:
     - name: Test Browser
       run: |
            npm run test:browser
+
+    - name: Test Examples
+      run: |
+           npm run docs
+           npm run test:docs

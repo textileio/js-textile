@@ -31,11 +31,13 @@ There are two commonly used object types for passing authentication parameters t
 `UserAuth` objects can be generated to provide Hub API access to your users inside of your application. Review the tutorial linked above on setting up a UserAuth providing endpoint.
 
 ```typescript
-interface UserAuth {
-  msg: <api msg>,
-  sig: <api sig>,
-  token: <user msg>,
-  key: <user group key>,
+import { UserAuth } from '@textile/hub'
+
+const auth: UserAuth = {
+  msg: '<api msg>',
+  sig: '<api sig>',
+  token: '<user msg>',
+  key: '<api key>',
 }
 ```
 
@@ -44,10 +46,12 @@ interface UserAuth {
 The `KeyInfo` object holds your API secret and so should never be used in an insecure environment (such as in an application). These methods can be used with user group keys (`type = 0`) or account keys (`type = 1`).
 
 ```typescript
-interface KeyInfo {
-  key: <api key>,
-  secret: <api secret>,
-  type: <api key type>,
+import { KeyInfo } from '@textile/hub'
+
+const auth: KeyInfo = {
+  key: '<api key>',
+  secret: '<api secret>',
+  type: 0 // <api key type>
 }
 ```
 
@@ -60,13 +64,14 @@ Create a database client using the Textile Hub and account keys.
 ```typescript
 import { Client, KeyInfo } from '@textile/hub'
 
-const keyInfo: KeyInfo = {
-  key: process.env.ACCOUNT_API_KEY,
-  secret: process.env.ACCOUNT_API_SECRET,
-  type: 1,
+async function start () {
+  const keyInfo: KeyInfo = {
+    key: '<api key>',
+    secret: '<api secret>',
+    type: 1,
+  }
+  const client = await Client.withKeyInfo(keyInfo)
 }
-
-const db = await Client.withKeyInfo(keyInfo)
 ```
 
 **User Account Auth**
@@ -76,17 +81,9 @@ Create a database client using the Textile Hub and user group keys.
 ```typescript
 import { Client, UserAuth } from '@textile/hub'
 
-/**
- * msg, sig, and token all must be provided by a secure gateway.
- */
-const auth: UserAuth = {
-  msg: msg,
-  sig: sig,
-  token: token,
-  key: process.env.USER_API_KEY,
-};
-
-const db = Client.withUserAuth(auth)
+async function start (auth: UserAuth) {
+  const client = Client.withUserAuth(auth)
+}
 ```
 
 ### ThreadDB Client
@@ -98,45 +95,55 @@ Threads client to access remote threads, generate token and more.
 **List Threads**
 
 ```typescript
-const threads = await db.listThreads()
+import { Client } from '@textile/hub'
+
+async function list (client: Client) {
+  const threads = await client.listThreads()
+}
 ```
 
 **Create a thread**
 
 ```typescript
-import { ThreadID } from '@textile/hub'
+import { Client, ThreadID } from '@textile/hub'
 
-/**
- * Setup a new ThreadID and Database
- */
-threadId = ThreadID.fromRandom();
+async function start (client: Client, schema: any) {
+  /**
+   * Setup a new ThreadID and Database
+   */
+  const threadId = ThreadID.fromRandom();
 
-/**
- * Each new ThreadID requires a `newDB` call.
- */
-await db.newDB(threadId)
+  /**
+   * Each new ThreadID requires a `newDB` call.
+   */
+  await client.newDB(threadId)
 
-/**
- * We add our first Collection to the DB for any schema.
- */
-await db.newCollection(threadId, 'Astronaut', astronautSchema);
+  /**
+   * We add our first Collection to the DB for any schema.
+   */
+  await client.newCollection(threadId, 'Astronaut', schema);
+}
 ```
 
 **Insert data**
 
 ```typescript
-/**
- * Add a new Astronaut
- * 
- * Our Thread contains the Astronaut Collection, so you just need
- * to add a new astronaut that matches the expected schema.
- * 
- * If you run this app many times, you'll notice many Buzz Aldrin
- * entries in your ThreadDB, each with a unique ID.
- */
-const ids = await db.create(threadId!, 'Astronaut', [
-  jsonAstronaut,
-]);
+import { Client, ThreadID } from '@textile/hub'
+
+async function createEntity (client: Client, threadId: ThreadID, jsonData: any) {
+  /**
+   * Add a new Astronaut
+   * 
+   * Our Thread contains the Astronaut Collection, so you just need
+   * to add a new astronaut that matches the expected schema.
+   * 
+   * If you run this app many times, you'll notice many Buzz Aldrin
+   * entries in your ThreadDB, each with a unique ID.
+   */
+  const ids = await client.create(threadId, 'Astronaut', [
+    jsonData,
+  ]);
+}
 ```
 
 ### Bucket Client
@@ -148,52 +155,62 @@ Create, manage, and publish user and account Buckets.
 **Create a new Bucket client**
 
 ```typescript
-import { Buckets } from '@textile/hub'
+import { Buckets, UserAuth } from '@textile/hub'
 
 /**
  * Create a Bucket client instance with the same auth
  * methods used for threads
  */
-const buckets = Buckets.withUserAuth(auth)
+async function start (auth: UserAuth) {
+  const buckets = Buckets.withUserAuth(auth)
+}
 ```
 
 **Read existing Buckets**
 
 ```typescript
-/**
- * List existing Buckets
- */
-const roots = await buckets.list();
-const existing = roots.find((bucket) => bucket.name === 'files')
+import { Buckets } from '@textile/hub'
 
-/**
- * If a Bucket named 'files' already existed for this user, use it.
- * If not, create one now.
- */
-let bucketKey = ''
-if (existing) {
-  bucketKey = existing.key;
-} else {
-  const created = await buckets.init('files');
-  bucketKey = created.root!.key;
+async function run (buckets: Buckets) {
+  /**
+   * List existing Buckets
+   */
+  const roots = await buckets.list();
+  const existing = roots.find((bucket) => bucket.name === 'files')
+
+  /**
+   * If a Bucket named 'files' already existed for this user, use it.
+   * If not, create one now.
+   */
+  let bucketKey = ''
+  if (existing) {
+    bucketKey = existing.key;
+  } else {
+    const created = await buckets.init('files');
+    bucketKey = created.root ? created.root.key : ''
+  }
+  return bucketKey
 }
 ```
 
 **Add files to Buckets**
 
 ```typescript
-/**
- * Add a simple file Buffer
- * 
- * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
- * 
- * We add the file as index.html so that we can render it right in the browser afterwards.
- */
-const file = { path: '/index.html', content: Buffer.from(webpage) }
+import { Buckets, UserAuth } from '@textile/hub'
 
-/**
- * Push the file to the root of the Files Bucket.
- */
-const raw = await buckets.pushPath(bucketKey!, 'index.html', file)
+async function add (buckets: Buckets, webpage: string, bucketKey: string) {
+  /**
+   * Add a simple file Buffer
+   * 
+   * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
+   * 
+   * We add the file as index.html so that we can render it right in the browser afterwards.
+   */
+  const file = { path: '/index.html', content: Buffer.from(webpage) }
 
+  /**
+   * Push the file to the root of the Files Bucket.
+   */
+  const raw = await buckets.pushPath(bucketKey, 'index.html', file)
+}
 ```

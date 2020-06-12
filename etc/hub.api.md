@@ -138,8 +138,6 @@ export class ThreadID {
     toBytes(): Buffer;
     toString(base?: name_2): string;
     static V1: number;
-    // Warning: (ae-forgotten-export) The symbol "Variant" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     static Variant: typeof Variant;
     variant(): number;
@@ -153,6 +151,14 @@ export type UserAuth = {
     msg: string;
     token?: string;
 };
+
+// @public
+export enum Variant {
+    // (undocumented)
+    AccessControlled = 112,
+    // (undocumented)
+    Raw = 85
+}
 
 
 ```

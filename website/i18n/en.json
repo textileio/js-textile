@@ -5,6 +5,12 @@
     "previous": "Previous",
     "tagline": "A client for communicating with Textile Hub.",
     "docs": {
+      "classes/_packages_buckets_src_buckets_.buckets": {
+        "title": "classes/_packages_buckets_src_buckets_.buckets"
+      },
+      "globals": {
+        "title": "globals"
+      },
       "hub.apisig": {
         "title": "APISig type"
       },
@@ -209,8 +215,44 @@
       "hub.userauth": {
         "title": "UserAuth type"
       },
+      "hub.variant": {
+        "title": "Variant enum"
+      },
       "index": {
         "title": "Introduction"
+      },
+      "interfaces/_packages_buckets_src_buckets_.pushpathresult": {
+        "title": "interfaces/_packages_buckets_src_buckets_.pushpathresult"
+      },
+      "interfaces/_packages_buckets_src_normalize_.file": {
+        "title": "interfaces/_packages_buckets_src_normalize_.file"
+      },
+      "interfaces/_packages_hub_src_users_._threads_client_.client": {
+        "title": "interfaces/_packages_hub_src_users_._threads_client_.client"
+      },
+      "modules/_packages_buckets_src_buckets_": {
+        "title": "modules/_packages_buckets_src_buckets_"
+      },
+      "modules/_packages_buckets_src_index_": {
+        "title": "modules/_packages_buckets_src_index_"
+      },
+      "modules/_packages_buckets_src_normalize_": {
+        "title": "modules/_packages_buckets_src_normalize_"
+      },
+      "modules/_packages_hub_src_index_": {
+        "title": "modules/_packages_hub_src_index_"
+      },
+      "modules/_packages_hub_src_users_._threads_client_": {
+        "title": "modules/_packages_hub_src_users_._threads_client_"
+      },
+      "modules/_packages_hub_src_users_": {
+        "title": "modules/_packages_hub_src_users_"
+      },
+      "modules/_scripts_tdocp_": {
+        "title": "modules/_scripts_tdocp_"
+      },
+      "README": {
+        "title": "README"
       }
     },
     "links": {},
