@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/buckets-grpc": "^1.0.7",
+    "@textile/buckets-grpc": "^1.0.8",
     "@textile/context": "^0.4.6",
     "@textile/security": "^0.1.3",
     "cids": "^0.8.0",
@@ -37,7 +37,7 @@
     "queueable": "^4.1.4"
   },
   "devDependencies": {
-    "@textile/hub-grpc": "^1.0.7",
+    "@textile/hub-grpc": "^1.0.8",
     "@textile/threads-client": "^0.6.7",
     "@textile/threads-core": "^0.1.18",
     "@textile/threads-id": "^0.1.5",

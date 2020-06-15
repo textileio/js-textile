@@ -87,12 +87,12 @@ export class Buckets {
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
    * @param ctx Context object containing web-gRPC headers and settings.
    * @example
-   * Initialize a Bucket called "app-name-file"
+   * Initialize a Bucket called "app-name-files"
    * ```tyepscript
    * import { Buckets } from '@textile/hub'
    *
-   * const init = async (buckets: Buckets, bucketName: string) => {
-   *     return buckets.init(bucketName)
+   * const init = async (buckets: Buckets) => {
+   *     return buckets.init("app-name-files")
    * }
    * ```
    */

@@ -5,7 +5,9 @@ Textile Hub
 
 ## Introduction
 
-`@textile/hub` provides access to Textile APIs in apps based on a Account Keys or User Group Keys. Go to [the docs](https://docs.textile.io/) for more about accounts and key generation.
+`@textile/hub` provides access to Textile APIs in apps based on a Account Keys or User Group Keys.
+
+Go to [the docs](https://docs.textile.io/) for the full Textile documentation, including information about accounts and key generation.
 
 Join us on our [public Slack channel](https://slack.textile.io/) for news, discussions, and status updates. [Check out our blog](https://blog.textile.io/) for the latest posts and announcements.
 
