@@ -1,6 +1,5 @@
-import { PrivateKey, PublicKey, keys } from 'libp2p-crypto'
+import { PrivateKey, PublicKey } from '@textile/threads-crypto'
 import { ThreadID } from '@textile/threads-id'
-import multibase from 'multibase'
 import { Multiaddr } from '@textile/multiaddr'
 import { LogInfo } from './log'
 import { ThreadKey } from './key'

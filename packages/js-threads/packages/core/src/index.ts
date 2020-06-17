@@ -1,4 +1,4 @@
-import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
+import { keys, PrivateKey, PublicKey } from '@textile/threads-crypto'
 
 export * from '@textile/threads-id'
 export * from '@textile/multiaddr'

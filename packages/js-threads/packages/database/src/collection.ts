@@ -19,7 +19,8 @@ export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7
 
 export const existingKeyError = new Error('Existing key')
 
-interface FindOptions<T extends Instance> extends Pick<Query<T>, 'limit' | 'offset' | 'keysOnly'> {
+interface FindOptions<T extends Instance>
+  extends Partial<Pick<Query<T>, 'limit' | 'offset' | 'keysOnly'>> {
   sort?: { [key in keyof T]?: 1 | -1 }
 }
 

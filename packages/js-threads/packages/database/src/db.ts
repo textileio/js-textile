@@ -153,7 +153,10 @@ export class Database implements DatabaseSettings {
 
   @Cache({ duration: 1800000 })
   async ownLogInfo(): Promise<LogInfo | undefined> {
-    return this.threadID && this.network.getOwnLog(this.threadID, false)
+    if (this.threadID) {
+      const info = await this.network.getThread(this.threadID)
+      return this.network.getOwnLog(info, false)
+    }
   }
 
   /**
@@ -313,13 +316,13 @@ export class Database implements DatabaseSettings {
 
   private async onRecord(rec: ThreadRecord) {
     if (this.threadID?.equals(rec.threadID)) {
-      const logInfo = await this.network.getOwnLog(this.threadID, false)
+      // @todo should just cache this information, as its unlikely to change
+      const info = await this.network.getThread(this.threadID)
+      const logInfo = await this.network.getOwnLog(info, false)
       if (logInfo?.id.equals(rec.logID)) {
         return // Ignore our own events since DB already dispatches to DB reducers
       }
-      // @todo should just cache this information, as its unlikely to change
-      const info = await this.network.getThread(this.threadID)
-      const value: Event | undefined = decodeRecord(rec, info)
+      const value: Event | undefined = await decodeRecord(rec, info)
       if (value !== undefined) {
         const collection = this.collections.get(value.collection)
         if (collection !== undefined) {

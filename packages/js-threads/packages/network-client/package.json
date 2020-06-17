@@ -28,12 +28,11 @@
     "@textile/context": "^0.4.6",
     "@textile/threads-core": "^0.1.18",
     "@textile/threads-encoding": "^0.1.18",
-    "@textile/threads-net-grpc": "^0.1.18",
+    "@textile/threads-crypto": "^0.0.0",
+    "@textile/threads-net-grpc": "^0.1.19",
     "cids": "^0.8.0",
-    "libp2p-crypto": "^0.17.2",
     "loglevel": "^1.6.6",
-    "next-tick": "^1.1.0",
-    "peer-id": "^0.13.9"
+    "next-tick": "^1.1.0"
   },
   "references": [
     {
@@ -44,6 +43,9 @@
     },
     {
       "path": "../context"
+    },
+    {
+      "path": "../crypto"
     }
   ],
   "devDependencies": {

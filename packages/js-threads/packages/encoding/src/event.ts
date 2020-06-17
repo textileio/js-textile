@@ -1,4 +1,4 @@
-import { randomBytes } from 'libp2p-crypto'
+import { randomBytes } from '@textile/threads-crypto'
 import log from 'loglevel'
 import { Block, Event, EventNode, EventHeader } from '@textile/threads-core'
 import { Options, defaultOptions, encodeBlock } from './coding'
@@ -19,11 +19,11 @@ export async function createEvent(
   opts: Options = defaultOptions,
 ) {
   logger.debug('creating event')
-  const keyiv = key || randomBytes(32)
-  const codedBody = encodeBlock(body, keyiv)
+  const keyiv = Buffer.from(key || randomBytes(32))
+  const codedBody = await encodeBlock(body, keyiv)
   const header: EventHeader = { key: keyiv }
   const eventHeader = Block.encoder(header, opts.codec, opts.algo)
-  const codedHeader = encodeBlock(eventHeader, readKey, opts)
+  const codedHeader = await encodeBlock(eventHeader, readKey, opts)
   // Encode to create the caches
   codedBody.encode()
   codedHeader.encode()

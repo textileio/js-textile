@@ -2,11 +2,8 @@
 // Some hackery to get WebSocket in the global namespace on nodejs
 ;(global as any).WebSocket = require('isomorphic-ws')
 
-import { randomBytes } from 'libp2p-crypto'
 import { expect } from 'chai'
-import nextTick from 'next-tick'
-import PeerId from 'peer-id'
-import { keys } from 'libp2p-crypto'
+import { randomBytes, keys } from '@textile/threads-crypto'
 import {
   ThreadID,
   ThreadInfo,
@@ -15,6 +12,8 @@ import {
   Multiaddr,
   ThreadKey,
   Libp2pCryptoIdentity,
+  LogID,
+  Identity,
 } from '@textile/threads-core'
 import { createEvent, createRecord } from '@textile/threads-encoding'
 import { Context } from '@textile/context'
@@ -26,30 +25,31 @@ const proxyAddr1 = 'http://127.0.0.1:6007'
 const proxyAddr2 = 'http://127.0.0.1:6207'
 const ed25519 = keys.supportedKeys.ed25519
 
-async function createThread(client: Network) {
+async function createThread(client: Network | Client) {
   const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
   const threadKey = ThreadKey.fromRandom()
   return client.createThread(id, { threadKey })
 }
 
-function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
-  const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
+function threadAddr(hostAddr: Multiaddr, hostID: string, info: ThreadInfo) {
+  const pa = new Multiaddr(`/p2p/${hostID}`)
   const ta = new Multiaddr(`/thread/${info.id.toString()}`)
   return hostAddr.encapsulate(pa.encapsulate(ta)) as any
 }
 
 describe('Network...', () => {
-  let client: Network
+  let client: Network | Client
+  let identity: Identity
   before(async () => {
-    const identity = await Libp2pCryptoIdentity.fromRandom()
     client = new Network(new MemoryDatastore(), new Client(new Context(proxyAddr1)))
-    const token = await client.getToken(identity)
-    expect(token).to.not.be.undefined
+    // client = new Client(new Context(proxyAddr1))
+    identity = await Libp2pCryptoIdentity.fromRandom()
+    await client.getToken(identity)
   })
   describe('Basic...', () => {
     it('should return a remote host peer id', async () => {
       const id = await client.getHostID()
-      expect(PeerId.isPeerId(id)).to.be.true
+      expect(id.length).to.be.greaterThan(41)
     })
 
     it('should create a remote thread', async () => {
@@ -116,7 +116,7 @@ describe('Network...', () => {
       const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))
 
       const pid = await client.addReplicator(info1.id, peerAddr)
-      expect(pid.toB58String()).to.equal(hostID2.toB58String())
+      expect(pid).to.equal(hostID2)
     })
 
     it('should create a new record', async () => {
@@ -152,7 +152,7 @@ describe('Network...', () => {
         pubKey: logKey,
       })
       const cid1 = await record.value.cid()
-      const logID = await PeerId.createFromPubKey(privKey.public.bytes)
+      const logID = await LogID.fromPublicKey(privKey.public)
       await client.addRecord(info.id, logID, record)
       const record2 = await client.getRecord(info.id, cid1)
       if (!record2) {
@@ -177,12 +177,13 @@ describe('Network...', () => {
     })
 
     describe('subscribe', () => {
-      let client2: Network
+      let client2: Client | Network
       let info: ThreadInfo
-      let token2: string
 
-      before(async () => {
+      before(async function () {
+        this.timeout(5000)
         client2 = new Network(new MemoryDatastore(), new Client(new Context(proxyAddr2)))
+        // client2 = new Client(new Context(proxyAddr2))
         const hostID2 = await client2.getHostID()
         const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
         const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))
@@ -190,23 +191,25 @@ describe('Network...', () => {
         await client.addReplicator(info.id, peerAddr)
         // Create temporary identity
         const identity = await Libp2pCryptoIdentity.fromRandom()
-        token2 = await client2.getToken(identity)
+        await client2.getToken(identity)
       })
 
       it('should handle updates and close cleanly', (done) => {
-        let rcount = 0
+        let count = 0
+        let timeOne = 0
         const res = client2.subscribe(
           (rec?: ThreadRecord, err?: Error) => {
             expect(rec).to.not.be.undefined
-            if (rec) rcount += 1
+            if (rec) count += 1
             if (err) throw new Error(`unexpected error: ${err.toString()}`)
-            if (rcount >= 2) {
+            if (count >= 2) {
               res.close()
-              nextTick(done)
+              done()
             }
           },
           [info.id],
         )
+        timeOne = Date.now()
         client.createRecord(info.id, { foo: 'bar1' }).then(() => {
           client.createRecord(info.id, { foo: 'bar2' })
         })

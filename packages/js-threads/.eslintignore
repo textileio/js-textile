@@ -2,3 +2,4 @@
 **/docs
 **/dist
 karma.conf.js
+**/proto.*.ts

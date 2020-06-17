@@ -1,12 +1,12 @@
-import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
+import { keys, PrivateKey, PublicKey } from '@textile/threads-crypto'
 import multibase from 'multibase'
 
 export function publicKeyToString(key: PublicKey) {
-  return multibase.encode('base32', keys.marshalPublicKey(key)).toString()
+  return multibase.encode('base32', keys.marshalPublicKey(key) as Buffer).toString()
 }
 
 export function privateKeyToString(key: PrivateKey) {
-  return multibase.encode('base32', keys.marshalPrivateKey(key)).toString()
+  return multibase.encode('base32', keys.marshalPrivateKey(key) as Buffer).toString()
 }
 
 export function privateKeyFromString(str: string) {
@@ -14,19 +14,19 @@ export function privateKeyFromString(str: string) {
 }
 
 export interface Public {
-  verify(data: Buffer, sig: Buffer): Promise<boolean>
+  verify(data: Uint8Array, sig: Uint8Array): Promise<boolean>
   toString(): string
-  bytes: Buffer
+  bytes: Uint8Array
 }
 
 /**
  * Identity represents an entity capable of signing a message.
  * This is a simple 'private key' interface that must be capable of returning the associated public key for
  * verification. In many cases, this will just be a private key, but callers can use any setup that suits their needs.
- * The interface is currently modeled after libp2p-crypto PrivateKey.
+ * The interface is currently modeled after @textile/threads-crypto PrivateKeys.
  */
 export interface Identity {
-  sign(data: Buffer): Promise<Buffer>
+  sign(data: Uint8Array): Promise<Uint8Array>
   public: Public
 }
 
@@ -38,7 +38,7 @@ export class Libp2pCryptoPublicKey implements Public {
    * @param data The data to verify.
    * @param sig The signature to verify.
    */
-  verify(data: Buffer, sig: Buffer) {
+  verify(data: Uint8Array, sig: Uint8Array) {
     return this.key.verify(data, sig)
   }
 
@@ -64,7 +64,7 @@ export class Libp2pCryptoIdentity implements Identity {
    * Signs the given data with the Private key,
    * @param data Data to be signed.
    */
-  sign(data: Buffer) {
+  sign(data: Uint8Array) {
     return this.key.sign(data)
   }
 

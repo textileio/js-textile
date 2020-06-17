@@ -2,9 +2,8 @@
 // Some hackery to get WebSocket in the global namespace on nodejs
 ;(global as any).WebSocket = require('isomorphic-ws')
 
-import { randomBytes, keys } from 'libp2p-crypto'
+import { randomBytes, keys } from '@textile/threads-crypto'
 import { expect } from 'chai'
-import PeerId from 'peer-id'
 import {
   ThreadID,
   ThreadInfo,
@@ -14,6 +13,7 @@ import {
   ThreadKey,
   Identity,
   Libp2pCryptoIdentity,
+  LogID,
 } from '@textile/threads-core'
 import { Context } from '@textile/context'
 import { createEvent, createRecord } from '@textile/threads-encoding'
@@ -29,26 +29,24 @@ async function createThread(client: Client) {
   return client.createThread(id, { threadKey })
 }
 
-function threadAddr(hostAddr: Multiaddr, hostID: PeerId, info: ThreadInfo) {
-  const pa = new Multiaddr(`/p2p/${hostID.toB58String()}`)
+function threadAddr(hostAddr: Multiaddr, hostID: string, info: ThreadInfo) {
+  const pa = new Multiaddr(`/p2p/${hostID}`)
   const ta = new Multiaddr(`/thread/${info.id.toString()}`)
   return hostAddr.encapsulate(pa.encapsulate(ta))
 }
 
 describe('Network Client...', () => {
   let client: Client
-  let token: string
   let identity: Identity
   before(async () => {
     client = new Client(new Context(proxyAddr1))
     identity = await Libp2pCryptoIdentity.fromRandom()
-    token = await client.getToken(identity)
+    await client.getToken(identity)
   })
   describe('Basic...', () => {
     it('should return a remote host peer id', async () => {
       const id = await client.getHostID()
-      expect(id).to.be.instanceOf(PeerId)
-      expect(PeerId.isPeerId(id)).to.be.true
+      expect(id.length).to.be.greaterThan(41)
     })
 
     it('should create a remote thread', async () => {
@@ -110,7 +108,7 @@ describe('Network Client...', () => {
       const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))
 
       const pid = await client.addReplicator(info1.id, peerAddr)
-      expect(pid.toB58String()).to.equal(hostID2.toB58String())
+      expect(pid).to.equal(hostID2)
     }).timeout(5000)
 
     it('should create a new record', async () => {
@@ -145,7 +143,7 @@ describe('Network Client...', () => {
         pubKey: identity.public,
       })
       const cid1 = await record.value.cid()
-      const logID = await PeerId.createFromPubKey(logPk.bytes)
+      const logID = await LogID.fromPublicKey(logPk)
       await client.addRecord(info.id, logID, record)
       const record2 = await client.getRecord(info.id, cid1)
       if (!record2) {
@@ -172,7 +170,6 @@ describe('Network Client...', () => {
     describe('subscribe', () => {
       let client2: Client
       let info: ThreadInfo
-      let token2: string
 
       before(async function () {
         this.timeout(5000)
@@ -184,7 +181,7 @@ describe('Network Client...', () => {
         await client.addReplicator(info.id, peerAddr)
         // Create temporary identity
         const identity = await Libp2pCryptoIdentity.fromRandom()
-        token2 = await client2.getToken(identity)
+        await client2.getToken(identity)
       })
 
       it('should handle updates and close cleanly', (done) => {
@@ -204,7 +201,7 @@ describe('Network Client...', () => {
         client.createRecord(info.id, { foo: 'bar1' }).then(() => {
           client.createRecord(info.id, { foo: 'bar2' })
         })
-      }).timeout(7000)
+      })
     })
   })
 })

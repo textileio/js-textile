@@ -1,4 +1,3 @@
-import PeerId from 'peer-id'
 import CID from 'cids'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
@@ -17,7 +16,7 @@ export interface Network {
   /**
    * getHostID returns the network's (remote) host peer ID.
    */
-  getHostID(): Promise<PeerId>
+  getHostID(): Promise<string>
 
   /**
    * getToken returns a signed token representing an identity.
@@ -64,7 +63,7 @@ export interface Network {
    * @param id The Thread ID.
    * @param addr The multiaddress of the replicator peer.
    */
-  addReplicator(id: ThreadID, addr: Multiaddr): Promise<PeerId>
+  addReplicator(id: ThreadID, addr: Multiaddr): Promise<string>
 
   /**
    * createRecord from body.

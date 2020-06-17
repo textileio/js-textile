@@ -136,7 +136,7 @@ describe('Database', () => {
       const hostID = await d1.network.getHostID()
       // const addrs = await d1.getInfo() // Normally we'd use this, but we're in Docker...
       const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
-      const addr = threadAddr(hostAddr, hostID.toB58String(), id1.toString())
+      const addr = threadAddr(hostAddr, hostID, id1.toString())
 
       // Peer 2: Create a completely parallel db2, which will sync with the previous one and should
       // have the same state of dummy.

@@ -128,7 +128,7 @@ export class Client {
   async getToken(identity: Identity, ctx?: ContextInterface) {
     return this.getTokenChallenge(
       identity.public.toString(),
-      async (challenge: Buffer) => {
+      async (challenge: Uint8Array) => {
         return identity.sign(challenge)
       },
       ctx,
@@ -149,7 +149,7 @@ export class Client {
    */
   async getTokenChallenge(
     publicKey: string,
-    callback: (challenge: Buffer) => Buffer | Promise<Buffer>,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
     ctx?: ContextInterface,
   ) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
@@ -161,7 +161,7 @@ export class Client {
       let token = ''
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
-          const challenge = Buffer.from(message.getChallenge() as string)
+          const challenge = message.getChallenge_asU8()
           const signature = await callback(challenge)
           const req = new pb.GetTokenRequest()
           req.setSignature(signature)

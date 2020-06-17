@@ -1,10 +1,7 @@
-import { PublicKey, PrivateKey, randomBytes } from 'libp2p-crypto'
+import { randomBytes } from '@textile/threads-crypto'
 import multibase from 'multibase'
 
 export const invalidKeyError = new Error('Invalid key')
-
-// NonceBytes is the length of GCM nonce.
-const nonceBytes = 12
 
 // KeyBytes is the length of GCM key.
 const keyBytes = 32
@@ -21,8 +18,8 @@ export const keyFromString = (k: string) => {
  * String returns the base32-encoded string representation of raw key bytes.
  * @param k Input key buffer.
  */
-export const keyToString = (k: Buffer) => {
-  return multibase.encode('base32', k).toString()
+export const keyToString = (k: Uint8Array) => {
+  return multibase.encode('base32', k as Buffer).toString()
 }
 
 /**
@@ -31,7 +28,7 @@ export const keyToString = (k: Buffer) => {
  * @param rk Read key is used to encrypt inner record events.
  */
 export class ThreadKey {
-  constructor(readonly service: Buffer, readonly read?: Buffer) {}
+  constructor(readonly service: Uint8Array, readonly read?: Uint8Array) {}
   /**
    * Create a new set of keys.
    * @param withRead Whether to also include a random read key.
@@ -44,12 +41,12 @@ export class ThreadKey {
    * Create Key from bytes.
    * @param bytes Input bytes of (possibly both) key(s).
    */
-  static fromBytes(bytes: Buffer) {
+  static fromBytes(bytes: Uint8Array) {
     if (bytes.byteLength !== keyBytes && bytes.byteLength !== keyBytes * 2) {
       throw invalidKeyError
     }
     const sk = bytes.slice(0, keyBytes)
-    let rk: Buffer | undefined
+    let rk: Uint8Array | undefined
     if (bytes.byteLength === keyBytes * 2) {
       rk = bytes.slice(keyBytes)
     }
@@ -74,7 +71,12 @@ export class ThreadKey {
   }
 
   toBytes() {
-    if (this.read !== undefined) return Buffer.concat([this.service, this.read])
+    if (this.read !== undefined) {
+      const full = new Uint8Array(this.service.byteLength + (this.read.byteLength ?? 0))
+      full.set(this.service)
+      this.read && full.set(this.read, this.service.byteLength)
+      return full
+    }
     return this.service
   }
 
@@ -85,6 +87,6 @@ export class ThreadKey {
    * Network: "bp2vvqody5zm6yqycsnazb4kpqvycbdosos352zvpsorxce5koh7q"
    */
   toString() {
-    return multibase.encode('base32', this.toBytes()).toString()
+    return multibase.encode('base32', this.toBytes() as Buffer).toString()
   }
 }

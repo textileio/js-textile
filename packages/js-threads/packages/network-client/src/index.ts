@@ -1,11 +1,11 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import CID from 'cids'
-import PeerId from 'peer-id'
-import { keys } from 'libp2p-crypto'
+import { keys } from '@textile/threads-crypto'
 import log from 'loglevel'
 import {
   ThreadID,
   LogID,
+  PeerId,
   ThreadInfo,
   NewThreadOptions,
   LogInfo,
@@ -19,9 +19,9 @@ import {
   Identity,
   Libp2pCryptoIdentity,
 } from '@textile/threads-core'
-import { ContextInterface, ContextKeys, Context } from '@textile/context'
+import { ContextInterface, Context } from '@textile/context'
 import * as pb from '@textile/threads-net-grpc/threadsnet_pb'
-import { API, APIGetToken } from '@textile/threads-net-grpc/threadsnet_pb_service'
+import { API, APIGetToken, APISubscribe } from '@textile/threads-net-grpc/threadsnet_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
 import nextTick from 'next-tick'
 
@@ -34,11 +34,11 @@ function getThreadKeys(opts: NewThreadOptions) {
   return threadKeys
 }
 
-function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: ThreadKey) {
+async function threadRecordFromProto(proto: pb.NewRecordReply.AsObject, key: ThreadKey) {
   const threadID = ThreadID.fromBytes(Buffer.from(proto.threadid as string, 'base64'))
   const rawID = Buffer.from(proto.logid as string, 'base64')
-  const logID = PeerId.createFromBytes(rawID)
-  const record = proto.record && recordFromProto(proto.record, key.service)
+  const logID = LogID.fromBytes(rawID)
+  const record = proto.record && (await recordFromProto(proto.record, key.service))
   const info: ThreadRecord = {
     record,
     threadID,
@@ -54,10 +54,7 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject): Promise<
   const logs: Set<LogInfo> = new Set()
   for (const log of proto.logsList) {
     const rawId = Buffer.from(log.id as string, 'base64')
-    const pid = PeerId.createFromBytes(rawId)
-    // @todo: Currently it looks like private key unmarshaling isn't compatible between Go and JS?
-    // const pkBytes = Buffer.from(log.privkey as string)
-    // const privKey = await keys.unmarshalPrivateKey(pkBytes)
+    const pid = LogID.fromBytes(rawId)
     const logInfo: LogInfo = {
       id: pid,
       addrs: new Set(
@@ -65,7 +62,10 @@ async function threadInfoFromProto(proto: pb.ThreadInfoReply.AsObject): Promise<
       ),
       head: log.head ? new CID(Buffer.from(log.head as string, 'base64')) : undefined,
       pubKey: keys.unmarshalPublicKey(Buffer.from(log.pubkey as string, 'base64')),
-      // privKey,
+    }
+    if (log.privkey) {
+      const pkBytes = Buffer.from(log.privkey as string, 'base64')
+      logInfo.privKey = await keys.unmarshalPrivateKey(pkBytes)
     }
     logs.add(logInfo)
   }
@@ -117,7 +117,7 @@ export class Client implements Network {
   async getToken(identity: Identity, ctx?: ContextInterface) {
     return this.getTokenChallenge(
       identity.public.toString(),
-      async (challenge: Buffer) => {
+      async (challenge: Uint8Array) => {
         return identity.sign(challenge)
       },
       ctx,
@@ -138,7 +138,7 @@ export class Client implements Network {
    */
   async getTokenChallenge(
     publicKey: string,
-    callback: (challenge: Buffer) => Buffer | Promise<Buffer>,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
     ctx?: ContextInterface,
   ) {
     const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
@@ -150,7 +150,7 @@ export class Client implements Network {
       let token = ''
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
-          const challenge = Buffer.from(message.getChallenge() as string)
+          const challenge = message.getChallenge_asU8()
           const signature = await callback(challenge)
           const req = new pb.GetTokenRequest()
           req.setSignature(signature)
@@ -185,8 +185,7 @@ export class Client implements Network {
     logger.debug('making get host ID request')
     const req = new pb.GetHostIDRequest()
     const res: pb.GetHostIDReply = await this.unary(API.GetHostID, req, ctx)
-    const peerID = res.getPeerid() as string
-    return PeerId.createFromBytes(Buffer.from(peerID, 'base64'))
+    return PeerId.BytesToString(res.getPeerid_asU8())
   }
 
   /**
@@ -275,9 +274,7 @@ export class Client implements Network {
     req.setThreadid(id.toBytes())
     req.setAddr(addr.buffer)
     const res: pb.AddReplicatorReply = await this.unary(API.AddReplicator, req, ctx)
-    const peerID = res.getPeerid() as string
-    const rawId = Buffer.from(peerID, 'base64')
-    return PeerId.createFromBytes(rawId)
+    return PeerId.BytesToString(res.getPeerid_asU8())
   }
 
   /**
@@ -294,7 +291,7 @@ export class Client implements Network {
     req.setThreadid(id.toBytes())
     req.setBody(block)
     const res: pb.NewRecordReply = await this.unary(API.CreateRecord, req, ctx)
-    return info.key && threadRecordFromProto(res.toObject(), info.key)
+    return info.key && (await threadRecordFromProto(res.toObject(), info.key))
   }
 
   /**
@@ -316,8 +313,7 @@ export class Client implements Network {
     record.setHeadernode(prec.headernode)
     record.setRecordnode(prec.recordnode)
     req.setRecord(record)
-    await this.unary(API.AddRecord, req, ctx)
-    return
+    return this.unary(API.AddRecord, req, ctx).then(() => undefined)
   }
 
   /**
@@ -352,49 +348,55 @@ export class Client implements Network {
   ): grpc.Request {
     logger.debug('making subscribe request')
     const ids = threads.map((thread) => thread.toBytes())
-    const request = new pb.SubscribeRequest()
-    request.setThreadidsList(ids)
-    const keys = new Map<ThreadID, Uint8Array | undefined>() // replicator key cache
-    const callback = async (reply?: pb.NewRecordReply, err?: Error) => {
-      if (!reply) {
-        return cb(undefined, err)
-      }
-      const proto = reply.toObject()
-      const id = ThreadID.fromBytes(Buffer.from(proto.threadid as string, 'base64'))
-      const rawID = Buffer.from(proto.logid as string, 'base64')
-      const logID = PeerId.createFromBytes(rawID)
-      if (!keys.has(id)) {
-        const info = await this.getThread(id, ctx)
-        keys.set(id, info.key?.service)
-      }
-      const keyiv = keys.get(id)
-      if (!keyiv) return cb(undefined, new Error('Missing key'))
-      const record = proto.record && recordFromProto(proto.record, keyiv)
-      return cb(
-        {
-          record,
-          threadID: id,
-          logID,
-        },
-        err,
-      )
-    }
-    const creds = this.context.withContext(ctx)
-    const metadata = JSON.parse(JSON.stringify(creds))
-    return grpc.invoke(API.Subscribe, {
-      host: this.serviceHost,
-      transport: this.rpcOptions.transport,
-      debug: this.rpcOptions.debug,
-      metadata,
-      request,
-      onMessage: (rec: pb.NewRecordReply) => nextTick(() => callback(rec)),
-      onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
-        if (status !== grpc.Code.OK) {
-          return nextTick(() => callback(undefined, new Error(message)))
-        }
-        return nextTick(() => callback())
+    const req = new pb.SubscribeRequest()
+    req.setThreadidsList(ids)
+    const keys: Map<ThreadID, Uint8Array | undefined> = new Map() // service key cache
+    const client = grpc.client<pb.SubscribeRequest, pb.NewRecordReply, APISubscribe>(
+      API.Subscribe,
+      {
+        host: this.serviceHost,
+        transport: this.rpcOptions.transport,
+        debug: this.rpcOptions.debug,
       },
+    )
+    const get = (threadID: ThreadID, logID: LogID, message: pb.NewRecordReply) => {
+      const keyiv = keys.get(threadID)
+      if (!keyiv) return cb(undefined, new Error('Missing service key'))
+      const rec = message.getRecord()
+      if (rec !== undefined) {
+        recordFromProto(rec.toObject(), keyiv).then((record) => {
+          return cb({ record, threadID, logID })
+        })
+      }
+    }
+    client.onMessage((message: pb.NewRecordReply) => {
+      if (message.hasRecord()) {
+        const threadID = ThreadID.fromBytes(message.getThreadid_asU8())
+        const logID = LogID.fromBytes(message.getLogid_asU8())
+        if (!keys.has(threadID)) {
+          this.getThread(threadID, ctx).then((info) => {
+            keys.set(threadID, info.key?.service)
+            get(threadID, logID, message)
+          })
+        } else {
+          get(threadID, logID, message)
+        }
+      } else {
+        return cb(undefined, new Error('Missing record'))
+      }
     })
+    client.onEnd((code: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      client.close()
+      if (code !== grpc.Code.OK) {
+        cb(undefined, new Error(message))
+      } else {
+        cb()
+      }
+    })
+    const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
+    client.start(metadata)
+    client.send(req)
+    return { close: () => client.finishSend() }
   }
 
   private unary<

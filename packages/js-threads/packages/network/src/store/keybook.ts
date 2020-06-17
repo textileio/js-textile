@@ -1,8 +1,7 @@
 import { Datastore, Key } from 'interface-datastore'
 import { NamespaceDatastore } from 'datastore-core'
 import { Closer, ThreadID, LogID } from '@textile/threads-core'
-import crypto, { PrivateKey, PublicKey } from 'libp2p-crypto'
-import PeerId from 'peer-id'
+import { keys, PrivateKey, PublicKey } from '@textile/threads-crypto'
 
 /**
  * Public and private keys are stored under the following db key pattern:
@@ -32,7 +31,7 @@ export class KeyBook implements Closer {
   async pubKey(id: ThreadID, log: LogID) {
     try {
       const key = await this.datastore.get(getKey(id, log, 'pub'))
-      return crypto.keys.unmarshalPublicKey(key) as PublicKey
+      return keys.unmarshalPublicKey(key) as PublicKey
     } catch (err) {
       return
     }
@@ -45,10 +44,10 @@ export class KeyBook implements Closer {
    * @param pubKey The public key from a symmetric key pair.
    */
   async addPubKey(id: ThreadID, log: LogID, pubKey: PublicKey) {
-    const key = pubKey.bytes
-    if (!log.equals(await PeerId.createFromPubKey(key))) {
+    if (!log.equals(await LogID.fromPublicKey(pubKey))) {
       throw new Error('Public Key Mismatch')
     }
+    const key = Buffer.from(pubKey.bytes)
     return this.datastore.put(getKey(id, log, 'pub'), key)
   }
 
@@ -60,7 +59,7 @@ export class KeyBook implements Closer {
   async privKey(id: ThreadID, log: LogID) {
     try {
       const key = await this.datastore.get(getKey(id, log, 'priv'))
-      return crypto.keys.unmarshalPrivateKey(key)
+      return keys.unmarshalPrivateKey(key)
     } catch (err) {
       return
     }
@@ -73,11 +72,11 @@ export class KeyBook implements Closer {
    * @param privKey The private key from a symmetric key pair.
    */
   async addPrivKey(id: ThreadID, log: LogID, privKey: PrivateKey) {
-    const key = privKey.bytes
-    const check = await PeerId.createFromPrivKey(key)
+    const check = await LogID.fromPrivateKey(privKey)
     if (!log.equals(check)) {
       throw new Error('Private Key Mismatch')
     }
+    const key = Buffer.from(privKey.bytes)
     return this.datastore.put(getKey(id, log, 'priv'), key)
   }
 
@@ -98,8 +97,8 @@ export class KeyBook implements Closer {
    * @param id The Thread ID.
    * @param key The asymmetric read key, of length 44 bytes.
    */
-  addReadKey(id: ThreadID, key: Buffer) {
-    return this.datastore.put(new Key(id.toString()).child(new Key('read')), key)
+  addReadKey(id: ThreadID, key: Uint8Array) {
+    return this.datastore.put(new Key(id.toString()).child(new Key('read')), Buffer.from(key))
   }
 
   /**
@@ -118,8 +117,8 @@ export class KeyBook implements Closer {
    * @param id The Thread ID.
    * @param key The asymmetric replicator key, of length 44 bytes.
    */
-  addServiceKey(id: ThreadID, key: Buffer) {
-    return this.datastore.put(new Key(id.toString()).child(new Key('repl')), key)
+  addServiceKey(id: ThreadID, key: Uint8Array) {
+    return this.datastore.put(new Key(id.toString()).child(new Key('repl')), Buffer.from(key))
   }
 
   async threads() {
@@ -141,7 +140,7 @@ export class KeyBook implements Closer {
     const q = { keysOnly: true, prefix: id.toString() }
     for await (const { key } of this.datastore.query(q)) {
       if (['priv', 'pub'].includes(key.name())) {
-        const log = PeerId.createFromB58String(key.type())
+        const log = LogID.fromB58String(key.type())
         logs.add(log)
       }
     }

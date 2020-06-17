@@ -2,8 +2,7 @@
 import { expect } from 'chai'
 import { MemoryDatastore } from 'interface-datastore'
 import { LogID, ThreadID } from '@textile/threads-core'
-import PeerId from 'peer-id'
-import crypto, { PrivateKey } from 'libp2p-crypto'
+import { keys, PrivateKey } from '@textile/threads-crypto'
 import { KeyBook } from './keybook'
 
 let kb: KeyBook
@@ -18,10 +17,10 @@ describe('KeyBook', () => {
     await kb.close()
   })
   it('PrivKey', async () => {
-    const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
+    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
     expect(privKey).to.not.be.undefined
 
-    log = await PeerId.createFromPrivKey(privKey.bytes)
+    log = await LogID.fromPrivateKey(privKey)
 
     // No privkey exists yet
     const key = await kb.privKey(tid, log)
@@ -41,10 +40,10 @@ describe('KeyBook', () => {
     expect(same.every(Boolean)).to.be.true
   })
   it('PubKey', async () => {
-    const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
+    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
     expect(privKey).to.not.be.undefined
 
-    log = await PeerId.createFromPubKey(privKey.public.bytes)
+    log = await LogID.fromPublicKey(privKey.public)
 
     // No pubKey exists yet
     const key = await kb.pubKey(tid, log)
@@ -76,10 +75,10 @@ describe('KeyBook', () => {
 
     // Stored read key should match
     const que = await kb.readKey(tid)
-    expect(que).to.equal(key128)
+    expect(que).to.eql(key128)
   })
 
-  it('ReplicatorKey', async () => {
+  it('Service Key', async () => {
     // No readKey exists yet
     const key = await kb.serviceKey(tid)
     expect(key).to.be.undefined
@@ -92,12 +91,12 @@ describe('KeyBook', () => {
 
     // Stored read key should match
     const que = await kb.serviceKey(tid)
-    expect(que).to.equal(key128)
+    expect(que).to.eql(key128)
   })
 
   it('clear keys', async () => {
-    const privKey: PrivateKey = await crypto.keys.generateKeyPair('rsa', 1024)
-    log = await PeerId.createFromPubKey(privKey.public.bytes)
+    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
+    log = await LogID.fromPublicKey(privKey.public)
     await kb.addPubKey(tid, log, privKey.public)
 
     const keyBefore = await kb.pubKey(tid, log)

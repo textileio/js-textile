@@ -59,13 +59,13 @@ export async function createRecord(
   logger.debug('creating record')
   const block = await data.value.cid()
   let payload = block.buffer
-  const pubKey = config.pubKey.bytes
+  const pubKey = Buffer.from(config.pubKey.bytes)
   if (config.prev && CID.isCID(config.prev)) {
     payload = Buffer.concat([payload, config.prev.buffer])
   } else {
     payload = pubKey
   }
-  const sig = await config.privKey.sign(payload)
+  const sig = Buffer.from(await config.privKey.sign(payload))
   const obj: RecordNode = {
     block,
     sig,
@@ -74,7 +74,7 @@ export async function createRecord(
   // Don't include prev unless it is defined
   if (config.prev) obj.prev = config.prev
   const node = Block.encoder(obj, opts.codec, opts.algo)
-  const value = encodeBlock(node, config.servKey, opts)
+  const value = await encodeBlock(node, config.servKey, opts)
   // @todo: We don't support a dag here yet, but this is where we'd add this data to IPFS!
   const record: LogRecord = {
     value,
@@ -110,7 +110,7 @@ export function recordToProto(rec: LogRecord) {
  * @param key The symmetric key.
  * @param opts Additional encoding/encryption options.
  */
-export function recordFromProto(
+export async function recordFromProto(
   proto: EncodedRecord,
   key: Uint8Array,
   opts: Options = defaultOptions,
@@ -124,7 +124,7 @@ export function recordFromProto(
   const hnode = Block.decoder<Uint8Array>(rawHeader, opts.codec, opts.algo)
   const rawBody = Buffer.from(proto.bodynode as string, 'base64')
   const body = Block.decoder<Uint8Array>(rawBody, opts.codec, opts.algo)
-  const decoded = decodeBlock(rnode, key)
+  const decoded = await decodeBlock(rnode, key)
   const robj = decoded.decode()
   const eobj = enode.decode()
   enode.encode() // Created encoded value

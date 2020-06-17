@@ -1,7 +1,7 @@
 import CID from 'cids'
-import PeerId from 'peer-id'
 import { ThreadID } from '@textile/threads-id'
 import { Block } from '../ipld'
+import { LogID } from '../thread'
 import { Event } from './event'
 
 /**
@@ -11,7 +11,7 @@ export interface LogRecord {
   /**
    * The node structure of the record.
    */
-  value: Block<Uint8Array>
+  value: Block<Buffer>
   /**
    * The underlying event block.
    */
@@ -29,7 +29,7 @@ export interface RecordNode {
   /**
    * Signature of current and previous blocks from the log key.
    */
-  sig: Uint8Array
+  sig: Buffer
   /**
    * CID of inner block.
    */
@@ -42,7 +42,7 @@ export interface RecordNode {
   /**
    * Public of the identity used to author this record.
    */
-  pubKey?: Uint8Array
+  pubKey?: Buffer
 }
 
 /**
@@ -60,5 +60,5 @@ export interface ThreadRecord {
   /**
    * To Log to which this record belongs.
    */
-  logID: PeerId
+  logID: LogID
 }

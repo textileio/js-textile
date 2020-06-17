@@ -18,16 +18,16 @@ describe('ThreadKey', () => {
     const k1 = ThreadKey.fromRandom()
     const b = k1.toBytes()
     const k2 = ThreadKey.fromBytes(b)
-    expect(k1.service.equals(k2.service)).to.be.true
+    expect(k1.service).to.eql(k2.service)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    expect(k1.read?.equals(k2.read!)).to.be.true
+    expect(k1.read).to.eql(k2.read)
   })
 
   it('should be able to create a network key from an input Buffer', () => {
     const k1 = ThreadKey.fromRandom(false)
     const b = k1.toBytes()
     const k2 = ThreadKey.fromBytes(b)
-    expect(k1.service.equals(k2.service)).to.be.true
+    expect(k1.service).to.eql(k2.service)
     expect(k1.read).to.be.undefined
   })
 
@@ -35,16 +35,16 @@ describe('ThreadKey', () => {
     const k1 = ThreadKey.fromRandom()
     const b = k1.toString()
     const k2 = ThreadKey.fromString(b)
-    expect(k1.service.equals(k2.service)).to.be.true
+    expect(k1.service).to.eql(k2.service)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    expect(k1.read?.equals(k2.read!)).to.be.true
+    expect(k1.read).to.eql(k2.read)
   })
 
   it('should be able to create a network key from an input string', () => {
     const k1 = ThreadKey.fromRandom(false)
     const b = k1.toString()
     const k2 = ThreadKey.fromString(b)
-    expect(k1.service.equals(k2.service)).to.be.true
+    expect(k1.service).to.eql(k2.service)
     expect(k1.read).to.be.undefined
   })
 })
