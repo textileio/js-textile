@@ -2,7 +2,10 @@
 //
 // :import github.com/libp2p/go-libp2p-crypto
 // :import crypto/rand
-// priv, pub, err := crypto.GenerateEd25519Key(rand.Reader)
+// :import mrand "math/rand"
+//
+// reader := mrand.New(mrand.NewSource(42))
+// priv, pub, err := crypto.GenerateEd25519Key(reader)
 // pubkeyBytes, err := pub.Bytes()
 // privkeyBytes, err := priv.Bytes()
 // data := []byte("hello! and welcome to some awesome crypto primitives")
