@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@textile/hub-grpc": "^1.0.8",
-    "@textile/threads-client": "^0.6.7",
-    "@textile/threads-core": "^0.1.18",
+    "@textile/threads-client": "^0.6.8",
+    "@textile/threads-core": "^0.1.19",
     "@textile/threads-id": "^0.1.5",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
