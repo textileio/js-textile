@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -37,7 +37,7 @@
     }
   ],
   "dependencies": {
-    "@textile/security": "^0.1.3"
+    "@textile/security": "^0.1.4"
   },
   "gitHead": "1e3fb240a50a8128fe285c0ed444286d87c996b2"
 }
