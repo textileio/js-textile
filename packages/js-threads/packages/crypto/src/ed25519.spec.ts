@@ -7,7 +7,7 @@ import * as crypto from './index'
 chai.use(dirtyChai)
 
 describe('ed25519', function () {
-  let key: ed25519.Ed25519PrivateKey
+  let key: crypto.PrivateKey
   before(async () => {
     key = await crypto.keys.generateKeyPair('Ed25519')
   })

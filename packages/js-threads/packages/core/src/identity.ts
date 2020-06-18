@@ -1,15 +1,15 @@
 import { keys, PrivateKey, PublicKey } from '@textile/threads-crypto'
 import multibase from 'multibase'
 
-export function publicKeyToString(key: PublicKey) {
+export function publicKeyToString(key: PublicKey): string {
   return multibase.encode('base32', keys.marshalPublicKey(key) as Buffer).toString()
 }
 
-export function privateKeyToString(key: PrivateKey) {
+export function privateKeyToString(key: PrivateKey): string {
   return multibase.encode('base32', keys.marshalPrivateKey(key) as Buffer).toString()
 }
 
-export function privateKeyFromString(str: string) {
+export function privateKeyFromString(str: string): Promise<PrivateKey> {
   return keys.unmarshalPrivateKey(multibase.decode(str))
 }
 

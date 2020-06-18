@@ -15,7 +15,10 @@ export const supportedKeys = {
 }
 
 // Generates a keypair of the given type and bitsize
-export const generateKeyPair = async (type: 'Ed25519', bytesLength?: number) => {
+export const generateKeyPair = async (
+  type: 'Ed25519',
+  bytesLength?: number,
+): Promise<PrivateKey> => {
   if (type !== 'Ed25519') throw keyTypeError
   return ed25519.generateKeyPair(bytesLength)
 }
@@ -24,7 +27,7 @@ export const generateKeyPair = async (type: 'Ed25519', bytesLength?: number) => 
  * Converts a protobuf serialized public key into its representative object
  * @param buf The input key bytes.
  */
-export const unmarshalPublicKey = (buf: Uint8Array) => {
+export const unmarshalPublicKey = (buf: Uint8Array): PublicKey => {
   const decoded = decodePublicKey(buf)
   const data = decoded.Data
 
@@ -52,7 +55,7 @@ export const marshalPublicKey = (key: PublicKey, type = 'ED25519') => {
  * Converts a protobuf serialized private key into its representative object
  * @param buf The input key bytes.
  */
-export const unmarshalPrivateKey = (buf: Uint8Array) => {
+export const unmarshalPrivateKey = (buf: Uint8Array): Promise<PrivateKey> => {
   const decoded = decodePrivateKey(buf)
   const data = decoded.Data
 
