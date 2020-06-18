@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "web-gRPC wrapper client for communicating with Textile Hub.",
   "main": "dist/index",
   "types": "dist/index",
