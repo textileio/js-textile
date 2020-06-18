@@ -5,7 +5,7 @@
   "main": "packages/threads",
   "types": "packages/threads",
   "scripts": {
-    "bootstrap": "lerna run clean && lerna bootstrap",
+    "bootstrap": "lerna run clean && lerna bootstrap --no-hoist",
     "compile": "lerna run compile",
     "build": "lerna run build",
     "build:node": "lerna run build:node --stream",
