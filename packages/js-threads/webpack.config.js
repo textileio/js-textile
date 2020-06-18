@@ -28,7 +28,7 @@ module.exports = {
       '@textile/threads-encoding': path.resolve(__dirname, 'packages/encoding'),
       '@textile/threads-crypto': path.resolve(__dirname, 'packages/crypto'),
       '@textile/threads-id': path.resolve(__dirname, 'packages/id'),
-      '@textile/threads-multiaddr': path.resolve(__dirname, 'packages/multiaddr'),
+      '@textile/multiaddr': path.resolve(__dirname, 'packages/multiaddr'),
       '@textile/threads-network': path.resolve(__dirname, 'packages/network'),
       '@textile/threads-network-client': path.resolve(__dirname, 'packages/network-client'),
       '@textile/threads-store': path.resolve(__dirname, 'packages/store'),
