@@ -63,6 +63,7 @@
     "eventemitter2": "^6.0.0",
     "interface-datastore": "^0.8.0",
     "isomorphic-ws": "^4.0.1",
+    "json-schema": "^0.2.5",
     "level": "^6.0.1",
     "loglevel": "^1.6.6",
     "mingo": "^3.0.2",
