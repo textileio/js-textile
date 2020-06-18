@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
-    "multibase": "^0.7.0",
+    "multibase": "^1.0.1",
     "varint": "^5.0.0"
   },
   "gitHead": "1e3fb240a50a8128fe285c0ed444286d87c996b2"

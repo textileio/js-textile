@@ -35,7 +35,7 @@
     "fast-sha256": "^1.3.0",
     "google-protobuf": "3.11.4",
     "micro-aes-gcm": "^0.2.0",
-    "multibase": "^0.7.0",
+    "multibase": "^1.0.1",
     "noble-ed25519": "^1.0.0",
     "varint": "^5.0.0"
   },
