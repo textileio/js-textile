@@ -39,6 +39,7 @@
     "@textile/users-grpc": "^1.0.8",
     "cids": "^0.8.0",
     "loglevel": "^1.6.8",
+    "multihashes": "0.4.19",
     "queueable": "^4.1.4"
   },
   "devDependencies": {
