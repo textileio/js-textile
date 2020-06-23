@@ -63,32 +63,14 @@ Want something specific? Take a look at our [contributor guide](#contributing) f
 
 ### Overview
 
-Underlying the Threads Database are a number of ideas and technologies, which are outlined in detail in the [Threads whitepaper](https://github.com/textileio/papers). These components are all housed within this [mono-repo](https://en.wikipedia.org/wiki/Monorepo), and include a set of [core modules](./packages/core) for creating Thread identities and keys (`@textile/threads-core`), as well as tooling for data [encryption and encoding](./packages/encoding) (`@textile/threads-encoding`), networking (with support for [local](./packages/network) (`@textile/threads-network`) and [remote](./packages/network-client) (`@textile/threads-network-client`) key management), and a local-first, event-sourced [storage layer](./packages/store) (`@textile/threads-store`). There are also two entry points for running Threads DB, including a [local-first Javascript _module_](./packages/database) (`@textile/threads-database`), and a [remote-only, Javascript _client_](./packages/client) (`@textile/threads-client`).
+
 
 ## Install
 
-`js-threads` is implemented as a series of sub-packages, all managed within the js-threads repo. In general, you can get most of what you need by simply installing and using the `@textile/threads` library.
+`js-threads` is implemented as a series of sub-packages. For general use, you can get most of what you need by simply installing and using the `@textile/threads` library.
 
 ```shell script
 npm install --save @textile/threads
-```
-
-Each package is separately published to npm, so that developers can pick and choose which components of `js-threads` they want to consume. For example, to install the low-level network APIs along with the encoding/encryption tooling:
-
-```shell script
-npm install --save @textile/threads-network @textile/threads-encoding
-```
-
-Similarly, one can install the local storage layer or full-fledged Database separately:
-
-```shell script
-npm i --save @textile/threads-store @textile/threads-database
-``` 
-
-There are also a number of other recommended packages that will make working with Threads in Typescript/Javascript easier:
-
-```shell script
-npm i --save interface-datastore datastore-level buffer 
 ```
 
 If you are running `js-threads` in an environment that does not support [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) by default (such as Node), be sure to include it explicitly using something like the following at the top of your script or module:
@@ -100,17 +82,17 @@ global.WebSocket = require('isomorphic-ws')
 
 ## Usage
 
-The tests within the underlying [sub-packages](https://github.com/textileio/js-threads/tree/master/packages) of this repo provide tests that use the various components of `js-threads`, and provide useful examples to explore. Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available.
-
-For the most comprehensive docs, see https://docs.textile.io
+For an introduction to use the `Database` classe, read the [Threads Introduction here](https://docs.textile.io/threads/). Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available.
 
 ## Authentication
 
-Textile also provides remote Threads APIs you can use when developing your app. See [`@textile/hub`](https://github.com/textileio/js-hub) (or [docs.textile.io](https://docs.textile.io)) for details on authenticating with these APIs, and how to set up your own local development peer.
+Textile provides remote Threads APIs you can use when developing your app. See [`@textile/hub`](https://textileio.github.io/js-hub) (or [docs.textile.io](https://docs.textile.io)) for details on authenticating with these APIs, and how to set up your own local development peer.
 
 ## Developing
 
-This mono-repo is made up of several sub-packages, all managed by [lerna](https://github.com/lerna/lerna). You shouldn't have to do anything special to get started, however, here are a few steps that will make it easier to develop new functionality locally.
+Underlying the Threads Database are a number of ideas and technologies, which are outlined in detail in the [Threads whitepaper](https://github.com/textileio/papers). These components are all housed within this [mono-repo](https://en.wikipedia.org/wiki/Monorepo), and include a set of [core modules](./packages/core) for creating Thread identities and keys (`@textile/threads-core`), as well as tooling for data [encryption and encoding](./packages/encoding) (`@textile/threads-encoding`), networking (with support for [local](./packages/network) (`@textile/threads-network`) and [remote](./packages/network-client) (`@textile/threads-network-client`) key management), and a local-first, event-sourced [storage layer](./packages/store) (`@textile/threads-store`). There are also two entry points for running Threads DB, including a [local-first Javascript _module_](./packages/database) (`@textile/threads-database`), and a [remote-only, Javascript _client_](./packages/client) (`@textile/threads-client`).
+
+This mono-repo is all managed by [lerna](https://github.com/lerna/lerna). You shouldn't have to do anything special to get started, however, here are a few steps that will make it easier to develop new functionality locally.
 
 ```shell script
 git clone git@github.com:textileio/js-threads.git
