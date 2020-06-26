@@ -82,7 +82,6 @@ export class Buckets {
     return new Buckets(context)
   }
 
-
   /**
    * Create a new gRPC client Bucket instance from a preconfigured threads client
    * @param client a threads client
