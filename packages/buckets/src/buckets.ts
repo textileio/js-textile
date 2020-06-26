@@ -3,7 +3,6 @@ import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
-// import { Channel } from 'queueable'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
@@ -299,13 +298,13 @@ export class Buckets {
     path: string,
     ctx?: ContextInterface,
     opts?: { progress?: (num?: number) => void },
-  ): AsyncIterable<Uint8Array> {
+  ): AsyncIterableIterator<Uint8Array> {
     const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
     const request = new pb.PullPathRequest()
     request.setKey(key)
     request.setPath(path)
     let written = 0
-    return new EventIterator(({ push, stop, fail }) => {
+    const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
       const resp = grpc.invoke(API.PullPath, {
         host: this.serviceHost,
         transport: this.rpcOptions.transport,
@@ -329,6 +328,13 @@ export class Buckets {
       })
       return () => resp.close()
     })
+    const it: AsyncIterableIterator<Uint8Array> = {
+      [Symbol.asyncIterator]() {
+        return this
+      },
+      ...events[Symbol.asyncIterator](),
+    }
+    return it
   }
 
   private unary<
