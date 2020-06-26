@@ -49,14 +49,12 @@
     "@textile/threads-core": "^0.1.24",
     "@textile/threads-id": "^0.1.6",
     "@types/google-protobuf": "^3.7.2",
-    "bs58": "^4.0.1",
     "cids": "^0.8.0",
     "google-protobuf": "^3.10.0",
     "next-tick": "^1.1.0",
     "to-json-schema": "^0.2.5"
   },
   "devDependencies": {
-    "@types/bs58": "^4.0.1",
     "@types/multibase": "^0.6.0",
     "@types/next-tick": "^1.0.0",
     "@types/to-json-schema": "^0.2.0",

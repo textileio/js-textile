@@ -64,7 +64,6 @@ const createPerson = (): Person => {
 describe('Client', function () {
   const dbID = ThreadID.fromRandom()
   let dbKey: string
-  let dbAddr: string
   let identity: Identity
   const client = new Client(new Context('http://127.0.0.1:6007'))
 
@@ -141,13 +140,12 @@ describe('Client', function () {
   })
 
   describe('.getDBInfo', () => {
-    it('response should be defined and be an array of strings', async () => {
+    it('should return a valid db info object', async () => {
       const invites = await client.getDBInfo(dbID)
       expect(invites).to.not.be.undefined
-      expect(invites[0].address).to.not.be.undefined
-      expect(invites[0].key).to.not.be.undefined
-      dbKey = invites[0].key
-      dbAddr = invites[0].address
+      expect(invites.addrs[0]).to.not.be.undefined
+      expect(invites.key).to.not.be.undefined
+      dbKey = invites.key
       expect(invites).to.not.be.empty
     })
   })
@@ -170,12 +168,38 @@ describe('Client', function () {
   })
 
   describe('.newDBFromAddr', () => {
-    it('response should be defined and be an empty object', async () => {
+    const client2 = new Client(new Context('http://127.0.0.1:6207'))
+    before(async () => {
+      identity = await Libp2pCryptoIdentity.fromRandom()
+      await client2.getToken(identity)
+    })
+    it('response should contain a valid list of thread protocol addrs', async () => {
+      const info = await client.getDBInfo(dbID)
+      // @hack: we're in docker and peers can't find each other; don't try this at home!
+      info.addrs.forEach((addr) => {
+        addr.replace('/ip4/127.0.0.1', '/dns4/threads1/')
+      })
+      // We can 'exclude' the local addrs because we swapped them for "dns" entries
+      await client2.joinFromInfo(info, false, [
+        // Include the known collections to bootstrap with...
+        {
+          name: 'Person',
+          schema: personSchema,
+        },
+        {
+          name: 'FromObject',
+          schema: schema2,
+        },
+      ])
+      const info2 = await client2.getDBInfo(dbID)
+      expect(info2.addrs.length).to.be.greaterThan(1)
+      expect(info2.key).to.equal(info.key)
+      // Now we should have it locally, so no need to add again
       try {
-        await client.newDBFromAddr((dbAddr as unknown) as string, dbKey, [])
+        await client2.newDBFromAddr(info.addrs[0], dbKey, [])
       } catch (err) {
         // Expect this db to already exist on this peer
-        expect(err.toString().endsWith('already exists')).to.be.true
+        expect(err.toString()).to.include('already exists')
       }
     })
   })

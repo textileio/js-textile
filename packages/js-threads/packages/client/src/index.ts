@@ -6,13 +6,12 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { API, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
 import * as pb from '@textile/threads-client-grpc/threads_pb'
 import nextTick from 'next-tick'
-import { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
+import { Identity, Libp2pCryptoIdentity, ThreadKey } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
 import toJsonSchema from 'to-json-schema'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
-import { encode, decode } from 'bs58'
 import {
   QueryJSON,
   Instance,
@@ -30,6 +29,31 @@ export interface CollectionConfig {
   name: string
   schema: any
   indexes: pb.Index.AsObject
+}
+
+export function maybeLocalAddr(ip: string) {
+  return (
+    ['localhost', '', '::1'].includes(ip) ||
+    ip.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/) ||
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.0.') ||
+    ip.endsWith('.local')
+  )
+}
+
+/**
+ * DBInfo contains joining/sharing information for a Thread/DB.
+ */
+export interface DBInfo {
+  /**
+   * The Thread Key, encoded as a base32 string.
+   * @see ThreadKey for details.
+   */
+  key: string
+  /**
+   * The Multiaddrs for a peer hosting the given Thread/DB.
+   */
+  addrs: string[]
 }
 
 /**
@@ -390,52 +414,99 @@ export class Client {
    * newDBFromAddr initializes the client with the given store, connecting to the given
    * thread address (database). It should be called before any operation on the store, and is an
    * alternative to start, which creates a local store. newDBFromAddr should also include the
-   * read and follow keys, which should be Buffer, Uint8Array or base58-encoded strings.
-   * See `getDBInfo` for a possible source of the address and keys.
+   * read/follow key, which should be a Buffer, Uint8Array or base32-encoded string.
+   * @see getDBInfo for a possible source of the address and keys.
+   * @see ThreadKey for information about thread keys.
    * @param address The address for the thread with which to connect.
    * Should be of the form /ip4/<url/ip-address>/tcp/<port>/p2p/<peer-id>/thread/<thread-id>
    * @param key The set of keys to use to connect to the database
-   * @param collections An array of Name and JSON Schemas for collections in the DB.
+   * @param collections Array of `name` and JSON schema pairs for seeding the DB with collections.
    */
   public async newDBFromAddr(
     address: string,
     key: string | Uint8Array,
-    collections: Array<{ name: string; schema: any }>,
+    collections?: Array<{ name: string; schema: any }>,
   ) {
     const req = new pb.NewDBFromAddrRequest()
     const addr = new Multiaddr(address).buffer
     req.setAddr(addr)
-    req.setKey(typeof key === 'string' ? decode(key) : key)
-    req.setCollectionsList(
-      collections.map((c) => {
-        const config = new pb.CollectionConfig()
-        config.setName(c.name)
-        config.setSchema(JSON.stringify(c.schema))
-        return config
-      }),
-    )
-    return await this.unary(API.NewDBFromAddr, req)
+    // Should always be encoded string, but might already be bytes
+    req.setKey(typeof key === 'string' ? ThreadKey.fromString(key).toBytes() : key)
+    if (collections !== undefined) {
+      req.setCollectionsList(
+        collections.map((c) => {
+          const config = new pb.CollectionConfig()
+          config.setName(c.name)
+          config.setSchema(Buffer.from(JSON.stringify(c.schema)))
+          return config
+        }),
+      )
+    }
+    await this.unary(API.NewDBFromAddr, req)
+    return
+  }
+
+  /**
+   * fromInfo initializes the client with the given store, connecting to the given
+   * thread address (database). It should be called before any operation on the store, and is an
+   * alternative to start, which creates a local store. fromInfo is a helper method around
+   * newDBFromAddr that takes the 'raw' output from getDBInfo, rather than specifying an address
+   * directly.
+   * @see getDBInfo for a possible source of the address and keys.
+   * @see ThreadKey for information about thread keys.
+   * @param info The output from a call to getDBInfo on a separate peer.
+   * @param includeLocal Whether to try dialing addresses that appear to be on the local host.
+   * Defaults to false, preferring to add from public ip addresses.
+   * @param collections Array of `name` and JSON schema pairs for seeding the DB with collections.
+   */
+  public async joinFromInfo(
+    info: DBInfo,
+    includeLocal = false,
+    collections?: Array<{ name: string; schema: any }>,
+  ) {
+    const req = new pb.NewDBFromAddrRequest()
+    const filtered = info.addrs
+      .map((addr) => new Multiaddr(addr))
+      .filter((addr) => includeLocal || !maybeLocalAddr(addr.toOptions().host))
+    for (const addr of filtered) {
+      req.setAddr(addr.buffer)
+      // Should always be encoded string, but might already be bytes
+      req.setKey(typeof info.key === 'string' ? ThreadKey.fromString(info.key).toBytes() : info.key)
+      if (collections !== undefined) {
+        req.setCollectionsList(
+          collections.map((c) => {
+            const config = new pb.CollectionConfig()
+            config.setName(c.name)
+            config.setSchema(Buffer.from(JSON.stringify(c.schema)))
+            return config
+          }),
+        )
+      }
+      // Try to add addrs one at a time, if one succeeds, we are done.
+      await this.unary(API.NewDBFromAddr, req)
+      return
+    }
+    throw new Error('No viable addresses for dialing')
   }
 
   /**
    * getDBInfo returns invite 'links' unseful for inviting other peers to join a given store/thread.
    * @param threadID the ID of the database
+   * @returns An object with an encoded thread key, and a list of multiaddrs.
    */
-  public async getDBInfo(threadID: ThreadID) {
+  public async getDBInfo(threadID: ThreadID): Promise<DBInfo> {
     const req = new pb.GetDBInfoRequest()
     req.setDbid(threadID.toBytes())
     const res = (await this.unary(API.GetDBInfo, req)) as pb.GetDBInfoReply.AsObject
-    const invites: Array<{ address: string; key: string }> = []
+    const threadKey = Buffer.from(res.key as string, 'base64')
+    const key = ThreadKey.fromBytes(threadKey)
+    const addrs: string[] = []
     for (const addr of res.addrsList) {
-      const dk = Buffer.from(res.key as string, 'base64')
       const a = typeof addr === 'string' ? Buffer.from(addr, 'base64') : Buffer.from(addr)
       const address = new Multiaddr(a).toString()
-      invites.push({
-        address,
-        key: encode(dk),
-      })
+      addrs.push(address)
     }
-    return invites
+    return { key: key.toString(), addrs }
   }
 
   /**
