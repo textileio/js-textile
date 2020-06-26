@@ -148,6 +148,7 @@ describe('Buckets...', () => {
     })
     const pth = path.join(__dirname, '../../..', 'testdata')
     const stream = fs.createWriteStream(path.join(pth, 'output.jpg'))
+    // Should be an AsyncIterable
     for await (const chunk of chunks) {
       stream.write(chunk)
     }
@@ -157,6 +158,23 @@ describe('Buckets...', () => {
     const written = fs.statSync(path.join(pth, 'output.jpg'))
     // expect(stored.size).to.equal(written.size)
     fs.unlinkSync(path.join(pth, 'output.jpg'))
+
+    // Should throw correctly when the file isn't available
+    try {
+      const more = client.pullPath(rootKey, 'dir1/nope.jpg')
+      for await (const chk of more) {
+        expect(chk).to.not.be.undefined
+      }
+      throw wrongError
+    } catch (err) {
+      expect(err).to.not.equal(wrongError)
+      expect(err.toString()).to.include('no link named "nope.jpg"')
+    }
+
+    // Should be an AsyncIterator
+    const more = client.pullPath(rootKey, 'dir1/file1.jpg')
+    const { value } = await more.next()
+    expect(value).to.not.be.undefined
   })
 
   it('should remove files by path', async () => {

@@ -2,7 +2,7 @@ import log from 'loglevel'
 import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
-import { Channel } from 'queueable'
+import { EventIterator } from 'event-iterator'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
@@ -300,33 +300,41 @@ export class Buckets {
     opts?: { progress?: (num?: number) => void },
   ): AsyncIterableIterator<Uint8Array> {
     const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-    const chan = new Channel<Uint8Array>()
     const request = new pb.PullPathRequest()
     request.setKey(key)
     request.setPath(path)
     let written = 0
-    const response = grpc.invoke(API.PullPath, {
-      host: this.serviceHost,
-      transport: this.rpcOptions.transport,
-      debug: this.rpcOptions.debug,
-      request,
-      metadata,
-      onMessage: async (res: pb.PullPathReply) => {
-        const chunk = res.getChunk_asU8()
-        await chan.push(chunk)
-        written += chunk.byteLength
-        if (opts?.progress) {
-          opts.progress(written)
-        }
-      },
-      onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
-        if (status !== grpc.Code.OK) {
-          throw new Error(message)
-        }
-        await chan.push(Buffer.alloc(0), true)
-      },
+    const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
+      const resp = grpc.invoke(API.PullPath, {
+        host: this.serviceHost,
+        transport: this.rpcOptions.transport,
+        debug: this.rpcOptions.debug,
+        request,
+        metadata,
+        onMessage: async (res: pb.PullPathReply) => {
+          const chunk = res.getChunk_asU8()
+          push(chunk)
+          written += chunk.byteLength
+          if (opts?.progress) {
+            opts.progress(written)
+          }
+        },
+        onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+          if (status !== grpc.Code.OK) {
+            fail(new Error(message))
+          }
+          stop()
+        },
+      })
+      return () => resp.close()
     })
-    return chan.wrap(() => response.close())
+    const it: AsyncIterableIterator<Uint8Array> = {
+      [Symbol.asyncIterator]() {
+        return this
+      },
+      ...events[Symbol.asyncIterator](),
+    }
+    return it
   }
 
   private unary<
