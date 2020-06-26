@@ -32,6 +32,7 @@
     "@textile/buckets-grpc": "^1.0.8",
     "@textile/context": "^0.4.7",
     "@textile/security": "^0.1.4",
+    "@textile/threads-client": "^0.6.13",
     "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.6.8"

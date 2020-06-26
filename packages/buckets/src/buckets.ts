@@ -6,6 +6,7 @@ import { EventIterator } from 'event-iterator'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
+import { Client } from '@textile/threads-client'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -79,6 +80,15 @@ export class Buckets {
     const context = new Context(host, debug)
     await context.withKeyInfo(key)
     return new Buckets(context)
+  }
+
+
+  /**
+   * Create a new gRPC client Bucket instance from a preconfigured threads client
+   * @param client a threads client
+   */
+  static async fromClient(client: Client) {
+    return new Buckets(client.context)
   }
 
   /**
