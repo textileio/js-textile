@@ -241,6 +241,33 @@ export class Client {
   }
 
   /**
+   * open creates and enters a new store on the remote node.
+   * @param threadID the ID of the database
+   * @param name The human-readable name for the database
+   * @example
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function openDB (client: Client, threadID: ThreadID) {
+   *   await client.open(threadID)
+   * }
+   * ```
+   */
+  public async open(threadID: ThreadID, name?: string) {
+    const req = new pb.ListDBsRequest()
+    const res = (await this.unary(API.ListDBs, req)) as pb.ListDBsReply.AsObject
+    for (const db of res.dbsList) {
+      const id = ThreadID.fromBytes(Buffer.from(db.dbid as string, 'base64'))
+      if (id === threadID) {
+        this.context.withThread(threadID.toString())
+        return
+      }
+    }
+    await this.newDB(threadID, name)
+    this.context.withThread(threadID.toString())
+  }
+
+  /**
    * Deletes an entire DB.
    * @param threadID the ID of the database.
    * @example
