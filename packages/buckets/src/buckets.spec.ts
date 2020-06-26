@@ -164,10 +164,10 @@ describe('Buckets...', () => {
       for await (const chk of more) {
         expect(chk).to.not.be.undefined
       }
-      throw new Error('should have thrown')
+      throw wrongError
     } catch (err) {
-      // @todo: Fixme
-      expect(err).to.be.empty
+      expect(err).to.not.equal(wrongError)
+      expect(err.toString()).to.include('no link named "nope.jpg"')
     }
   })
 
