@@ -321,7 +321,7 @@ export class Buckets {
       },
       onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
         if (status !== grpc.Code.OK) {
-          throw new Error(message)
+          chan.push(new Error(message) as any)
         }
         await chan.push(Buffer.alloc(0), true)
       },

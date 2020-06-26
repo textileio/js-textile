@@ -157,6 +157,17 @@ describe('Buckets...', () => {
     const written = fs.statSync(path.join(pth, 'output.jpg'))
     // expect(stored.size).to.equal(written.size)
     fs.unlinkSync(path.join(pth, 'output.jpg'))
+
+    // Should throw correctly when the file isn't available
+    try {
+      const more = client.pullPath(rootKey, 'dir1/nope.jpg')
+      for await (const chk of more) {
+        expect(chk).to.not.be.undefined
+      }
+    } catch (err) {
+      // @todo: Fixme
+      expect(err).to.be.empty
+    }
   })
 
   it('should remove files by path', async () => {
