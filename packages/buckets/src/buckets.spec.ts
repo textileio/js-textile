@@ -164,6 +164,7 @@ describe('Buckets...', () => {
       for await (const chk of more) {
         expect(chk).to.not.be.undefined
       }
+      throw new Error('should have thrown')
     } catch (err) {
       // @todo: Fixme
       expect(err).to.be.empty
