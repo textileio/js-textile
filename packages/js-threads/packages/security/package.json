@@ -32,5 +32,6 @@
     "@types/multibase": "^0.6.0",
     "fast-sha256": "^1.3.0",
     "multibase": "^1.0.0"
-  }
+  },
+  "gitHead": "5b20b0a05ec6d928a5b6730f8d738d377de7e4c6"
 }
