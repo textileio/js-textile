@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "web-gRPC wrapper client for communicating with Textile Hub.",
   "main": "dist/index",
   "types": "dist/index",
@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/buckets": "^0.2.5",
+    "@textile/buckets": "^0.2.6",
     "@textile/buckets-grpc": "^1.0.8",
     "@textile/context": "^0.4.8",
     "@textile/security": "^0.1.5",
