@@ -25,12 +25,6 @@ export interface PushPathResult {
   root: string
 }
 
-export interface BucketConfig {
-  name: string
-  thread?: string
-  threadID?: ThreadID
-}
-
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
  * @example
@@ -100,7 +94,19 @@ export class Buckets {
   /**
    * Open a new / existing bucket by bucket name and ThreadID
    * @param name name of bucket
+   * @param threadName the name of the thread where the bucket is stored (default 'buckets')
    * @param threadID id of thread where bucket is stored
+   * @example
+   * Initialize a Bucket called "app-name-files"
+   * ```tyepscript
+   * import { Buckets, UserAuth } from '@textile/hub'
+   *
+   * const open = async (auth: UserAuth, name: string) => {
+   *     const buckets = Buckets.withUserAuth(auth)
+   *     await buckets.open(name)
+   *     return buckets
+   * }
+   * ```
    */
   async open(name: string, threadName?: string, threadID?: ThreadID) {
     if (threadID) {
