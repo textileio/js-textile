@@ -7,7 +7,7 @@ import { isBrowser, isNode } from 'browser-or-node'
 import { ThreadID } from '@textile/threads-id'
 import { expect } from 'chai'
 import { Client } from '@textile/threads-client'
-import { InitReply } from '@textile/buckets-grpc/buckets_pb'
+import { InitReply, Root } from '@textile/buckets-grpc/buckets_pb'
 import { Context } from '@textile/context'
 import { Buckets } from './buckets'
 import { signUp } from './spec.util'
@@ -26,15 +26,21 @@ describe('Buckets...', () => {
 
   before(async () => {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
-    const id = ThreadID.fromRandom()
-    const db = new Client(ctx.withSession(user.user?.session).withThreadName('buckets'))
-    await db.newDB(id)
+    ctx.withSession(user.user?.session)
   })
 
-  it('should init a new bucket', async () => {
+  it('should open a bucket by name without thread info', async () => {
+    const root = await client.open('initbuck')
+    expect(root).to.have.ownProperty('key')
+    expect(root).to.have.ownProperty('path')
+    expect(root).to.have.ownProperty('createdat')
+    expect(root).to.have.ownProperty('updatedat')
+  })
+
+  it('should init a new bucket on open thread', async () => {
     // Check that we're empty
     const list = await client.list()
-    expect(list).to.have.length(0)
+    expect(list).to.have.length(1)
     // Now initialize a bucket
     buck = await client.init('mybuck')
     expect(buck).to.have.ownProperty('root')
@@ -44,9 +50,10 @@ describe('Buckets...', () => {
     expect(buck.root).to.have.ownProperty('updatedat')
   })
 
+
   it('should list buckets', async () => {
     const roots = await client.list()
-    expect(roots).to.have.length(1)
+    expect(roots).to.have.length(2)
     const root = roots[0]
     expect(root).to.have.ownProperty('key', buck.root?.key)
     expect(root).to.have.ownProperty('path', buck.root?.path)
@@ -168,7 +175,7 @@ describe('Buckets...', () => {
       throw wrongError
     } catch (err) {
       expect(err).to.not.equal(wrongError)
-      expect(err.toString()).to.include('no link named "nope.jpg"')
+      expect(err.toString()).to.include('nope.jpg')
     }
 
     // Should be an AsyncIterator

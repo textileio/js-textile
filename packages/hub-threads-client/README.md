@@ -1,0 +1,19 @@
+# @textile/hub
+
+**Info**
+
+You should use the `@textile/hub` library to integrate threads client into your application.
+
+**Install**
+
+```js
+npm install --save git@github.com:textileio/js-hub.git
+```
+
+**Usage**
+
+```js
+import { Client } from '@textile/hub'
+```
+
+[Read the docs](https://textileio.github.io/js-hub/).
