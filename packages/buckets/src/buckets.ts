@@ -108,21 +108,20 @@ export class Buckets {
    * }
    * ```
    */
-  async open(name: string, threadName?: string, threadID?: ThreadID) {
+  async open(name: string, threadName = 'buckets', threadID?: ThreadID) {
     if (threadID) {
       const id = threadID.toString()
       const client = new Client(this.context)
       const res = await client.listThreads()
       const exists = res.listList.find((thread) => thread.id === id)
       if (!exists) {
-        await client.newDB(threadID)
+        await client.newDB(threadID, threadName)
       }
       this.context.withThread(threadID.toString())
     } else {
-      const threadname = threadName && threadName !== '' ? threadName : 'buckets'
       const client = new Client(this.context)
       try {
-        const res = await client.getThread(threadname)
+        const res = await client.getThread(threadName)
         const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
         this.context.withThread(existingId)
       } catch (error) {
@@ -130,7 +129,7 @@ export class Buckets {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
-        await client.newDB(newId, threadname)
+        await client.newDB(newId, threadName)
         this.context.withThread(newId.toString())
       }
     }

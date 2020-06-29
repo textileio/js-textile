@@ -175,7 +175,7 @@ describe('Buckets...', () => {
       throw wrongError
     } catch (err) {
       expect(err).to.not.equal(wrongError)
-      expect(err.toString()).to.include('no link named "nope.jpg"')
+      expect(err.toString()).to.include('nope.jpg')
     }
 
     // Should be an AsyncIterator
