@@ -1,6 +1,6 @@
 {
   "name": "@textile/buckets",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "web-gRPC wrapper client for managing Textile Buckets.",
   "main": "dist/index",
   "types": "dist/index",
@@ -31,7 +31,7 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/buckets-grpc": "^1.0.8",
     "@textile/context": "^0.4.8",
-    "@textile/hub-threads-client": "^0.0.1",
+    "@textile/hub-threads-client": "^0.0.2",
     "@textile/security": "^0.1.5",
     "@textile/threads-client": "^0.6.14",
     "cids": "^0.8.0",
