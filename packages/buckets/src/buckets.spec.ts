@@ -50,11 +50,11 @@ describe('Buckets...', () => {
     expect(buck.root).to.have.ownProperty('updatedat')
   })
 
-
   it('should list buckets', async () => {
     const roots = await client.list()
     expect(roots).to.have.length(2)
-    const root = roots[0]
+    const index = roots[0].key === buck.root?.key ? 0 : 1
+    const root = roots[index]
     expect(root).to.have.ownProperty('key', buck.root?.key)
     expect(root).to.have.ownProperty('path', buck.root?.path)
     expect(root).to.have.ownProperty('createdat', buck.root?.createdat)
