@@ -32,6 +32,7 @@
     "@textile/buckets": "^0.2.6",
     "@textile/buckets-grpc": "^1.0.8",
     "@textile/context": "^0.4.8",
+    "@textile/hub-threads-client": "^0.0.1",
     "@textile/security": "^0.1.5",
     "@textile/threads-client": "^0.6.14",
     "@textile/threads-core": "^0.1.25",
@@ -54,6 +55,9 @@
   "references": [
     {
       "path": "../buckets"
+    },
+    {
+      "path": "../hub-threads-client"
     }
   ]
 }

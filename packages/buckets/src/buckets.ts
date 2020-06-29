@@ -6,7 +6,8 @@ import { EventIterator } from 'event-iterator'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
-import { Client } from '@textile/threads-client'
+import { ThreadID } from '@textile/threads-id'
+import { Client } from '@textile/hub-threads-client'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -22,6 +23,12 @@ export interface PushPathResult {
     remainder: string
   }
   root: string
+}
+
+export interface BucketConfig {
+  name: string
+  thread?: string
+  threadID?: ThreadID
 }
 
 /**
@@ -88,6 +95,47 @@ export class Buckets {
    */
   static async fromClient(client: Client) {
     return new Buckets(client.context)
+  }
+
+  /**
+   * Open a new / existing bucket by bucket name and ThreadID
+   * @param name name of bucket
+   * @param threadID id of thread where bucket is stored
+   */
+  async open(name: string, threadName?: string, threadID?: ThreadID) {
+    if (threadID) {
+      const id = threadID.toString()
+      const client = new Client(this.context)
+      const res = await client.listThreads()
+      const exists = res.listList.find((thread) => thread.id === id)
+      if (!exists) {
+        await client.newDB(threadID)
+      }
+      this.context.withThread(threadID.toString())
+    } else {
+      const threadname = threadName && threadName !== '' ? threadName : 'buckets'
+      const client = new Client(this.context)
+      try {
+        const res = await client.getThread(threadname)
+        const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
+        this.context.withThread(existingId)
+      } catch (error) {
+        if (error.message !== 'Thread not found') {
+          throw new Error(error.message)
+        }
+        const newId = ThreadID.fromRandom()
+        await client.newDB(newId, threadname)
+        this.context.withThread(newId.toString())
+      }
+    }
+
+    const roots = await this.list()
+    const existing = roots.find((bucket) => bucket.name === name)
+    if (existing) {
+      return existing
+    }
+    const created = await this.init(name)
+    return created.root
   }
 
   /**
