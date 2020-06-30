@@ -20,6 +20,9 @@
       "hub.buckets.context": {
         "title": "Buckets.context property"
       },
+      "hub.buckets.fromclient": {
+        "title": "Buckets.fromClient() method"
+      },
       "hub.buckets.init": {
         "title": "Buckets.init() method"
       },
@@ -34,6 +37,9 @@
       },
       "hub.buckets": {
         "title": "Buckets class"
+      },
+      "hub.buckets.open": {
+        "title": "Buckets.open() method"
       },
       "hub.buckets.pullpath": {
         "title": "Buckets.pullPath() method"
@@ -98,6 +104,9 @@
       "hub.client.has": {
         "title": "Client.has() method"
       },
+      "hub.client.joinfrominfo": {
+        "title": "Client.joinFromInfo() method"
+      },
       "hub.client.listdbs": {
         "title": "Client.listDBs() method"
       },
@@ -118,6 +127,9 @@
       },
       "hub.client.newdbfromaddr": {
         "title": "Client.newDBFromAddr() method"
+      },
+      "hub.client.open": {
+        "title": "Client.open() method"
       },
       "hub.client.randomidentity": {
         "title": "Client.randomIdentity() method"

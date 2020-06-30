@@ -8,12 +8,14 @@ import CID from 'cids';
 import { ContextInterface } from '@textile/context';
 import { grpc } from '@improbable-eng/grpc-web';
 import { Identity } from '@textile/threads-core';
+import { InitReply } from '@textile/buckets-grpc/buckets_pb';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { name as name_2 } from 'multibase';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import * as pb_2 from '@textile/buckets-grpc/buckets_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
+import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -28,10 +30,12 @@ export class Buckets {
     constructor(context?: ContextInterface);
     // (undocumented)
     context: ContextInterface;
+    static fromClient(client: Client): Promise<Buckets>;
     init(name: string, ctx?: ContextInterface): Promise<pb_2.InitReply.AsObject>;
     links(key: string, ctx?: ContextInterface): Promise<pb_2.LinksReply.AsObject>;
     list(ctx?: ContextInterface): Promise<pb_2.Root.AsObject[]>;
     listPath(key: string, path: string, ctx?: ContextInterface): Promise<pb_2.ListPathReply.AsObject>;
+    open(name: string, threadName?: string, threadID?: ThreadID): Promise<pb_2.Root.AsObject | undefined>;
     pullPath(key: string, path: string, ctx?: ContextInterface, opts?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
@@ -63,23 +67,26 @@ export class Client {
     // Warning: (ae-forgotten-export) The symbol "Instance" needs to be exported by the entry point index.d.ts
     findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
     getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
-    getDBInfo(threadID: ThreadID): Promise<{
-        address: string;
-        key: string;
-    }[]>;
+    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
     getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
-    getTokenChallenge(publicKey: string, callback: (challenge: Buffer) => Buffer | Promise<Buffer>, ctx?: ContextInterface): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
     has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
+    // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<{
+        name: string;
+        schema: any;
+    }>): Promise<void>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Instance<T>, err?: Error) => void): () => void;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections: Array<{
+    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<{
         name: string;
         schema: any;
-    }>): Promise<unknown>;
+    }>): Promise<void>;
+    open(threadID: ThreadID, name?: string): Promise<void>;
     static randomIdentity(): Promise<Libp2pCryptoIdentity>;
     // Warning: (ae-forgotten-export) The symbol "ReadTransaction" needs to be exported by the entry point index.d.ts
     readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
@@ -104,6 +111,10 @@ export function createUserAuth(key: string, secret: string, date?: Date, token?:
 // @public
 export const expirationError: Error;
 
+export { Identity }
+
+export { InitReply }
+
 // @public
 export type KeyInfo = {
     key: string;
@@ -123,6 +134,8 @@ export interface PushPathResult {
     // (undocumented)
     root: string;
 }
+
+export { Root }
 
 // @public
 export class ThreadID {
