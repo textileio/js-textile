@@ -8,6 +8,7 @@
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean && lerna run clean",
     "compile": "lerna run compile",
     "build": "lerna run build",
     "build:node": "lerna run build:node --stream",
@@ -19,6 +20,9 @@
     "test:browser": "lerna run --stream test:browser",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
     "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile/.*$/'"
+  },
+  "resolutions": {
+    "npm-packlist": "1.1.12"
   },
   "nyc": {
     "extension": [
