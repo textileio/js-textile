@@ -289,6 +289,8 @@ export class Client {
 
   /**
    * Lists all known DBs.
+   * @note this API is blocked on the Hub.
+   * @see {listThreads} available via `@textile/hub` for an alternative.
    */
   public async listDBs() {
     const req = new pb.ListDBsRequest()

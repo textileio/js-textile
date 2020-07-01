@@ -19,7 +19,7 @@ import {
 import LevelDatastore from 'datastore-level'
 import { EventBus } from './eventbus'
 import { Collection, JSONSchema, Config } from './collection'
-import { createThread, decodeRecord, Cache } from './utils'
+import { createThread, decodeRecord, Cache, maybeLocalAddr } from './utils'
 
 const metaKey = new Key('meta')
 const schemaKey = metaKey.child(new Key('schema'))
@@ -33,7 +33,22 @@ export const missingIdentity = new Error(
 )
 
 /**
- * DatabaseSettings specifies a set of settings to constrol the operation of the Database.
+ * DBInfo contains joining/sharing information for a Thread/DB.
+ */
+interface DBInfo {
+  /**
+   * The Thread Key, encoded as a base32 string.
+   * @see ThreadKey for details.
+   */
+  key: string | ThreadKey
+  /**
+   * The Multiaddrs for a peer hosting the given Thread/DB.
+   */
+  addrs: string[] | Set<Multiaddr>
+}
+
+/**
+ * DatabaseSettings specifies a set of settings to control the operation of the Database.
  * Implementations should provide reasonable defaults.
  */
 export interface DatabaseSettings {
@@ -196,7 +211,8 @@ export class Database implements DatabaseSettings {
    * Open (and sync) a remote database.
    * Opens the underlying datastore if not already open, and enables the dispatcher and
    * underlying services (event bus, network network, etc). This method will also begin pulling
-   * from the underlying remote Thread. Only one of `start` or `startFromAddress` should be used.
+   * from the underlying remote Thread. Only one of `start`, `startFromAddress` or `joinFromInfo`
+   * should be used.
    * @param identity An identity to use for creating records in the database. A random identity
    * can be created with `Database.randomIdentity()`, however, it is not easy/possible to migrate
    * identities after the fact. Please store or otherwise persist any identity information
@@ -231,7 +247,50 @@ export class Database implements DatabaseSettings {
     }
     await this.eventBus.start(this.threadID)
     this.eventBus.on('record', this.onRecord.bind(this))
-    if (this.threadID) this.network.pullThread(this.threadID) // Don't await
+    if (this.threadID) {
+      this.network.pullThread(this.threadID) // Don't await
+    }
+  }
+
+  /**
+   * Open (and sync) a remote database based on a remote DB info object.
+   * Opens the underlying datastore if not already open, and enables the dispatcher and
+   * underlying services (event bus, network network, etc). This method will also begin pulling
+   * from the underlying remote Thread. Only one of `start`, `startFromAddress` or `joinFromInfo`
+   * should be used. This method will attempt to start using the set of provided addrs,
+   * returning on the first successful attempt. If none are successful, it will return the last
+   * error message.
+   * @see getDBInfo for a possible source of the address and keys.
+   * @see ThreadKey for information about thread keys.
+   * @param identity An identity to use for creating records in the database. A random identity
+   * can be created with `Database.randomIdentity()`, however, it is not easy/possible to migrate
+   * identities after the fact. Please store or otherwise persist any identity information
+   * if you wish to retrieve user data later, or use an external identity provider.
+   * @param info The output from a call to `getDBInfo` on a separate peer.
+   * @param includeLocal Whether to try dialing addresses that appear to be on the local host.
+   * Defaults to false, preferring to add from public ip addresses.
+   * @param opts A set of options to configure the setup and usage of the underlying database.
+   */
+  async startFromInfo(
+    identity: Identity,
+    info: DBInfo,
+    includeLocal = false,
+    opts: StartOptions = {},
+  ) {
+    const threadKey = typeof info.key === 'string' ? ThreadKey.fromString(info.key) : info.key
+    const filtered = [...info.addrs]
+      .map((addr) => new Multiaddr(addr))
+      .filter((addr) => includeLocal || !maybeLocalAddr(addr.toOptions().host))
+    let error: Error | undefined = undefined
+    for (const addr of filtered) {
+      try {
+        // If we're successful, we're done
+        return this.startFromAddress(identity, addr, threadKey, opts)
+      } catch (err) {
+        error = err
+      }
+    }
+    return error
   }
 
   /**
@@ -292,14 +351,16 @@ export class Database implements DatabaseSettings {
 
   /**
    * Return db (remote) address and keys.
+   * @param asStrings Return key and multiaddrs as strings (true), or objects (default: false).
    */
-  async getInfo() {
-    if (this.threadID !== undefined) {
-      const info = await this.network.getThread(this.threadID)
-      return {
-        key: info.key,
-        addrs: info.addrs,
-      }
+  async getDBInfo(asStrings = false): Promise<DBInfo | undefined> {
+    if (this.threadID === undefined) return
+    const info = await this.network.getThread(this.threadID)
+    if (info.key === undefined || info.addrs === undefined) return
+
+    return {
+      key: asStrings ? info.key.toString() : info.key,
+      addrs: asStrings ? [...info.addrs].map((addr) => addr.toString()) : info.addrs,
     }
   }
 

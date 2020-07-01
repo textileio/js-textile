@@ -6,7 +6,7 @@ import path from 'path'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { UserAuth } from '@textile/security'
-import { Multiaddr, ThreadID } from '@textile/threads-core'
+import { Multiaddr, ThreadID, ThreadKey } from '@textile/threads-core'
 import LevelDatastore from 'datastore-level'
 import delay from 'delay'
 import { isBrowser } from 'browser-or-node'
@@ -339,10 +339,54 @@ describe('Database', () => {
       const db = new Database(store)
       const threadID = ThreadID.fromRandom()
       await db.start(await Database.randomIdentity(), { threadID })
-      const info = await db.getInfo()
-      expect(info?.addrs?.size).to.be.greaterThan(1)
+      const info = await db.getDBInfo()
+      expect(info?.addrs).to.have.length.greaterThan(1)
       expect(info?.key).to.not.be.undefined
       await db.close()
+    })
+
+    it('response should contain a valid list of thread protocol addrs', async function () {
+      if (isBrowser) return this.skip() // Don't run in browser
+      if (process.env.CI) return this.skip() // Don't run in CI (too slow)
+      // Peer 1: Create db1, register a collection, create and update an instance.
+      const d1 = new Database(new MemoryDatastore())
+      const ident1 = await Database.randomIdentity()
+      await d1.start(ident1)
+      const id1 = d1.threadID
+      if (id1 === undefined) {
+        throw new Error('should be a valid thread id')
+      }
+
+      const info = await d1.getDBInfo()
+      if (info === undefined) {
+        throw new Error('should be a valid db info object')
+      }
+
+      // @hack: we're in docker and peers can't find each other; don't try this at home!
+      info.addrs = new Set(
+        [...info.addrs].map((addr) => {
+          return new Multiaddr(addr.toString().replace('/ip4/127.0.0.1', '/dns4/threads1/'))
+        }),
+      )
+
+      const datastore = new MemoryDatastore()
+      const client = new Client(new Context('http://127.0.0.1:6207'))
+      const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
+      const d2 = new Database(datastore, { network })
+      const ident2 = await Database.randomIdentity()
+      await d2.startFromInfo(ident2, info)
+
+      const info2 = await d2.getDBInfo()
+      expect(info2?.addrs).to.have.length.greaterThan(1)
+      expect(info2?.key).to.deep.equal(info.key)
+      // Now we should have it locally, so no need to add again
+      const threadKey = typeof info.key === 'string' ? ThreadKey.fromString(info.key) : info.key
+      try {
+        await d2.startFromAddress(ident2, [...info.addrs][0], threadKey)
+      } catch (err) {
+        // Expect this db to already exist on this peer
+        expect(err).to.equal(mismatchError)
+      }
     })
 
     it('should automatically open if not yet "opened"', async function () {
@@ -390,8 +434,8 @@ describe('Database', () => {
         counter: 0,
       })
 
-      const info = await db.getInfo()
-      expect(info?.addrs?.size).to.be.greaterThan(1)
+      const info = await db.getDBInfo()
+      expect(info?.addrs).to.have.length.greaterThan(1)
       expect(info?.key).to.not.be.undefined
       await db.close()
     })

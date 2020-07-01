@@ -94,3 +94,13 @@ export function Cache(params: CacheOptions = {}) {
     }
   }
 }
+
+export function maybeLocalAddr(ip: string) {
+  return (
+    ['localhost', '', '::1'].includes(ip) ||
+    ip.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/) ||
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.0.') ||
+    ip.endsWith('.local')
+  )
+}
