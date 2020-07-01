@@ -32,7 +32,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Lint
-        run: npm run lint
+        run: npm run lint:check
 
   spelling:
     name: Spelling
@@ -43,7 +43,7 @@ jobs:
         with:
           reporter: github-pr-review
           github_token: ${{ secrets.github_token }}
-          locale: "US"
+          locale: 'US'
 
   validate:
     name: Validate
