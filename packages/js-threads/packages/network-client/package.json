@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-network-client",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "main": "dist/index",
   "types": "dist/index",
   "files": [

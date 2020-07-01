@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-network",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -28,7 +28,7 @@
     "@textile/threads-core": "^0.1.26",
     "@textile/threads-crypto": "^0.0.7",
     "@textile/threads-encoding": "^0.1.26",
-    "@textile/threads-network-client": "^0.5.12",
+    "@textile/threads-network-client": "^0.5.13",
     "@types/node": "^14.0.1",
     "cids": "^0.8.0",
     "datastore-core": "^1.0.0",
