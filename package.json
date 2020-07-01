@@ -8,6 +8,7 @@
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",
+    "publish": "lerna publish",
     "clean": "lerna clean && lerna run clean",
     "compile": "lerna run compile",
     "build": "lerna run build",
