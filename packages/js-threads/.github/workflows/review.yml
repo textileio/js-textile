@@ -75,8 +75,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Install
-        run: npm install
+      - name: Install dependencies
+        run: npm i
+      - name: Install npm-check-updates
+        run: npm i -g npm-check-updates
       - name: Display
         run: npm run textile:check
       - name: Check
