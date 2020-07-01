@@ -4,6 +4,9 @@
   "description": "Typescript/Javascript implementation of Textile's Threads Protocol",
   "main": "packages/threads",
   "types": "packages/threads",
+  "resolutions": {
+    "npm-packlist": "1.1.12"
+  },
   "scripts": {
     "clean": "lerna clean && lerna run clean",
     "bootstrap": "lerna bootstrap",
