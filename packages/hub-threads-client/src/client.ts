@@ -25,17 +25,18 @@ Client.prototype.getThread = async function (name: string, ctx?: Context) {
   return new Promise<pb.GetThreadReply.AsObject>((resolve, reject) => {
     const req = new pb.GetThreadRequest()
     req.setName(name)
-    this.context.withContext(ctx)
-    this.context.toMetadata().then((meta) => {
-      client.getThread(req, meta, (err: ServiceError | null, message: pb.GetThreadReply | null) => {
+    client.getThread(
+      req,
+      this.context.withContext(ctx).toMetadata(),
+      (err: ServiceError | null, message: pb.GetThreadReply | null) => {
         if (err) reject(err)
         const msg = message?.toObject()
         if (msg) {
           msg.id = ThreadID.fromBytes(Buffer.from(msg.id as string, 'base64')).toString()
         }
         resolve(msg)
-      })
-    })
+      },
+    )
   })
 }
 
@@ -53,21 +54,20 @@ Client.prototype.listThreads = async function (ctx?: Context) {
   })
   return new Promise<pb.ListThreadsReply.AsObject>((resolve, reject) => {
     const req = new pb.ListThreadsRequest()
-    this.context
-      .withContext(ctx)
-      .toMetadata()
-      .then((meta) => {
-        client.listThreads(req, meta, (err: ServiceError | null, message: pb.ListThreadsReply | null) => {
-          if (err) reject(err)
-          const msg = message?.toObject()
-          if (msg) {
-            msg.listList.forEach((thread) => {
-              thread.id = ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString()
-            })
-          }
-          resolve(msg)
-        })
-      })
+    client.listThreads(
+      req,
+      this.context.withContext(ctx).toMetadata(),
+      (err: ServiceError | null, message: pb.ListThreadsReply | null) => {
+        if (err) reject(err)
+        const msg = message?.toObject()
+        if (msg) {
+          msg.listList.forEach((thread) => {
+            thread.id = ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString()
+          })
+        }
+        resolve(msg)
+      },
+    )
   })
 }
 
