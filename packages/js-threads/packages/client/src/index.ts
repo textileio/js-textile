@@ -88,7 +88,7 @@ export class Client {
    * ```typescript
    * import {UserAuth, Client} from '@textile/threads'
    *
-   * async function create (auth: UserAuth) {
+   * function create (auth: UserAuth) {
    *   return Client.withUserAuth(auth)
    * }
    * ```
@@ -96,12 +96,8 @@ export class Client {
    * ```typescript
    * import {UserAuth, Client} from '@textile/threads'
    *
-   * async function create () {
-   *   return Client.withUserAuth(async () => {
-   *     // fetch and generate some remote auth. faked here:
-   *     const auth: UserAuth = { key: '', sig: '', msg: '' }
-   *     return auth
-   *   })
+   * function setCallback (callback: () => Promise<UserAuth>) {
+   *   return Client.withUserAuth(callback)
    * }
    * ```
    */
