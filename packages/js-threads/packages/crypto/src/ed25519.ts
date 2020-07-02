@@ -1,8 +1,11 @@
 import multibase from 'multibase'
-import * as ed from 'noble-ed25519'
+import { keys } from 'libp2p-crypto'
 import { encodePublicKey, encodePrivateKey, KeyType } from './proto.keys'
 import { PublicKey, PrivateKey } from './interfaces'
 import { ensureKey, sha256Multihash } from './utils'
+
+// import * as ed from 'noble-ed25519'
+const ed = keys.supportedKeys.ed25519
 
 export const constants = {
   PUBLIC_KEY_BYTE_LENGTH: 32,
@@ -18,7 +21,9 @@ export class Ed25519PublicKey implements PublicKey {
   }
 
   async verify(data: Uint8Array, sig: Uint8Array) {
-    return ed.verify(sig, data, this.publicKey)
+    // return ed.verify(sig, data, this.publicKey)
+    const key = new ed.Ed25519PublicKey(Buffer.from(this.publicKey))
+    return key.verify(Buffer.from(data), Buffer.from(sig))
   }
 
   marshal() {
@@ -54,7 +59,10 @@ export class Ed25519PrivateKey implements PrivateKey {
   }
 
   async sign(message: Uint8Array) {
-    return ed.sign(message, this.privateKey)
+    // return ed.sign(message, this.privateKey)
+    const privateKey = Buffer.concat([this.privateKey, this.publicKey])
+    const key = new ed.Ed25519PrivateKey(privateKey, Buffer.from(this.publicKey))
+    return key.sign(Buffer.from(message))
   }
 
   get public() {
@@ -119,8 +127,15 @@ export function unmarshalEd25519PublicKey(bytes: Uint8Array) {
   return new Ed25519PublicKey(bytes)
 }
 
-export async function generateKeyPair(bytesLength = constants.PRIVATE_KEY_BYTE_LENGTH) {
-  const privateKey = ed.utils.randomPrivateKey(bytesLength)
-  const publicKey = await ed.getPublicKey(privateKey)
+export async function generateKeyPair(_bytesLength = constants.PRIVATE_KEY_BYTE_LENGTH) {
+  // const privateKey = ed.utils.randomPrivateKey(bytesLength)
+  // const publicKey = await ed.getPublicKey(privateKey)
+  const key = await ed.generateKeyPair()
+  const bytes = key.marshal()
+  const privateKey = bytes.slice(0, constants.PRIVATE_KEY_BYTE_LENGTH)
+  const publicKey = bytes.slice(
+    constants.PRIVATE_KEY_BYTE_LENGTH,
+    constants.PRIVATE_KEY_BYTE_LENGTH + constants.PUBLIC_KEY_BYTE_LENGTH,
+  )
   return new Ed25519PrivateKey(privateKey, publicKey)
 }
