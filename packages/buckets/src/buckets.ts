@@ -68,8 +68,11 @@ export class Buckets {
    * Creates a new gRPC client instance for accessing the Textile Buckets API.
    * @param auth The user auth object.
    */
-  static withUserAuth(auth: UserAuth, host = defaultHost, debug = false) {
-    const context = Context.fromUserAuth(auth, host, debug)
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
+    const context =
+    typeof auth === 'object'
+      ? Context.fromUserAuth(auth, host, debug)
+      : Context.fromUserAuthCallback(auth, host, debug)
     return new Buckets(context)
   }
 
