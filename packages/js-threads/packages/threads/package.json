@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Components for building with Threads Database and Client.",
   "main": "dist/index",
   "types": "dist/index",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@textile/security": "^0.1.8",
-    "@textile/threads-client": "^0.7.0",
+    "@textile/threads-client": "^0.7.1",
     "@textile/threads-core": "^0.1.29",
     "@textile/threads-database": "^0.5.0",
     "@textile/threads-id": "^0.1.10",
