@@ -30,18 +30,18 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/buckets-grpc": "^1.0.11",
-    "@textile/context": "^0.4.11",
+    "@textile/context": "^0.5.0",
     "@textile/hub-threads-client": "^0.0.3",
     "@textile/security": "^0.1.8",
-    "@textile/threads-client": "^0.6.18",
+    "@textile/threads-client": "^0.7.0",
     "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.6.8"
   },
   "devDependencies": {
     "@textile/hub-grpc": "^1.0.11",
-    "@textile/threads-client": "^0.6.18",
-    "@textile/threads-core": "^0.1.28",
+    "@textile/threads-client": "^0.7.0",
+    "@textile/threads-core": "^0.1.29",
     "@textile/threads-id": "^0.1.10",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
