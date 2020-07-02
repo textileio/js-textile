@@ -137,7 +137,7 @@ export interface ContextInterface {
   /**
    * Export this context as gRPC Metadata.
    */
-  toMetadata(): grpc.Metadata
+  toMetadata(ctx?: ContextInterface): Promise<grpc.Metadata>
   /**
    * Set arbitrary key/value context pairs.
    * @param key The key to set.
@@ -158,6 +158,7 @@ export interface ContextInterface {
 export class Context implements ContextInterface {
   // Internal context variables
   public _context: Partial<Record<keyof ContextKeys, any>> = {}
+  public authCallback?: () => Promise<UserAuth>
 
   /**
    * Construct a new Context object.
@@ -183,7 +184,19 @@ export class Context implements ContextInterface {
   ) {
     const ctx = new Context(host, debug, transport)
     const { key, token, ...sig } = auth
-    return ctx.withAPIKey(auth.key).withAPISig(sig).withToken(token)
+    return ctx.withAPIKey(key).withAPISig(sig).withToken(token)
+  }
+
+  static fromUserAuthCallback(
+    authCallback: () => Promise<UserAuth>,
+    host: HostString = defaultHost,
+    debug = false,
+    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
+  ) {
+    const ctx = new Context(host, debug, transport)
+    // @todo: Should we now callback right away?
+    ctx.authCallback = authCallback
+    return ctx
   }
 
   get host() {
@@ -264,18 +277,66 @@ export class Context implements ContextInterface {
     return this
   }
 
-  toJSON() {
-    // Strip out transport. @todo: phase out transport out entirely
-    const { transport, ...context } = this._context
-    const msg = context['x-textile-api-sig-msg']
-    if (msg && new Date(msg) <= new Date()) {
-      throw expirationError
-    }
-    return context
+  /**
+   * Returns true if this Context contains an api sig msg, and that msg has expired, or if
+   * it does _not_ have an api sig msg, but it _does_ have an auth callback.
+   */
+  get isExpired() {
+    const msg = this.get('x-textile-api-sig-msg')
+    const notAuthed = msg === undefined && this.authCallback !== undefined
+    const isExpired = msg !== undefined && new Date(msg) <= new Date()
+    return isExpired || notAuthed
   }
 
-  toMetadata() {
-    return new grpc.Metadata(this.toJSON())
+  /**
+   * Refresh user auth with provided callback.
+   * If callback is not specified, attempts to use existing callback specified at initialization.
+   */
+  async refreshUserAuth(authCallback?: () => Promise<UserAuth>) {
+    // If we have a new one, use it...
+    if (authCallback !== undefined) {
+      this.authCallback = authCallback
+    }
+    // If we still don't have a callback, throw...
+    if (this.authCallback === undefined) {
+      throw new Error('Missing authCallback. See Context.fromUserAuthCallback for details.')
+    }
+    // Now do the renewal and return self...
+    const { key, token, ...sig } = await this.authCallback()
+    return this.withAPIKey(key).withAPISig(sig).withToken(token)
+  }
+
+  /**
+   * Convert Context to plain JSON object.
+   * @throws If this Context has expired.
+   * @see toMetadata for an alternative for gRPC clients that supports auto-renewal.
+   */
+  toJSON() {
+    // Strip out transport
+    // @todo: Phase out transport out entirely
+    const { transport, ...json } = this._context
+    // If we're expired, throw...
+    if (this.isExpired) {
+      throw expirationError
+    }
+    return json
+  }
+
+  /**
+   * Convert Context to grpc Metadata object.
+   * Will automatically call the auth callback if available.
+   * @param ctx Additional context object that will be merged with this prior to conversion.
+   * @see toJSON for an alternative that returns a plain object, and throws when expired.
+   */
+  async toMetadata(ctx?: Context) {
+    const context = new Context()
+    if (this.isExpired && this.authCallback !== undefined) {
+      const { key, token, ...sig } = await this.authCallback()
+      // We do want to mutate this here because we want to update our auth sig
+      this.withAPIKey(key).withAPISig(sig).withToken(token)
+    }
+    // We merge this context and ctx with the empty context so as to avoid mutating this with ctx
+    return new grpc.Metadata(context.withContext(this).withContext(ctx).toJSON())
   }
 
   /**

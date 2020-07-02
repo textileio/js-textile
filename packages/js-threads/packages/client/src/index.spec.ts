@@ -379,7 +379,7 @@ describe('Client', function () {
           done()
         }
       }
-      listener.close = client.listen<Person>(
+      const closer = client.listen<Person>(
         dbID,
         [
           {
@@ -395,6 +395,7 @@ describe('Client', function () {
         client.create(dbID, 'Person', [person])
         client.create(dbID, 'Person', [person])
       }, 1000)
+      listener.close = () => closer.close()
     }).timeout(15000) // Make sure our test doesn't timeout
   })
   describe('Query', () => {

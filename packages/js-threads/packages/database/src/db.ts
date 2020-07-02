@@ -147,16 +147,19 @@ export class Database implements DatabaseSettings {
 
   /**
    * Create a new network connected instance from a supplied user auth object.
-   * @param auth The user auth object.
+   * @param auth The user auth object or an async callback that returns a user auth object.
    */
   static withUserAuth(
-    auth: UserAuth,
+    auth: UserAuth | (() => Promise<UserAuth>),
     store: Datastore,
     options?: Partial<DatabaseSettings>,
     host = defaultHost,
     debug = false,
   ) {
-    const context = Context.fromUserAuth(auth, host, debug)
+    const context =
+      typeof auth === 'object'
+        ? Context.fromUserAuth(auth, host, debug)
+        : Context.fromUserAuthCallback(auth, host, debug)
     const client = new Client(context)
     const network = new Network(store, client)
     const opts: Partial<DatabaseSettings> = {

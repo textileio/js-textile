@@ -3,7 +3,7 @@
  * @module @textile/threads-client
  */
 import { grpc } from '@improbable-eng/grpc-web'
-import { API, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
+import { API, APIGetToken, APIListen } from '@textile/threads-client-grpc/threads_pb_service'
 import * as pb from '@textile/threads-client-grpc/threads_pb'
 import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity, ThreadKey } from '@textile/threads-core'
@@ -81,19 +81,37 @@ export class Client {
 
   /**
    * Create a new gRPC client instance from a supplied user auth object.
-   * Assumes all default gRPC setttings. For custimization options, use a context object directly.
-   * @param auth The user auth object.
+   * Assumes all default gRPC settlings. For customization options, use a context object directly.
+   * @param auth The user auth object or an async callback that returns a user auth object.
    * @example
    * ```typescript
    * import {UserAuth, Client} from '@textile/threads'
    *
    * async function create (auth: UserAuth) {
-   *   return await Client.withUserAuth(auth)
+   *   return Client.withUserAuth(auth)
+   * }
+   * ```
+   * @example
+   * ```typescript
+   * import {UserAuth, Client} from '@textile/threads'
+   *
+   * async function create (auth: UserAuth) {
+   *   return Client.withUserAuth(async () => {
+   *     // fetch some remote auth, or just...
+   *     return auth
+   *   })
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth, host = defaultHost, debug = false) {
-    const context = Context.fromUserAuth(auth, host, debug)
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    host = defaultHost,
+    debug = false,
+  ) {
+    const context =
+      typeof auth === 'object'
+        ? Context.fromUserAuth(auth, host, debug)
+        : Context.fromUserAuthCallback(auth, host, debug)
     return new Client(context)
   }
 
@@ -206,9 +224,10 @@ export class Client {
       })
       const req = new pb.GetTokenRequest()
       req.setKey(publicKey)
-      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-      client.start(metadata)
-      client.send(req)
+      this.context.toMetadata(ctx).then((metadata) => {
+        client.start(metadata)
+        client.send(req)
+      })
     })
   }
 
@@ -687,7 +706,7 @@ export class Client {
     threadID: ThreadID,
     filters: Filter[],
     callback: (reply?: Instance<T>, err?: Error) => void,
-  ) {
+  ): grpc.Request {
     const req = new pb.ListenRequest()
     req.setDbid(threadID.toBytes())
     for (const filter of filters) {
@@ -724,27 +743,31 @@ export class Client {
       req.addFilters(requestFilter)
     }
 
-    const metadata = JSON.parse(JSON.stringify(this.context))
-    const res = grpc.invoke(API.Listen, {
+    const client = grpc.client<pb.ListenRequest, pb.ListenReply, APIListen>(API.Listen, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
-      request: req,
-      metadata,
-      onMessage: (rec: pb.ListenReply) => {
-        const ret: Instance<T> = {
-          instance: JSON.parse(Buffer.from(rec.getInstance_asU8()).toString()),
-        }
-        nextTick(() => callback(ret))
-      },
-      onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
-        if (status !== grpc.Code.OK) {
-          nextTick(() => callback(undefined, new Error(message)))
-        }
-        nextTick(callback)
-      },
     })
-    return res.close.bind(res)
+    client.onMessage((message: pb.ListenReply) => {
+      const ret: Instance<T> = {
+        instance: JSON.parse(Buffer.from(message.getInstance_asU8()).toString()),
+      }
+      nextTick(() => callback(ret))
+    })
+
+    client.onEnd((status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      if (status !== grpc.Code.OK) {
+        nextTick(() => callback(undefined, new Error(message)))
+      }
+      nextTick(callback)
+    })
+
+    this.context.toMetadata().then((metadata) => {
+      client.start(metadata)
+      client.send(req)
+      client.finishSend()
+    })
+    return { close: () => client.close() }
   }
 
   private async unary<
@@ -752,7 +775,7 @@ export class Client {
     TResponse extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<TRequest, TResponse>
   >(methodDescriptor: M, req: TRequest) {
-    const metadata = JSON.parse(JSON.stringify(this.context))
+    const metadata = await this.context.toMetadata()
     return new Promise((resolve, reject) => {
       grpc.unary(methodDescriptor, {
         transport: this.rpcOptions.transport,

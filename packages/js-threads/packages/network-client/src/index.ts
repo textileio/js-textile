@@ -171,9 +171,10 @@ export class Client implements Network {
       })
       const req = new pb.GetTokenRequest()
       req.setKey(publicKey)
-      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-      client.start(metadata)
-      client.send(req)
+      this.context.toMetadata(ctx).then((metadata) => {
+        client.start(metadata)
+        client.send(req)
+      })
     })
   }
 
@@ -393,25 +394,26 @@ export class Client implements Network {
         cb()
       }
     })
-    const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-    client.start(metadata)
-    client.send(req)
+    this.context.toMetadata(ctx).then((metadata) => {
+      client.start(metadata)
+      client.send(req)
+    })
     return { close: () => client.finishSend() }
   }
 
-  private unary<
+  private async unary<
     R extends grpc.ProtobufMessage,
     T extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<R, T>
-  >(methodDescriptor: M, req: R, context?: ContextInterface): Promise<T> {
+  >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
+    const metadata = await this.context.toMetadata(ctx)
     return new Promise<T>((resolve, reject) => {
-      const creds = this.context.withContext(context)
       grpc.unary(methodDescriptor, {
         request: req,
         host: this.serviceHost,
         transport: this.rpcOptions.transport,
         debug: this.rpcOptions.debug,
-        metadata: JSON.parse(JSON.stringify(creds)),
+        metadata,
         onEnd: (res: grpc.UnaryOutput<T>) => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {

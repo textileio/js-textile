@@ -26,6 +26,30 @@ describe('Context', () => {
     validJson = context.toJSON()
     expect(validJson).to.haveOwnProperty('x-textile-api-sig-msg', validMsg)
   })
+
+  it('should callback when working with expired tag and callback is available', async () => {
+    const pastDate = new Date(Date.now() - 1000 * 60)
+    const futureDate = new Date(Date.now() + 1000 * 60)
+    const context: ContextInterface = Context.fromUserAuthCallback(async () => {
+      return { sig: 'fake', msg: futureDate.toUTCString(), token: 'fake', key: 'fake' }
+    })
+    context.withAPISig({
+      sig: 'fake',
+      // Create msg date in the past
+      msg: pastDate.toUTCString(),
+    })
+    // Should throw
+    try {
+      context.toJSON()
+      throw new Error('should have thrown')
+    } catch (err) {
+      expect(err).to.equal(expirationError)
+    }
+    // Should renew
+    const metadata = await context.toMetadata()
+    expect(metadata.get('x-textile-api-sig-msg')[0]).to.equal(futureDate.toUTCString())
+  })
+
   it('should not throw when creating fromUserAuth', async () => {
     const msg = new Date(Date.now() + 1000 * 60).toUTCString()
     const context = Context.fromUserAuth({
