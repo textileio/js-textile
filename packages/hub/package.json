@@ -34,7 +34,7 @@
     "@textile/context": "^0.4.11",
     "@textile/hub-threads-client": "^0.0.3",
     "@textile/security": "^0.1.8",
-    "@textile/threads-client": "^0.6.18",
+    "@textile/threads-client": "^0.7.0",
     "@textile/threads-core": "^0.1.28",
     "@textile/threads-id": "^0.1.10",
     "@textile/users-grpc": "^1.0.11",
