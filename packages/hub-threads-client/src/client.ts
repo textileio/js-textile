@@ -25,17 +25,21 @@ Client.prototype.getThread = async function (name: string, ctx?: Context) {
   return new Promise<pb.GetThreadReply.AsObject>((resolve, reject) => {
     const req = new pb.GetThreadRequest()
     req.setName(name)
-    this.context.withContext(ctx)
-    this.context.toMetadata().then((meta) => {
-      client.getThread(req, meta, (err: ServiceError | null, message: pb.GetThreadReply | null) => {
-        if (err) reject(err)
-        const msg = message?.toObject()
-        if (msg) {
-          msg.id = ThreadID.fromBytes(Buffer.from(msg.id as string, 'base64')).toString()
-        }
-        resolve(msg)
+    this.context
+      .toMetadata(ctx)
+      .then((meta) => {
+        client.getThread(req, meta, (err: ServiceError | null, message: pb.GetThreadReply | null) => {
+          if (err) reject(err)
+          const msg = message?.toObject()
+          if (msg) {
+            msg.id = ThreadID.fromBytes(Buffer.from(msg.id as string, 'base64')).toString()
+          }
+          resolve(msg)
+        })
       })
-    })
+      .catch((err: Error) => {
+        reject(err)
+      })
   })
 }
 
@@ -54,8 +58,7 @@ Client.prototype.listThreads = async function (ctx?: Context) {
   return new Promise<pb.ListThreadsReply.AsObject>((resolve, reject) => {
     const req = new pb.ListThreadsRequest()
     this.context
-      .withContext(ctx)
-      .toMetadata()
+      .toMetadata(ctx)
       .then((meta) => {
         client.listThreads(req, meta, (err: ServiceError | null, message: pb.ListThreadsReply | null) => {
           if (err) reject(err)
@@ -67,6 +70,9 @@ Client.prototype.listThreads = async function (ctx?: Context) {
           }
           resolve(msg)
         })
+      })
+      .catch((err: Error) => {
+        reject(err)
       })
   })
 }
