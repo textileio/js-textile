@@ -83,8 +83,9 @@ Create a database client using the Textile Hub and user group keys.
 ```typescript
 import { Client, UserAuth } from '@textile/hub'
 
-async function start (auth: UserAuth) {
-  const client = Client.withUserAuth(auth)
+function start (callback: () => Promise<UserAuth>) {
+  const client = Client.withUserAuth(callback)
+  return client
 }
 ```
 
@@ -163,8 +164,9 @@ import { Buckets, UserAuth } from '@textile/hub'
  * Create a Bucket client instance with the same auth
  * methods used for threads
  */
-async function start (auth: UserAuth) {
-  const buckets = Buckets.withUserAuth(auth)
+async function start (callback: () => Promise<UserAuth>) {
+  const buckets = Buckets.withUserAuth(callback)
+  return buckets
 }
 ```
 
