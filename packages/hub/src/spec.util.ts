@@ -50,7 +50,7 @@ export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSec
       req.setUsername(username)
       const client = new APIClient(ctx.host, { transport: ctx.transport, debug: ctx.debug })
       ctx.toMetadata().then((meta) => {
-        return client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
+        client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
           if (err) reject(err)
           resolve({ user: message?.toObject(), username, email })
         })
