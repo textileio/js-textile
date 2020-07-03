@@ -10,7 +10,7 @@ const { exec } = require("child_process");
 async function main() {
     await new Promise((resolve, reject) =>
         exec(
-            "api-extractor run --local && api-documenter markdown -i temp && cp packages/hub/README.md markdown/index.md",
+            `api-extractor run --local && api-documenter markdown -i temp && ./scripts/change-client-imports-to-hub && cp packages/hub/README.md markdown/index.md`,
             (err, stdout, stderr) => {
                 console.log(stdout);
                 console.error(stderr);

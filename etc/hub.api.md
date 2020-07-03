@@ -5,19 +5,14 @@
 ```ts
 
 import CID from 'cids';
+import { Client } from '@textile/threads-client';
 import { ContextInterface } from '@textile/context';
 import { grpc } from '@improbable-eng/grpc-web';
 import { Identity } from '@textile/threads-core';
 import { InitReply } from '@textile/buckets-grpc/buckets_pb';
-import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { name as name_2 } from 'multibase';
-import * as pb from '@textile/threads-client-grpc/threads_pb';
-import * as pb_2 from '@textile/buckets-grpc/buckets_pb';
-import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
-import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
+import * as pb from '@textile/buckets-grpc/buckets_pb';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
-import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
-import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
 // @public
 export type APISig = {
@@ -31,11 +26,11 @@ export class Buckets {
     // (undocumented)
     context: ContextInterface;
     static fromClient(client: Client): Promise<Buckets>;
-    init(name: string, ctx?: ContextInterface): Promise<pb_2.InitReply.AsObject>;
-    links(key: string, ctx?: ContextInterface): Promise<pb_2.LinksReply.AsObject>;
-    list(ctx?: ContextInterface): Promise<pb_2.Root.AsObject[]>;
-    listPath(key: string, path: string, ctx?: ContextInterface): Promise<pb_2.ListPathReply.AsObject>;
-    open(name: string, threadName?: string, threadID?: ThreadID): Promise<pb_2.Root.AsObject | undefined>;
+    init(name: string, ctx?: ContextInterface): Promise<pb.InitReply.AsObject>;
+    links(key: string, ctx?: ContextInterface): Promise<pb.LinksReply.AsObject>;
+    list(ctx?: ContextInterface): Promise<pb.Root.AsObject[]>;
+    listPath(key: string, path: string, ctx?: ContextInterface): Promise<pb.ListPathReply.AsObject>;
+    open(name: string, threadName?: string, threadID?: ThreadID): Promise<pb.Root.AsObject | undefined>;
     pullPath(key: string, path: string, ctx?: ContextInterface, opts?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
@@ -49,58 +44,10 @@ export class Buckets {
     // (undocumented)
     serviceHost: string;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
-    static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Buckets;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
 }
 
-// @public
-export class Client {
-    constructor(context?: ContextInterface);
-    // (undocumented)
-    context: ContextInterface;
-    create(threadID: ThreadID, collectionName: string, values: any[]): Promise<string[]>;
-    delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
-    deleteCollection(threadID: ThreadID, name: string): Promise<void>;
-    deleteDB(threadID: ThreadID): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "QueryJSON" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "InstanceList" needs to be exported by the entry point index.d.ts
-    find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<InstanceList<T>>;
-    // Warning: (ae-forgotten-export) The symbol "Instance" needs to be exported by the entry point index.d.ts
-    findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
-    getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
-    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
-    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
-    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
-    // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
-    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<{
-        name: string;
-        schema: any;
-    }>): Promise<void>;
-    listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Instance<T>, err?: Error) => void): () => void;
-    newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
-    newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<{
-        name: string;
-        schema: any;
-    }>): Promise<void>;
-    open(threadID: ThreadID, name?: string): Promise<void>;
-    static randomIdentity(): Promise<Libp2pCryptoIdentity>;
-    // Warning: (ae-forgotten-export) The symbol "ReadTransaction" needs to be exported by the entry point index.d.ts
-    readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
-    // (undocumented)
-    rpcOptions: grpc.RpcOptions;
-    save(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
-    // (undocumented)
-    serviceHost: string;
-    updateCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
-    static withUserAuth(auth: UserAuth, host?: string, debug?: boolean): Client;
-    // Warning: (ae-forgotten-export) The symbol "WriteTransaction" needs to be exported by the entry point index.d.ts
-    writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
-}
+export { Client }
 
 // @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
