@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-client",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -46,7 +46,7 @@
     "@textile/multiaddr": "^0.0.21",
     "@textile/security": "^0.1.8",
     "@textile/threads-client-grpc": "^0.1.21",
-    "@textile/threads-core": "^0.1.29",
+    "@textile/threads-core": "^0.1.30",
     "@textile/threads-id": "^0.1.10",
     "@types/google-protobuf": "^3.7.2",
     "cids": "^0.8.0",
