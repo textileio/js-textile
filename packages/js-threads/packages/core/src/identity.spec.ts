@@ -8,4 +8,11 @@ describe('Identity', () => {
     const back = await Libp2pCryptoIdentity.fromString(str)
     expect(id).to.deep.equal(back)
   })
+  it('signatures should verify', async () => {
+    const id = await Libp2pCryptoIdentity.fromRandom()
+    const msg = Buffer.from('teststring')
+    const sig = await id.sign(msg)
+    const verify = await id.public.verify(msg, sig)
+    expect(verify).to.be.true
+  })
 })

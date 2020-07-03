@@ -22,12 +22,16 @@ export class Ed25519PublicKey implements PublicKey {
 
   async verify(data: Uint8Array, sig: Uint8Array) {
     // return ed.verify(sig, data, this.publicKey)
-    const key = new ed.Ed25519PublicKey(Buffer.from(this.publicKey))
+    const key = new ed.Ed25519PublicKey(this.buffer)
     return key.verify(Buffer.from(data), Buffer.from(sig))
   }
 
   marshal() {
     return new Uint8Array(this.publicKey)
+  }
+
+  get buffer() {
+    return Buffer.from(this.publicKey)
   }
 
   get bytes() {
@@ -60,8 +64,8 @@ export class Ed25519PrivateKey implements PrivateKey {
 
   async sign(message: Uint8Array) {
     // return ed.sign(message, this.privateKey)
-    const privateKey = Buffer.concat([this.privateKey, this.publicKey])
-    const key = new ed.Ed25519PrivateKey(privateKey, Buffer.from(this.publicKey))
+    const privateKey = Buffer.concat([this.privateKeyBuffer, this.publicKeyBuffer])
+    const key = new ed.Ed25519PrivateKey(privateKey, this.publicKeyBuffer)
     return key.sign(Buffer.from(message))
   }
 
@@ -78,6 +82,14 @@ export class Ed25519PrivateKey implements PrivateKey {
     // @note To match the output of libp2p-crypto, we also append redundant public key bytes
     full.set(this.publicKey, this.privateKey.byteLength + this.publicKey.byteLength)
     return full
+  }
+
+  get publicKeyBuffer() {
+    return Buffer.from(this.publicKey)
+  }
+
+  get privateKeyBuffer() {
+    return Buffer.from(this.privateKey)
   }
 
   get bytes() {
