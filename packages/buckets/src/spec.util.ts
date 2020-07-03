@@ -32,7 +32,7 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
     req.setType(pb.KeyType[kind])
     const client = new APIClient(ctx.host, { transport: ctx.transport, debug: ctx.debug })
     ctx.toMetadata().then((meta) => {
-      client.createKey(req, meta, (err: ServiceError | null, message: pb.GetKeyReply | null) => {
+      return client.createKey(req, meta, (err: ServiceError | null, message: pb.GetKeyReply | null) => {
         if (err) reject(err)
         resolve(message?.toObject())
       })
@@ -50,7 +50,7 @@ export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSec
       req.setUsername(username)
       const client = new APIClient(ctx.host, { transport: ctx.transport, debug: ctx.debug })
       ctx.toMetadata().then((meta) => {
-        client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
+        return client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
           if (err) reject(err)
           resolve({ user: message?.toObject(), username, email })
         })
