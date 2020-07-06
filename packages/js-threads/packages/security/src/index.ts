@@ -40,7 +40,6 @@ export type UserAuth = {
  * ```
  * @param {string} key - API key. Can be embedded/shared within an app.
  * @param {string} secret - User group/account secret. Should not be embedded/shared publicly.
- * @param {number} type - Key type. 0 of ACCOUNT or 1 of USER
  */
 export type KeyInfo = {
   /**
@@ -51,10 +50,6 @@ export type KeyInfo = {
    * User group/account secret. Should not be embedded/shared publicly.
    */
   secret: string
-  /**
-   * Key type. Zero of ACCOUNT or One of USER
-   */
-  type: 0 | 1
 }
 
 /**
