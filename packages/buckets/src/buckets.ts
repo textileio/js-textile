@@ -96,9 +96,10 @@ export class Buckets {
   }
 
   /**
-   * Open a new / existing bucket by bucket name and ThreadID
+   * Open a new / existing bucket by bucket name and ThreadID (init not required)
    * @param name name of bucket
-   * @param threadName the name of the thread where the bucket is stored (default 'buckets')
+   * @param threadName the name of the thread where the bucket is stored (default `buckets`)
+   * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
    * @example
    * Initialize a Bucket called "app-name-files"
@@ -151,6 +152,7 @@ export class Buckets {
    * Initializes a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
+   * @param isPrivate encrypt the bucket contents (default `false`)
    * @example
    * Initialize a Bucket called "app-name-files"
    * ```tyepscript

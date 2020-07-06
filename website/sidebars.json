@@ -10,12 +10,16 @@
         "ids": [
           "hub.buckets.withuserauth",
           "hub.buckets.withkeyinfo",
+          "hub.buckets.open",
           "hub.buckets.init",
+          "hub.buckets.root",
           "hub.buckets.links",
           "hub.buckets.list",
           "hub.buckets.listpath",
-          "hub.buckets.pullpath",
+          "hub.buckets.listipfspath",
           "hub.buckets.pushpath",
+          "hub.buckets.pullpath",
+          "hub.buckets.pullipfspath",
           "hub.buckets.remove",
           "hub.buckets.removepath"
         ]
@@ -32,7 +36,6 @@
           "hub.client.gettoken",
           "hub.client.gettokenchallenge",
           "hub.client.newdb",
-          "hub.client.listdbs",
           "hub.client.deletedb",
           "hub.client.getdbinfo",
           "hub.client.newdbfromaddr",
