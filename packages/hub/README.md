@@ -45,15 +45,14 @@ const auth: UserAuth = {
 
 #### KeyInfo
 
-The `KeyInfo` object holds your API secret and so should never be used in an insecure environment (such as in an application). These methods can be used with user group keys (`type = 0`) or account keys (`type = 1`).
+The `KeyInfo` object holds your API secret and so should never be used in an insecure environment (such as in an application). You can use `KeyInfo` with an insecure key (signing not required) from the api by leaving `secret` as an empty string `''`.
 
 ```typescript
 import { KeyInfo } from '@textile/hub'
 
 const auth: KeyInfo = {
   key: '<api key>',
-  secret: '<api secret>',
-  type: 0 // <api key type>
+  secret: '<api secret>'
 }
 ```
 
@@ -69,8 +68,7 @@ import { Client, KeyInfo } from '@textile/hub'
 async function start () {
   const keyInfo: KeyInfo = {
     key: '<api key>',
-    secret: '<api secret>',
-    type: 1,
+    secret: '<api secret>'
   }
   const client = await Client.withKeyInfo(keyInfo)
 }
