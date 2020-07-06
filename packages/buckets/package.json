@@ -34,9 +34,11 @@
     "@textile/hub-threads-client": "^0.1.2",
     "@textile/security": "^0.1.8",
     "@textile/threads-client": "^0.7.3",
+    "@types/next-tick": "^1.0.0",
     "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
-    "loglevel": "^1.6.8"
+    "loglevel": "^1.6.8",
+    "next-tick": "^1.1.0"
   },
   "devDependencies": {
     "@textile/hub-grpc": "^1.0.12",

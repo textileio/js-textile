@@ -80,7 +80,7 @@ describe('Buckets...', () => {
     let length = 0
 
     // Bucket path
-    const res = await client.pushPath(rootKey, 'dir1/file1.jpg', stream, undefined, {
+    const res = await client.pushPath(rootKey, 'dir1/file1.jpg', stream, {
       progress: (num) => (length = num || 0),
     })
     expect(length).to.equal(fileSize)
@@ -111,7 +111,7 @@ describe('Buckets...', () => {
     let length = 0
 
     // Bucket path
-    const res = await client.pushPath(rootKey, 'dir1/file1.jpg', file, undefined, {
+    const res = await client.pushPath(rootKey, 'dir1/file1.jpg', file, {
       progress: (num) => (length = num || 0),
     })
     expect(length).to.equal(54)
@@ -150,7 +150,7 @@ describe('Buckets...', () => {
     let length = 0
 
     // Bucket path
-    const chunks = client.pullPath(rootKey, 'dir1/file1.jpg', undefined, {
+    const chunks = client.pullPath(rootKey, 'dir1/file1.jpg', {
       progress: (num) => (length = num || 0),
     })
     const pth = path.join(__dirname, '../../..', 'testdata')
