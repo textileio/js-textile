@@ -3,12 +3,12 @@ import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
+import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import { Client } from '@textile/hub-threads-client'
-import nextTick from 'next-tick'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -112,7 +112,7 @@ export class Buckets {
    * }
    * ```
    */
-  async open(name: string, threadName = 'buckets', threadID?: ThreadID) {
+  async open(name: string, threadName = 'buckets', isPrivate = false, threadID?: ThreadID) {
     if (threadID) {
       const id = threadID.toString()
       const client = new Client(this.context)
@@ -143,7 +143,7 @@ export class Buckets {
     if (existing) {
       return existing
     }
-    const created = await this.init(name)
+    const created = await this.init(name, isPrivate)
     return created.root
   }
 
@@ -161,10 +161,11 @@ export class Buckets {
    * }
    * ```
    */
-  async init(name: string, ctx?: ContextInterface) {
+  async init(name: string, isPrivate = false, ctx?: ContextInterface) {
     logger.debug('init request')
     const req = new pb.InitRequest()
     req.setName(name)
+    req.setPrivate(isPrivate)
     const res: pb.InitReply = await this.unary(API.Init, req, ctx)
     return res.toObject()
   }
