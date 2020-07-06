@@ -8,6 +8,7 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
+import { Identity } from '@textile/threads-core'
 import { Client } from '@textile/hub-threads-client'
 import { normaliseInput, File } from './normalize'
 
@@ -540,6 +541,30 @@ export class Buckets {
       },
     })
     return res.close.bind(res)
+  }
+
+  /**
+   * Obtain a token for interacting with the remote API.
+   * @param identity A user identity to use for creating records in the database. A random identity
+   * can be created with `Client.randomIdentity(), however, it is not easy/possible to migrate
+   * identities after the fact. Please store or otherwise persist any identity information if
+   * you wish to retrieve user data later, or use an external identity provider.
+   * @example
+   * ```typescript
+   * import { Buckets, Identity } from '@textile/hub'
+   *
+   * async function newToken (buckets: Buckets, user: Identity) {
+   *   // Token is added to the connection at the same time
+   *   const token = await buckets.getToken(user)
+   *   return token
+   * }
+   * ```
+   */
+  async getToken(identity: Identity, ctx?: ContextInterface) {
+    const client = new Client(this.context)
+    const token = await client.getToken(identity, ctx)
+    this.context = client.context
+    return token
   }
 
   private unary<
