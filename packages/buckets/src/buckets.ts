@@ -8,6 +8,7 @@ import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import { Client } from '@textile/hub-threads-client'
+import nextTick from 'next-tick'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -70,9 +71,9 @@ export class Buckets {
    */
   static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
     const context =
-    typeof auth === 'object'
-      ? Context.fromUserAuth(auth, host, debug)
-      : Context.fromUserAuthCallback(auth, host, debug)
+      typeof auth === 'object'
+        ? Context.fromUserAuth(auth, host, debug)
+        : Context.fromUserAuthCallback(auth, host, debug)
     return new Buckets(context)
   }
 
@@ -150,7 +151,6 @@ export class Buckets {
    * Initializes a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
-   * @param ctx Context object containing web-gRPC headers and settings.
    * @example
    * Initialize a Bucket called "app-name-files"
    * ```tyepscript
@@ -170,29 +170,20 @@ export class Buckets {
   }
 
   /**
-   * Returns a list of all bucket roots.
-   * @example
-   * Find an existing Bucket named "app-name-files"
-   * ```typescript
-   * import { Buckets } from '@textile/hub'
-   *
-   * const exists = async (buckets: Buckets) => {
-   *     const roots = await buckets.list();
-   *     return roots.find((bucket) => bucket.name ===  "app-name-files")
-   * }
-   * ````
+   * Returns the bucket root CID
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async list(ctx?: ContextInterface) {
-    logger.debug('list request')
-    const req = new pb.ListRequest()
-    const res: pb.ListReply = await this.unary(API.List, req, ctx)
-    return res.toObject().rootsList
+  async root(key: string, ctx?: ContextInterface) {
+    logger.debug('root request')
+    const req = new pb.RootRequest()
+    req.setKey(key)
+    const res: pb.RootReply = await this.unary(API.Root, req, ctx)
+    return res.toObject().root
   }
 
   /**
    * Returns a list of bucket links.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
-   * @param ctx Context object containing web-gRPC headers and settings.
    * @example
    * Generate the HTTP, IPNS, and IPFS links for a Bucket
    * ```tyepscript
@@ -218,10 +209,29 @@ export class Buckets {
   }
 
   /**
+   * Returns a list of all bucket roots.
+   * @example
+   * Find an existing Bucket named "app-name-files"
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const exists = async (buckets: Buckets) => {
+   *     const roots = await buckets.list();
+   *     return roots.find((bucket) => bucket.name ===  "app-name-files")
+   * }
+   * ````
+   */
+  async list(ctx?: ContextInterface) {
+    logger.debug('list request')
+    const req = new pb.ListRequest()
+    const res: pb.ListReply = await this.unary(API.List, req, ctx)
+    return res.toObject().rootsList
+  }
+
+  /**
    * Returns information about a bucket path.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
-   * @param ctx Context object containing web-gRPC headers and settings.
    */
   async listPath(key: string, path: string, ctx?: ContextInterface) {
     logger.debug('list path request')
@@ -233,31 +243,15 @@ export class Buckets {
   }
 
   /**
-   * Removes an entire bucket. Files and directories will be unpinned.
-   * @param key Unique (IPNS compatible) identifier key for a bucket.
-   * @param ctx Context object containing web-gRPC headers and settings.
+   * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
+   * @param path UnixFS path
    */
-  async remove(key: string, ctx?: ContextInterface) {
-    logger.debug('remove request')
-    const req = new pb.RemoveRequest()
-    req.setKey(key)
-    await this.unary(API.Remove, req, ctx)
-    return
-  }
-
-  /**
-   * Returns information about a bucket path.
-   * @param key Unique (IPNS compatible) identifier key for a bucket.
-   * @param path A file/object (sub)-path within a bucket.
-   * @param ctx Context object containing web-gRPC headers and settings.
-   */
-  async removePath(key: string, path: string, ctx?: ContextInterface) {
-    logger.debug('remove path request')
-    const req = new pb.RemovePathRequest()
-    req.setKey(key)
+  async listIpfsPath(path: string, ctx?: ContextInterface) {
+    logger.debug('list path request')
+    const req = new pb.ListIpfsPathRequest()
     req.setPath(path)
-    await this.unary(API.RemovePath, req, ctx)
-    return
+    const res: pb.ListIpfsPathReply = await this.unary(API.ListIpfsPath, req, ctx)
+    return res.toObject().item
   }
 
   /**
@@ -265,7 +259,6 @@ export class Buckets {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
    * @param input The input file/stream/object.
-   * @param ctx Context object containing web-gRPC headers and settings.
    * @param opts Options to control response stream. Currently only supports a progress function.
    * @remarks
    * This will return the resolved path and the bucket's new root path.
@@ -284,8 +277,8 @@ export class Buckets {
     key: string,
     path: string,
     input: any,
-    ctx?: ContextInterface,
     opts?: { progress?: (num?: number) => void },
+    ctx?: ContextInterface,
   ) {
     return new Promise<PushPathResult>(async (resolve, reject) => {
       // Only process the first  input if there are more than one
@@ -355,14 +348,13 @@ export class Buckets {
    * Pulls the bucket path, returning the bytes of the given file.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
-   * @param ctx Context object containing web-gRPC headers and settings.
    * @param opts Options to control response stream. Currently only supports a progress function.
    */
   pullPath(
     key: string,
     path: string,
-    ctx?: ContextInterface,
     opts?: { progress?: (num?: number) => void },
+    ctx?: ContextInterface,
   ): AsyncIterableIterator<Uint8Array> {
     const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
     const request = new pb.PullPathRequest()
@@ -400,6 +392,151 @@ export class Buckets {
       ...events[Symbol.asyncIterator](),
     }
     return it
+  }
+
+  /**
+   * pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.
+   * @param path A file/object (sub)-path within a bucket.
+   * @param opts Options to control response stream. Currently only supports a progress function.
+   */
+  pullIpfsPath(
+    path: string,
+    opts?: { progress?: (num?: number) => void },
+    ctx?: ContextInterface,
+  ): AsyncIterableIterator<Uint8Array> {
+    const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
+    const request = new pb.PullIpfsPathRequest()
+    request.setPath(path)
+    let written = 0
+    const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
+      const resp = grpc.invoke(API.PullIpfsPath, {
+        host: this.serviceHost,
+        transport: this.rpcOptions.transport,
+        debug: this.rpcOptions.debug,
+        request,
+        metadata,
+        onMessage: async (res: pb.PullIpfsPathReply) => {
+          const chunk = res.getChunk_asU8()
+          push(chunk)
+          written += chunk.byteLength
+          if (opts?.progress) {
+            opts.progress(written)
+          }
+        },
+        onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+          if (status !== grpc.Code.OK) {
+            fail(new Error(message))
+          }
+          stop()
+        },
+      })
+      return () => resp.close()
+    })
+    const it: AsyncIterableIterator<Uint8Array> = {
+      [Symbol.asyncIterator]() {
+        return this
+      },
+      ...events[Symbol.asyncIterator](),
+    }
+    return it
+  }
+
+  /**
+   * Removes an entire bucket. Files and directories will be unpinned.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   */
+  async remove(key: string, ctx?: ContextInterface) {
+    logger.debug('remove request')
+    const req = new pb.RemoveRequest()
+    req.setKey(key)
+    await this.unary(API.Remove, req, ctx)
+    return
+  }
+
+  /**
+   * Returns information about a bucket path.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A file/object (sub)-path within a bucket.
+   */
+  async removePath(key: string, path: string, ctx?: ContextInterface) {
+    logger.debug('remove path request')
+    const req = new pb.RemovePathRequest()
+    req.setKey(key)
+    req.setPath(path)
+    await this.unary(API.RemovePath, req, ctx)
+    return
+  }
+
+  /**
+   * archive creates a Filecoin bucket archive via Powergate.
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   */
+  async archive(key: string, ctx?: ContextInterface) {
+    logger.debug('archive request')
+    const req = new pb.ArchiveRequest()
+    req.setKey(key)
+    return await this.unary(API.Archive, req, ctx)
+  }
+
+  /**
+   * archiveStatus returns the status of a Filecoin bucket archive.
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   */
+  async archiveStatus(key: string, ctx?: ContextInterface) {
+    logger.debug('archive status request')
+    const req = new pb.ArchiveStatusRequest()
+    req.setKey(key)
+    return await this.unary(API.ArchiveStatus, req, ctx)
+  }
+
+  /**
+   * archiveInfo returns info about a Filecoin bucket archive.
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   */
+  async archiveInfo(key: string, ctx?: ContextInterface) {
+    logger.debug('archive info request')
+    const req = new pb.ArchiveInfoRequest()
+    req.setKey(key)
+    return await this.unary(API.ArchiveInfo, req, ctx)
+  }
+
+  /**
+   * archiveWatch watches status events from a Filecoin bucket archive.
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   */
+  async archiveWatch(
+    key: string,
+    callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void,
+    ctx?: ContextInterface,
+  ) {
+    logger.debug('archive watch request')
+    const req = new pb.ArchiveWatchRequest()
+    req.setKey(key)
+
+    const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
+    const res = grpc.invoke(API.ArchiveWatch, {
+      host: this.context.host,
+      request: req,
+      metadata,
+      onMessage: (rec: pb.ArchiveWatchReply) => {
+        const response = {
+          id: rec.getJsPbMessageId(),
+          msg: rec.getMsg(),
+        }
+        nextTick(() => callback(response))
+      },
+      onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+        if (status !== grpc.Code.OK) {
+          return callback(undefined, new Error(message))
+        }
+        callback()
+      },
+    })
+    return res.close.bind(res)
   }
 
   private unary<
