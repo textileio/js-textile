@@ -551,7 +551,7 @@ export class Buckets {
    * you wish to retrieve user data later, or use an external identity provider.
    * @example
    * ```typescript
-   * import {Buckets} from '@textile/hub'
+   * import { Buckets, Identity } from '@textile/hub'
    *
    * async function newToken (buckets: Buckets, user: Identity) {
    *   // Token is added to the connection at the same time
