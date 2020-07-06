@@ -107,16 +107,23 @@
 <tr><th>Method</th><th>Modifiers</th><th>Description</th></tr>
 </thead>
 <tbody>
+<tr><td><a href="/js-hub/docs/hub.buckets.archive">archive(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archive creates a Filecoin bucket archive via Powergate.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archiveinfo">archiveInfo(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archivestatus">archiveStatus(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archivewatch">archiveWatch(key, callback, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.fromclient">fromClient(client)</a></td><td><code>static</code></td><td>Create a new gRPC client Bucket instance from a preconfigured threads client</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.init">init(name, ctx)</a></td><td></td><td>Initializes a new bucket.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.init">init(name, isPrivate, ctx)</a></td><td></td><td>Initializes a new bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.links">links(key, ctx)</a></td><td></td><td>Returns a list of bucket links.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.list">list(ctx)</a></td><td></td><td>Returns a list of all bucket roots.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.listipfspath">listIpfsPath(path, ctx)</a></td><td></td><td>listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.listpath">listPath(key, path, ctx)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.open">open(name, threadName, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, ctx, opts)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.pushpath">pushPath(key, path, input, ctx, opts)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.open">open(name, threadName, isPrivate, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pullipfspath">pullIpfsPath(path, opts, ctx)</a></td><td></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, opts, ctx)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pushpath">pushPath(key, path, input, opts, ctx)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.remove">remove(key, ctx)</a></td><td></td><td>Removes an entire bucket. Files and directories will be unpinned.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.removepath">removePath(key, path, ctx)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.root">root(key, ctx)</a></td><td></td><td>Returns the bucket root CID</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withkeyinfo">withKeyInfo(key, host, debug)</a></td><td><code>static</code></td><td>Create a new gRPC client Bucket instance from a supplied key and secret</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withuserauth">withUserAuth(auth, host, debug)</a></td><td><code>static</code></td><td>Creates a new gRPC client instance for accessing the Textile Buckets API.</td></tr>
 </tbody>
