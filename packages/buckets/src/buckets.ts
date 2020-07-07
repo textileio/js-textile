@@ -52,6 +52,7 @@ export interface PushPathResult {
  * ```
  */
 export class Buckets {
+  private _client: Client
   public serviceHost: string
   public rpcOptions: grpc.RpcOptions
   /**
@@ -64,6 +65,7 @@ export class Buckets {
       transport: context.transport,
       debug: context.debug,
     }
+    this._client = new Client(context)
   }
 
   /**
@@ -117,17 +119,15 @@ export class Buckets {
   async open(name: string, threadName = 'buckets', isPrivate = false, threadID?: ThreadID) {
     if (threadID) {
       const id = threadID.toString()
-      const client = new Client(this.context)
-      const res = await client.listThreads()
+      const res = await this._client.listThreads()
       const exists = res.listList.find((thread) => thread.id === id)
       if (!exists) {
-        await client.newDB(threadID, threadName)
+        await this._client.newDB(threadID, threadName)
       }
       this.context.withThread(threadID.toString())
     } else {
-      const client = new Client(this.context)
       try {
-        const res = await client.getThread(threadName)
+        const res = await this._client.getThread(threadName)
         const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
         this.context.withThread(existingId)
       } catch (error) {
@@ -135,7 +135,7 @@ export class Buckets {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
-        await client.newDB(newId, threadName)
+        await this._client.newDB(newId, threadName)
         this.context.withThread(newId.toString())
       }
     }
@@ -561,9 +561,8 @@ export class Buckets {
    * ```
    */
   async getToken(identity: Identity, ctx?: ContextInterface) {
-    const client = new Client(this.context)
-    const token = await client.getToken(identity, ctx)
-    this.context = client.context
+    const token = await this._client.getToken(identity, ctx)
+    this.context.withToken(token)
     return token
   }
 
