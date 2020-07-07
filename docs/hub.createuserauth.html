@@ -84,7 +84,7 @@
   <span class="hljs-comment">// Create an expiration and create a signature. 60s or less is recommended.</span>
   <span class="hljs-keyword">const</span> expiration = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-built_in">Date</span>.now() + <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>)
   <span class="hljs-comment">// Generate a new UserAuth</span>
-  <span class="hljs-keyword">const</span> userAuth: UserAuth = <span class="hljs-keyword">await</span> createUserAuth(keyInfo.key, keyInfo.secret, expiration)
+  <span class="hljs-keyword">const</span> userAuth: UserAuth = <span class="hljs-keyword">await</span> createUserAuth(keyInfo.key, keyInfo.secret ?? <span class="hljs-string">''</span>, expiration)
   <span class="hljs-keyword">return</span> userAuth
 }
 
