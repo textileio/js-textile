@@ -49,7 +49,7 @@ export type KeyInfo = {
   /**
    * User group/account secret. Should not be embedded/shared publicly.
    */
-  secret: string
+  secret?: string
 }
 
 /**
@@ -115,7 +115,7 @@ export async function createAPISig(
  *   // Create an expiration and create a signature. 60s or less is recommended.
  *   const expiration = new Date(Date.now() + 60 * 1000)
  *   // Generate a new UserAuth
- *   const userAuth: UserAuth = await createUserAuth(keyInfo.key, keyInfo.secret, expiration)
+ *   const userAuth: UserAuth = await createUserAuth(keyInfo.key, keyInfo.secret ?? '', expiration)
  *   return userAuth
  * }
  * ```

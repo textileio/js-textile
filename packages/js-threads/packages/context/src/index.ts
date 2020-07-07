@@ -267,7 +267,7 @@ export class Context implements ContextInterface {
   async withKeyInfo(key?: KeyInfo, date?: Date) {
     if (key === undefined) return this
     // Enables the use of insecure / non-signing keys
-    if (key.secret === '') return this.withAPIKey(key.key)
+    if (!key.secret) return this.withAPIKey(key.key)
     const sig = await createAPISig(key.secret, date)
     return this.withAPIKey(key.key).withAPISig(sig)
   }

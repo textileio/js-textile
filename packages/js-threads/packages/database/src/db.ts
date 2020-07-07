@@ -2,7 +2,7 @@ import toJsonSchema from 'to-json-schema'
 import cbor from 'cbor-sync'
 import { Network, Client } from '@textile/threads-network'
 import { Context, defaultHost } from '@textile/context'
-import { UserAuth } from '@textile/security'
+import { UserAuth, KeyInfo } from '@textile/security'
 import { EventEmitter2 } from 'eventemitter2'
 import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
 import { Datastore, Key } from 'interface-datastore'
@@ -151,22 +151,54 @@ export class Database implements DatabaseSettings {
    */
   static withUserAuth(
     auth: UserAuth | (() => Promise<UserAuth>),
-    store: Datastore,
+    store: string | Datastore,
     options?: Partial<DatabaseSettings>,
     host = defaultHost,
     debug = false,
   ) {
+    const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
     const context =
       typeof auth === 'object'
         ? Context.fromUserAuth(auth, host, debug)
         : Context.fromUserAuthCallback(auth, host, debug)
     const client = new Client(context)
-    const network = new Network(store, client)
+    const network = new Network(datastore, client)
     const opts: Partial<DatabaseSettings> = {
       ...options,
       network,
     }
-    return new Database(store, opts)
+    return new Database(datastore, opts)
+  }
+
+  /**
+   * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
+   * @param store The underlying datastore implementation to use.
+   * @example
+   * ```typescript
+   * import {KeyInfo, Database, ThreadID} from '@textile/threads'
+   *
+   * async function create (keyInfo: KeyInfo, threadID: ThreadID) {
+   *   return await Database.withKeyInfo(keyInfo, threadID.toString())
+   * }
+   * ```
+   */
+  static async withKeyInfo(
+    keyInfo: KeyInfo,
+    store: string | Datastore,
+    options?: Partial<DatabaseSettings>,
+    host = defaultHost,
+    debug = false,
+  ) {
+    const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
+    const context = new Context(host, debug)
+    await context.withKeyInfo(keyInfo)
+    const client = new Client(context)
+    const network = new Network(datastore, client)
+    const opts: Partial<DatabaseSettings> = {
+      ...options,
+      network,
+    }
+    return new Database(datastore, opts)
   }
 
   @Cache({ duration: 1800000 })
