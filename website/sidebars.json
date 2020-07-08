@@ -38,6 +38,7 @@
           "hub.client.newdb",
           "hub.client.deletedb",
           "hub.client.getdbinfo",
+          "hub.client.joinfrominfo",
           "hub.client.newdbfromaddr",
           "hub.client.randomidentity",
           "hub.client.listen",
