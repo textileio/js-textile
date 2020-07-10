@@ -36,6 +36,7 @@
     "@textile/security": "^0.2.1",
     "@textile/threads-client": "^0.8.1",
     "@textile/threads-core": "^0.1.30",
+    "@textile/threads-database": "^0.6.1",
     "@textile/threads-id": "^0.1.10",
     "@textile/users-grpc": "^1.0.12",
     "cids": "^0.8.0",
