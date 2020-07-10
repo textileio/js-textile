@@ -5,6 +5,7 @@
 
 export { ThreadID, Variant } from '@textile/threads-id'
 export { Identity } from '@textile/threads-core'
+export { Database } from '@textile/threads-database'
 export * from '@textile/buckets'
 export * from '@textile/security'
 export { Client } from '@textile/hub-threads-client'
