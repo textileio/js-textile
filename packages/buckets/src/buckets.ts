@@ -1,15 +1,17 @@
 import log from 'loglevel'
 import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
+import { API as ClientAPI, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
+import { GetTokenReply, GetTokenRequest } from '@textile/threads-client-grpc/threads_pb'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
-import { UserAuth, KeyInfo } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
-import { Identity } from '@textile/threads-core'
 import { Client } from '@textile/hub-threads-client'
+import type { UserAuth, KeyInfo } from '@textile/security'
+import type { Identity } from '@textile/threads-core'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -52,7 +54,6 @@ export interface PushPathResult {
  * ```
  */
 export class Buckets {
-  private _client: Client
   public serviceHost: string
   public rpcOptions: grpc.RpcOptions
   /**
@@ -65,7 +66,6 @@ export class Buckets {
       transport: context.transport,
       debug: context.debug,
     }
-    this._client = new Client(context)
   }
 
   /**
@@ -91,11 +91,13 @@ export class Buckets {
   }
 
   /**
-   * Create a new gRPC client Bucket instance from a preconfigured threads client
-   * @param client a threads client
+   * Scopes to a Thread by ID
+   * @param threadId the ID of the thread
    */
-  static async fromClient(client: Client) {
-    return new Buckets(client.context)
+  withThread(threadID?: string | ThreadID) {
+    if (threadID === undefined) return this
+    const id = typeof threadID === 'string' ? threadID : ThreadID.toString()
+    this.context.withThread(id)
   }
 
   /**
@@ -116,27 +118,29 @@ export class Buckets {
    * }
    * ```
    */
-  async open(name: string, threadName = 'buckets', isPrivate = false, threadID?: ThreadID) {
+  async open(name: string, threadName = 'buckets', isPrivate = false, threadID?: string) {
+    const client = new Client(this.context)
     if (threadID) {
-      const id = threadID.toString()
-      const res = await this._client.listThreads()
+      const id = threadID
+      const res = await client.listThreads()
       const exists = res.listList.find((thread) => thread.id === id)
       if (!exists) {
-        await this._client.newDB(threadID, threadName)
+        const id = ThreadID.fromString(threadID)
+        await client.newDB(id, threadName)
       }
-      this.context.withThread(threadID.toString())
+      this.withThread(threadID)
     } else {
       try {
-        const res = await this._client.getThread(threadName)
+        const res = await client.getThread(threadName)
         const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
-        this.context.withThread(existingId)
+        this.withThread(existingId)
       } catch (error) {
         if (error.message !== 'Thread not found') {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
-        await this._client.newDB(newId, threadName)
-        this.context.withThread(newId.toString())
+        await client.newDB(newId, threadName)
+        this.withThread(newId.toString())
       }
     }
 
@@ -545,25 +549,65 @@ export class Buckets {
 
   /**
    * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for creating records in the database. A random identity
-   * can be created with `Client.randomIdentity(), however, it is not easy/possible to migrate
-   * identities after the fact. Please store or otherwise persist any identity information if
-   * you wish to retrieve user data later, or use an external identity provider.
-   * @example
-   * ```typescript
-   * import { Buckets, Identity } from '@textile/hub'
-   *
-   * async function newToken (buckets: Buckets, user: Identity) {
-   *   // Token is added to the connection at the same time
-   *   const token = await buckets.getToken(user)
-   *   return token
-   * }
-   * ```
+   * @param identity A user identity to use for interacting with buckets.
    */
   async getToken(identity: Identity, ctx?: ContextInterface) {
-    const token = await this._client.getToken(identity, ctx)
-    this.context.withToken(token)
-    return token
+    return this.getTokenChallenge(
+      identity.public.toString(),
+      async (challenge: Uint8Array) => {
+        return identity.sign(challenge)
+      },
+      ctx,
+    )
+  }
+
+  /**
+   * Obtain a token for interacting with the remote API.
+   * @param identity A user identity to use for interacting with buckets.
+   * @param callback A callback function that takes a `challenge` argument and returns a signed
+   * message using the input challenge and the private key associated with `publicKey`.
+   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
+   */
+  async getTokenChallenge(
+    publicKey: string,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
+    ctx?: ContextInterface,
+  ) {
+    const client = grpc.client<GetTokenRequest, GetTokenReply, APIGetToken>(ClientAPI.GetToken, {
+      host: this.serviceHost,
+      transport: this.rpcOptions.transport,
+      debug: this.rpcOptions.debug,
+    })
+    return new Promise<string>((resolve, reject) => {
+      let token = ''
+      client.onMessage(async (message: GetTokenReply) => {
+        if (message.hasChallenge()) {
+          const challenge = message.getChallenge_asU8()
+          const signature = await callback(challenge)
+          const req = new GetTokenRequest()
+          req.setSignature(signature)
+          client.send(req)
+          client.finishSend()
+        } else if (message.hasToken()) {
+          token = message.getToken()
+        }
+      })
+      client.onEnd((code: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+        client.close()
+        if (code === grpc.Code.OK) {
+          this.context.withToken(token)
+          resolve(token)
+        } else {
+          reject(new Error(message))
+        }
+      })
+      const req = new GetTokenRequest()
+      req.setKey(publicKey)
+      this.context.toMetadata(ctx).then((metadata) => {
+        client.start(metadata)
+        client.send(req)
+      })
+    })
   }
 
   private unary<
