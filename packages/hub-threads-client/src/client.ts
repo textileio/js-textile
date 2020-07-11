@@ -4,8 +4,8 @@ import { APIClient } from '@textile/users-grpc/users_pb_service'
 import { ServiceError } from '@textile/hub-grpc/hub_pb_service'
 import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
-import type { Context } from '@textile/context'
-import type { UserAuth, KeyInfo } from '@textile/security'
+import { UserAuth, KeyInfo } from '@textile/security'
+import { Context } from '@textile/context'
 
 const logger = log.getLogger('users')
 

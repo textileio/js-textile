@@ -6,10 +6,11 @@ import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
-import { ThreadID } from '@textile/threads-id'
 import { Client } from '@textile/hub-threads-client'
-import type { UserAuth, KeyInfo } from '@textile/security'
-import type { Identity } from '@textile/threads-core'
+import { Identity } from '@textile/threads-core'
+import { UserAuth, KeyInfo } from '@textile/security'
+import { ThreadID } from '@textile/threads-id'
+import { Root } from '@textile/buckets-grpc/buckets_pb'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets')
@@ -67,38 +68,6 @@ export class Buckets {
   }
 
   /**
-   * Creates a new gRPC client instance for accessing the Textile Buckets API.
-   * @param auth The user auth object.
-   */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
-    const context =
-      typeof auth === 'object'
-        ? Context.fromUserAuth(auth, host, debug)
-        : Context.fromUserAuthCallback(auth, host, debug)
-    return new Buckets(context)
-  }
-
-  /**
-   * Create a new gRPC client Bucket instance from a supplied key and secret
-   * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
-   */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const context = new Context(host, debug)
-    await context.withKeyInfo(key)
-    return new Buckets(context)
-  }
-
-  /**
-   * Scopes to a Thread by ID
-   * @param threadId the ID of the thread
-   */
-  withThread(threadID?: string | ThreadID) {
-    if (threadID === undefined) return this
-    const id = typeof threadID === 'string' ? threadID : ThreadID.toString()
-    this.context.withThread(id)
-  }
-
-  /**
    * Open a new / existing bucket by bucket name and ThreadID (init not required)
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
@@ -116,7 +85,12 @@ export class Buckets {
    * }
    * ```
    */
-  async open(name: string, threadName = 'buckets', isPrivate = false, threadID?: string) {
+  async open(
+    name: string,
+    threadName = 'buckets',
+    isPrivate = false,
+    threadID?: string,
+  ): Promise<Root.AsObject | undefined> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
@@ -152,6 +126,62 @@ export class Buckets {
   }
 
   /**
+   * Obtain a token for interacting with the remote API.
+   * @param identity A user identity to use for interacting with buckets.
+   */
+  async getToken(identity: Identity, ctx?: ContextInterface) {
+    const client = new Client(this.context)
+    return client.getToken(identity, ctx)
+  }
+
+  /**
+   * Obtain a token for interacting with the remote API.
+   * @param identity A user identity to use for interacting with buckets.
+   * @param callback A callback function that takes a `challenge` argument and returns a signed
+   * message using the input challenge and the private key associated with `publicKey`.
+   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
+   */
+  async getTokenChallenge(
+    publicKey: string,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
+    ctx?: ContextInterface,
+  ): Promise<string> {
+    const client = new Client(this.context)
+    return client.getTokenChallenge(publicKey, callback, ctx)
+  }
+
+  /**
+   * Creates a new gRPC client instance for accessing the Textile Buckets API.
+   * @param auth The user auth object.
+   */
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
+    const context =
+      typeof auth === 'object'
+        ? Context.fromUserAuth(auth, host, debug)
+        : Context.fromUserAuthCallback(auth, host, debug)
+    return new Buckets(context)
+  }
+
+  /**
+   * Create a new gRPC client Bucket instance from a supplied key and secret
+   * @param key The KeyInfo object containing {key: string, secret: string}
+   */
+  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
+    const context = new Context(host, debug)
+    await context.withKeyInfo(key)
+    return new Buckets(context)
+  }
+
+  /**
+   * Scopes to a Thread by ID
+   * @param threadId the ID of the thread
+   */
+  withThread(threadID?: string) {
+    if (threadID === undefined) return this
+    this.context.withThread(threadID)
+  }
+
+  /**
    * Initializes a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
@@ -179,7 +209,7 @@ export class Buckets {
    * Returns the bucket root CID
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async root(key: string, ctx?: ContextInterface) {
+  async root(key: string, ctx?: ContextInterface): Promise<pb.Root.AsObject | undefined> {
     logger.debug('root request')
     const req = new pb.RootRequest()
     req.setKey(key)
@@ -206,7 +236,7 @@ export class Buckets {
    * }
    * ```
    */
-  async links(key: string, ctx?: ContextInterface) {
+  async links(key: string, ctx?: ContextInterface): Promise<pb.LinksReply.AsObject> {
     logger.debug('link request')
     const req = new pb.LinksRequest()
     req.setKey(key)
@@ -227,7 +257,7 @@ export class Buckets {
    * }
    * ````
    */
-  async list(ctx?: ContextInterface) {
+  async list(ctx?: ContextInterface): Promise<Array<pb.Root.AsObject>> {
     logger.debug('list request')
     const req = new pb.ListRequest()
     const res: pb.ListReply = await this.unary(API.List, req, ctx)
@@ -543,36 +573,6 @@ export class Buckets {
       },
     })
     return res.close.bind(res)
-  }
-
-  /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   */
-  async getToken(identity: Identity, ctx?: ContextInterface) {
-    this.getTokenChallenge(
-      identity.public.toString(),
-      async (challenge: Uint8Array) => {
-        return identity.sign(challenge)
-      },
-      ctx,
-    )
-  }
-
-  /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   * @param callback A callback function that takes a `challenge` argument and returns a signed
-   * message using the input challenge and the private key associated with `publicKey`.
-   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
-   */
-  async getTokenChallenge(
-    publicKey: string,
-    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
-    ctx?: ContextInterface,
-  ) {
-    const client = new Client(this.context)
-    return client.getTokenChallenge(publicKey, callback, ctx)
   }
 
   private unary<
