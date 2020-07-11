@@ -1,8 +1,6 @@
 import log from 'loglevel'
 import * as pb from '@textile/buckets-grpc/buckets_pb'
 import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
-import { API as ClientAPI, APIGetToken } from '@textile/threads-client-grpc/threads_pb_service'
-import { GetTokenReply, GetTokenRequest } from '@textile/threads-client-grpc/threads_pb'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
@@ -552,7 +550,7 @@ export class Buckets {
    * @param identity A user identity to use for interacting with buckets.
    */
   async getToken(identity: Identity, ctx?: ContextInterface) {
-    return this.getTokenChallenge(
+    this.getTokenChallenge(
       identity.public.toString(),
       async (challenge: Uint8Array) => {
         return identity.sign(challenge)
@@ -573,41 +571,8 @@ export class Buckets {
     callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
     ctx?: ContextInterface,
   ) {
-    const client = grpc.client<GetTokenRequest, GetTokenReply, APIGetToken>(ClientAPI.GetToken, {
-      host: this.serviceHost,
-      transport: this.rpcOptions.transport,
-      debug: this.rpcOptions.debug,
-    })
-    return new Promise<string>((resolve, reject) => {
-      let token = ''
-      client.onMessage(async (message: GetTokenReply) => {
-        if (message.hasChallenge()) {
-          const challenge = message.getChallenge_asU8()
-          const signature = await callback(challenge)
-          const req = new GetTokenRequest()
-          req.setSignature(signature)
-          client.send(req)
-          client.finishSend()
-        } else if (message.hasToken()) {
-          token = message.getToken()
-        }
-      })
-      client.onEnd((code: grpc.Code, message: string, _trailers: grpc.Metadata) => {
-        client.close()
-        if (code === grpc.Code.OK) {
-          this.context.withToken(token)
-          resolve(token)
-        } else {
-          reject(new Error(message))
-        }
-      })
-      const req = new GetTokenRequest()
-      req.setKey(publicKey)
-      this.context.toMetadata(ctx).then((metadata) => {
-        client.start(metadata)
-        client.send(req)
-      })
-    })
+    const client = new Client(this.context)
+    return client.getTokenChallenge(publicKey, callback, ctx)
   }
 
   private unary<
