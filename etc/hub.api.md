@@ -4,17 +4,33 @@
 
 ```ts
 
+import { ArchiveInfoReply } from '@textile/buckets-grpc/buckets_pb';
+import { ArchiveReply } from '@textile/buckets-grpc/buckets_pb';
+import { ArchiveStatusReply } from '@textile/buckets-grpc/buckets_pb';
+import { ArchiveWatchReply } from '@textile/buckets-grpc/buckets_pb';
 import CID from 'cids';
 import { ContextInterface } from '@textile/context';
 import { grpc } from '@improbable-eng/grpc-web';
 import { Identity } from '@textile/threads-core';
+import { InitReply } from '@textile/buckets-grpc/buckets_pb';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
+import { LinksReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListPathItem } from '@textile/buckets-grpc/buckets_pb';
+import { ListPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListReply } from '@textile/buckets-grpc/buckets_pb';
 import { name as name_2 } from 'multibase';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
-import * as pb_2 from '@textile/buckets-grpc/buckets_pb';
+import { PullIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { PullPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { PushPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
+import { RemovePathReply } from '@textile/buckets-grpc/buckets_pb';
+import { RemoveReply } from '@textile/buckets-grpc/buckets_pb';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
+import { RootReply } from '@textile/buckets-grpc/buckets_pb';
+import { SetPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -24,50 +40,118 @@ export type APISig = {
     msg: string;
 };
 
+export { ArchiveInfoReply }
+
+export { ArchiveReply }
+
+export { ArchiveStatusReply }
+
+export { ArchiveWatchReply }
+
 // @public
-export class Buckets {
-    constructor(context?: ContextInterface);
+export class Buckets extends BucketsGrpcClient {
     // @beta
-    archive(key: string, ctx?: ContextInterface): Promise<grpc.ProtobufMessage>;
+    archive(key: string): Promise<ArchiveReply.AsObject>;
     // @beta
-    archiveInfo(key: string, ctx?: ContextInterface): Promise<grpc.ProtobufMessage>;
+    archiveInfo(key: string): Promise<ArchiveInfoReply.AsObject>;
     // @beta
-    archiveStatus(key: string, ctx?: ContextInterface): Promise<grpc.ProtobufMessage>;
+    archiveStatus(key: string): Promise<ArchiveStatusReply.AsObject>;
     // @beta
     archiveWatch(key: string, callback: (reply?: {
         id: string | undefined;
         msg: string;
-    }, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
-    // (undocumented)
-    context: ContextInterface;
-    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
-    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    init(name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<pb_2.InitReply.AsObject>;
-    links(key: string, ctx?: ContextInterface): Promise<pb_2.LinksReply.AsObject>;
-    list(ctx?: ContextInterface): Promise<Array<pb_2.Root.AsObject>>;
-    listIpfsPath(path: string, ctx?: ContextInterface): Promise<pb_2.ListPathItem.AsObject | undefined>;
-    listPath(key: string, path: string, ctx?: ContextInterface): Promise<pb_2.ListPathReply.AsObject>;
+    }, err?: Error) => void): Promise<() => void>;
+    getToken(identity: Identity): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    init(name: string, isPrivate?: boolean): Promise<InitReply.AsObject>;
+    links(key: string): Promise<LinksReply.AsObject>;
+    list(): Promise<Root.AsObject[]>;
+    listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined>;
+    listPath(key: string, path: string): Promise<ListPathReply.AsObject>;
     open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<Root.AsObject | undefined>;
     pullIpfsPath(path: string, opts?: {
         progress?: (num?: number) => void;
-    }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
+    }): AsyncIterableIterator<Uint8Array>;
     pullPath(key: string, path: string, opts?: {
         progress?: (num?: number) => void;
-    }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
+    }): AsyncIterableIterator<Uint8Array>;
     pushPath(key: string, path: string, input: any, opts?: {
         progress?: (num?: number) => void;
-    }, ctx?: ContextInterface): Promise<PushPathResult>;
-    remove(key: string, ctx?: ContextInterface): Promise<void>;
-    removePath(key: string, path: string, ctx?: ContextInterface): Promise<void>;
-    root(key: string, ctx?: ContextInterface): Promise<pb_2.Root.AsObject | undefined>;
-    // (undocumented)
-    rpcOptions: grpc.RpcOptions;
-    // (undocumented)
-    serviceHost: string;
+    }): Promise<PushPathResult>;
+    remove(key: string): Promise<void>;
+    removePath(key: string, path: string): Promise<void>;
+    root(key: string): Promise<Root.AsObject | undefined>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
 }
+
+// @beta
+export function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveReply.AsObject>;
+
+// @beta
+export function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveInfoReply.AsObject>;
+
+// @beta
+export function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveStatusReply.AsObject>;
+
+// @beta
+export function bucketsArchiveWatch(api: BucketsGrpcClient, key: string, callback: (reply?: {
+    id: string | undefined;
+    msg: string;
+}, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
+
+// @public (undocumented)
+export class BucketsGrpcClient {
+    constructor(context?: ContextInterface);
+    // (undocumented)
+    context: ContextInterface;
+    // (undocumented)
+    rpcOptions: grpc.RpcOptions;
+    // (undocumented)
+    serviceHost: string;
+    // (undocumented)
+    unary<R extends grpc.ProtobufMessage, T extends grpc.ProtobufMessage, M extends grpc.UnaryMethodDefinition<R, T>>(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T>;
+}
+
+// @public
+export function bucketsInit(api: BucketsGrpcClient, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitReply.AsObject>;
+
+// @public
+export function bucketsLinks(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<LinksReply.AsObject>;
+
+// @public
+export function bucketsList(api: BucketsGrpcClient, ctx?: ContextInterface): Promise<Array<Root.AsObject>>;
+
+// @public
+export function bucketsListIpfsPath(api: BucketsGrpcClient, path: string, ctx?: ContextInterface): Promise<ListPathItem.AsObject | undefined>;
+
+// @public
+export function bucketsListPath(api: BucketsGrpcClient, key: string, path: string, ctx?: ContextInterface): Promise<ListPathReply.AsObject>;
+
+// @public
+export function bucketsPullIpfsPath(api: BucketsGrpcClient, path: string, opts?: {
+    progress?: (num?: number) => void;
+}, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
+
+// @public
+export function bucketsPullPath(api: BucketsGrpcClient, key: string, path: string, opts?: {
+    progress?: (num?: number) => void;
+}, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
+
+// @public
+export function bucketsPushPath(api: BucketsGrpcClient, key: string, path: string, input: any, opts?: {
+    progress?: (num?: number) => void;
+}, ctx?: ContextInterface): Promise<PushPathResult>;
+
+// @public
+export function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<void>;
+
+// @public
+export function bucketsRemovePath(api: BucketsGrpcClient, key: string, path: string, ctx?: ContextInterface): Promise<void>;
+
+// @public
+export function bucketsRoot(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
 
 // @public
 export class Client {
@@ -130,11 +214,29 @@ export const expirationError: Error;
 
 export { Identity }
 
+export { InitReply }
+
 // @public
 export type KeyInfo = {
     key: string;
     secret?: string;
 };
+
+export { LinksReply }
+
+export { ListIpfsPathReply }
+
+export { ListPathItem }
+
+export { ListPathReply }
+
+export { ListReply }
+
+export { PullIpfsPathReply }
+
+export { PullPathReply }
+
+export { PushPathReply }
 
 // @public
 export interface PushPathResult {
@@ -148,6 +250,16 @@ export interface PushPathResult {
     // (undocumented)
     root: string;
 }
+
+export { RemovePathReply }
+
+export { RemoveReply }
+
+export { Root }
+
+export { RootReply }
+
+export { SetPathReply }
 
 // @public
 export class ThreadID {

@@ -1,6 +1,7 @@
+export * from './api'
 export * from './buckets'
 // Exports all API response types for typescript users
-export type {
+export {
   Root,
   LinksReply,
   ListIpfsPathReply,
@@ -12,6 +13,7 @@ export type {
   ArchiveStatusReply,
   ArchiveWatchReply,
   InitReply,
+  ListPathItem,
   ListPathReply,
   ListReply,
   PullIpfsPathReply,

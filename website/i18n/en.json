@@ -8,6 +8,18 @@
       "hub.apisig": {
         "title": "APISig type"
       },
+      "hub.archive": {
+        "title": "archive() function"
+      },
+      "hub.archiveinfo": {
+        "title": "archiveInfo() function"
+      },
+      "hub.archivestatus": {
+        "title": "archiveStatus() function"
+      },
+      "hub.archivewatch": {
+        "title": "archiveWatch() function"
+      },
       "hub.buckets._constructor_": {
         "title": "Buckets.(constructor)"
       },
@@ -85,6 +97,69 @@
       },
       "hub.buckets.withuserauth": {
         "title": "Buckets.withUserAuth() method"
+      },
+      "hub.bucketsarchive": {
+        "title": "bucketsArchive() function"
+      },
+      "hub.bucketsarchiveinfo": {
+        "title": "bucketsArchiveInfo() function"
+      },
+      "hub.bucketsarchivestatus": {
+        "title": "bucketsArchiveStatus() function"
+      },
+      "hub.bucketsarchivewatch": {
+        "title": "bucketsArchiveWatch() function"
+      },
+      "hub.bucketsgrpcclient._constructor_": {
+        "title": "BucketsGrpcClient.(constructor)"
+      },
+      "hub.bucketsgrpcclient.context": {
+        "title": "BucketsGrpcClient.context property"
+      },
+      "hub.bucketsgrpcclient": {
+        "title": "BucketsGrpcClient class"
+      },
+      "hub.bucketsgrpcclient.rpcoptions": {
+        "title": "BucketsGrpcClient.rpcOptions property"
+      },
+      "hub.bucketsgrpcclient.servicehost": {
+        "title": "BucketsGrpcClient.serviceHost property"
+      },
+      "hub.bucketsgrpcclient.unary": {
+        "title": "BucketsGrpcClient.unary() method"
+      },
+      "hub.bucketsinit": {
+        "title": "bucketsInit() function"
+      },
+      "hub.bucketslinks": {
+        "title": "bucketsLinks() function"
+      },
+      "hub.bucketslist": {
+        "title": "bucketsList() function"
+      },
+      "hub.bucketslistipfspath": {
+        "title": "bucketsListIpfsPath() function"
+      },
+      "hub.bucketslistpath": {
+        "title": "bucketsListPath() function"
+      },
+      "hub.bucketspullipfspath": {
+        "title": "bucketsPullIpfsPath() function"
+      },
+      "hub.bucketspullpath": {
+        "title": "bucketsPullPath() function"
+      },
+      "hub.bucketspushpath": {
+        "title": "bucketsPushPath() function"
+      },
+      "hub.bucketsremove": {
+        "title": "bucketsRemove() function"
+      },
+      "hub.bucketsremovepath": {
+        "title": "bucketsRemovePath() function"
+      },
+      "hub.bucketsroot": {
+        "title": "bucketsRoot() function"
       },
       "hub.client._constructor_": {
         "title": "Client.(constructor)"
@@ -188,6 +263,24 @@
       "hub.expirationerror": {
         "title": "expirationError variable"
       },
+      "hub.grpcbucketapi._constructor_": {
+        "title": "GrpcBucketApi.(constructor)"
+      },
+      "hub.grpcbucketapi.context": {
+        "title": "GrpcBucketApi.context property"
+      },
+      "hub.grpcbucketapi": {
+        "title": "GrpcBucketApi class"
+      },
+      "hub.grpcbucketapi.rpcoptions": {
+        "title": "GrpcBucketApi.rpcOptions property"
+      },
+      "hub.grpcbucketapi.servicehost": {
+        "title": "GrpcBucketApi.serviceHost property"
+      },
+      "hub.grpcbucketapi.unary": {
+        "title": "GrpcBucketApi.unary() method"
+      },
       "hub.grpcclient._constructor_": {
         "title": "GrpcClient.(constructor)"
       },
@@ -257,11 +350,35 @@
       "hub.grpcclient.withuserauth": {
         "title": "GrpcClient.withUserAuth() method"
       },
+      "hub.init": {
+        "title": "init() function"
+      },
       "hub.keyinfo": {
         "title": "KeyInfo type"
       },
+      "hub.links": {
+        "title": "links() function"
+      },
+      "hub.list": {
+        "title": "list() function"
+      },
+      "hub.listipfspath": {
+        "title": "listIpfsPath() function"
+      },
+      "hub.listpath": {
+        "title": "listPath() function"
+      },
       "hub": {
         "title": "Package Overview"
+      },
+      "hub.pullipfspath": {
+        "title": "pullIpfsPath() function"
+      },
+      "hub.pullpath": {
+        "title": "pullPath() function"
+      },
+      "hub.pushpath": {
+        "title": "pushPath() function"
       },
       "hub.pushpathresult": {
         "title": "PushPathResult interface"
@@ -271,6 +388,15 @@
       },
       "hub.pushpathresult.root": {
         "title": "PushPathResult.root property"
+      },
+      "hub.remove": {
+        "title": "remove() function"
+      },
+      "hub.removepath": {
+        "title": "removePath() function"
+      },
+      "hub.root": {
+        "title": "root() function"
       },
       "hub.threadid._constructor_": {
         "title": "ThreadID.(constructor)"
