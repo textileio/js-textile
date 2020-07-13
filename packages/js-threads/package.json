@@ -12,9 +12,7 @@
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
     "compile": "lerna run compile",
-    "build": "lerna run build",
-    "build:node": "lerna run build:node --stream",
-    "build:browser": "lerna run build:browser --stream",
+    "build": "lerna run build --stream",
     "lint": "npm run lint:check -- --fix",
     "lint:check": "eslint --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",
@@ -60,8 +58,6 @@
     "typedoc-plugin-markdown": "^2.3.1",
     "typescript": "^3.7.2",
     "typescript-docs-verifier": "^1.1.2",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
     "ws": "^7.2.3"
   },
   "husky": {
@@ -69,5 +65,8 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
 }

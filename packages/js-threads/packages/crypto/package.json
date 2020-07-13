@@ -12,13 +12,10 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prepare": "npm run build:node",
+    "prepare": "npm run build && npm run build:protos",
     "prebuild": "npm run clean",
-    "build": "npm run build:protos && npm run build:node && npm run build:browser",
-    "build:node": "npm run compile",
+    "build": "tsc -b tsconfig.json",
     "build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
-    "build:browser": "webpack --mode production --config ../../webpack.config.js",
-    "compile": "tsc -b tsconfig.json",
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "license": "MIT",

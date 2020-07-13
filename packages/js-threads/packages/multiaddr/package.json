@@ -13,12 +13,9 @@
   "license": "MIT",
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prepare": "npm run build:node",
+    "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "npm run build:node && npm run build:browser",
-    "build:node": "npm run compile",
-    "build:browser": "webpack --mode production --config ../../webpack.config.js",
-    "compile": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json",
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "repository": "github:textileio/js-threads",

@@ -9,6 +9,9 @@ module.exports = {
       },
     ],
   },
+  performance: {
+    hints: false,
+  },
   resolveLoader: {
     modules: ['../../node_modules'],
   },

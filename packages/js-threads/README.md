@@ -43,27 +43,9 @@ If you think you've found a bug in Threads, please file a Github issue. Take a l
 
 Textile's Threads Protocol and Database provides an alternative architecture for data on the web. Threads aims to help power a new generation of web technologies by combining a novel use of event sourcing, Interplanetary Linked Data (IPLD), and access control to provide a distributed, scalable, and flexible database solution for decentralized applications. Threads is backed by a great deal of research and experience, and provides protocols for securely storing and sharing content-addressable data (on IPFS), with tooling to help standardize data creation and dissemination.
 
-The primary public API to Threads is the [Threads Database](./packages/database). The Database aims to provide:
-
-- [x] Document & [datastore compliant](https://github.com/ipfs/js-datastore-level) key-value store
-- [x] Familiar APIs (think [mongodb/mongoose](https://mongoosejs.com)!)
-- [x] [Offline](http://offlinefirst.org) and/or [local-first](https://www.inkandswitch.com/local-first.html) storage and remote/peer sync
-- [x] User/developer authentication & cloud support
-- [ ] Multiple transport options (pubsub, direct p2p, IPNS, etc)
-- [ ] Cryptographically-driven access control
-- [x] Encryption and IPLD encoding
-- [x] Configurable codecs (i.e., handling conflicts via [CRDTs](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) etc)
-- [ ] Fast indexes and queries
-- [x] Multiple API entry points and levels (low- and high-level APIs)
-- [ ] Direct integration with common frameworks (e.g., React, Vue, Electron, etc)
-
-Plus more features on the way!
-
 Want something specific? Take a look at our [contributor guide](#contributing) for details on how to ask for features, or better yet, submit a PR yourself :wink:!
 
 ### Overview
-
-
 
 ## Install
 
@@ -110,11 +92,61 @@ npm run test:node
 npm run test:browser
 ```
 
-Similarly, you can compile the Typescript-based sub-packages to Javascript all at once. This will also build the browser bundles via webpack:
+Similarly, you can compile the Typescript-based sub-packages to Javascript all at once.
 
 ```bash
 npm run build
 ```
+
+### Browsers
+
+If you'd like to build browser bundles (say, using webpack), you may want to use something like the following in your `webpack.config.js`. Note however, that if you are working with a framework such as React or Angular, you might be better off letting that bundler handle the tree-shaking etc for you!
+
+```javascript
+const path = require('path')
+
+module.exports = {
+  entry: './src/index.ts',
+  devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolveLoader: {
+    modules: ['../../node_modules'],
+  },
+  resolve: {
+    modules: ['./node_modules'],
+    ['.tsx', '.ts', '.js', 'json'],
+    symlinks: false,
+  output: {
+    filename: './[name].js',
+    path: path.resolve(process.cwd(), 'dist'),
+    library: 'threads',
+    libraryTarget: 'var',
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+    minimize: true,
+  },
+}
+```
+
+The the bundle(s) can be built with:
+
+```bash
+cd packages/threads
+webpack --mode production --config webpack.config.js
+```
+
+### Typescript
 
 This project also uses incremental Typescript builds, so to take advantage of that (rather than building from scratch each time) use `compile`. You should notice significant speed-ups in your build process:
 
@@ -138,7 +170,7 @@ See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other
 
 ## API
 
-See [https://textileio.github.io/js-threads](https://textileio.github.io/js-threads), which includes the technical API docs for all subpackages. 
+See [https://textileio.github.io/js-threads](https://textileio.github.io/js-threads), which includes the technical API docs for all subpackages.
 
 ## Maintainers
 
