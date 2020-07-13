@@ -65,6 +65,7 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-hub/docs/hub.buckets">Buckets</a></td><td>Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsgrpcclient">BucketsGrpcClient</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.client">Client</a></td><td>Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile's 'DB' API, which is defined here: <a href="https://github.com/textileio/go-threads/blob/master/api/pb/api.proto">https://github.com/textileio/go-threads/blob/master/api/pb/api.proto</a>.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.threadid">ThreadID</a></td><td>ThreadID represents a self-describing Thread identifier.<!-- -->It is formed by a Version, a Variant, and a random number of a given length.</td></tr>
 </tbody>
@@ -84,6 +85,21 @@
 <tr><th>Function</th><th>Description</th></tr>
 </thead>
 <tbody>
+<tr><td><a href="/js-hub/docs/hub.bucketsarchive">bucketsArchive(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archive creates a Filecoin bucket archive via Powergate.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsarchiveinfo">bucketsArchiveInfo(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsarchivestatus">bucketsArchiveStatus(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsarchivewatch">bucketsArchiveWatch(api, key, callback, ctx)</a></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsinit">bucketsInit(api, name, isPrivate, ctx)</a></td><td>Initializes a new bucket.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketslinks">bucketsLinks(api, key, ctx)</a></td><td>Returns a list of bucket links.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketslist">bucketsList(api, ctx)</a></td><td>Returns a list of all bucket roots.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketslistipfspath">bucketsListIpfsPath(api, path, ctx)</a></td><td>listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketslistpath">bucketsListPath(api, key, path, ctx)</a></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketspullipfspath">bucketsPullIpfsPath(api, path, opts, ctx)</a></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketspullpath">bucketsPullPath(api, key, path, opts, ctx)</a></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketspushpath">bucketsPushPath(api, key, path, input, opts, ctx)</a></td><td>Pushes a file to a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsremove">bucketsRemove(api, key, ctx)</a></td><td>Removes an entire bucket. Files and directories will be unpinned.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsremovepath">bucketsRemovePath(api, key, path, ctx)</a></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketsroot">bucketsRoot(api, key, ctx)</a></td><td>Returns the bucket root CID</td></tr>
 <tr><td><a href="/js-hub/docs/hub.createapisig">createAPISig(secret, date)</a></td><td>createAPISig generates an authorization signature and message only.<!-- -->This function should NOT be used client-side, as it requires a key secret.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.createuserauth">createUserAuth(key, secret, date, token)</a></td><td>Generate a UserAuth containing API key, signature, and message.<!-- -->The gRPC APIs will throw (or return an authorization error) if the message date has passed. This function should NOT be used client-side, as it requires a key secret. The result does not contain the secret and therefor CAN be used client side.</td></tr>
 </tbody>

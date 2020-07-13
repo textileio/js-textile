@@ -59,8 +59,9 @@
 <h2><a class="anchor" aria-hidden="true" id="buckets-class"></a><a href="#buckets-class" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Buckets class</h2>
 <p>Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.</p>
 <p><b>Signature:</b></p>
-<pre><code class="hljs css language-javascript"><span class="hljs-keyword">export</span> declare <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Buckets</span> 
+<pre><code class="hljs css language-javascript"><span class="hljs-keyword">export</span> declare <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Buckets</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BucketsGrpcClient</span> 
 </span></code></pre>
+<p><b>Extends:</b> <a href="/js-hub/docs/hub.bucketsgrpcclient">BucketsGrpcClient</a></p>
 <h2><a class="anchor" aria-hidden="true" id="example-1"></a><a href="#example-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example 1</h2>
 <p>Initialize a the Bucket API</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
@@ -81,52 +82,33 @@
 }
 
 </code></pre>
-<h2><a class="anchor" aria-hidden="true" id="constructors"></a><a href="#constructors" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Constructors</h2>
-<table>
-<thead>
-<tr><th>Constructor</th><th>Modifiers</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="/js-hub/docs/hub.buckets._constructor_">(constructor)(context)</a></td><td></td><td>Creates a new gRPC client instance for accessing the Textile Buckets API.</td></tr>
-</tbody>
-</table>
-<h2><a class="anchor" aria-hidden="true" id="properties"></a><a href="#properties" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Properties</h2>
-<table>
-<thead>
-<tr><th>Property</th><th>Modifiers</th><th>Type</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="/js-hub/docs/hub.buckets.context">context</a></td><td></td><td>ContextInterface</td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.rpcoptions">rpcOptions</a></td><td></td><td>grpc.RpcOptions</td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.servicehost">serviceHost</a></td><td></td><td>string</td><td></td></tr>
-</tbody>
-</table>
 <h2><a class="anchor" aria-hidden="true" id="methods"></a><a href="#methods" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Methods</h2>
 <table>
 <thead>
 <tr><th>Method</th><th>Modifiers</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.buckets.archive">archive(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archive creates a Filecoin bucket archive via Powergate.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.archiveinfo">archiveInfo(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.archivestatus">archiveStatus(key, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.archivewatch">archiveWatch(key, callback, ctx)</a></td><td></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.fromclient">fromClient(client)</a></td><td><code>static</code></td><td>Create a new gRPC client Bucket instance from a preconfigured threads client</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.gettoken">getToken(identity, ctx)</a></td><td></td><td>Obtain a token for interacting with the remote API.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.init">init(name, isPrivate, ctx)</a></td><td></td><td>Initializes a new bucket.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.links">links(key, ctx)</a></td><td></td><td>Returns a list of bucket links.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.list">list(ctx)</a></td><td></td><td>Returns a list of all bucket roots.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.listipfspath">listIpfsPath(path, ctx)</a></td><td></td><td>listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.listpath">listPath(key, path, ctx)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archive">archive(key)</a></td><td></td><td><b><i>(BETA)</i></b> archive creates a Filecoin bucket archive via Powergate.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archiveinfo">archiveInfo(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archivestatus">archiveStatus(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archivewatch">archiveWatch(key, callback)</a></td><td></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.gettoken">getToken(identity)</a></td><td></td><td>Obtain a token for interacting with the remote API.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.gettokenchallenge">getTokenChallenge(publicKey, callback)</a></td><td></td><td>Obtain a token for interacting with the remote API.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.init">init(name, isPrivate)</a></td><td></td><td>Initializes a new bucket.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.links">links(key)</a></td><td></td><td>Returns a list of bucket links.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.list">list()</a></td><td></td><td>Returns a list of all bucket roots.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.listipfspath">listIpfsPath(path)</a></td><td></td><td>listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.listpath">listPath(key, path)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.open">open(name, threadName, isPrivate, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID (init not required)</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.pullipfspath">pullIpfsPath(path, opts, ctx)</a></td><td></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, opts, ctx)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.pushpath">pushPath(key, path, input, opts, ctx)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.remove">remove(key, ctx)</a></td><td></td><td>Removes an entire bucket. Files and directories will be unpinned.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.removepath">removePath(key, path, ctx)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.root">root(key, ctx)</a></td><td></td><td>Returns the bucket root CID</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pullipfspath">pullIpfsPath(path, opts)</a></td><td></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, opts)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pushpath">pushPath(key, path, input, opts)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.remove">remove(key)</a></td><td></td><td>Removes an entire bucket. Files and directories will be unpinned.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.removepath">removePath(key, path)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.root">root(key)</a></td><td></td><td>Returns the bucket root CID</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withkeyinfo">withKeyInfo(key, host, debug)</a></td><td><code>static</code></td><td>Create a new gRPC client Bucket instance from a supplied key and secret</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.withthread">withThread(threadID)</a></td><td></td><td>Scopes to a Thread by ID</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withuserauth">withUserAuth(auth, host, debug)</a></td><td><code>static</code></td><td>Creates a new gRPC client instance for accessing the Textile Buckets API.</td></tr>
 </tbody>
 </table>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/js-hub/docs/hub"><span class="arrow-prev">← </span><span>Package Overview</span></a><a class="docs-next button" href="/js-hub/docs/hub.buckets.withuserauth"><span class="function-name-prevnext">Buckets.withUserAuth() method</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#buckets-class">Buckets class</a></li><li><a href="#example-1">Example 1</a></li><li><a href="#example-2">Example 2</a></li><li><a href="#constructors">Constructors</a></li><li><a href="#properties">Properties</a></li><li><a href="#methods">Methods</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/js-hub/" class="nav-home"><img src="/js-hub/img/hex.svg" alt="Hub JS Package" width="66" height="58"/></a><div><h5>Docs</h5><a href="/js-hub/docs/index">Getting Started</a><a href="/js-hub/docs/hub.client">ThreadDB</a><a href="/js-hub/docs/hub.buckets">Buckets</a></div><div><h5>Resources</h5><a href="https://docs.textile.io/" target="_blank" rel="noreferrer noopener">All Documentation</a><a href="https://slack.textile.io/" target="_blank" rel="noreferrer noopener">Project Slack</a><a href="https://blog.textile.io/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/textileio">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/textileio/js-threads/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/textileio" class="twitter-follow-button">Follow @textileio</a></div></div></section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/js-hub/docs/hub"><span class="arrow-prev">← </span><span>Package Overview</span></a><a class="docs-next button" href="/js-hub/docs/hub.buckets.withuserauth"><span class="function-name-prevnext">Buckets.withUserAuth() method</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#buckets-class">Buckets class</a></li><li><a href="#example-1">Example 1</a></li><li><a href="#example-2">Example 2</a></li><li><a href="#methods">Methods</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/js-hub/" class="nav-home"><img src="/js-hub/img/hex.svg" alt="Hub JS Package" width="66" height="58"/></a><div><h5>Docs</h5><a href="/js-hub/docs/index">Getting Started</a><a href="/js-hub/docs/hub.client">ThreadDB</a><a href="/js-hub/docs/hub.buckets">Buckets</a></div><div><h5>Resources</h5><a href="https://docs.textile.io/" target="_blank" rel="noreferrer noopener">All Documentation</a><a href="https://slack.textile.io/" target="_blank" rel="noreferrer noopener">Project Slack</a><a href="https://blog.textile.io/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/textileio">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/textileio/js-threads/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/textileio" class="twitter-follow-button">Follow @textileio</a></div></div></section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
