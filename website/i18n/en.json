@@ -5,23 +5,44 @@
     "previous": "Previous",
     "tagline": "A client for communicating with Textile Hub.",
     "docs": {
-      "classes/_packages_buckets_src_buckets_.buckets": {
-        "title": "classes/_packages_buckets_src_buckets_.buckets"
-      },
-      "globals": {
-        "title": "globals"
-      },
       "hub.apisig": {
         "title": "APISig type"
+      },
+      "hub.archive": {
+        "title": "archive() function"
+      },
+      "hub.archiveinfo": {
+        "title": "archiveInfo() function"
+      },
+      "hub.archivestatus": {
+        "title": "archiveStatus() function"
+      },
+      "hub.archivewatch": {
+        "title": "archiveWatch() function"
       },
       "hub.buckets._constructor_": {
         "title": "Buckets.(constructor)"
       },
+      "hub.buckets.archive": {
+        "title": "Buckets.archive() method"
+      },
+      "hub.buckets.archiveinfo": {
+        "title": "Buckets.archiveInfo() method"
+      },
+      "hub.buckets.archivestatus": {
+        "title": "Buckets.archiveStatus() method"
+      },
+      "hub.buckets.archivewatch": {
+        "title": "Buckets.archiveWatch() method"
+      },
       "hub.buckets.context": {
         "title": "Buckets.context property"
       },
-      "hub.buckets.fromclient": {
-        "title": "Buckets.fromClient() method"
+      "hub.buckets.gettoken": {
+        "title": "Buckets.getToken() method"
+      },
+      "hub.buckets.gettokenchallenge": {
+        "title": "Buckets.getTokenChallenge() method"
       },
       "hub.buckets.init": {
         "title": "Buckets.init() method"
@@ -32,6 +53,9 @@
       "hub.buckets.list": {
         "title": "Buckets.list() method"
       },
+      "hub.buckets.listipfspath": {
+        "title": "Buckets.listIpfsPath() method"
+      },
       "hub.buckets.listpath": {
         "title": "Buckets.listPath() method"
       },
@@ -40,6 +64,9 @@
       },
       "hub.buckets.open": {
         "title": "Buckets.open() method"
+      },
+      "hub.buckets.pullipfspath": {
+        "title": "Buckets.pullIpfsPath() method"
       },
       "hub.buckets.pullpath": {
         "title": "Buckets.pullPath() method"
@@ -53,6 +80,9 @@
       "hub.buckets.removepath": {
         "title": "Buckets.removePath() method"
       },
+      "hub.buckets.root": {
+        "title": "Buckets.root() method"
+      },
       "hub.buckets.rpcoptions": {
         "title": "Buckets.rpcOptions property"
       },
@@ -62,8 +92,74 @@
       "hub.buckets.withkeyinfo": {
         "title": "Buckets.withKeyInfo() method"
       },
+      "hub.buckets.withthread": {
+        "title": "Buckets.withThread() method"
+      },
       "hub.buckets.withuserauth": {
         "title": "Buckets.withUserAuth() method"
+      },
+      "hub.bucketsarchive": {
+        "title": "bucketsArchive() function"
+      },
+      "hub.bucketsarchiveinfo": {
+        "title": "bucketsArchiveInfo() function"
+      },
+      "hub.bucketsarchivestatus": {
+        "title": "bucketsArchiveStatus() function"
+      },
+      "hub.bucketsarchivewatch": {
+        "title": "bucketsArchiveWatch() function"
+      },
+      "hub.bucketsgrpcclient._constructor_": {
+        "title": "BucketsGrpcClient.(constructor)"
+      },
+      "hub.bucketsgrpcclient.context": {
+        "title": "BucketsGrpcClient.context property"
+      },
+      "hub.bucketsgrpcclient": {
+        "title": "BucketsGrpcClient class"
+      },
+      "hub.bucketsgrpcclient.rpcoptions": {
+        "title": "BucketsGrpcClient.rpcOptions property"
+      },
+      "hub.bucketsgrpcclient.servicehost": {
+        "title": "BucketsGrpcClient.serviceHost property"
+      },
+      "hub.bucketsgrpcclient.unary": {
+        "title": "BucketsGrpcClient.unary() method"
+      },
+      "hub.bucketsinit": {
+        "title": "bucketsInit() function"
+      },
+      "hub.bucketslinks": {
+        "title": "bucketsLinks() function"
+      },
+      "hub.bucketslist": {
+        "title": "bucketsList() function"
+      },
+      "hub.bucketslistipfspath": {
+        "title": "bucketsListIpfsPath() function"
+      },
+      "hub.bucketslistpath": {
+        "title": "bucketsListPath() function"
+      },
+      "hub.bucketspullipfspath": {
+        "title": "bucketsPullIpfsPath() function"
+      },
+      "hub.bucketspullpath": {
+        "title": "bucketsPullPath() function"
+      },
+      "hub.bucketspushpath": {
+        "title": "bucketsPushPath() function"
+      },
+      "hub.bucketsremove": {
+        "title": "bucketsRemove() function"
+      },
+      "hub.bucketsremovepath": {
+        "title": "bucketsRemovePath() function"
+      },
+      "hub.bucketsroot": {
+        "title": "bucketsRoot() function"
       },
       "hub.client._constructor_": {
         "title": "Client.(constructor)"
@@ -167,11 +263,122 @@
       "hub.expirationerror": {
         "title": "expirationError variable"
       },
+      "hub.grpcbucketapi._constructor_": {
+        "title": "GrpcBucketApi.(constructor)"
+      },
+      "hub.grpcbucketapi.context": {
+        "title": "GrpcBucketApi.context property"
+      },
+      "hub.grpcbucketapi": {
+        "title": "GrpcBucketApi class"
+      },
+      "hub.grpcbucketapi.rpcoptions": {
+        "title": "GrpcBucketApi.rpcOptions property"
+      },
+      "hub.grpcbucketapi.servicehost": {
+        "title": "GrpcBucketApi.serviceHost property"
+      },
+      "hub.grpcbucketapi.unary": {
+        "title": "GrpcBucketApi.unary() method"
+      },
+      "hub.grpcclient._constructor_": {
+        "title": "GrpcClient.(constructor)"
+      },
+      "hub.grpcclient.archive": {
+        "title": "GrpcClient.archive() method"
+      },
+      "hub.grpcclient.archiveinfo": {
+        "title": "GrpcClient.archiveInfo() method"
+      },
+      "hub.grpcclient.archivestatus": {
+        "title": "GrpcClient.archiveStatus() method"
+      },
+      "hub.grpcclient.archivewatch": {
+        "title": "GrpcClient.archiveWatch() method"
+      },
+      "hub.grpcclient.context": {
+        "title": "GrpcClient.context property"
+      },
+      "hub.grpcclient.init": {
+        "title": "GrpcClient.init() method"
+      },
+      "hub.grpcclient.links": {
+        "title": "GrpcClient.links() method"
+      },
+      "hub.grpcclient.list": {
+        "title": "GrpcClient.list() method"
+      },
+      "hub.grpcclient.listipfspath": {
+        "title": "GrpcClient.listIpfsPath() method"
+      },
+      "hub.grpcclient.listpath": {
+        "title": "GrpcClient.listPath() method"
+      },
+      "hub.grpcclient": {
+        "title": "GrpcClient class"
+      },
+      "hub.grpcclient.pullipfspath": {
+        "title": "GrpcClient.pullIpfsPath() method"
+      },
+      "hub.grpcclient.pullpath": {
+        "title": "GrpcClient.pullPath() method"
+      },
+      "hub.grpcclient.pushpath": {
+        "title": "GrpcClient.pushPath() method"
+      },
+      "hub.grpcclient.remove": {
+        "title": "GrpcClient.remove() method"
+      },
+      "hub.grpcclient.removepath": {
+        "title": "GrpcClient.removePath() method"
+      },
+      "hub.grpcclient.root": {
+        "title": "GrpcClient.root() method"
+      },
+      "hub.grpcclient.rpcoptions": {
+        "title": "GrpcClient.rpcOptions property"
+      },
+      "hub.grpcclient.servicehost": {
+        "title": "GrpcClient.serviceHost property"
+      },
+      "hub.grpcclient.withkeyinfo": {
+        "title": "GrpcClient.withKeyInfo() method"
+      },
+      "hub.grpcclient.withthread": {
+        "title": "GrpcClient.withThread() method"
+      },
+      "hub.grpcclient.withuserauth": {
+        "title": "GrpcClient.withUserAuth() method"
+      },
+      "hub.init": {
+        "title": "init() function"
+      },
       "hub.keyinfo": {
         "title": "KeyInfo type"
       },
+      "hub.links": {
+        "title": "links() function"
+      },
+      "hub.list": {
+        "title": "list() function"
+      },
+      "hub.listipfspath": {
+        "title": "listIpfsPath() function"
+      },
+      "hub.listpath": {
+        "title": "listPath() function"
+      },
       "hub": {
         "title": "Package Overview"
+      },
+      "hub.pullipfspath": {
+        "title": "pullIpfsPath() function"
+      },
+      "hub.pullpath": {
+        "title": "pullPath() function"
+      },
+      "hub.pushpath": {
+        "title": "pushPath() function"
       },
       "hub.pushpathresult": {
         "title": "PushPathResult interface"
@@ -181,6 +388,15 @@
       },
       "hub.pushpathresult.root": {
         "title": "PushPathResult.root property"
+      },
+      "hub.remove": {
+        "title": "remove() function"
+      },
+      "hub.removepath": {
+        "title": "removePath() function"
+      },
+      "hub.root": {
+        "title": "root() function"
       },
       "hub.threadid._constructor_": {
         "title": "ThreadID.(constructor)"
@@ -232,39 +448,6 @@
       },
       "index": {
         "title": "Introduction"
-      },
-      "interfaces/_packages_buckets_src_buckets_.pushpathresult": {
-        "title": "interfaces/_packages_buckets_src_buckets_.pushpathresult"
-      },
-      "interfaces/_packages_buckets_src_normalize_.file": {
-        "title": "interfaces/_packages_buckets_src_normalize_.file"
-      },
-      "interfaces/_packages_hub_src_users_._threads_client_.client": {
-        "title": "interfaces/_packages_hub_src_users_._threads_client_.client"
-      },
-      "modules/_packages_buckets_src_buckets_": {
-        "title": "modules/_packages_buckets_src_buckets_"
-      },
-      "modules/_packages_buckets_src_index_": {
-        "title": "modules/_packages_buckets_src_index_"
-      },
-      "modules/_packages_buckets_src_normalize_": {
-        "title": "modules/_packages_buckets_src_normalize_"
-      },
-      "modules/_packages_hub_src_index_": {
-        "title": "modules/_packages_hub_src_index_"
-      },
-      "modules/_packages_hub_src_users_._threads_client_": {
-        "title": "modules/_packages_hub_src_users_._threads_client_"
-      },
-      "modules/_packages_hub_src_users_": {
-        "title": "modules/_packages_hub_src_users_"
-      },
-      "modules/_scripts_tdocp_": {
-        "title": "modules/_scripts_tdocp_"
-      },
-      "README": {
-        "title": "README"
       }
     },
     "links": {},
