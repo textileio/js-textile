@@ -741,14 +741,18 @@ export class Client {
       req.addFilters(requestFilter)
     }
 
+    const decoder = new TextDecoder()
+
     const client = grpc.client<pb.ListenRequest, pb.ListenReply, APIListen>(API.Listen, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
     })
     client.onMessage((message: pb.ListenReply) => {
-      const ret: Instance<T> = {
-        instance: JSON.parse(Buffer.from(message.getInstance_asU8()).toString()),
+      const str = decoder.decode(message.getInstance_asU8())
+      let ret: Instance<T> | undefined
+      if (str !== '') {
+        ret = { instance: JSON.parse(str) }
       }
       nextTick(() => callback(ret))
     })

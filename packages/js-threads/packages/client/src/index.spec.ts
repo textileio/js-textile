@@ -162,7 +162,7 @@ describe('Client', function () {
         await client.getDBInfo(id)
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err.toString()).to.include('db not found')
+        expect(err.toString()).to.include('thread not found')
       }
     })
   })
@@ -394,9 +394,41 @@ describe('Client', function () {
         person.age = 40
         client.create(dbID, 'Person', [person])
         client.create(dbID, 'Person', [person])
-      }, 1000)
+      }, 500)
       listener.close = () => closer.close()
-    }).timeout(15000) // Make sure our test doesn't timeout
+    }).timeout(5000) // Make sure our test doesn't timeout
+
+    it('should handle deletes.', (done) => {
+      const callback = (reply: any, err?: Error) => {
+        if (err) {
+          throw err
+        }
+        expect(reply).to.be.undefined
+        if (listener.close) {
+          listener.close()
+        }
+        done()
+      }
+      const closer = client.listen<Person>(
+        dbID,
+        [
+          {
+            collectionName: 'Person',
+            actionTypes: ['DELETE'],
+          },
+        ],
+        callback,
+      )
+      setTimeout(() => {
+        const person = createPerson()
+        client.create(dbID, 'Person', [person]).then((ids) => {
+          setTimeout(() => {
+            client.delete(dbID, 'Person', ids)
+          }, 500)
+        })
+      }, 500)
+      listener.close = () => closer.close()
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
   describe('Query', () => {
     before(async () => {
