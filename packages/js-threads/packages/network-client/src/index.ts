@@ -23,7 +23,7 @@ import { ContextInterface, Context } from '@textile/context'
 import * as pb from '@textile/threads-net-grpc/threadsnet_pb'
 import { API, APIGetToken, APISubscribe } from '@textile/threads-net-grpc/threadsnet_pb_service'
 import { recordFromProto, recordToProto } from '@textile/threads-encoding'
-import nextTick from 'next-tick'
+import { WebsocketTransport } from '@textile/grpc-transport'
 
 const logger = log.getLogger('network-client')
 
@@ -88,15 +88,17 @@ export class Client implements Network {
   /**
    * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
+   * @param debug Whether to run in debug mode. Defaults to false.
    */
-  constructor(public context: ContextInterface = new Context('http://127.0.0.1:6007')) {
+  constructor(
+    public context: ContextInterface = new Context('http://127.0.0.1:6007'),
+    debug = false,
+  ) {
     this.serviceHost = context.host
     this.rpcOptions = {
-      transport: context.transport,
-      debug: context.debug,
+      transport: WebsocketTransport(),
+      debug,
     }
-    // If we have a default here, use it. Otherwise, rely on specific calls
-    this.rpcOptions.transport && grpc.setDefaultTransport(this.rpcOptions.transport)
   }
 
   /**

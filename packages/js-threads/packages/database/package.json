@@ -81,12 +81,10 @@
     "@types/url-parse": "^1.4.3",
     "browser-or-node": "^1.2.1",
     "delay": "^4.3.0",
-    "isomorphic-ws": "^4.0.1",
     "level": "^6.0.1",
     "rimraf": "^3.0.0",
     "sinon": "^9.0.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.1"
+    "typescript": "^3.7.2"
   },
   "gitHead": "331b99b7d5dbae032e5c071a0b9f6141d757b6f1"
 }

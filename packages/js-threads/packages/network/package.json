@@ -53,11 +53,9 @@
     "@types/datastore-core": "^0.7.0",
     "@types/interface-datastore": "^0.8.0",
     "@types/next-tick": "^1.0.0",
-    "isomorphic-ws": "^4.0.1",
     "next-tick": "^1.1.0",
     "rimraf": "^3.0.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.1"
+    "typescript": "^3.7.2"
   },
   "gitHead": "331b99b7d5dbae032e5c071a0b9f6141d757b6f1"
 }

@@ -23,13 +23,13 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.6.1",
+    "@textile/grpc-transport": "^0.0.0",
     "@textile/threads-core": "^0.1.30",
     "@textile/threads-crypto": "^0.1.1",
     "@textile/threads-encoding": "^0.1.30",
     "@textile/threads-net-grpc": "^0.1.21",
     "cids": "^0.8.0",
-    "loglevel": "^1.6.6",
-    "next-tick": "^1.1.0"
+    "loglevel": "^1.6.6"
   },
   "references": [
     {
@@ -43,15 +43,15 @@
     },
     {
       "path": "../crypto"
+    },
+    {
+      "path": "../transport"
     }
   ],
   "devDependencies": {
-    "@types/next-tick": "^1.0.0",
     "@types/node": "^14.0.1",
-    "isomorphic-ws": "^4.0.1",
     "rimraf": "^3.0.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.1"
+    "typescript": "^3.7.2"
   },
   "gitHead": "331b99b7d5dbae032e5c071a0b9f6141d757b6f1"
 }

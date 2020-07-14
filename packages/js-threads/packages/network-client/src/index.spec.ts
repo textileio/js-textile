@@ -1,7 +1,3 @@
-/* eslint-disable import/first */
-// Some hackery to get WebSocket in the global namespace on nodejs
-;(global as any).WebSocket = require('isomorphic-ws')
-
 import { randomBytes, keys } from '@textile/threads-crypto'
 import { expect } from 'chai'
 import {
@@ -65,7 +61,7 @@ describe('Network Client...', () => {
       const client2 = new Client(new Context(proxyAddr2))
       // Create temporary identity
       const identity = await Libp2pCryptoIdentity.fromRandom()
-      const token2 = await client2.getToken(identity)
+      await client2.getToken(identity)
       try {
         const info2 = await client2.addThread(addr, { threadKey: info1.key })
         expect(info2.id.toString()).to.equal(info1.id.toString())

@@ -59,16 +59,6 @@ export interface ContextKeys {
   host?: HostString
 
   /**
-   * The transport to use for gRPC calls. Defaults to web-sockets.
-   */
-  transport?: grpc.TransportFactory
-
-  /**
-   * Whether to enable debugging output during gRPC calls.
-   */
-  debug?: boolean
-
-  /**
    * ContextKeys may also contain any number of additional custom keys.
    */
   [key: string]: any
@@ -84,14 +74,6 @@ export interface ContextInterface {
    * The service host address/url. Defaults to https://api.textile.io.
    */
   host: HostString
-  /**
-   * Whether to enable debugging output during gRPC calls.
-   */
-  debug: boolean
-  /**
-   * The transport to use for gRPC calls. Defaults to web-sockets.
-   */
-  transport: grpc.TransportFactory
   /**
    * Set the session key. Used for various session contexts.
    */
@@ -163,26 +145,13 @@ export class Context implements ContextInterface {
   /**
    * Construct a new Context object.
    * @param host The remote gRPC host. This input exists to comply with the Config interface.
-   * @param debug For testing and debugging purposes.
-   * @param transport To comply with Config interface. Should be left as websocket transport.
    */
-  constructor(
-    host: HostString = defaultHost,
-    debug = false,
-    transport = grpc.WebsocketTransport(),
-  ) {
+  constructor(host: HostString = defaultHost) {
     this._context['host'] = host
-    this._context['transport'] = transport
-    this._context['debug'] = debug
   }
 
-  static fromUserAuth(
-    auth: UserAuth,
-    host: HostString = defaultHost,
-    debug = false,
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
-  ) {
-    const ctx = new Context(host, debug, transport)
+  static fromUserAuth(auth: UserAuth, host: HostString = defaultHost) {
+    const ctx = new Context(host)
     const { key, token, ...sig } = auth
     return ctx.withAPIKey(key).withAPISig(sig).withToken(token)
   }
@@ -190,10 +159,8 @@ export class Context implements ContextInterface {
   static fromUserAuthCallback(
     authCallback: () => Promise<UserAuth>,
     host: HostString = defaultHost,
-    debug = false,
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
   ) {
-    const ctx = new Context(host, debug, transport)
+    const ctx = new Context(host)
     // @todo: Should we now callback right away?
     ctx.authCallback = authCallback
     return ctx
@@ -201,14 +168,6 @@ export class Context implements ContextInterface {
 
   get host() {
     return this._context['host']
-  }
-
-  get transport() {
-    return this._context['transport']
-  }
-
-  get debug() {
-    return this._context['debug']
   }
 
   set(key: keyof ContextKeys, value?: any) {
@@ -314,9 +273,7 @@ export class Context implements ContextInterface {
    * @see toMetadata for an alternative for gRPC clients that supports auto-renewal.
    */
   toJSON() {
-    // Strip out transport
-    // @todo: Phase out transport out entirely
-    const { transport, ...json } = this._context
+    const { ...json } = this._context
     // If we're expired, throw...
     if (this.isExpired) {
       throw expirationError
@@ -345,19 +302,10 @@ export class Context implements ContextInterface {
    * Import various ContextInterface API properties from JSON.
    * @param json The JSON object.
    * @param host Optional host string.
-   * @param debug Optional debug setting.
-   * @param transport Optional transport option.
    */
-  static fromJSON(
-    json: ContextKeys,
-    host: HostString = defaultHost,
-    debug = false,
-    transport: grpc.TransportFactory = grpc.WebsocketTransport(),
-  ) {
+  static fromJSON(json: ContextKeys, host: HostString = defaultHost) {
     const newContext = { ...json }
     newContext['host'] = host
-    newContext['transport'] = transport
-    newContext['debug'] = debug
     const ctx = new Context()
     ctx._context = newContext
     return ctx

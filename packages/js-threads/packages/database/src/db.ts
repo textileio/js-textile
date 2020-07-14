@@ -148,6 +148,8 @@ export class Database implements DatabaseSettings {
   /**
    * Create a new network connected instance from a supplied user auth object.
    * @param auth The user auth object or an async callback that returns a user auth object.
+   * @param store The underlying datastore implementation to use. If a string is supplied, this is
+   * used as the default store name.
    */
   static withUserAuth(
     auth: UserAuth | (() => Promise<UserAuth>),
@@ -159,9 +161,9 @@ export class Database implements DatabaseSettings {
     const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
     const context =
       typeof auth === 'object'
-        ? Context.fromUserAuth(auth, host, debug)
-        : Context.fromUserAuthCallback(auth, host, debug)
-    const client = new Client(context)
+        ? Context.fromUserAuth(auth, host)
+        : Context.fromUserAuthCallback(auth, host)
+    const client = new Client(context, debug)
     const network = new Network(datastore, client)
     const opts: Partial<DatabaseSettings> = {
       ...options,
@@ -171,8 +173,9 @@ export class Database implements DatabaseSettings {
   }
 
   /**
-   * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
-   * @param store The underlying datastore implementation to use.
+   * @param keyInfo The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
+   * @param store The underlying datastore implementation to use. If a string is supplied, this is
+   * used as the default store name.
    * @example
    * ```typescript
    * import {KeyInfo, Database, ThreadID} from '@textile/threads'
@@ -190,9 +193,9 @@ export class Database implements DatabaseSettings {
     debug = false,
   ) {
     const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
-    const context = new Context(host, debug)
+    const context = new Context(host)
     await context.withKeyInfo(keyInfo)
-    const client = new Client(context)
+    const client = new Client(context, debug)
     const network = new Network(datastore, client)
     const opts: Partial<DatabaseSettings> = {
       ...options,

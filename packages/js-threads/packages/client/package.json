@@ -35,11 +35,15 @@
     },
     {
       "path": "../security"
+    },
+    {
+      "path": "../transport"
     }
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.6.1",
+    "@textile/grpc-transport": "^0.0.0",
     "@textile/multiaddr": "^0.0.21",
     "@textile/security": "^0.2.1",
     "@textile/threads-client-grpc": "^0.1.21",
@@ -55,10 +59,8 @@
     "@types/multibase": "^0.6.0",
     "@types/next-tick": "^1.0.0",
     "@types/to-json-schema": "^0.2.0",
-    "isomorphic-ws": "^4.0.1",
     "rimraf": "^3.0.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.3"
+    "typescript": "^3.7.2"
   },
   "gitHead": "331b99b7d5dbae032e5c071a0b9f6141d757b6f1"
 }

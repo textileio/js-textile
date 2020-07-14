@@ -55,16 +55,15 @@ Want something specific? Take a look at our [contributor guide](#contributing) f
 npm install --save @textile/threads
 ```
 
-If you are running `js-threads` in an environment that does not support [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) by default (such as Node), be sure to include it explicitly using something like the following at the top of your script or module:
+If you are running `js-threads` in an environment that does not support [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) by default (such as Node), be sure to include it explicitly by installing the `ws` module:
 
-```javascript
-// Add WebSocket to the global namespace on Node
-global.WebSocket = require('isomorphic-ws')
+```bash
+npm i ws
 ```
 
 ## Usage
 
-For an introduction to use the `Database` classe, read the [Threads Introduction here](https://docs.textile.io/threads/). Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available.
+For an introduction to use the `Database` class, read the [Threads Introduction here](https://docs.textile.io/threads/). Additionally, there are a growing list of [examples](https://github.com/textileio/js-examples) available.
 
 ## Authentication
 

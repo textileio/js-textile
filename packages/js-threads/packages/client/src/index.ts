@@ -12,6 +12,7 @@ import { ThreadID } from '@textile/threads-id'
 import toJsonSchema from 'to-json-schema'
 import { ContextInterface, Context, defaultHost } from '@textile/context'
 import { UserAuth, KeyInfo } from '@textile/security'
+import { WebsocketTransport } from '@textile/grpc-transport'
 import {
   QueryJSON,
   Instance,
@@ -68,15 +69,14 @@ export class Client {
   /**
    * Creates a new gRPC client instance for accessing the Textile Threads API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
+   * @param debug Should we run in debug mode. Defaults to false.
    */
-  constructor(public context: ContextInterface = new Context()) {
+  constructor(public context: ContextInterface = new Context(), debug = false) {
     this.serviceHost = context.host
     this.rpcOptions = {
-      transport: context.transport,
-      debug: context.debug,
+      transport: WebsocketTransport(),
+      debug,
     }
-    // If we have a default here, use it. Otherwise, rely on specific calls
-    this.rpcOptions.transport && grpc.setDefaultTransport(this.rpcOptions.transport)
   }
 
   /**
@@ -108,14 +108,16 @@ export class Client {
   ) {
     const context =
       typeof auth === 'object'
-        ? Context.fromUserAuth(auth, host, debug)
-        : Context.fromUserAuthCallback(auth, host, debug)
-    return new Client(context)
+        ? Context.fromUserAuth(auth, host)
+        : Context.fromUserAuthCallback(auth, host)
+    return new Client(context, debug)
   }
 
   /**
    * Create a new gRPC client instance from a supplied key and secret
    * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
+   * @param host The remote gRPC host to connect with. Should be left as default.
+   * @param debug Whether to run in debug mode. Defaults to false.
    * @example
    * ```typescript
    * import {KeyInfo, Client} from '@textile/threads'
@@ -126,9 +128,9 @@ export class Client {
    * ```
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const context = new Context(host, debug)
+    const context = new Context(host)
     await context.withKeyInfo(key)
-    return new Client(context)
+    return new Client(context, debug)
   }
 
   /**

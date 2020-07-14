@@ -1,7 +1,3 @@
-/* eslint-disable import/first */
-// 'Hack' to get WebSocket in the global namespace on nodejs
-;(global as any).WebSocket = require('isomorphic-ws')
-
 import path from 'path'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
