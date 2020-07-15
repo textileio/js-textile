@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-store",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -21,9 +21,9 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
-    "@types/lexicographic-integer": "^1.1.0",
     "@types/datastore-core": "^0.7.0",
     "@types/interface-datastore": "^0.8.0",
+    "@types/lexicographic-integer": "^1.1.0",
     "async-rwlock": "^1.1.1",
     "cbor-sync": "^1.0.4",
     "datastore-core": "^1.0.0",

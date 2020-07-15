@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-id",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -25,9 +25,9 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@consento/sync-randombytes": "^1.0.4",
     "@types/multibase": "^0.6.0",
     "@types/varint": "^5.0.0",
-    "@consento/sync-randombytes": "^1.0.4",
     "multibase": "^1.0.1",
     "varint": "^5.0.0"
   },
