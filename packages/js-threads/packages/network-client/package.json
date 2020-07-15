@@ -21,6 +21,7 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
+    "@types/node": "^14.0.1",
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.6.1",
     "@textile/grpc-transport": "^0.0.0",
@@ -49,7 +50,6 @@
     }
   ],
   "devDependencies": {
-    "@types/node": "^14.0.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },

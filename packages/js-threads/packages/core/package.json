@@ -32,14 +32,14 @@
     }
   ],
   "devDependencies": {
-    "@types/multiaddr": "^7.2.0",
-    "@types/node": "^14.0.5",
-    "@types/varint": "^5.0.0",
     "cids": "^0.8.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@types/multiaddr": "^7.2.0",
+    "@types/node": "^14.0.5",
+    "@types/varint": "^5.0.0",
     "@ipld/block": "^4.0.0",
     "@textile/multiaddr": "^0.0.21",
     "@textile/threads-crypto": "^0.1.1",

@@ -21,12 +21,12 @@
   },
   "repository": "github:textileio/js-threads",
   "devDependencies": {
-    "@types/multibase": "^0.6.0",
-    "@types/varint": "^5.0.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@types/multibase": "^0.6.0",
+    "@types/varint": "^5.0.0",
     "@consento/sync-randombytes": "^1.0.4",
     "multibase": "^1.0.1",
     "varint": "^5.0.0"

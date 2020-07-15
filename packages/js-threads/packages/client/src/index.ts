@@ -5,7 +5,6 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import { API, APIGetToken, APIListen } from '@textile/threads-client-grpc/threads_pb_service'
 import * as pb from '@textile/threads-client-grpc/threads_pb'
-import nextTick from 'next-tick'
 import { Identity, Libp2pCryptoIdentity, ThreadKey } from '@textile/threads-core'
 import { Multiaddr } from '@textile/multiaddr'
 import { ThreadID } from '@textile/threads-id'
@@ -756,14 +755,14 @@ export class Client {
       if (str !== '') {
         ret = { instance: JSON.parse(str) }
       }
-      nextTick(() => callback(ret))
+      callback(ret)
     })
 
     client.onEnd((status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
       if (status !== grpc.Code.OK) {
-        nextTick(() => callback(undefined, new Error(message)))
+        callback(undefined, new Error(message))
       }
-      nextTick(callback)
+      callback()
     })
 
     this.context.toMetadata().then((metadata) => {

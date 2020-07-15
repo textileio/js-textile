@@ -52,13 +52,11 @@
     "@types/google-protobuf": "^3.7.2",
     "cids": "^0.8.0",
     "google-protobuf": "^3.10.0",
-    "next-tick": "^1.1.0",
-    "to-json-schema": "^0.2.5"
+    "to-json-schema": "^0.2.5",
+    "@types/multibase": "^0.6.0",
+    "@types/to-json-schema": "^0.2.0"
   },
   "devDependencies": {
-    "@types/multibase": "^0.6.0",
-    "@types/next-tick": "^1.0.0",
-    "@types/to-json-schema": "^0.2.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },

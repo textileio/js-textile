@@ -21,6 +21,8 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
+    "@types/datastore-core": "^0.7.0",
+    "@types/interface-datastore": "^0.8.0",
     "@textile/context": "^0.6.1",
     "@textile/threads-core": "^0.1.30",
     "@textile/threads-crypto": "^0.1.1",
@@ -50,10 +52,6 @@
     }
   ],
   "devDependencies": {
-    "@types/datastore-core": "^0.7.0",
-    "@types/interface-datastore": "^0.8.0",
-    "@types/next-tick": "^1.0.0",
-    "next-tick": "^1.1.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
