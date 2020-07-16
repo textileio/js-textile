@@ -16,6 +16,7 @@ jobs:
           fetch-depth: "0"
         # pulls all tags (needed for lerna to correctly version)
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - run: git checkout master
 
       - name: Cache
         uses: actions/cache@v1
