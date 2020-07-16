@@ -28,7 +28,7 @@
     "ThreadDB": [
       {
         "type": "subcategory",
-        "label": "Client Methods",
+        "label": "Client",
         "collapse": true,
         "ids": [
           "hub.client",
@@ -60,7 +60,7 @@
       },
       {
         "type": "subcategory",
-        "label": "Database Methods",
+        "label": "Database",
         "collapse": true,
         "ids": [
           "hub.database",
