@@ -649,8 +649,12 @@
     "categories": {
       "Getting Started": "Getting Started",
       "Buckets": "Buckets",
-      "ThreadDB": "ThreadDB",
-      "Other Types & Methods": "Other Types & Methods"
+      "Threads": "Threads",
+      "Other Types & Methods": "Other Types & Methods",
+      "Client": "Client",
+      "Database": "Database",
+      "Collections": "Collections",
+      "Config": "Config"
     }
   },
   "pages-strings": {

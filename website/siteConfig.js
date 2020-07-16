@@ -82,7 +82,7 @@ const siteConfig = {
   },
   enableUpdateTime: true,
   enableUpdateBy: true,
-  docsSideNavCollapsible: true,
+  docsSideNavCollapsible: false,
 }
 
 module.exports = siteConfig
