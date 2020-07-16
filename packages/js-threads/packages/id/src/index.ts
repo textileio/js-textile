@@ -1,9 +1,15 @@
-import { encode, decode } from 'varint'
-import randomBytes from '@consento/sync-randombytes'
-import multibase, { name as Name } from 'multibase'
-import { Variant } from './variant'
+import randomBytes from "@consento/sync-randombytes"
+import multibase, { name as Name } from "multibase"
+import { decode, encode } from "varint"
 
-export { Variant }
+/**
+ * Variant denotes Thread variant. Currently only two variants are supported.
+ * @public
+ */
+export enum Variant {
+  Raw = 0x55,
+  AccessControlled = 0x70, // Supports access control lists
+}
 
 /**
  * ThreadID represents a self-describing Thread identifier.
@@ -17,7 +23,7 @@ export { Variant }
  * import { ThreadID } from '@textile/threads'
  *
  * const id = ThreadID.fromRandom()
- * 
+ *
  * console.log(id)
  * ```
  *
@@ -50,7 +56,10 @@ export class ThreadID {
    * @param variant The Thread variant to use. @see Variant
    * @param size The size of the random component to use. Defaults to 32 bytes.
    */
-  static fromRandom(variant: Variant = ThreadID.Variant.Raw, size = 32) {
+  static fromRandom(
+    variant: Variant = ThreadID.Variant.Raw,
+    size = 32
+  ): ThreadID {
     // two 8 bytes (max) numbers plus random bytes
     const bytes = Buffer.concat([
       Buffer.from(encode(ThreadID.V1)),
@@ -68,9 +77,9 @@ export class ThreadID {
    *    <version><variant><random-number>
    * @param v The input encoded Thread ID.
    */
-  static fromString(v: string | Uint8Array) {
+  static fromString(v: string | Uint8Array): ThreadID {
     if (v.length < 2) {
-      throw new Error('id too short')
+      throw new Error("id too short")
     }
     const data = multibase.decode(Buffer.from(v))
     return ThreadID.fromBytes(data)
@@ -84,7 +93,7 @@ export class ThreadID {
    * expect multibase-encoded data. fromBytes accepts the output of ID.bytes().
    * @param data The input Thread ID bytes.
    */
-  static fromBytes(data: Uint8Array) {
+  static fromBytes(data: Uint8Array): ThreadID {
     let copy = Buffer.from(data)
     const version = decode(copy)
     if (version != 1) {
@@ -93,11 +102,11 @@ export class ThreadID {
     copy = copy.slice(decode.bytes, copy.length)
     const variant = decode(copy)
     if (!(variant in ThreadID.Variant)) {
-      throw new Error('invalid variant.')
+      throw new Error("invalid variant.")
     }
     const id = copy.slice(decode.bytes, copy.length)
     if (id.length < 16) {
-      throw new Error('random component too small.')
+      throw new Error("random component too small.")
     }
     return new ThreadID(Buffer.from(data))
   }
@@ -109,12 +118,12 @@ export class ThreadID {
    */
   static getEncoding(v: string): string {
     if (v.length < 2) {
-      throw new Error('Too Short')
+      throw new Error("Too Short")
     }
     const encoding = multibase.isEncoded(v)
     // check encoding is valid
     if (encoding === false) {
-      throw new Error('Invalid Encoding')
+      throw new Error("Invalid Encoding")
     }
     return encoding
   }
@@ -164,15 +173,14 @@ export class ThreadID {
    * toString returns the (multibase encoded) string representation of an ID.
    * @param base Name of the base to use for encoding. Defaults to 'base32'.
    */
-  toString(base: Name = 'base32'): string {
+  toString(base: Name = "base32"): string {
     switch (this.version()) {
       case ThreadID.V1:
         return multibase.encode(base, this.buf).toString()
       default:
-        throw new Error('unknown ID version.')
+        throw new Error("unknown ID version.")
     }
   }
 }
 
-// eslint-disable-next-line import/no-default-export
 export default ThreadID

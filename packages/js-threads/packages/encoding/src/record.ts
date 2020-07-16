@@ -1,17 +1,17 @@
-import CID from 'cids'
-import log from 'loglevel'
 import {
   Block,
   Event,
   EventNode,
-  LogRecord,
-  RecordNode,
   Identity,
+  LogRecord,
   Public,
-} from '@textile/threads-core'
-import { Options, defaultOptions, encodeBlock, decodeBlock } from './coding'
+  RecordNode,
+} from "@textile/threads-core"
+import CID from "cids"
+import log from "loglevel"
+import { decodeBlock, defaultOptions, encodeBlock, Options } from "./coding"
 
-const logger = log.getLogger('encoding:record')
+const logger = log.getLogger("encoding:record")
 
 /**
  * EncodedRecord is a serialized version of a record that contains link data.
@@ -54,9 +54,9 @@ export interface CreateRecordConfig {
 export async function createRecord(
   data: Event,
   config: CreateRecordConfig,
-  opts: Options = defaultOptions,
-) {
-  logger.debug('creating record')
+  opts: Options = defaultOptions
+): Promise<LogRecord> {
+  logger.debug("creating record")
   const block = await data.value.cid()
   let payload = block.buffer
   const pubKey = Buffer.from(config.pubKey.bytes)
@@ -88,13 +88,13 @@ export async function createRecord(
  * RecordToProto returns a proto version of a record for transport. Nodes are sent encrypted.
  * @param rec The input record to encode as a protobuf-like object.
  */
-export function recordToProto(rec: LogRecord) {
-  logger.debug('converting log record to proto object')
+export function recordToProto(rec: LogRecord): EncodedRecord {
+  logger.debug("converting log record to proto object")
   const event = rec.block
-  const eventnode = event.value.encodeUnsafe().toString('base64')
-  const headernode = event.header.encodeUnsafe().toString('base64')
-  const bodynode = event.body.encodeUnsafe().toString('base64')
-  const recordnode = rec.value.encodeUnsafe().toString('base64')
+  const eventnode = event.value.encodeUnsafe().toString("base64")
+  const headernode = event.header.encodeUnsafe().toString("base64")
+  const bodynode = event.body.encodeUnsafe().toString("base64")
+  const recordnode = rec.value.encodeUnsafe().toString("base64")
   const record: EncodedRecord = {
     eventnode,
     headernode,
@@ -113,16 +113,16 @@ export function recordToProto(rec: LogRecord) {
 export async function recordFromProto(
   proto: EncodedRecord,
   key: Uint8Array,
-  opts: Options = defaultOptions,
-) {
-  logger.debug('converting proto object to log record')
-  const rawRecord = Buffer.from(proto.recordnode as string, 'base64')
+  opts: Options = defaultOptions
+): Promise<LogRecord> {
+  logger.debug("converting proto object to log record")
+  const rawRecord = Buffer.from(proto.recordnode as string, "base64")
   const rnode = Block.decoder<Buffer>(rawRecord, opts.codec, opts.algo)
-  const rawEvent = Buffer.from(proto.eventnode as string, 'base64')
+  const rawEvent = Buffer.from(proto.eventnode as string, "base64")
   const enode = Block.decoder<EventNode>(rawEvent, opts.codec, opts.algo)
-  const rawHeader = Buffer.from(proto.headernode as string, 'base64')
+  const rawHeader = Buffer.from(proto.headernode as string, "base64")
   const hnode = Block.decoder<Uint8Array>(rawHeader, opts.codec, opts.algo)
-  const rawBody = Buffer.from(proto.bodynode as string, 'base64')
+  const rawBody = Buffer.from(proto.bodynode as string, "base64")
   const body = Block.decoder<Uint8Array>(rawBody, opts.codec, opts.algo)
   const decoded = await decodeBlock(rnode, key)
   const robj = decoded.decode()

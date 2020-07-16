@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { expect } from 'chai'
-import { MemoryDatastore } from 'interface-datastore'
-import { LogID, ThreadID } from '@textile/threads-core'
-import { keys, PrivateKey } from '@textile/threads-crypto'
-import { KeyBook } from './keybook'
+import { LogID, ThreadID } from "@textile/threads-core"
+import { keys, PrivateKey } from "@textile/threads-crypto"
+import { expect } from "chai"
+import { MemoryDatastore } from "interface-datastore"
+import { KeyBook } from "./keybook"
 
 let kb: KeyBook
 const tid: ThreadID = ThreadID.fromRandom(0, 24)
 let log: LogID
 
-describe('KeyBook', () => {
+describe("KeyBook", () => {
   beforeEach(() => {
     kb = new KeyBook(new MemoryDatastore())
   })
   after(async () => {
     await kb.close()
   })
-  it('PrivKey', async () => {
-    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
+  it("PrivKey", async () => {
+    const privKey: PrivateKey = await keys.generateKeyPair("Ed25519")
     expect(privKey).to.not.be.undefined
 
     log = await LogID.fromPrivateKey(privKey)
@@ -39,8 +39,8 @@ describe('KeyBook', () => {
     const same = Array.from(logs).map((l) => log.equals(l))
     expect(same.every(Boolean)).to.be.true
   })
-  it('PubKey', async () => {
-    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
+  it("PubKey", async () => {
+    const privKey: PrivateKey = await keys.generateKeyPair("Ed25519")
     expect(privKey).to.not.be.undefined
 
     log = await LogID.fromPublicKey(privKey.public)
@@ -62,12 +62,29 @@ describe('KeyBook', () => {
     const same = Array.from(logs).map((l) => log.equals(l))
     expect(same.every(Boolean)).to.be.true
   })
-  it('ReadKey', async () => {
+  it("ReadKey", async () => {
     // No readKey exists yet
     const key = await kb.readKey(tid)
     expect(key).to.be.undefined
 
-    const key128 = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+    const key128 = Buffer.from([
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+    ])
 
     // Add should not err
     const res = await kb.addReadKey(tid, key128)
@@ -78,12 +95,29 @@ describe('KeyBook', () => {
     expect(que).to.eql(key128)
   })
 
-  it('Service Key', async () => {
+  it("Service Key", async () => {
     // No readKey exists yet
     const key = await kb.serviceKey(tid)
     expect(key).to.be.undefined
 
-    const key128 = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+    const key128 = Buffer.from([
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+    ])
 
     // Add should not err
     const res = await kb.addServiceKey(tid, key128)
@@ -94,8 +128,8 @@ describe('KeyBook', () => {
     expect(que).to.eql(key128)
   })
 
-  it('clear keys', async () => {
-    const privKey: PrivateKey = await keys.generateKeyPair('Ed25519')
+  it("clear keys", async () => {
+    const privKey: PrivateKey = await keys.generateKeyPair("Ed25519")
     log = await LogID.fromPublicKey(privKey.public)
     await kb.addPubKey(tid, log, privKey.public)
 

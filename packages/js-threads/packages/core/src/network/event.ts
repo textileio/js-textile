@@ -1,5 +1,5 @@
-import CID from 'cids'
-import { Block } from '../ipld'
+import CID from "cids"
+import { Block } from "../ipld"
 
 /**
  * Event is a Block node representing an event.

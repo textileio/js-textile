@@ -1,6 +1,6 @@
-import * as ed25519 from './ed25519'
-import { decodePublicKey, KeyType, decodePrivateKey } from './proto.keys'
-import { PrivateKey, PublicKey } from './interfaces'
+import * as ed25519 from "./ed25519"
+import { PrivateKey, PublicKey } from "./interfaces"
+import { decodePrivateKey, decodePublicKey, KeyType } from "./proto.keys"
 
 /**
  * Exposes an interface to various cryptographic key generation routines.
@@ -8,7 +8,7 @@ import { PrivateKey, PublicKey } from './interfaces'
  * support only signing and verification of messages.
  */
 
-export const keyTypeError = new Error('Unsupported key type.')
+export const keyTypeError = new Error("Unsupported key type.")
 
 export const supportedKeys = {
   ed25519,
@@ -16,10 +16,10 @@ export const supportedKeys = {
 
 // Generates a keypair of the given type and bitsize
 export const generateKeyPair = async (
-  type: 'Ed25519',
-  bytesLength?: number,
+  type: "Ed25519",
+  bytesLength?: number
 ): Promise<PrivateKey> => {
-  if (type !== 'Ed25519') throw keyTypeError
+  if (type !== "Ed25519") throw keyTypeError
   return ed25519.generateKeyPair(bytesLength)
 }
 
@@ -46,8 +46,8 @@ export const unmarshalPublicKey = (buf: Uint8Array): PublicKey => {
  * @param key public key.
  * @param type key type. Currently only ED25519 is supported.
  */
-export const marshalPublicKey = (key: PublicKey, type = 'ED25519') => {
-  if (type !== 'ED25519') throw keyTypeError
+export const marshalPublicKey = (key: PublicKey, type = "ED25519") => {
+  if (type !== "ED25519") throw keyTypeError
   return key.bytes
 }
 
@@ -70,7 +70,7 @@ export const unmarshalPrivateKey = (buf: Uint8Array): Promise<PrivateKey> => {
 }
 
 // Converts a private key object into a protobuf serialized private key
-export const marshalPrivateKey = (key: PrivateKey, type = 'ED25519') => {
-  if (type !== 'ED25519') throw keyTypeError
+export const marshalPrivateKey = (key: PrivateKey, type = "ED25519") => {
+  if (type !== "ED25519") throw keyTypeError
   return key.bytes
 }

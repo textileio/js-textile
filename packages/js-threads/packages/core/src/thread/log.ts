@@ -1,7 +1,7 @@
-import CID from 'cids'
-import { PublicKey, PrivateKey, multihash, keys } from '@textile/threads-crypto'
-import { Multiaddr } from '@textile/multiaddr'
-import multibase from 'multibase'
+import { Multiaddr } from "@textile/multiaddr"
+import { keys, multihash, PrivateKey, PublicKey } from "@textile/threads-crypto"
+import CID from "cids"
+import multibase from "multibase"
 
 function areEqual(a: Uint8Array, b: Uint8Array) {
   if (a.byteLength !== b.byteLength) return false
@@ -18,7 +18,7 @@ const computeDigest = (pubKey: PublicKey) => {
 
 const computeLogId = async (privKey?: PrivateKey, pubKey?: PublicKey) => {
   const key = pubKey ?? privKey?.public
-  if (key === undefined) throw new Error('Valid public or private key required')
+  if (key === undefined) throw new Error("Valid public or private key required")
   const digest = await computeDigest(key)
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   return new LogID(digest, privKey, pubKey)
@@ -32,42 +32,42 @@ export class LogID {
   constructor(
     readonly id: Uint8Array,
     readonly privKey?: PrivateKey,
-    readonly pubKey: PublicKey | undefined = privKey?.public,
+    readonly pubKey: PublicKey | undefined = privKey?.public
   ) {
     if (!(id instanceof Uint8Array)) {
-      throw new Error('invalid id provided')
+      throw new Error("invalid id provided")
     }
     if (privKey && pubKey && !areEqual(privKey.public.bytes, pubKey.bytes)) {
-      throw new Error('inconsistent arguments')
+      throw new Error("inconsistent arguments")
     }
   }
 
-  static async fromRandom(bytesLength?: number) {
-    const key = await keys.generateKeyPair('Ed25519', bytesLength)
+  static async fromRandom(bytesLength?: number): Promise<LogID> {
+    const key = await keys.generateKeyPair("Ed25519", bytesLength)
     return computeLogId(key)
   }
 
-  static fromBytes(buf: Uint8Array) {
+  static fromBytes(buf: Uint8Array): LogID {
     return new LogID(buf)
   }
 
-  static fromB58String(str: string) {
+  static fromB58String(str: string): LogID {
     const cid = new CID(str)
     // supported: 'libp2p-key' (CIDv1) and 'dag-pb' (CIDv0 converted to CIDv1)
-    if (!(cid.codec === 'libp2p-key' || cid.codec === 'dag-pb')) {
-      throw new Error('Invalid multicodec')
+    if (!(cid.codec === "libp2p-key" || cid.codec === "dag-pb")) {
+      throw new Error("Invalid multicodec")
     }
     return new LogID(cid.multihash)
   }
 
-  static fromPublicKey(key: PublicKey | Uint8Array) {
+  static fromPublicKey(key: PublicKey | Uint8Array): Promise<LogID> {
     if (key instanceof Uint8Array) {
       return computeLogId(undefined, keys.unmarshalPublicKey(key))
     }
     return computeLogId(undefined, key)
   }
 
-  static async fromPrivateKey(key: PrivateKey | Uint8Array) {
+  static async fromPrivateKey(key: PrivateKey | Uint8Array): Promise<LogID> {
     if (key instanceof Uint8Array) {
       return computeLogId(await keys.unmarshalPrivateKey(key))
     }
@@ -75,62 +75,65 @@ export class LogID {
   }
 
   // Return the protobuf version of the public key, matching go ipfs formatting
-  marshalPubKey() {
+  marshalPubKey(): Uint8Array | undefined {
     if (this.pubKey) {
       return keys.marshalPublicKey(this.pubKey)
     }
   }
 
   // Return the protobuf version of the private key, matching go ipfs formatting
-  marshalPrivKey() {
+  marshalPrivKey(): Uint8Array | undefined {
     if (this.privKey) {
       return keys.marshalPrivateKey(this.privKey)
     }
   }
 
-  toBytes() {
+  toBytes(): Uint8Array {
     return this.id
   }
 
-  toB58String() {
-    return multibase.encode('base58btc', Buffer.from(this.id)).toString().slice(1)
+  toB58String(): string {
+    return multibase
+      .encode("base58btc", Buffer.from(this.id))
+      .toString()
+      .slice(1)
   }
 
   // Return self-describing String representation
-  toString() {
-    const cid = new CID(1, 'libp2p-key', Buffer.from(this.id), 'base32')
-    return cid.toBaseEncodedString('base32')
+  toString(): string {
+    const cid = new CID(1, "libp2p-key", Buffer.from(this.id), "base32")
+    return cid.toBaseEncodedString("base32")
   }
 
   /**
    * Checks the equality of `this` peer against a given LogID.
    */
-  equals(id: Uint8Array | LogID) {
+  equals(id: Uint8Array | LogID): boolean {
     if (id instanceof Uint8Array) {
       return areEqual(this.id, id)
     } else if (id.id) {
       return areEqual(this.id, id.id)
     } else {
-      throw new Error('not valid Id')
+      throw new Error("not valid Id")
     }
   }
 
   /*
    * Check if this LogID instance is valid (privKey -> pubKey -> Id)
    */
-  isValid() {
+  isValid(): boolean {
     return Boolean(
       this.privKey &&
         this.privKey.public &&
         this.privKey.public.bytes &&
         this.pubKey?.bytes instanceof Uint8Array &&
-        areEqual(this.privKey.public.bytes, this.pubKey.bytes),
+        areEqual(this.privKey.public.bytes, this.pubKey.bytes)
     )
   }
 }
 
 export const PeerId = {
-  BytesToString: (buf: Uint8Array) => new LogID(buf).toB58String(),
+  BytesToString: (buf: Uint8Array): string => new LogID(buf).toB58String(),
 }
 
 /**

@@ -1,7 +1,7 @@
-import CID from 'cids'
+import CID from "cids"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const _Block = require('@ipld/block') as BlockConstructor
+const _Block = require("@ipld/block") as BlockConstructor
 
 export type Codec = any
 
@@ -12,7 +12,7 @@ export interface Reader<T> {
 }
 
 export interface Options {
-  source?: object
+  source?: any
   data?: Buffer
   codec?: string
   cid?: CID | string

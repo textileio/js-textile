@@ -62,28 +62,28 @@ export enum BSONType {
 }
 
 export type BSONTypeAlias =
-  | 'number'
-  | 'double'
-  | 'string'
-  | 'object'
-  | 'array'
-  | 'binData'
-  | 'undefined'
-  | 'objectId'
-  | 'bool'
-  | 'date'
-  | 'null'
-  | 'regex'
-  | 'dbPointer'
-  | 'javascript'
-  | 'symbol'
-  | 'javascriptWithScope'
-  | 'int'
-  | 'timestamp'
-  | 'long'
-  | 'decimal'
-  | 'minKey'
-  | 'maxKey'
+  | "number"
+  | "double"
+  | "string"
+  | "object"
+  | "array"
+  | "binData"
+  | "undefined"
+  | "objectId"
+  | "bool"
+  | "date"
+  | "null"
+  | "regex"
+  | "dbPointer"
+  | "javascript"
+  | "symbol"
+  | "javascriptWithScope"
+  | "int"
+  | "timestamp"
+  | "long"
+  | "decimal"
+  | "minKey"
+  | "maxKey"
 
 // we can search using alternative types in mongodb e.g.
 // string types can be searched using a regex in mongo
@@ -122,7 +122,7 @@ export type QuerySelector<T> = {
   // Array
   // TODO: define better types for $all and $elemMatch
   $all?: T extends Array<infer U> ? any[] : never
-  $elemMatch?: T extends Array<infer U> ? object : never
+  $elemMatch?: T extends Array<infer U> ? Record<string, unknown> : never
   $size?: T extends Array<infer U> ? number : never
 }
 
@@ -141,7 +141,7 @@ export type RootQuerySelector<T> = {
     $diacraticSensitive?: boolean
   }
   /** https://docs.mongodb.com/manual/reference/operator/query/where/#op._S_where */
-  $where?: string | Function
+  $where?: string | ((...args: any[]) => any)
   /** https://docs.mongodb.com/manual/reference/operator/query/comment/#op._S_comment */
   $comment?: string
   // we could not find a proper TypeScript generic to support nested queries e.g. 'user.friends.name'
@@ -149,10 +149,13 @@ export type RootQuerySelector<T> = {
   [key: string]: any
 }
 
-export type ObjectQuerySelector<T = any> = T extends object
+export type ObjectQuerySelector<T = any> = T extends Record<string, unknown>
   ? { [key in keyof T]?: QuerySelector<T[key]> }
   : QuerySelector<T>
 
-export type Condition<T = any> = MongoAltQuery<T> | QuerySelector<MongoAltQuery<T>>
+export type Condition<T = any> =
+  | MongoAltQuery<T>
+  | QuerySelector<MongoAltQuery<T>>
 
-export type FilterQuery<T = any> = { [P in keyof T]?: Condition<T[P]> } & RootQuerySelector<T>
+export type FilterQuery<T = any> = { [P in keyof T]?: Condition<T[P]> } &
+  RootQuerySelector<T>

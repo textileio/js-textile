@@ -1,8 +1,8 @@
-import varint from 'varint'
-import { ThreadID } from '@textile/threads-id'
-import { protocols } from './protocols'
+import { ThreadID } from "@textile/threads-id"
+import varint from "varint"
+import { protocols } from "./protocols"
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Convert = require('multiaddr/src/convert')
+const Convert = require("multiaddr/src/convert")
 
 function thread2buf(str: string) {
   // const buf = Buffer.from(str)
@@ -16,13 +16,13 @@ function buf2thread(buf: Buffer) {
   buf = buf.slice(varint.decode.bytes)
 
   if (buf.length !== size) {
-    throw new Error('inconsistent lengths')
+    throw new Error("inconsistent lengths")
   }
 
   return ThreadID.fromBytes(buf).toString()
 }
 
-export function toString(prt: string | number, buf: Buffer) {
+export function toString(prt: string | number, buf: Buffer): string {
   const proto = protocols(prt)
   switch (proto.code) {
     case 406:
@@ -32,7 +32,7 @@ export function toString(prt: string | number, buf: Buffer) {
   }
 }
 
-export function toBuffer(prt: string | number, str: string) {
+export function toBuffer(prt: string | number, str: string): Buffer {
   const proto = protocols(prt)
   switch (proto.code) {
     case 406:

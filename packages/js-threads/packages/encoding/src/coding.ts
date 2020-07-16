@@ -1,5 +1,5 @@
-import { aes } from '@textile/threads-crypto'
-import { Block } from '@textile/threads-core'
+import { Block } from "@textile/threads-core"
+import { aes } from "@textile/threads-crypto"
 
 export interface Options {
   codec: string
@@ -16,8 +16,8 @@ export const tagBytes = 16
 const keyBytes = 32
 
 export const defaultOptions: Options = {
-  codec: 'dag-cbor',
-  algo: 'sha2-256',
+  codec: "dag-cbor",
+  algo: "sha2-256",
 }
 
 /**
@@ -27,7 +27,11 @@ export const defaultOptions: Options = {
  * @param opts Options to control encoding and encryption.
  * Defaults to CBOR encoding with the SHA256 hash function, and AES GCM 256-bit encryption.
  */
-export async function encodeBlock(block: Block, key: Uint8Array, opts: Options = defaultOptions) {
+export async function encodeBlock(
+  block: Block,
+  key: Uint8Array,
+  opts: Options = defaultOptions
+): Promise<Block<Buffer>> {
   const plaintext = block.encodeUnsafe()
   const sk = key.slice(0, keyBytes)
   const ciphertext = await aes.encrypt(sk, plaintext)
@@ -43,8 +47,8 @@ export async function encodeBlock(block: Block, key: Uint8Array, opts: Options =
 export async function decodeBlock<T = any>(
   block: Block<Uint8Array>,
   key: Uint8Array,
-  opts: Options = defaultOptions,
-) {
+  opts: Options = defaultOptions
+): Promise<Block<T>> {
   // Start with Block node wrapping raw encrypted bytes
   const ciphertext = block.decodeUnsafe()
   const sk = key.slice(0, keyBytes)

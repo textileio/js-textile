@@ -1,6 +1,12 @@
-import { Datastore } from 'interface-datastore'
-import { ThreadID, LogInfo, ThreadInfo, LogID, ThreadKey } from '@textile/threads-core'
-import { KeyBook } from './keybook'
+import {
+  LogID,
+  LogInfo,
+  ThreadID,
+  ThreadInfo,
+  ThreadKey,
+} from "@textile/threads-core"
+import { Datastore } from "interface-datastore"
+import { KeyBook } from "./keybook"
 
 /**
  * LogStore is an internal store of log information.
@@ -13,14 +19,14 @@ export class LogStore {
    * Create a new LogStore from an existing datastore instance.
    * @param store
    */
-  static fromDatastore(store: Datastore<Buffer>) {
+  static fromDatastore(store: Datastore<Buffer>): LogStore {
     return new LogStore(new KeyBook(store))
   }
 
   /**
    * Close the underlying key store.
    */
-  async close() {
+  async close(): Promise<void> {
     await this.keys.close()
     return
   }
@@ -28,7 +34,7 @@ export class LogStore {
   /**
    * Threads returns all threads in the store.
    */
-  async threads() {
+  async threads(): Promise<Set<ThreadID>> {
     return this.keys.threads()
   }
 
@@ -44,9 +50,9 @@ export class LogStore {
    * AddThread adds a thread with keys.
    * @param info Thread information.
    */
-  async addThread(info: ThreadInfo) {
+  async addThread(info: ThreadInfo): Promise<void> {
     if (info.key?.service === undefined) {
-      throw new Error('Network key required')
+      throw new Error("Network key required")
     }
     await this.keys.addServiceKey(info.id, info.key.service)
     info.key.read && (await this.keys.addReadKey(info.id, info.key.read))
@@ -56,7 +62,7 @@ export class LogStore {
    * deleteThread removes a thread from the store.
    * @param id Thread ID.
    */
-  async deleteThread(id: ThreadID) {
+  async deleteThread(id: ThreadID): Promise<void> {
     return this.keys.clearThreadKeys(id)
   }
 
@@ -64,9 +70,9 @@ export class LogStore {
    * threadInfo returns info about a thread.
    * @param id Thread ID.
    */
-  async threadInfo(id: ThreadID) {
+  async threadInfo(id: ThreadID): Promise<ThreadInfo> {
     const service = await this.keys.serviceKey(id)
-    if (service === undefined) throw new Error('Missing network key')
+    if (service === undefined) throw new Error("Missing network key")
     const read = await this.keys.readKey(id)
     const key = new ThreadKey(service, read)
     const info: ThreadInfo = {
@@ -81,7 +87,7 @@ export class LogStore {
    * @param id Thread ID.
    * @param info Log information.
    */
-  async addLog(id: ThreadID, info: LogInfo) {
+  async addLog(id: ThreadID, info: LogInfo): Promise<void> {
     if (info.pubKey) await this.keys.addPubKey(id, info.id, info.pubKey)
     if (info.privKey) await this.keys.addPrivKey(id, info.id, info.privKey)
     return
@@ -92,7 +98,7 @@ export class LogStore {
    * @param id Thread ID.
    * @param log Log ID.
    */
-  async deleteLog(id: ThreadID, log: LogID) {
+  async deleteLog(id: ThreadID, log: LogID): Promise<void> {
     return this.keys.clearLogKeys(id, log)
   }
 
@@ -101,7 +107,7 @@ export class LogStore {
    * @param id The Thread ID.
    * @param log The Log ID.
    */
-  async logInfo(id: ThreadID, log: LogID) {
+  async logInfo(id: ThreadID, log: LogID): Promise<LogInfo> {
     const privKey = await this.keys.privKey(id, log)
     const pubKey = (await this.keys.pubKey(id, log)) || privKey?.public
     const info: LogInfo = {

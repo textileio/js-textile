@@ -1,17 +1,17 @@
-import { Datastore, Key, Result, Batch, Query } from 'interface-datastore'
-import lexInt from 'lexicographic-integer'
-import { EventEmitter } from 'tsee'
-import { Reducer, Dispatcher, Event } from '../dispatcher'
+import { Key } from "interface-datastore"
+import type { Batch, Datastore, Query, Result } from "interface-datastore"
+import lexInt from "lexicographic-integer"
+import { EventEmitter } from "tsee"
+import { Codec } from "../codec"
 import {
-  Lockable,
-  DomainDatastore,
-  Semaphore,
-  EncodingDatastore,
-  Encoder,
   CborEncoder,
-} from '../datastores'
-// eslint-disable-next-line import/no-cycle
-import { Codec } from '../codec'
+  DomainDatastore,
+  Encoder,
+  EncodingDatastore,
+  Lockable,
+  Semaphore,
+} from "../datastores"
+import { Dispatcher, Event, Reducer } from "../dispatcher"
 
 /**
  * Events for Store's EventEmitter
@@ -55,11 +55,14 @@ const asUpdate = <T = any>(event: Result<Event<T>>): Update<T> => {
  * @param store The store to query.
  * @param key The key to get.
  */
-export const safeGet = async <T = any>(store: Datastore<T>, key: Key) => {
+export const safeGet = async <T = any>(
+  store: Datastore<T>,
+  key: Key
+): Promise<T | undefined> => {
   try {
     return await store.get(key)
   } catch (err) {
-    if (err.code !== 'ERR_NOT_FOUND') {
+    if (err.code !== "ERR_NOT_FOUND") {
       throw err
     }
   }
@@ -77,7 +80,7 @@ export class ActionBatch<D = any, A = D> implements Batch<D> {
    * Promises to delete the value under the given key.
    * @param key The key.
    */
-  delete(key: Key) {
+  delete(key: Key): void {
     const deferred = async () => {
       const event: Event = {
         timestamp: Buffer.from(lexInt.pack(Date.now())),
@@ -95,7 +98,7 @@ export class ActionBatch<D = any, A = D> implements Batch<D> {
    * @param key The key.
    * @param value The value.
    */
-  put(key: Key, value: D) {
+  put(key: Key, value: D): void {
     const deferred = async () => {
       const event: Event = {
         timestamp: Buffer.from(lexInt.pack(Date.now())),
@@ -111,7 +114,7 @@ export class ActionBatch<D = any, A = D> implements Batch<D> {
   /**
    * Dispatches the accumulated actions.
    */
-  async commit() {
+  async commit(): Promise<void> {
     if (this.patches.length > 0) {
       await this.store.dispatch(...this.patches)
     }
@@ -134,12 +137,15 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
   constructor(
     child: Datastore<any>,
     public codec: Codec<D, A>,
-    public prefix: Key = new Key(''),
+    public prefix: Key = new Key(""),
     public dispatcher: Dispatcher = new Dispatcher(child),
-    public encoder: Encoder<D> = CborEncoder,
+    public encoder: Encoder<D> = CborEncoder
   ) {
     super()
-    this.child = new DomainDatastore(new EncodingDatastore(child, this.encoder), this.prefix)
+    this.child = new DomainDatastore(
+      new EncodingDatastore(child, this.encoder),
+      this.prefix
+    )
     this.semaphore = new Semaphore(this.prefix)
     this.dispatcher.register(this)
   }
@@ -151,7 +157,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * @param timeout How long to wait to acquire the lock before rejecting the promise, in milliseconds.
    * If timeout is not in range 0 <= timeout < Infinity, it will wait indefinitely.
    */
-  readLock(key: Key, timeout?: number) {
+  readLock(key: Key, timeout?: number): Promise<void> {
     return this.semaphore.get(key).readLock(timeout)
   }
 
@@ -162,7 +168,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * @param timeout How long to wait to acquire the lock before rejecting the promise, in milliseconds.
    * If timeout is not in range 0 <= timeout < Infinity, it will wait indefinitely.
    */
-  writeLock(key: Key, timeout?: number) {
+  writeLock(key: Key, timeout?: number): Promise<void> {
     return this.semaphore.get(key).writeLock(timeout)
   }
 
@@ -171,7 +177,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * Must be called after an operation using a read/write lock is finished.
    * @param key The key to unlock.
    */
-  unlock(key: Key) {
+  unlock(key: Key): void {
     return this.semaphore.unlock(key)
   }
 
@@ -180,27 +186,27 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * This method will emit the set of Events (after dispatch is complete) so that listeners may take action.
    * @param actions The set of deferred actions to dispatch.
    */
-  async dispatch(...actions: Action<Event<A>>[]) {
+  async dispatch(...actions: Action<Event<A>>[]): Promise<void> {
     if (this.dispatcher === undefined) return
     const events = await Promise.all(
       actions.map(async (event) => {
         const value = await event()
         const key = this.prefix.child(new Key(value.id))
         return { key, value }
-      }),
+      })
     )
-    this.emit('events', ...events.map((event) => event.value))
+    this.emit("events", ...events.map((event) => event.value))
     return this.dispatcher.dispatch(...events)
   }
 
   /**
    * Open the underlying datastore.
    */
-  open() {
+  open(): Promise<void> {
     return this.child.open()
   }
 
-  close() {
+  close(): Promise<void> {
     return this.child.close()
   }
 
@@ -208,7 +214,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * Returns whether the given key is in the store.
    * @param key The key.
    */
-  has(key: Key) {
+  has(key: Key): Promise<boolean> {
     return this.child.has(key)
   }
 
@@ -217,7 +223,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * @throws if the given key is not found.
    * @param key The key.
    */
-  get(key: Key) {
+  get(key: Key): Promise<D> {
     return this.child.get(key)
   }
 
@@ -227,7 +233,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * @param key The key.
    * @param value The value.
    */
-  put(key: Key, value: D) {
+  put(key: Key, value: D): Promise<void> {
     const batch = this.batch()
     batch.put(key, value)
     return batch.commit()
@@ -237,7 +243,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * Deletes the value under the given key.
    * @param key The key.
    */
-  delete(key: Key) {
+  delete(key: Key): Promise<void> {
     const batch = this.batch()
     batch.delete(key)
     return batch.commit()
@@ -248,7 +254,7 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * Returns an Iterable with each item being a Value (i.e., { key, value } pair).
    * @param query The query object.
    */
-  query(query: Query<D>) {
+  query(query: Query<D>): AsyncIterable<Result<D>> {
     return this.child.query(query)
   }
 
@@ -265,9 +271,9 @@ export class Store<D = any, A = D> extends EventEmitter<Events<A>>
    * This method will emit the set of updates (after reduction is complete) so that listeners may take action.
    * @param events The set of incoming events to the 'folded' into the Store.
    */
-  async reduce(...events: Result<Event<A>>[]) {
+  async reduce(...events: Result<Event<A>>[]): Promise<void> {
     const filtered = events.filter(({ key }) => key.isDecendantOf(this.prefix))
     await this.codec.onReduce(this.child, ...filtered)
-    this.emit('update', ...filtered.map(asUpdate))
+    this.emit("update", ...filtered.map(asUpdate))
   }
 }

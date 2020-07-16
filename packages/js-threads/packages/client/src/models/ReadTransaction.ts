@@ -2,36 +2,42 @@
  * @packageDocumentation
  * @module @textile/threads-client/models
  */
-import { grpc } from '@improbable-eng/grpc-web'
+import { grpc } from "@improbable-eng/grpc-web"
+import { ContextInterface } from "@textile/context"
 import {
-  HasRequest,
-  FindRequest,
   FindByIDRequest,
-  StartTransactionRequest,
-  ReadTransactionRequest,
+  FindRequest,
+  HasRequest,
   ReadTransactionReply,
-} from '@textile/threads-client-grpc/threads_pb'
-import { ContextInterface } from '@textile/context'
-import { ThreadID } from '@textile/threads-id'
-import { Transaction } from './Transaction'
-import { Instance, InstanceList, QueryJSON } from './query'
+  ReadTransactionRequest,
+  StartTransactionRequest,
+} from "@textile/threads-client-grpc/threads_pb"
+import { ThreadID } from "@textile/threads-id"
+import { Instance, InstanceList, QueryJSON } from "./query"
+import { Transaction } from "./Transaction"
 
 /**
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
  */
-export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
+export class ReadTransaction extends Transaction<
+  ReadTransactionRequest,
+  ReadTransactionReply
+> {
   constructor(
     protected readonly context: ContextInterface,
-    protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>,
+    protected readonly client: grpc.Client<
+      ReadTransactionRequest,
+      ReadTransactionReply
+    >,
     protected readonly threadID: ThreadID,
-    protected readonly modelName: string,
+    protected readonly modelName: string
   ) {
     super(client, threadID, modelName)
   }
   /**
    * start begins the transaction. All operations between start and end will be applied as a single transaction upon a call to end.
    */
-  public async start() {
+  public async start(): Promise<void> {
     const startReq = new StartTransactionRequest()
     startReq.setDbid(this.threadID.toBytes())
     startReq.setCollectionname(this.modelName)
@@ -46,7 +52,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
    * has checks whether a given instance exists in the given store.
    * @param IDs An array of instance ids to check for.
    */
-  public async has(IDs: string[]) {
+  public async has(IDs: string[]): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       const hasReq = new HasRequest()
       hasReq.setInstanceidsList(IDs)
@@ -65,7 +71,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
    * find queries the store for entities matching the given query parameters. See Query for options.
    * @param query The object that describes the query. See Query for options. Alternatively, see QueryJSON for the basic interface.
    */
-  public async find<T = any>(query: QueryJSON) {
+  public async find<T = any>(query: QueryJSON): Promise<InstanceList<T>> {
     return new Promise<InstanceList<T>>((resolve, reject) => {
       const findReq = new FindRequest()
       findReq.setQueryjson(Buffer.from(JSON.stringify(query)))
@@ -80,7 +86,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
             instancesList: reply
               .toObject()
               .instancesList.map((instance) =>
-                JSON.parse(Buffer.from(instance as string, 'base64').toString()),
+                JSON.parse(Buffer.from(instance as string, "base64").toString())
               ),
           }
           resolve(ret)
@@ -95,7 +101,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
    * findByID queries the store for the id of an instance.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(ID: string) {
+  public async findByID<T = any>(ID: string): Promise<Instance<T>> {
     return new Promise<Instance<T>>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
@@ -108,7 +114,10 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
         } else {
           const ret: Instance<T> = {
             instance: JSON.parse(
-              Buffer.from(reply.toObject().instance as string, 'base64').toString(),
+              Buffer.from(
+                reply.toObject().instance as string,
+                "base64"
+              ).toString()
             ),
           }
           resolve(ret)

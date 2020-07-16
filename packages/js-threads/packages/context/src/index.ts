@@ -1,15 +1,20 @@
-import { grpc } from '@improbable-eng/grpc-web'
-import { createAPISig, UserAuth, KeyInfo, expirationError } from '@textile/security'
+import { grpc } from "@improbable-eng/grpc-web"
+import {
+  createAPISig,
+  expirationError,
+  KeyInfo,
+  UserAuth,
+} from "@textile/security"
 
 /**
  * The set of host strings used by any gPRC clients.
  */
 export type HostString =
-  | 'https://api.textile.io:3447'
-  | 'https://api.staging.textile.io:3447'
-  | 'http://127.0.0.1:3007'
+  | "https://api.textile.io:3447"
+  | "https://api.staging.textile.io:3447"
+  | "http://127.0.0.1:3007"
   | string
-export const defaultHost: HostString = 'https://api.textile.io:3447'
+export const defaultHost: HostString = "https://api.textile.io:3447"
 
 /**
  * Interface describing the set of default context keys.
@@ -18,25 +23,25 @@ export interface ContextKeys {
   /**
    * Thread name. Specifies a mapping between human-readable name and a ThreadID.
    */
-  ['x-textile-thread-name']?: string
+  ["x-textile-thread-name"]?: string
   /**
    * ThreadID as a string. Should be generated with `ThreadID.toString()` method.
    */
-  ['x-textile-thread']?: string
+  ["x-textile-thread"]?: string
   /**
    * Session key. Used for various session contexts.
    */
-  ['x-textile-session']?: string
+  ["x-textile-session"]?: string
 
   /**
    * Org slug/name. Used for various org session operations.
    */
-  ['x-textile-org']?: string
+  ["x-textile-org"]?: string
 
   /**
    * API key. Used for user group/account authentication.
    */
-  ['x-textile-api-key']?: string
+  ["x-textile-api-key"]?: string
 
   /**
    * Authorization token for interacting with remote APIs.
@@ -46,12 +51,12 @@ export interface ContextKeys {
   /**
    * API signature used to authenticate with remote APIs.
    */
-  ['x-textile-api-sig']?: string
+  ["x-textile-api-sig"]?: string
 
   /**
    * Raw message (date as ISO string) used to generate API signature.
    */
-  ['x-textile-api-sig-msg']?: string
+  ["x-textile-api-sig-msg"]?: string
 
   /**
    * The service host address/url. Defaults to https://api.textile.io.
@@ -147,10 +152,10 @@ export class Context implements ContextInterface {
    * @param host The remote gRPC host. This input exists to comply with the Config interface.
    */
   constructor(host: HostString = defaultHost) {
-    this._context['host'] = host
+    this._context["host"] = host
   }
 
-  static fromUserAuth(auth: UserAuth, host: HostString = defaultHost) {
+  static fromUserAuth(auth: UserAuth, host: HostString = defaultHost): Context {
     const ctx = new Context(host)
     const { key, token, ...sig } = auth
     return ctx.withAPIKey(key).withAPISig(sig).withToken(token)
@@ -158,72 +163,73 @@ export class Context implements ContextInterface {
 
   static fromUserAuthCallback(
     authCallback: () => Promise<UserAuth>,
-    host: HostString = defaultHost,
-  ) {
+    host: HostString = defaultHost
+  ): Context {
     const ctx = new Context(host)
     // @todo: Should we now callback right away?
     ctx.authCallback = authCallback
     return ctx
   }
 
-  get host() {
-    return this._context['host']
+  get host(): string {
+    return this._context["host"]
   }
 
-  set(key: keyof ContextKeys, value?: any) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  set(key: keyof ContextKeys, value?: any): this {
     this._context[key] = value
     return this
   }
 
-  get(key: keyof ContextKeys) {
+  get(key: keyof ContextKeys): any {
     return this._context[key]
   }
 
-  withSession(value?: string) {
+  withSession(value?: string): this {
     if (value === undefined) return this
-    this._context['x-textile-session'] = value
+    this._context["x-textile-session"] = value
     return this
   }
 
-  withThread(value?: string) {
+  withThread(value?: string): this {
     if (value === undefined) return this
-    this._context['x-textile-thread'] = value.toString()
+    this._context["x-textile-thread"] = value.toString()
     return this
   }
 
-  withThreadName(value?: string) {
+  withThreadName(value?: string): this {
     if (value === undefined) return this
-    this._context['x-textile-thread-name'] = value
+    this._context["x-textile-thread-name"] = value
     return this
   }
 
-  withOrg(value?: string) {
+  withOrg(value?: string): this {
     if (value === undefined) return this
-    this._context['x-textile-org'] = value
+    this._context["x-textile-org"] = value
     return this
   }
 
-  withToken(value?: string) {
+  withToken(value?: string): this {
     if (value === undefined) return this
-    this._context['authorization'] = `bearer ${value}`
+    this._context["authorization"] = `bearer ${value}`
     return this
   }
 
-  withAPIKey(value?: string) {
+  withAPIKey(value?: string): this {
     if (value === undefined) return this
-    this._context['x-textile-api-key'] = value
+    this._context["x-textile-api-key"] = value
     return this
   }
 
-  withAPISig(value?: { sig: string; msg: string }) {
+  withAPISig(value?: { sig: string; msg: string }): this {
     if (value === undefined) return this
     const { sig, msg } = value
-    this._context['x-textile-api-sig-msg'] = msg
-    this._context['x-textile-api-sig'] = sig
+    this._context["x-textile-api-sig-msg"] = msg
+    this._context["x-textile-api-sig"] = sig
     return this
   }
 
-  async withKeyInfo(key?: KeyInfo, date?: Date) {
+  async withKeyInfo(key?: KeyInfo, date?: Date): Promise<this> {
     if (key === undefined) return this
     // Enables the use of insecure / non-signing keys
     if (!key.secret) return this.withAPIKey(key.key)
@@ -231,7 +237,7 @@ export class Context implements ContextInterface {
     return this.withAPIKey(key.key).withAPISig(sig)
   }
 
-  withContext(value?: ContextInterface) {
+  withContext(value?: ContextInterface): this {
     if (value === undefined) return this
     // Spread to copy rather than reference
     this._context = value.toJSON()
@@ -242,8 +248,8 @@ export class Context implements ContextInterface {
    * Returns true if this Context contains an api sig msg, and that msg has expired, or if
    * it does _not_ have an api sig msg, but it _does_ have an auth callback.
    */
-  get isExpired() {
-    const msg = this.get('x-textile-api-sig-msg')
+  get isExpired(): boolean {
+    const msg = this.get("x-textile-api-sig-msg")
     const notAuthed = msg === undefined && this.authCallback !== undefined
     const isExpired = msg !== undefined && new Date(msg) <= new Date()
     return isExpired || notAuthed
@@ -253,14 +259,16 @@ export class Context implements ContextInterface {
    * Refresh user auth with provided callback.
    * If callback is not specified, attempts to use existing callback specified at initialization.
    */
-  async refreshUserAuth(authCallback?: () => Promise<UserAuth>) {
+  async refreshUserAuth(authCallback?: () => Promise<UserAuth>): Promise<this> {
     // If we have a new one, use it...
     if (authCallback !== undefined) {
       this.authCallback = authCallback
     }
     // If we still don't have a callback, throw...
     if (this.authCallback === undefined) {
-      throw new Error('Missing authCallback. See Context.fromUserAuthCallback for details.')
+      throw new Error(
+        "Missing authCallback. See Context.fromUserAuthCallback for details."
+      )
     }
     // Now do the renewal and return self...
     const { key, token, ...sig } = await this.authCallback()
@@ -272,7 +280,7 @@ export class Context implements ContextInterface {
    * @throws If this Context has expired.
    * @see toMetadata for an alternative for gRPC clients that supports auto-renewal.
    */
-  toJSON() {
+  toJSON(): Record<string | number, any> {
     const { ...json } = this._context
     // If we're expired, throw...
     if (this.isExpired) {
@@ -287,7 +295,7 @@ export class Context implements ContextInterface {
    * @param ctx Additional context object that will be merged with this prior to conversion.
    * @see toJSON for an alternative that returns a plain object, and throws when expired.
    */
-  async toMetadata(ctx?: Context) {
+  async toMetadata(ctx?: Context): Promise<grpc.Metadata> {
     const context = new Context()
     if (this.isExpired && this.authCallback !== undefined) {
       const { key, token, ...sig } = await this.authCallback()
@@ -295,7 +303,9 @@ export class Context implements ContextInterface {
       this.withAPIKey(key).withAPISig(sig).withToken(token)
     }
     // We merge this context and ctx with the empty context so as to avoid mutating this with ctx
-    return new grpc.Metadata(context.withContext(this).withContext(ctx).toJSON())
+    return new grpc.Metadata(
+      context.withContext(this).withContext(ctx).toJSON()
+    )
   }
 
   /**
@@ -303,9 +313,9 @@ export class Context implements ContextInterface {
    * @param json The JSON object.
    * @param host Optional host string.
    */
-  static fromJSON(json: ContextKeys, host: HostString = defaultHost) {
+  static fromJSON(json: ContextKeys, host: HostString = defaultHost): Context {
     const newContext = { ...json }
-    newContext['host'] = host
+    newContext["host"] = host
     const ctx = new Context()
     ctx._context = newContext
     return ctx

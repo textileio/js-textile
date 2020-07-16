@@ -5,8 +5,8 @@
  *
  * @packageDocumentation
  */
-import { HMAC } from 'fast-sha256'
-import multibase from 'multibase'
+import { HMAC } from "fast-sha256"
+import multibase from "multibase"
 
 /**
  * UserAuth is a type describing the minimal requirements create a session from a user group key. Generate with {@link createUserAuth}.
@@ -89,13 +89,13 @@ export type APISig = {
  */
 export async function createAPISig(
   secret: string,
-  date: Date = new Date(Date.now() + 1000 * 60),
+  date: Date = new Date(Date.now() + 1000 * 60)
 ): Promise<APISig> {
   const sec = multibase.decode(secret)
   const msg = (date ?? new Date()).toISOString()
   const hash = new HMAC(sec)
   const mac = hash.update(Buffer.from(msg)).digest()
-  const sig = multibase.encode('base32', Buffer.from(mac)).toString()
+  const sig = multibase.encode("base32", Buffer.from(mac)).toString()
   return { sig, msg }
 }
 
@@ -129,7 +129,7 @@ export async function createUserAuth(
   key: string,
   secret: string,
   date: Date = new Date(Date.now() + 1000 * 60),
-  token?: string,
+  token?: string
 ): Promise<UserAuth> {
   const partial = await createAPISig(secret, date)
   return {
@@ -144,5 +144,5 @@ export async function createUserAuth(
  * @public
  */
 export const expirationError = new Error(
-  'Auth expired. Consider calling withKeyInfo or withAPISig to refresh.',
+  "Auth expired. Consider calling withKeyInfo or withAPISig to refresh."
 )

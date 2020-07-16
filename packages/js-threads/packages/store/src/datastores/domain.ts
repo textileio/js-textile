@@ -1,5 +1,6 @@
-import { Datastore, Key, Query, Batch } from 'interface-datastore'
-import { KeytransformDatastore, Transform } from 'datastore-core'
+import { KeytransformDatastore, Transform } from "datastore-core"
+import { Key } from "interface-datastore"
+import type { Batch, Datastore, Query, Result } from "interface-datastore"
 
 interface PrefixDatastore<Value = Buffer> extends Datastore<Value> {
   prefix?: Key
@@ -11,8 +12,12 @@ interface PrefixDatastore<Value = Buffer> extends Datastore<Value> {
  * @param child
  * @param prefix
  */
-const reachBack = <T = Buffer>(child: PrefixDatastore<T>, prefix: Key = new Key('')): Key => {
-  if (child.child) return reachBack(child.child, child.prefix?.child(prefix) || prefix)
+const reachBack = <T = Buffer>(
+  child: PrefixDatastore<T>,
+  prefix: Key = new Key("")
+): Key => {
+  if (child.child)
+    return reachBack(child.child, child.prefix?.child(prefix) || prefix)
   return prefix
 }
 
@@ -38,19 +43,21 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
    * @param child The child datastore to wrap/shim.
    * @param domain The (sub-) domain to use as a prefix.
    */
-  constructor(child: Datastore<T>, domain: Key = new Key('')) {
+  constructor(child: Datastore<T>, domain: Key = new Key("")) {
     const prefix = reachBack(child, domain)
     const transform: Transform = {
       convert(key) {
         return prefix.child(key)
       },
       invert(key) {
-        if (prefix.toString() === '/') {
+        if (prefix.toString() === "/") {
           return key
         }
 
         if (!prefix.isAncestorOf(key)) {
-          throw new Error(`Expected prefix: (${prefix.toString()}) in key: ${key.toString()}`)
+          throw new Error(
+            `Expected prefix: (${prefix.toString()}) in key: ${key.toString()}`
+          )
         }
 
         return new Key(key.toString().slice(prefix.toString().length), false)
@@ -66,7 +73,7 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
    * Returns an Iterable with each item being a Value (i.e., { key, value } pair).
    * @param query The query object. If it contains a prefix, it is appended to the base domain prefix.
    */
-  query(query: Query<T>) {
+  query(query: Query<T>): AsyncIterable<Result<T>> {
     // All queries should be prefixed with the base domain prefix
     const prefix = query.prefix
       ? this.prefix.child(new Key(query.prefix)).toString()
@@ -79,7 +86,7 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
    * @param key The key.
    * @param value The value.
    */
-  put(key: Key, value: T) {
+  put(key: Key, value: T): Promise<void> {
     return super.put(key, value)
   }
 
@@ -87,7 +94,7 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
    * Deletes the value under the given key.
    * @param key The key.
    */
-  delete(key: Key) {
+  delete(key: Key): Promise<void> {
     return super.delete(key)
   }
 
@@ -95,7 +102,7 @@ export class DomainDatastore<T = Buffer> extends KeytransformDatastore<T> {
    * Returns a Batch object with which you can chain multiple operations.
    * The operations are only executed upon calling `commit`.
    */
-  batch() {
+  batch(): Batch<T> {
     const b: Batch<T> = super.batch()
     const batch: Batch<T> = {
       /**

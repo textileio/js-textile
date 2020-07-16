@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import varint from 'varint'
-import * as convert from './convert'
-import { protocols, Protocol } from './protocols'
+import varint from "varint"
+import * as convert from "./convert"
+import { Protocol, protocols } from "./protocols"
 
 // string -> [[str name, str addr]... ]
-export function stringToStringTuples(str: string) {
+export function stringToStringTuples(str: string): string[][] {
   const tuples = []
-  const parts = str.split('/').slice(1) // skip first empty elem
-  if (parts.length === 1 && parts[0] === '') {
+  const parts = str.split("/").slice(1) // skip first empty elem
+  if (parts.length === 1 && parts[0] === "") {
     return []
   }
 
@@ -22,7 +22,7 @@ export function stringToStringTuples(str: string) {
 
     p++ // advance addr part
     if (p >= parts.length) {
-      throw ParseError('invalid address: ' + str)
+      throw ParseError("invalid address: " + str)
     }
 
     // if it's a path proto, take the rest
@@ -32,7 +32,7 @@ export function stringToStringTuples(str: string) {
         // TODO: should we need to check each path part to see if it's a proto?
         // This would allow for other protocols to be added after a unix path,
         // however it would have issues if the path had a protocol name in the path
-        cleanPath(parts.slice(p).join('/')),
+        cleanPath(parts.slice(p).join("/")),
       ])
       break
     }
@@ -44,9 +44,9 @@ export function stringToStringTuples(str: string) {
 }
 
 // [[str name, str addr]... ] -> string
-export function stringTuplesToString(tuples: string[][]) {
+export function stringTuplesToString(tuples: string[][]): string {
   const parts: string[] = []
-  tuples.map(tup => {
+  tuples.map((tup) => {
     const proto = protoFromTuple(tup)
     parts.push(proto.name)
     if (tup.length > 1) {
@@ -54,12 +54,12 @@ export function stringTuplesToString(tuples: string[][]) {
     }
   })
 
-  return cleanPath(parts.join('/'))
+  return cleanPath(parts.join("/"))
 }
 
 // [[str name, str addr]... ] -> [[int code, Buffer]... ]
-export function stringTuplesToTuples(tuples: string[][]) {
-  return tuples.map(tup => {
+export function stringTuplesToTuples(tuples: string[][]): any[][] {
+  return tuples.map((tup) => {
     if (!Array.isArray(tup)) {
       tup = [tup]
     }
@@ -72,8 +72,8 @@ export function stringTuplesToTuples(tuples: string[][]) {
 }
 
 // [[int code, Buffer]... ] -> [[str name, str addr]... ]
-export function tuplesToStringTuples(tuples: any[][]) {
-  return tuples.map(tup => {
+export function tuplesToStringTuples(tuples: any[][]): any[][] {
+  return tuples.map((tup) => {
     const proto = protoFromTuple(tup)
     if (tup.length > 1) {
       return [proto.code, convert.toString(proto.code, tup[1])]
@@ -83,10 +83,10 @@ export function tuplesToStringTuples(tuples: any[][]) {
 }
 
 // [[int code, Buffer ]... ] -> Buffer
-export function tuplesToBuffer(tuples: any[][]) {
+export function tuplesToBuffer(tuples: any[][]): Buffer {
   return fromBuffer(
     Buffer.concat(
-      tuples.map(tup => {
+      tuples.map((tup) => {
         const proto = protoFromTuple(tup)
         let buf = Buffer.from(varint.encode(proto.code))
 
@@ -95,12 +95,12 @@ export function tuplesToBuffer(tuples: any[][]) {
         }
 
         return buf
-      }),
-    ),
+      })
+    )
   )
 }
 
-export function sizeForAddr(p: Protocol, addr: number[] | Buffer) {
+export function sizeForAddr(p: Protocol, addr: number[] | Buffer): number {
   if (p.size > 0) {
     return p.size / 8
   } else if (p.size === 0) {
@@ -112,7 +112,7 @@ export function sizeForAddr(p: Protocol, addr: number[] | Buffer) {
 }
 
 // Buffer -> [[int code, Buffer ]... ]
-export function bufferToTuples(buf: Buffer) {
+export function bufferToTuples(buf: Buffer): (number | Buffer)[][] {
   const tuples = []
   let i = 0
   while (i < buf.length) {
@@ -135,7 +135,7 @@ export function bufferToTuples(buf: Buffer) {
 
     if (i > buf.length) {
       // did not end _exactly_ at buffer.length
-      throw ParseError('Invalid address buffer: ' + buf.toString('hex'))
+      throw ParseError("Invalid address buffer: " + buf.toString("hex"))
     }
 
     // ok, tuple seems good.
@@ -146,14 +146,14 @@ export function bufferToTuples(buf: Buffer) {
 }
 
 // Buffer -> String
-export function bufferToString(buf: Buffer) {
+export function bufferToString(buf: Buffer): string {
   const a = bufferToTuples(buf)
   const b = tuplesToStringTuples(a)
   return stringTuplesToString(b)
 }
 
 // String -> Buffer
-export function stringToBuffer(str: string) {
+export function stringToBuffer(str: string): Buffer {
   str = cleanPath(str)
   const a = stringToStringTuples(str)
   const b = stringTuplesToTuples(a)
@@ -162,18 +162,18 @@ export function stringToBuffer(str: string) {
 }
 
 // String -> Buffer
-export function fromString(str: string) {
+export function fromString(str: string): Buffer {
   return stringToBuffer(str)
 }
 
 // Buffer -> Buffer
-export function fromBuffer(buf: Buffer) {
+export function fromBuffer(buf: Buffer): Buffer {
   const err = validateBuffer(buf)
   if (err) throw err
   return Buffer.from(buf) // copy
 }
 
-function validateBuffer(buf: Buffer) {
+function validateBuffer(buf: Buffer): any {
   try {
     bufferToTuples(buf) // try to parse. will throw if breaks
   } catch (err) {
@@ -181,26 +181,26 @@ function validateBuffer(buf: Buffer) {
   }
 }
 
-export function isValidBuffer(buf: Buffer) {
+export function isValidBuffer(buf: Buffer): boolean {
   return validateBuffer(buf) === undefined
 }
 
-export function cleanPath(str: string) {
+export function cleanPath(str: string): string {
   return (
-    '/' +
+    "/" +
     str
       .trim()
-      .split('/')
-      .filter(a => a)
-      .join('/')
+      .split("/")
+      .filter((a) => a)
+      .join("/")
   )
 }
 
-export function ParseError(str: string) {
-  return new Error('Error parsing address: ' + str)
+export function ParseError(str: string): Error {
+  return new Error("Error parsing address: " + str)
 }
 
-export function protoFromTuple(tup: any[]) {
+export function protoFromTuple(tup: any[]): Protocol {
   const proto = protocols(tup[0])
   return proto
 }

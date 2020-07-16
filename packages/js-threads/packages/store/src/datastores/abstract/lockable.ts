@@ -1,11 +1,11 @@
-import { RWLock, State } from 'async-rwlock'
-import { Key } from 'interface-datastore'
+import { RWLock, State } from "async-rwlock"
+import { Key } from "interface-datastore"
 
 /**
  * A key-based RWLock Semaphore.
  */
 export class Semaphore {
-  constructor(private prefix: Key = new Key('')) {}
+  constructor(private prefix: Key = new Key("")) {}
   /**
    * Map of RW locks.
    */
@@ -16,7 +16,7 @@ export class Semaphore {
    * Returns a new lock if `key` is not yet in the map.
    * @param key
    */
-  get(key: Key) {
+  get(key: Key): RWLock {
     const k = this.prefix.child(key).toString()
     let lock = this.locks.get(k)
     if (!lock) {
@@ -31,7 +31,7 @@ export class Semaphore {
    * If there are no other holds on the lock, it is deleted from the map.
    * @param key
    */
-  unlock(key: Key) {
+  unlock(key: Key): void {
     const k = this.prefix.child(key).toString()
     const lock = this.locks.get(k)
     if (lock !== undefined) {
@@ -59,7 +59,7 @@ export class Lockable {
    * @param timeout How long to wait to acquire the lock before rejecting the promise, in milliseconds.
    * If timeout is not in range 0 <= timeout < Infinity, it will wait indefinitely.
    */
-  readLock(key: Key, timeout?: number) {
+  readLock(key: Key, timeout?: number): Promise<void> {
     return this.semaphore.get(key).readLock(timeout)
   }
 
@@ -70,7 +70,7 @@ export class Lockable {
    * @param timeout How long to wait to acquire the lock before rejecting the promise, in milliseconds.
    * If timeout is not in range 0 <= timeout < Infinity, it will wait indefinitely.
    */
-  writeLock(key: Key, timeout?: number) {
+  writeLock(key: Key, timeout?: number): Promise<void> {
     return this.semaphore.get(key).writeLock(timeout)
   }
 
@@ -79,7 +79,7 @@ export class Lockable {
    * Must be called after an operation using a read/write lock is finished.
    * @param key The key to unlock.
    */
-  unlock(key: Key) {
+  unlock(key: Key): void {
     return this.semaphore.unlock(key)
   }
 }

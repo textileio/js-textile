@@ -1,5 +1,4 @@
 **/node_modules
 **/docs
 **/dist
-karma.conf.js
 **/proto.*.ts

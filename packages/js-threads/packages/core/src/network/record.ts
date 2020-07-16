@@ -1,8 +1,8 @@
-import CID from 'cids'
-import { ThreadID } from '@textile/threads-id'
-import { Block } from '../ipld'
-import { LogID } from '../thread'
-import { Event } from './event'
+import { ThreadID } from "@textile/threads-id"
+import CID from "cids"
+import { Block } from "../ipld"
+import { LogID } from "../thread"
+import { Event } from "./event"
 
 /**
  * LogRecord is an Block node representing a record.

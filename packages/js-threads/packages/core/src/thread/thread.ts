@@ -1,13 +1,13 @@
-import { PrivateKey, PublicKey } from '@textile/threads-crypto'
-import { ThreadID } from '@textile/threads-id'
-import { Multiaddr } from '@textile/multiaddr'
-import { LogInfo } from './log'
-import { ThreadKey } from './key'
+import { Multiaddr } from "@textile/multiaddr"
+import { PrivateKey, PublicKey } from "@textile/threads-crypto"
+import { ThreadID } from "@textile/threads-id"
+import { ThreadKey } from "./key"
+import { LogInfo } from "./log"
 
 // Thread protocol version
-const version = '0.0.1'
+const version = "0.0.1"
 // Thread protocol name
-const name = 'thread'
+const name = "thread"
 
 /**
  * ThreadProtocol describes the default Threads Protocol parameters

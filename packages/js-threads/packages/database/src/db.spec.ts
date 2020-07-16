@@ -1,21 +1,20 @@
-import path from 'path'
-import { expect } from 'chai'
-import { Context } from '@textile/context'
-import { UserAuth } from '@textile/security'
-import { Multiaddr, ThreadID, ThreadKey } from '@textile/threads-core'
-import LevelDatastore from 'datastore-level'
-import delay from 'delay'
-import { isBrowser } from 'browser-or-node'
-import { Key } from 'interface-datastore'
-import { DomainDatastore, Dispatcher, Update, Op } from '@textile/threads-store'
-import { Network, Client } from '@textile/threads-network'
-import { MemoryDatastore } from 'interface-datastore'
-import { Database, mismatchError } from './db'
-import { EventBus } from './eventbus'
-import { threadAddr } from './utils'
+import { Context } from "@textile/context"
+import { UserAuth } from "@textile/security"
+import { Multiaddr, ThreadID, ThreadKey } from "@textile/threads-core"
+import { Client, Network } from "@textile/threads-network"
+import { Dispatcher, DomainDatastore, Op, Update } from "@textile/threads-store"
+import { isBrowser } from "browser-or-node"
+import { expect } from "chai"
+import LevelDatastore from "datastore-level"
+import delay from "delay"
+import { Key, MemoryDatastore } from "interface-datastore"
+import path from "path"
+import { Database, mismatchError } from "./db"
+import { EventBus } from "./eventbus"
+import { threadAddr } from "./utils"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const level = require('level')
+const level = require("level")
 
 interface DummyInstance {
   _id: string
@@ -33,21 +32,27 @@ interface DummyInstance {
 async function runListenersComplexUseCase(los: string[]) {
   const store = new MemoryDatastore()
   const db = new Database(store)
-  const Collection1 = await db.newCollectionFromObject<DummyInstance>('Collection1', {
-    _id: '',
-    name: '',
-    counter: 0,
-  })
+  const Collection1 = await db.newCollectionFromObject<DummyInstance>(
+    "Collection1",
+    {
+      _id: "",
+      name: "",
+      counter: 0,
+    }
+  )
 
-  const Collection2 = await db.newCollectionFromObject<DummyInstance>('Collection2', {
-    _id: '',
-    name: '',
-    counter: 0,
-  })
+  const Collection2 = await db.newCollectionFromObject<DummyInstance>(
+    "Collection2",
+    {
+      _id: "",
+      name: "",
+      counter: 0,
+    }
+  )
 
   // Create some instance *before* any listener, just to test that it doesn't appear on a
   // listener's "stream".
-  const i1 = new Collection1({ _id: 'id-i1', name: 'Textile1' })
+  const i1 = new Collection1({ _id: "id-i1", name: "Textile1" })
   await i1.save()
   await delay(500)
 
@@ -60,15 +65,15 @@ async function runListenersComplexUseCase(los: string[]) {
   }
 
   // Collection1 save i1
-  i1.name = 'Textile0'
+  i1.name = "Textile0"
   await i1.save()
 
   // Collection1 create i2
-  const i2 = new Collection1({ _id: 'id-i2', name: 'Textile2' })
+  const i2 = new Collection1({ _id: "id-i2", name: "Textile2" })
   await i2.save()
 
   // Collection2 create j1
-  const j1 = new Collection2({ _id: 'id-j1', name: 'Textile3' })
+  const j1 = new Collection2({ _id: "id-j1", name: "Textile3" })
   await j1.save()
 
   // Collection1 save i1
@@ -81,7 +86,7 @@ async function runListenersComplexUseCase(los: string[]) {
 
   // Collection2 save j1
   j1.counter = -1
-  j1.name = 'Textile33'
+  j1.name = "Textile33"
   await j1.save()
 
   // Collection1 delete i1
@@ -108,9 +113,9 @@ async function runListenersComplexUseCase(los: string[]) {
   return events
 }
 
-describe('Database', () => {
-  describe('end to end test', () => {
-    it('should allow paired peers to exchange updates', async function () {
+describe("Database", () => {
+  describe("end to end test", () => {
+    it("should allow paired peers to exchange updates", async function () {
       if (isBrowser) return this.skip() // Don't run in browser
       if (process.env.CI) return this.skip() // Don't run in CI (too slow)
       // Peer 1: Create db1, register a collection, create and update an instance.
@@ -119,38 +124,41 @@ describe('Database', () => {
       await d1.start(ident1)
       const id1 = d1.threadID
       if (id1 === undefined) {
-        throw new Error('should not be invalid thread id')
+        throw new Error("should not be invalid thread id")
       }
       // Create a new collection
-      const Dummy1 = await d1.newCollectionFromObject<DummyInstance>('dummy', {
-        _id: '',
-        name: '',
+      const Dummy1 = await d1.newCollectionFromObject<DummyInstance>("dummy", {
+        _id: "",
+        name: "",
         counter: 0,
       })
 
       // Boilerplate to generate peer1 thread-addr
       const hostID = await d1.network.getHostID()
       // const addrs = await d1.getInfo() // Normally we'd use this, but we're in Docker...
-      const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
+      const hostAddr = new Multiaddr("/dns4/threads1/tcp/4006")
       const addr = threadAddr(hostAddr, hostID, id1.toString())
 
       // Peer 2: Create a completely parallel db2, which will sync with the previous one and should
       // have the same state of dummy.
       const info = await d1.network.getThread(id1)
       const datastore = new MemoryDatastore()
-      const client = new Client(new Context('http://127.0.0.1:6207'))
-      const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
+      const client = new Client(new Context("http://127.0.0.1:6207"))
+      const network = new Network(
+        new DomainDatastore(datastore, new Key("network")),
+        client
+      )
       const d2 = new Database(datastore, { network })
       const ident2 = await Database.randomIdentity()
       await d2.startFromAddress(ident2, addr, info.key)
       // Create parallel collection
-      const Dummy2 = await d2.newCollectionFromObject<DummyInstance>('dummy', {
-        _id: '',
-        name: '',
+      const Dummy2 = await d2.newCollectionFromObject<DummyInstance>("dummy", {
+        _id: "",
+        name: "",
         counter: 0,
       })
 
-      const dummy1 = new Dummy1({ name: 'Textile1', counter: 0 })
+      const dummy1 = new Dummy1({ name: "Textile1", counter: 0 })
       dummy1.counter += 42
       await dummy1.save()
 
@@ -173,29 +181,37 @@ describe('Database', () => {
     }).timeout(6000)
   })
 
-  describe('Persistence', () => {
-    const tmp = path.join(__dirname, './test.db')
+  describe("Persistence", () => {
+    const tmp = path.join(__dirname, "./test.db")
     after(() => {
       level.destroy(tmp, () => {
         return
       })
     })
 
-    it('should work with a persistent database and custom options', async function () {
+    it("should work with a persistent database and custom options", async function () {
       if (isBrowser) return this.skip()
       const datastore = new LevelDatastore(tmp)
       if (datastore) await (datastore as any).db.clear()
-      const dispatcher = new Dispatcher(new DomainDatastore(datastore, new Key('dispatcher')))
-      const network = new Network(new DomainDatastore(datastore, new Key('network')), new Client())
-      const eventBus = new EventBus(new DomainDatastore(datastore, new Key('eventbus')), network)
+      const dispatcher = new Dispatcher(
+        new DomainDatastore(datastore, new Key("dispatcher"))
+      )
+      const network = new Network(
+        new DomainDatastore(datastore, new Key("network")),
+        new Client()
+      )
+      const eventBus = new EventBus(
+        new DomainDatastore(datastore, new Key("eventbus")),
+        network
+      )
       const db = new Database(datastore, { dispatcher, network, eventBus })
 
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       await db.start(await Database.randomIdentity(), { threadID: id })
 
-      await db.newCollectionFromObject<DummyInstance>('dummy', {
-        _id: '',
-        name: '',
+      await db.newCollectionFromObject<DummyInstance>("dummy", {
+        _id: "",
+        name: "",
         counter: 0,
       })
       // Re-do again to re-use id. If something wasn't closed correctly, would fail
@@ -206,7 +222,7 @@ describe('Database', () => {
     })
   })
 
-  describe('Events', () => {
+  describe("Events", () => {
     const assertEvents = (events: Update[], expected: Update[]) => {
       expect(events).to.have.length(expected.length)
       for (const i in events) {
@@ -214,99 +230,99 @@ describe('Database', () => {
       }
     }
 
-    it('should listen to all db events', async () => {
-      const actions = await runListenersComplexUseCase(['**'])
+    it("should listen to all db events", async () => {
+      const actions = await runListenersComplexUseCase(["**"])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Create, id: 'id-i2' },
-        { collection: 'Collection2', type: Op.Type.Create, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i2' },
-        { collection: 'Collection2', type: Op.Type.Save, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i1' },
-        { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i2' },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Create, id: "id-i2" },
+        { collection: "Collection2", type: Op.Type.Create, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i2" },
+        { collection: "Collection2", type: Op.Type.Save, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i1" },
+        { collection: "Collection2", type: Op.Type.Delete, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i2" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to events on collection 1 only', async () => {
-      const actions = await runListenersComplexUseCase(['Collection1.**'])
+    it("should listen to events on collection 1 only", async () => {
+      const actions = await runListenersComplexUseCase(["Collection1.**"])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Create, id: 'id-i2' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i2' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i2' },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Create, id: "id-i2" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i2" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i2" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to events on collection 2 only', async () => {
-      const actions = await runListenersComplexUseCase(['Collection2.**'])
+    it("should listen to events on collection 2 only", async () => {
+      const actions = await runListenersComplexUseCase(["Collection2.**"])
       const expected: Update[] = [
-        { collection: 'Collection2', type: Op.Type.Create, id: 'id-j1' },
-        { collection: 'Collection2', type: Op.Type.Save, id: 'id-j1' },
-        { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
+        { collection: "Collection2", type: Op.Type.Create, id: "id-j1" },
+        { collection: "Collection2", type: Op.Type.Save, id: "id-j1" },
+        { collection: "Collection2", type: Op.Type.Delete, id: "id-j1" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to any create events', async () => {
+    it("should listen to any create events", async () => {
       const actions = await runListenersComplexUseCase([`**.${Op.Type.Create}`])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Create, id: 'id-i2' },
-        { collection: 'Collection2', type: Op.Type.Create, id: 'id-j1' },
+        { collection: "Collection1", type: Op.Type.Create, id: "id-i2" },
+        { collection: "Collection2", type: Op.Type.Create, id: "id-j1" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to any save events', async () => {
+    it("should listen to any save events", async () => {
       const actions = await runListenersComplexUseCase([`**.${Op.Type.Save}`])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i2' },
-        { collection: 'Collection2', type: Op.Type.Save, id: 'id-j1' },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i2" },
+        { collection: "Collection2", type: Op.Type.Save, id: "id-j1" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to any delete events', async () => {
+    it("should listen to any delete events", async () => {
       const actions = await runListenersComplexUseCase([`**.${Op.Type.Delete}`])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i1' },
-        { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i2' },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i1" },
+        { collection: "Collection2", type: Op.Type.Delete, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i2" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should listen to any collection1 events or delete events on collection2', async () => {
+    it("should listen to any collection1 events or delete events on collection2", async () => {
       const actions = await runListenersComplexUseCase([
-        'Collection1.**',
+        "Collection1.**",
         `Collection2.*.${Op.Type.Delete}`,
       ])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Create, id: 'id-i2' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i1' },
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i2' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i1' },
-        { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i2' },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Create, id: "id-i2" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i1" },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i2" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i1" },
+        { collection: "Collection2", type: Op.Type.Delete, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i2" },
       ]
       assertEvents(actions, expected)
     })
 
-    it('should not listen to any events for non-existant collections', async () => {
-      const actions = await runListenersComplexUseCase(['Collection3.**'])
+    it("should not listen to any events for non-existent collections", async () => {
+      const actions = await runListenersComplexUseCase(["Collection3.**"])
       const expected: Update[] = []
       assertEvents(actions, expected)
     })
 
-    it('should listen to various complex mixed event types', async () => {
+    it("should listen to various complex mixed event types", async () => {
       const actions = await runListenersComplexUseCase([
         `Collection2.*.${Op.Type.Save}`,
         `Collection1.id-i2.${Op.Type.Save}`,
@@ -314,23 +330,23 @@ describe('Database', () => {
         `Collection2.id-j1.${Op.Type.Delete}`,
       ])
       const expected: Update[] = [
-        { collection: 'Collection1', type: Op.Type.Save, id: 'id-i2' },
-        { collection: 'Collection2', type: Op.Type.Save, id: 'id-j1' },
-        { collection: 'Collection1', type: Op.Type.Delete, id: 'id-i1' },
-        { collection: 'Collection2', type: Op.Type.Delete, id: 'id-j1' },
+        { collection: "Collection1", type: Op.Type.Save, id: "id-i2" },
+        { collection: "Collection2", type: Op.Type.Save, id: "id-j1" },
+        { collection: "Collection1", type: Op.Type.Delete, id: "id-i1" },
+        { collection: "Collection2", type: Op.Type.Delete, id: "id-j1" },
       ]
       assertEvents(actions, expected)
     })
   })
 
-  describe('Basic', () => {
-    const tmp = path.join(__dirname, './test.db')
+  describe("Basic", () => {
+    const tmp = path.join(__dirname, "./test.db")
     after(() => {
-      level.destroy(tmp, (_err: Error) => {
+      level.destroy(tmp, () => {
         return
       })
     })
-    it('should return valid addrs and keys for sharing', async () => {
+    it("should return valid addrs and keys for sharing", async () => {
       const store = new MemoryDatastore()
       const db = new Database(store)
       const threadID = ThreadID.fromRandom()
@@ -341,7 +357,7 @@ describe('Database', () => {
       await db.close()
     })
 
-    it('response should contain a valid list of thread protocol addrs', async function () {
+    it("response should contain a valid list of thread protocol addrs", async function () {
       if (isBrowser) return this.skip() // Don't run in browser
       if (process.env.CI) return this.skip() // Don't run in CI (too slow)
       // Peer 1: Create db1, register a collection, create and update an instance.
@@ -350,24 +366,29 @@ describe('Database', () => {
       await d1.start(ident1)
       const id1 = d1.threadID
       if (id1 === undefined) {
-        throw new Error('should be a valid thread id')
+        throw new Error("should be a valid thread id")
       }
 
       const info = await d1.getDBInfo()
       if (info === undefined) {
-        throw new Error('should be a valid db info object')
+        throw new Error("should be a valid db info object")
       }
 
       // @hack: we're in docker and peers can't find each other; don't try this at home!
       info.addrs = new Set(
         [...info.addrs].map((addr) => {
-          return new Multiaddr(addr.toString().replace('/ip4/127.0.0.1', '/dns4/threads1/'))
-        }),
+          return new Multiaddr(
+            addr.toString().replace("/ip4/127.0.0.1", "/dns4/threads1/")
+          )
+        })
       )
 
       const datastore = new MemoryDatastore()
-      const client = new Client(new Context('http://127.0.0.1:6207'))
-      const network = new Network(new DomainDatastore(datastore, new Key('network')), client)
+      const client = new Client(new Context("http://127.0.0.1:6207"))
+      const network = new Network(
+        new DomainDatastore(datastore, new Key("network")),
+        client
+      )
       const d2 = new Database(datastore, { network })
       const ident2 = await Database.randomIdentity()
       await d2.startFromInfo(ident2, info)
@@ -376,7 +397,8 @@ describe('Database', () => {
       expect(info2?.addrs).to.have.length.greaterThan(1)
       expect(info2?.key).to.deep.equal(info.key)
       // Now we should have it locally, so no need to add again
-      const threadKey = typeof info.key === 'string' ? ThreadKey.fromString(info.key) : info.key
+      const threadKey =
+        typeof info.key === "string" ? ThreadKey.fromString(info.key) : info.key
       try {
         await d2.startFromAddress(ident2, [...info.addrs][0], threadKey)
       } catch (err) {
@@ -389,12 +411,12 @@ describe('Database', () => {
       if (isBrowser) return this.skip()
       const child = new LevelDatastore(tmp)
       const db = new Database(child)
-      const Col = await db.newCollectionFromObject('blah', { _id: '' })
+      const Col = await db.newCollectionFromObject("blah", { _id: "" })
       expect(Col).to.not.be.undefined
       await db.close()
     })
 
-    it('should throw if our database and thread id do not match', async function () {
+    it("should throw if our database and thread id do not match", async function () {
       const store = new MemoryDatastore()
       let db = new Database(store)
       const ident = await Database.randomIdentity()
@@ -404,29 +426,29 @@ describe('Database', () => {
       db = new Database(store)
       try {
         await db.start(ident, { threadID: ThreadID.fromRandom() })
-        throw new Error('should have throw')
+        throw new Error("should have throw")
       } catch (err) {
         expect(err).to.equal(mismatchError)
       }
       await db.close()
     })
 
-    it('start a functional db using withUserAuth', async () => {
+    it("start a functional db using withUserAuth", async () => {
       const store = new MemoryDatastore()
 
       // We'll just use a dummy auth here. Hub auth should be tested in @textile/hub
       const auth: UserAuth = {
-        key: '',
-        sig: '',
+        key: "",
+        sig: "",
         msg: new Date(Date.now() + 1000 * 60).toUTCString(),
       }
-      const db = Database.withUserAuth(auth, store, {}, 'http://localhost:6007')
+      const db = Database.withUserAuth(auth, store, {}, "http://localhost:6007")
       const threadID = ThreadID.fromRandom()
       await db.start(await Database.randomIdentity(), { threadID })
 
-      await db.newCollectionFromObject<DummyInstance>('dummy', {
-        _id: '',
-        name: '',
+      await db.newCollectionFromObject<DummyInstance>("dummy", {
+        _id: "",
+        name: "",
         counter: 0,
       })
 

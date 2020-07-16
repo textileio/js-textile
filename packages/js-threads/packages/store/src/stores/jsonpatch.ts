@@ -1,8 +1,9 @@
-import { Datastore, Result, Key, MemoryDatastore } from 'interface-datastore'
-import jsonpatch, { Operation } from 'fast-json-patch'
-import { Dispatcher, Event } from '../dispatcher'
-import { Codec } from '../codec'
-import { Store, safeGet } from './store'
+import jsonpatch, { Operation } from "fast-json-patch"
+import { Key, MemoryDatastore } from "interface-datastore"
+import type { Datastore, Result } from "interface-datastore"
+import { Codec } from "../codec"
+import { Dispatcher, Event } from "../dispatcher"
+import { safeGet, Store } from "./store"
 
 /**
  * Instance is any object with an ID field.
@@ -37,14 +38,14 @@ export interface Op<T extends Instance> {
  * JsonPatchCodec uses JSON-Patch standard (RFC 6902) semantics to update JSON documents using delta patches.
  */
 export class JsonPatchCodec<T extends Instance> implements Codec<T, Op<T>> {
-  async onDelete(_store: Datastore<T>, key: Key) {
+  async onDelete(_store: Datastore<T>, key: Key): Promise<Op<T>> {
     return {
       type: Op.Type.Delete,
       instanceID: key.toString().slice(1),
       patch: undefined,
     }
   }
-  async onPut(store: Datastore<T>, key: Key, value: T) {
+  async onPut(store: Datastore<T>, key: Key, value: T): Promise<Op<T>> {
     const instanceID = key.toString().slice(1)
     let patch: Op<T>
     const old = await safeGet(store, key)
@@ -53,11 +54,18 @@ export class JsonPatchCodec<T extends Instance> implements Codec<T, Op<T>> {
     } else {
       const ops = jsonpatch.compare(old, value)
       // If no ops, old == new
-      patch = { type: Op.Type.Save, instanceID, patch: ops.length > 0 ? ops : old }
+      patch = {
+        type: Op.Type.Save,
+        instanceID,
+        patch: ops.length > 0 ? ops : old,
+      }
     }
     return patch
   }
-  async onReduce(store: Datastore<T>, ...events: Result<Event<Op<T>>>[]) {
+  async onReduce(
+    store: Datastore<T>,
+    ...events: Result<Event<Op<T>>>[]
+  ): Promise<void> {
     const batch = store.batch()
     for (const { value } of events) {
       const newKey = new Key(value.id)
@@ -85,7 +93,7 @@ export class JsonPatchStore<T extends Instance> extends Store<T, Op<T>> {
   constructor(
     child: Datastore<any> = new MemoryDatastore(),
     prefix?: Key,
-    dispatcher?: Dispatcher,
+    dispatcher?: Dispatcher
   ) {
     super(child, new JsonPatchCodec<T>(), prefix, dispatcher)
   }

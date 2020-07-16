@@ -1,13 +1,19 @@
-import { ulid } from 'ulid'
-import { Datastore, Key, Query, Result, MemoryDatastore } from 'interface-datastore'
-import { EventEmitter } from 'tsee'
-import { encode, decode } from 'cbor-sync'
-import log from 'loglevel'
-import { reduce, map, collect } from 'streaming-iterables'
+import { decode, encode } from "cbor-sync"
+import {
+  Datastore,
+  Key,
+  MemoryDatastore,
+  Query,
+  Result,
+} from "interface-datastore"
+import log from "loglevel"
+import { collect, map, reduce } from "streaming-iterables"
+import { EventEmitter } from "tsee"
+import { ulid } from "ulid"
 
-const logger = log.getLogger('store:queue')
+const logger = log.getLogger("store:queue")
 
-const notOpenError = new Error('Database not open')
+const notOpenError = new Error("Database not open")
 
 export interface Job<T> {
   id: string
@@ -67,25 +73,25 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    */
   constructor(
     public store: Datastore<Buffer> = new MemoryDatastore(),
-    public batchSize: number = 10,
+    public batchSize: number = 10
   ) {
     super()
 
-    if (batchSize < 1) throw new Error('Invalid batch size')
+    if (batchSize < 1) throw new Error("Invalid batch size")
 
-    this.on('trigger_next', (index = 0) => {
-      logger.debug('on.trigger_next')
+    this.on("trigger_next", (index = 0) => {
+      logger.debug("on.trigger_next")
       // Check state of queue
       if (!this.run || this.isEmpty) {
-        logger.debug('run=' + this.run + ' and empty=' + this.isEmpty)
-        logger.debug('not started or empty queue')
+        logger.debug("run=" + this.run + " and empty=" + this.isEmpty)
+        logger.debug("not started or empty queue")
         // If queue not started or is empty, then just return
         return
       }
 
       // Define our embedded recursive function to be called later
       const trigger = () => {
-        this.emit('next', this._queue[index])
+        this.emit("next", this._queue[index])
       }
 
       // If our in-memory list is empty, but queue is not, re-hydrate from db
@@ -95,8 +101,8 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
             // Schedule job for next check phase in event loop
             setImmediate(trigger)
           })
-          .catch(err => {
-            this.emit('error', err)
+          .catch((err) => {
+            this.emit("error", err)
             console.error(err)
           })
       } else if (this._queue.length) {
@@ -106,69 +112,69 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
       } else {
         // Otherwise queue is empty
         this._empty = true
-        this.emit('empty')
+        this.emit("empty")
       }
     })
 
     // If a job is pushed, trigger_next event
-    this.on('push', _job => {
+    this.on("push", (/** job */) => {
       if (this.isEmpty) {
         this._empty = false
-        logger.debug('No longer empty')
-        if (this.run) this.emit('trigger_next')
+        logger.debug("No longer empty")
+        if (this.run) this.emit("trigger_next")
       }
     })
   }
 
-  get length() {
+  get length(): number | undefined {
     if (this.isOpen) return this._length
   }
 
   /**
    * Open persistent storage.
    */
-  async open() {
+  async open(): Promise<Array<Job<T>>> {
     await this.store.open()
     this._opened = true
     await this.countQueue()
     const jobs = await this.hydrateQueue()
     // If no msg left, set empty to true (but don't emit event)
     this._empty = this._queue.length === 0
-    this.emit('open', this.store)
+    this.emit("open", this.store)
     return jobs
   }
 
   /**
    * Close persistent storage.
    */
-  async close() {
+  async close(): Promise<void> {
     await this.store.close()
     this._opened = false
     this._empty = undefined
     this.run = false
     this._queue = []
-    this.emit('close')
+    this.emit("close")
     return
   }
 
   /**
    * Start processing the queue.
    */
-  start() {
-    this.emit('start')
+  start(): void {
+    this.emit("start")
     if (!this.isOpen) throw notOpenError
     if (this.run === false) {
       this.run = true
-      this.emit('trigger_next')
+      this.emit("trigger_next")
     }
   }
 
   /**
    * Stop processing the queue
    */
-  stop() {
+  stop(): void {
     this.run = false
-    this.emit('stop')
+    this.emit("stop")
   }
 
   /**
@@ -179,26 +185,26 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * dropped from the in-memory queue, but will be re-hydrated from persistent storage once the current batch of jobs
    * are complete. Useful to keep a single job from holding up the whole queue, without throwing it out entirely.
    */
-  done(skip = false) {
+  done(skip = false): void {
     if (skip) {
-      logger.debug('Skipping job for now.')
+      logger.debug("Skipping job for now.")
       // Skips this job until re-hydration from persistent storage
       this._queue.shift()
-      this.emit('trigger_next')
+      this.emit("trigger_next")
       return
     }
-    logger.debug('Calling done.')
+    logger.debug("Calling done.")
     // Remove the job from the queue
     this.removeJob()
       .then(() => {
-        logger.debug('Job deleted from db')
+        logger.debug("Job deleted from db")
         // Decrement our job length
         // @todo: Should this be moved to the actual removeJob method?
         this._length--
-        this.emit('trigger_next')
+        this.emit("trigger_next")
       })
-      .catch(err => {
-        this.emit('error', err)
+      .catch((err) => {
+        this.emit("error", err)
         console.error(err)
       })
   }
@@ -207,8 +213,8 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Called by user from within their 'next' event handler when error occurred and job to remain at head of queue
    * It will leave the current job in the queue and stop the queue
    */
-  abort() {
-    logger.debug('Calling abort!')
+  abort(): void {
+    logger.debug("Calling abort!")
     this.stop()
   }
 
@@ -216,12 +222,12 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Called by user to push a job to the queue
    * @param job Object to be serialized and pushed to queue as CBOR.
    */
-  push(job: T, id: string = ulid()) {
-    return new Promise<string>((resolve, _reject) => {
+  push(job: T, id: string = ulid()): Promise<string> {
+    return new Promise<string>((resolve) => {
       this.store.put(new Key(id), encode(job)).then(() => {
         // Increment our job length
         this._length++
-        this.emit('push', { id, job })
+        this.emit("push", { id, job })
         resolve(id)
       })
     })
@@ -231,7 +237,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Control logging level.
    * @param level The logging level to enable.
    */
-  setLogLevel(level: log.LogLevelDesc) {
+  setLogLevel(level: log.LogLevelDesc): this {
     logger.setLevel(level)
     return this
   }
@@ -241,7 +247,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * @throws If open method hasn't been called first
    * @return True if empty, false if jobs still remain
    */
-  get isEmpty() {
+  get isEmpty(): boolean | undefined {
     if (!this.isOpen) throw notOpenError
     return this._empty
   }
@@ -250,7 +256,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Is the queue started and processing jobs
    * @return True if started, otherwise false
    */
-  get isStarted() {
+  get isStarted(): boolean {
     return this.run
   }
 
@@ -258,7 +264,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Is the queue's persistent storage open.
    * @return True if opened, otherwise false
    */
-  get isOpen() {
+  get isOpen(): boolean {
     return this._opened
   }
 
@@ -267,20 +273,20 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * @param id The job id to search for
    * @return Promise resolves true if the job id is still in the queue, otherwise false
    */
-  has(id: string) {
+  has(id: string): Promise<boolean> {
     // First search the in-memory queue as its quick
-    return new Promise((reject, resolve) => {
+    return new Promise<boolean>((reject, resolve) => {
       for (let i = 0; i < this._queue.length; i++) {
         if (this._queue[i].id === id) resolve(true)
       }
       // Now check the on-disk queue
       this.store
         .has(new Key(id))
-        .then(has => {
+        .then((has) => {
           // Return true if there is a record, otherwise return false
           resolve(has)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -290,7 +296,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Return an array of job id numbers matching the given job data in order of execution.
    * @param job The job to search for.
    */
-  getJobIds(job: T) {
+  getJobIds(job: T): Promise<string[]> {
     return this.searchQueue(job)
   }
 
@@ -298,11 +304,11 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * Return an array of job id numbers matching the given job data in order of execution.
    * @param job The job to search for.
    */
-  getFirstJobId(job: T) {
-    return new Promise<string>((resolve, _reject) => {
+  getFirstJobId(job: T): Promise<string> {
+    return new Promise<string>((resolve) => {
       // search in-memory queue first, compare as JSON string?
       const jobstr = JSON.stringify(job)
-      const i = this._queue.findIndex(j => {
+      const i = this._queue.findIndex((j) => {
         return JSON.stringify(j.job) === jobstr
       })
       if (i !== -1) {
@@ -310,7 +316,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
         return
       }
       // Otherwise have to search rest of db queue
-      this.searchQueue(job).then(data => {
+      this.searchQueue(job).then((data) => {
         if (data.length === 0) {
           resolve(undefined)
           return
@@ -325,12 +331,12 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * @param id The job id number to delete.
    * @return The id number that was deleted.
    */
-  delete(id: string) {
-    return new Promise((resolve, reject) => {
+  delete(id: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       this.removeJob(id)
         .then(() => {
-          logger.debug('Job deleted from db')
-          this.emit('delete', id)
+          logger.debug("Job deleted from db")
+          this.emit("delete", id)
           // Decrement our job length
           this._length--
           resolve(id)
@@ -339,19 +345,19 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
     })
   }
 
-  private countQueue() {
-    logger.debug('CountQueue')
+  private countQueue(): Promise<number> {
+    logger.debug("CountQueue")
     return new Promise<number>((resolve, reject) => {
       if (!this.isOpen) reject(notOpenError)
-      reduce((a, _b) => a + 1, 0, this.store.query({})).then(count => {
+      reduce((a /** b */) => a + 1, 0, this.store.query({})).then((count) => {
         this._length = count
         resolve(count)
       })
     })
   }
 
-  private searchQueue(job: T) {
-    logger.debug('SearchQueue')
+  private searchQueue(job: T): Promise<Array<string>> {
+    logger.debug("SearchQueue")
     const encoded = encode(job)
     return new Promise<Array<string>>((resolve, reject) => {
       if (!this.isOpen) reject(notOpenError)
@@ -359,13 +365,13 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
       collect(
         map(
           ({ key }) => key.baseNamespace(),
-          this.store.query({ filters: [filter], keysOnly: true }),
-        ),
+          this.store.query({ filters: [filter], keysOnly: true })
+        )
       )
-        .then(jobs => {
+        .then((jobs) => {
           resolve(jobs)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -375,20 +381,20 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * This function will load from the database, 'size' number of records into queue array.
    * @param limit How many records to hydrate.
    */
-  private hydrateQueue(limit: number = this.batchSize) {
-    logger.debug('HydrateQueue')
+  private hydrateQueue(limit: number = this.batchSize): Promise<Array<Job<T>>> {
+    logger.debug("HydrateQueue")
     return new Promise((resolve, reject) => {
       if (!this.isOpen) reject(notOpenError)
       const mapper = ({ key, value }: Result) => {
         return { id: key.baseNamespace(), job: decode(value) }
       }
       collect(map(mapper, this.store.query({ limit })))
-        .then(jobs => {
+        .then((jobs) => {
           // Update our queue array
           this._queue = jobs
           resolve(jobs)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -398,7 +404,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
    * This function will remove the given or current job from the database and in-memory array.
    * @param id Optional job id number to remove, if omitted, remove current job at front of queue.
    */
-  private removeJob(id?: string) {
+  private removeJob(id?: string): Promise<string> {
     if (id === undefined) {
       id = this._queue.shift().id
     } else {
@@ -411,10 +417,10 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
       }
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       if (!this.isOpen) reject(notOpenError)
-      logger.debug('Removing job: ' + id)
-      logger.debug('With queue length: ' + this.length)
+      logger.debug("Removing job: " + id)
+      logger.debug("With queue length: " + this.length)
 
       this.store
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -422,7 +428,7 @@ export class Queue<T = any> extends EventEmitter<Events<T>> {
         .then(() => {
           resolve(id)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })

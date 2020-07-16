@@ -1,35 +1,42 @@
-import toJsonSchema from 'to-json-schema'
-import cbor from 'cbor-sync'
-import { Network, Client } from '@textile/threads-network'
-import { Context, defaultHost } from '@textile/context'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { EventEmitter2 } from 'eventemitter2'
-import { Dispatcher, Instance, DomainDatastore, Event, Update, Op } from '@textile/threads-store'
-import { Datastore, Key } from 'interface-datastore'
+import { Context, defaultHost } from "@textile/context"
+import { KeyInfo, UserAuth } from "@textile/security"
 import {
-  ThreadID,
-  ThreadRecord,
-  ThreadInfo,
-  ThreadKey,
-  Multiaddr,
   Identity,
   Libp2pCryptoIdentity,
   LogInfo,
-} from '@textile/threads-core'
-import LevelDatastore from 'datastore-level'
-import { EventBus } from './eventbus'
-import { Collection, JSONSchema, Config } from './collection'
-import { createThread, decodeRecord, Cache, maybeLocalAddr } from './utils'
+  Multiaddr,
+  ThreadID,
+  ThreadInfo,
+  ThreadKey,
+  ThreadRecord,
+} from "@textile/threads-core"
+import { Client, Network } from "@textile/threads-network"
+import {
+  Dispatcher,
+  DomainDatastore,
+  Event,
+  Instance,
+  Op,
+  Update,
+} from "@textile/threads-store"
+import cbor from "cbor-sync"
+import LevelDatastore from "datastore-level"
+import { EventEmitter2 } from "eventemitter2"
+import { Datastore, Key } from "interface-datastore"
+import toJsonSchema from "to-json-schema"
+import { Collection, Config, JSONSchema } from "./collection"
+import { EventBus } from "./eventbus"
+import { Cache, createThread, decodeRecord, maybeLocalAddr } from "./utils"
 
-const metaKey = new Key('meta')
-const schemaKey = metaKey.child(new Key('schema'))
-const duplicateCollection = new Error('Duplicate collection')
+const metaKey = new Key("meta")
+const schemaKey = metaKey.child(new Key("schema"))
+const duplicateCollection = new Error("Duplicate collection")
 
 export const mismatchError = new Error(
-  'Input ThreadID does not match existing database ThreadID. Consider creating new database or use a matching ThreadID.',
+  "Input ThreadID does not match existing database ThreadID. Consider creating new database or use a matching ThreadID."
 )
 export const missingIdentity = new Error(
-  'Identity required. You may use Database.randomIdentity() to generate a new one, but see caveats in docs.',
+  "Identity required. You may use Database.randomIdentity() to generate a new one, but see caveats in docs."
 )
 
 /**
@@ -129,20 +136,31 @@ export class Database implements DatabaseSettings {
    * @param options A set of database options.
    * These are used to control the operation of the underlying database.
    */
-  constructor(store: Datastore<any> | string, options: Partial<DatabaseSettings> = {}) {
-    const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
-    this.child = new DomainDatastore(datastore, new Key('db'))
+  constructor(
+    store: Datastore<any> | string,
+    options: Partial<DatabaseSettings> = {}
+  ) {
+    const datastore =
+      typeof store === "string" ? new LevelDatastore(store) : store
+    this.child = new DomainDatastore(datastore, new Key("db"))
     this.dispatcher =
-      options.dispatcher ?? new Dispatcher(new DomainDatastore(datastore, new Key('dispatcher')))
+      options.dispatcher ??
+      new Dispatcher(new DomainDatastore(datastore, new Key("dispatcher")))
     if (options.network === undefined) {
       const client = new Client()
-      this.network = new Network(new DomainDatastore(datastore, new Key('network')), client)
+      this.network = new Network(
+        new DomainDatastore(datastore, new Key("network")),
+        client
+      )
     } else {
       this.network = options.network
     }
     this.eventBus =
       options.eventBus ??
-      new EventBus(new DomainDatastore(this.child, new Key('eventbus')), this.network)
+      new EventBus(
+        new DomainDatastore(this.child, new Key("eventbus")),
+        this.network
+      )
   }
 
   /**
@@ -156,11 +174,12 @@ export class Database implements DatabaseSettings {
     store: string | Datastore,
     options?: Partial<DatabaseSettings>,
     host = defaultHost,
-    debug = false,
-  ) {
-    const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
+    debug = false
+  ): Database {
+    const datastore =
+      typeof store === "string" ? new LevelDatastore(store) : store
     const context =
-      typeof auth === 'object'
+      typeof auth === "object"
         ? Context.fromUserAuth(auth, host)
         : Context.fromUserAuthCallback(auth, host)
     const client = new Client(context, debug)
@@ -190,9 +209,10 @@ export class Database implements DatabaseSettings {
     store: string | Datastore,
     options?: Partial<DatabaseSettings>,
     host = defaultHost,
-    debug = false,
-  ) {
-    const datastore = typeof store === 'string' ? new LevelDatastore(store) : store
+    debug = false
+  ): Promise<Database> {
+    const datastore =
+      typeof store === "string" ? new LevelDatastore(store) : store
     const context = new Context(host)
     await context.withKeyInfo(keyInfo)
     const client = new Client(context, debug)
@@ -218,7 +238,10 @@ export class Database implements DatabaseSettings {
    * @param name A name for the collection.
    * @param data A valid JSON object.
    */
-  newCollectionFromObject<T extends Instance>(name: string, data: T) {
+  newCollectionFromObject<T extends Instance>(
+    name: string,
+    data: T
+  ): Promise<Collection<T>> {
     const schema = toJsonSchema(data) as JSONSchema
     return this.newCollection<T>(name, schema)
   }
@@ -228,7 +251,10 @@ export class Database implements DatabaseSettings {
    * @param name A name for the collection.
    * @param schema A valid JSON schema object.
    */
-  async newCollection<T extends Instance>(name: string, schema: JSONSchema) {
+  async newCollection<T extends Instance>(
+    name: string,
+    schema: JSONSchema
+  ): Promise<Collection<T>> {
     if (this.collections.has(name)) {
       throw duplicateCollection
     }
@@ -239,8 +265,8 @@ export class Database implements DatabaseSettings {
     }
     const { dispatcher, child } = this
     const collection = new Collection<T>(name, schema, { child, dispatcher })
-    collection.child.on('update', this.onUpdate.bind(this))
-    collection.child.on('events', this.onEvents.bind(this))
+    collection.child.on("update", this.onUpdate.bind(this))
+    collection.child.on("events", this.onEvents.bind(this))
     this.collections.set(name, collection)
     return collection
   }
@@ -264,14 +290,14 @@ export class Database implements DatabaseSettings {
     identity: Identity,
     addr: Multiaddr,
     threadKey?: ThreadKey,
-    opts: StartOptions = {},
-  ) {
+    opts: StartOptions = {}
+  ): Promise<void> {
     if (identity === undefined) {
       throw missingIdentity
     }
     await this.network.getToken(identity)
     await this.child.open()
-    const idKey = metaKey.child(new Key('threadid'))
+    const idKey = metaKey.child(new Key("threadid"))
     const hasExisting = await this.child.has(idKey)
     if (hasExisting) {
       throw mismatchError
@@ -284,7 +310,7 @@ export class Database implements DatabaseSettings {
       await this.newCollection(name, schema)
     }
     await this.eventBus.start(this.threadID)
-    this.eventBus.on('record', this.onRecord.bind(this))
+    this.eventBus.on("record", this.onRecord.bind(this))
     if (this.threadID) {
       this.network.pullThread(this.threadID) // Don't await
     }
@@ -313,9 +339,10 @@ export class Database implements DatabaseSettings {
     identity: Identity,
     info: DBInfo,
     includeLocal = false,
-    opts: StartOptions = {},
-  ) {
-    const threadKey = typeof info.key === 'string' ? ThreadKey.fromString(info.key) : info.key
+    opts: StartOptions = {}
+  ): Promise<undefined | Error> {
+    const threadKey =
+      typeof info.key === "string" ? ThreadKey.fromString(info.key) : info.key
     const filtered = [...info.addrs]
       .map((addr) => new Multiaddr(addr))
       .filter((addr) => includeLocal || !maybeLocalAddr(addr.toOptions().host))
@@ -323,7 +350,8 @@ export class Database implements DatabaseSettings {
     for (const addr of filtered) {
       try {
         // If we're successful, we're done
-        return this.startFromAddress(identity, addr, threadKey, opts)
+        await this.startFromAddress(identity, addr, threadKey, opts)
+        return
       } catch (err) {
         error = err
       }
@@ -341,13 +369,13 @@ export class Database implements DatabaseSettings {
    * if you wish to retrieve user data later, or use an external identity provider.
    * @param opts A set of options to configure the setup and usage of the underlying database.
    */
-  async start(identity: Identity, opts: StartOptions = {}) {
+  async start(identity: Identity, opts: StartOptions = {}): Promise<void> {
     if (identity === undefined) {
       throw missingIdentity
     }
     await this.network.getToken(identity)
     await this.child.open()
-    const idKey = metaKey.child(new Key('threadid'))
+    const idKey = metaKey.child(new Key("threadid"))
     const hasExisting = await this.child.has(idKey)
 
     if (opts.threadID === undefined) {
@@ -383,7 +411,7 @@ export class Database implements DatabaseSettings {
       await this.newCollection(name, schema)
     }
     await this.eventBus.start(this.threadID)
-    this.eventBus.on('record', this.onRecord.bind(this))
+    this.eventBus.on("record", this.onRecord.bind(this))
     if (this.threadID) this.network.pullThread(this.threadID) // Don't await
   }
 
@@ -398,7 +426,9 @@ export class Database implements DatabaseSettings {
 
     return {
       key: asStrings ? info.key.toString() : info.key,
-      addrs: asStrings ? [...info.addrs].map((addr) => addr.toString()) : info.addrs,
+      addrs: asStrings
+        ? [...info.addrs].map((addr) => addr.toString())
+        : info.addrs,
     }
   }
 
@@ -407,7 +437,7 @@ export class Database implements DatabaseSettings {
    * Stops the underlying datastore if not already stopped, and disables the dispatcher and
    * underlying services (event bus, network network, etc.)
    */
-  async close() {
+  async close(): Promise<void> {
     this.collections.clear()
     await this.eventBus.stop()
     return this.child.close()
@@ -462,7 +492,7 @@ export class Database implements DatabaseSettings {
   /**
    * Create a random user identity.
    */
-  static async randomIdentity() {
+  static async randomIdentity(): Promise<Libp2pCryptoIdentity> {
     return Libp2pCryptoIdentity.fromRandom()
   }
 }

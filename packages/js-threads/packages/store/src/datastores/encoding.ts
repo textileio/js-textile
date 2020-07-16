@@ -1,5 +1,6 @@
-import { Datastore, Key, Batch, Query, utils, Result } from 'interface-datastore'
-import cbor from 'cbor-sync'
+import cbor from "cbor-sync"
+import { utils } from "interface-datastore"
+import type { Batch, Datastore, Key, Query, Result } from "interface-datastore"
 
 export interface Encoder<T = Buffer, O = Buffer> {
   encode(data: T): O
@@ -33,15 +34,19 @@ export const CborEncoder: Encoder<any, Buffer> = {
 }
 
 function isString(x: any) {
-  return typeof x === 'string'
+  return typeof x === "string"
 }
 
 function isObject(x: any) {
-  return typeof x === 'object' && x !== null
+  return typeof x === "object" && x !== null
 }
 
 function isBufferLike(x: any) {
-  return isObject(x) && x.type === 'Buffer' && (Array.isArray(x.data) || isString(x.data))
+  return (
+    isObject(x) &&
+    x.type === "Buffer" &&
+    (Array.isArray(x.data) || isString(x.data))
+  )
 }
 
 function reviver(_key: string, value: any) {
@@ -76,7 +81,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
   /**
    * Open the underlying datastore.
    */
-  open() {
+  open(): Promise<void> {
     return this.child.open()
   }
 
@@ -85,7 +90,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * @param key The key.
    * @param value The value.
    */
-  put(key: Key, value: T) {
+  put(key: Key, value: T): Promise<void> {
     return this.child.put(key, this.encoder.encode(value))
   }
 
@@ -93,7 +98,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * Deletes the value under the given key.
    * @param key The key.
    */
-  delete(key: Key) {
+  delete(key: Key): Promise<void> {
     return this.child.delete(key)
   }
 
@@ -102,7 +107,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * @throws if the given key is not found.
    * @param key The key.
    */
-  async get(key: Key) {
+  async get(key: Key): Promise<T> {
     return this.encoder.decode(await this.child.get(key))
   }
 
@@ -110,7 +115,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * Returns whether the given key is in the store.
    * @param key The key.
    */
-  has(key: Key) {
+  has(key: Key): Promise<boolean> {
     return this.child.has(key)
   }
 
@@ -118,7 +123,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
    * Returns a Batch object with which you can chain multiple operations.
    * The operations are only executed upon calling `commit`.
    */
-  batch() {
+  batch(): Batch<T> {
     const b: Batch<O> = this.child.batch()
     const batch: Batch<T> = {
       /**
@@ -179,7 +184,7 @@ export class EncodingDatastore<T = Buffer, O = Buffer> implements Datastore<T> {
   /**
    * Close the underlying datastore.
    */
-  close() {
+  close(): Promise<void> {
     return this.child.close()
   }
 }

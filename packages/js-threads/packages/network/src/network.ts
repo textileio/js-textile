@@ -1,27 +1,32 @@
-import { keys, PrivateKey, PublicKey, randomBytes } from '@textile/threads-crypto'
-import CID from 'cids'
-import log from 'loglevel'
 import {
   Block,
   Closer,
-  ThreadKey,
+  Identity,
   LogID,
   LogInfo,
   LogRecord,
   Multiaddr,
   Network as Interface,
-  ThreadID,
-  ThreadRecord,
-  ThreadInfo,
-  Identity,
   NewThreadOptions,
-} from '@textile/threads-core'
-import { createEvent, createRecord } from '@textile/threads-encoding'
-import { Client } from '@textile/threads-network-client'
-import { Datastore } from 'interface-datastore'
-import { LogStore } from './store'
+  ThreadID,
+  ThreadInfo,
+  ThreadKey,
+  ThreadRecord,
+} from "@textile/threads-core"
+import {
+  keys,
+  PrivateKey,
+  PublicKey,
+  randomBytes,
+} from "@textile/threads-crypto"
+import { createEvent, createRecord } from "@textile/threads-encoding"
+import { Client } from "@textile/threads-network-client"
+import CID from "cids"
+import { Datastore } from "interface-datastore"
+import log from "loglevel"
+import { LogStore } from "./store"
 
-const logger = log.getLogger('network')
+const logger = log.getLogger("network")
 
 const ed25519 = keys.supportedKeys.ed25519
 
@@ -39,8 +44,13 @@ export class Network implements Interface {
    * It is not easy/possible to migrate identities after the fact. Please supply an identity argument if
    * you wish to persist/retrieve user data later.
    */
-  constructor(store: LogStore | Datastore, readonly client: Client, public identity?: Identity) {
-    this.store = store instanceof LogStore ? store : LogStore.fromDatastore(store)
+  constructor(
+    store: LogStore | Datastore,
+    readonly client: Client,
+    public identity?: Identity
+  ) {
+    this.store =
+      store instanceof LogStore ? store : LogStore.fromDatastore(store)
   }
 
   /**
@@ -48,10 +58,14 @@ export class Network implements Interface {
    * @param identity The generic identity to use for signing and validation. Will default to the  identity specified
    * at construction if available, otherwise a new Identity is required here.
    */
-  async getToken(identity: Identity | undefined = this.identity): Promise<string> {
-    const existing: string | undefined = this.client.context.get('authorization')
+  async getToken(
+    identity: Identity | undefined = this.identity
+  ): Promise<string> {
+    const existing: string | undefined = this.client.context.get(
+      "authorization"
+    )
     if (existing !== undefined) return existing
-    if (identity === undefined) throw new Error('Identity required.')
+    if (identity === undefined) throw new Error("Identity required.")
     this.identity = identity
     return this.client.getToken(identity)
   }
@@ -71,7 +85,10 @@ export class Network implements Interface {
    * is provided, one will be created. Similarly, if no log key is provided, then the "host" Peer ID will be used.
    * If no ReadKey is provided, the network will be unable to write records (but it may be able to return records).
    */
-  async createThread(id: ThreadID, opts?: NewThreadOptions) {
+  async createThread(
+    id: ThreadID,
+    opts?: NewThreadOptions
+  ): Promise<ThreadInfo> {
     const logInfo = await this.deriveLogKeys(opts?.logKey)
     // Don't send along readKey, or log's privKey information
     const threadKey = opts?.threadKey || ThreadKey.fromRandom()
@@ -81,8 +98,11 @@ export class Network implements Interface {
     }
     const info: ThreadInfo = await this.client.createThread(id, newOpts)
     // Now we want to store or create read key
-    info.key = new ThreadKey(threadKey.service, Buffer.from(threadKey.read || randomBytes(32)))
-    logger.debug('caching thread + log information')
+    info.key = new ThreadKey(
+      threadKey.service,
+      Buffer.from(threadKey.read || randomBytes(32))
+    )
+    logger.debug("caching thread + log information")
     await this.store.addThread(info)
     await this.store.addLog(id, logInfo)
     return info
@@ -93,11 +113,14 @@ export class Network implements Interface {
    * @param addr The Thread multiaddress.
    * @param opts The set of keys to use when adding the Thread.
    */
-  async addThread(addr: Multiaddr, opts?: NewThreadOptions) {
+  async addThread(
+    addr: Multiaddr,
+    opts?: NewThreadOptions
+  ): Promise<ThreadInfo> {
     const logInfo = await this.deriveLogKeys(opts?.logKey)
     // Don't send along readKey, or log's privKey information
     const threadKey = opts?.threadKey
-    if (threadKey === undefined) throw new Error('Missing Thread key(s)')
+    if (threadKey === undefined) throw new Error("Missing Thread key(s)")
     const newOpts: NewThreadOptions = {
       threadKey: new ThreadKey(threadKey.service),
       logKey: logInfo.pubKey,
@@ -105,7 +128,7 @@ export class Network implements Interface {
     const info: ThreadInfo = await this.client.addThread(addr, newOpts)
     // Now we want to store full key information
     info.key = threadKey
-    logger.debug('caching thread + log information')
+    logger.debug("caching thread + log information")
     await this.store.addThread(info)
     await this.store.addLog(info.id, logInfo)
     return info
@@ -115,7 +138,7 @@ export class Network implements Interface {
    * getThread with id.
    * @param id The Thread ID.
    */
-  async getThread(id: ThreadID) {
+  async getThread(id: ThreadID): Promise<ThreadInfo> {
     const info = await this.client.getThread(id)
     // Merge local thread info with remote thread info
     const local = await this.store.threadInfo(id)
@@ -128,7 +151,7 @@ export class Network implements Interface {
    * from the network on the (possible remote) client and forwarded to this peer.
    * @param id The Thread ID.
    */
-  async pullThread(id: ThreadID) {
+  async pullThread(id: ThreadID): Promise<void> {
     logger.debug(`pulling thread ${id.toString()}`)
     // @note: Not need to worry about safety here, the remote peer will handle that for us.
     return this.client.pullThread(id)
@@ -138,7 +161,7 @@ export class Network implements Interface {
    * deleteThread with id.
    * @param id The Thread ID.
    */
-  async deleteThread(id: ThreadID) {
+  async deleteThread(id: ThreadID): Promise<void> {
     await this.client.deleteThread(id)
     return this.store.deleteThread(id)
   }
@@ -157,21 +180,23 @@ export class Network implements Interface {
    * @param id The Thread ID.
    * @param body The body to add as content.
    */
-  async createRecord(id: ThreadID, body: any) {
-    const block = Block.encoder(body, 'dag-cbor')
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async createRecord(id: ThreadID, body: any): Promise<ThreadRecord> {
+    const block = Block.encoder(body, "dag-cbor")
     const info = await this.getThread(id)
     // Get (or create a new set of) log keys
     const logInfo = await this.getOwnLog(info, true)
-    if (info.key === undefined) throw new Error('Missing key info.')
-    if (info.key.read === undefined) throw new Error('Missing network key.')
+    if (info.key === undefined) throw new Error("Missing key info.")
+    if (info.key.read === undefined) throw new Error("Missing network key.")
     const event = await createEvent(block, info.key.read)
-    if (!logInfo.privKey) throw new Error('Missing private key.')
+    if (!logInfo.privKey) throw new Error("Missing private key.")
     // If we have head information for this log, use head CID
     const prev = logInfo.head
     // Use supplied identity if available, otherwise, default to log private key
     // Using log private key assumes the log owner is also the identity owner, which might not always be the case.
     // In most cases, there _will_ be an available identity because it is required for `getToken`.
-    const pubKey = this.identity?.public ?? logInfo.pubKey ?? logInfo.privKey.public
+    const pubKey =
+      this.identity?.public ?? logInfo.pubKey ?? logInfo.privKey.public
     const record = await createRecord(event, {
       privKey: logInfo.privKey,
       servKey: info.key.service,
@@ -193,7 +218,7 @@ export class Network implements Interface {
    * @param logID The Log ID.
    * @param rec The log record to add.
    */
-  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord) {
+  async addRecord(id: ThreadID, logID: LogID, rec: LogRecord): Promise<void> {
     await this.client.addRecord(id, logID, rec)
   }
 
@@ -202,7 +227,7 @@ export class Network implements Interface {
    * @param id The Thread ID.
    * @param rec The record's CID.
    */
-  async getRecord(id: ThreadID, rec: CID) {
+  async getRecord(id: ThreadID, rec: CID): Promise<LogRecord> {
     return this.client.getRecord(id, rec)
   }
 
@@ -211,7 +236,10 @@ export class Network implements Interface {
    * @param cb The callback to call on each new thread record.
    * @param threads The variadic set of threads to subscribe to.
    */
-  subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, threads: ThreadID[] = []): Closer {
+  subscribe(
+    cb: (rec?: ThreadRecord, err?: Error) => void,
+    threads: ThreadID[] = []
+  ): Closer {
     return this.client.subscribe(cb, threads)
   }
 
@@ -219,7 +247,7 @@ export class Network implements Interface {
    * deriveLogKeys returns a set of log keys from the given inputs.
    * @param key Optional public or private log key.
    */
-  async deriveLogKeys(key?: PublicKey | PrivateKey) {
+  async deriveLogKeys(key?: PublicKey | PrivateKey): Promise<LogInfo> {
     let pubKey: PublicKey
     let privKey: PrivateKey | undefined
     if (!key) {
@@ -246,8 +274,14 @@ export class Network implements Interface {
    * @param create
    */
   async getOwnLog(info: ThreadInfo, create?: true): Promise<LogInfo>
-  async getOwnLog(info: ThreadInfo, create?: false): Promise<LogInfo | undefined>
-  async getOwnLog(info: ThreadInfo, create?: boolean): Promise<LogInfo | undefined> {
+  async getOwnLog(
+    info: ThreadInfo,
+    create?: false
+  ): Promise<LogInfo | undefined>
+  async getOwnLog(
+    info: ThreadInfo,
+    create?: boolean
+  ): Promise<LogInfo | undefined> {
     const logs = info.logs || new Set()
     for (const log of logs.values()) {
       const local = await this.store.logInfo(info.id, log.id)

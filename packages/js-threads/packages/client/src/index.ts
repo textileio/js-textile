@@ -2,26 +2,34 @@
  * @packageDocumentation
  * @module @textile/threads-client
  */
-import { grpc } from '@improbable-eng/grpc-web'
-import { API, APIGetToken, APIListen } from '@textile/threads-client-grpc/threads_pb_service'
-import * as pb from '@textile/threads-client-grpc/threads_pb'
-import { Identity, Libp2pCryptoIdentity, ThreadKey } from '@textile/threads-core'
-import { Multiaddr } from '@textile/multiaddr'
-import { ThreadID } from '@textile/threads-id'
-import toJsonSchema from 'to-json-schema'
-import { ContextInterface, Context, defaultHost } from '@textile/context'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { WebsocketTransport } from '@textile/grpc-transport'
+import { grpc } from "@improbable-eng/grpc-web"
+import { Context, ContextInterface, defaultHost } from "@textile/context"
+import { WebsocketTransport } from "@textile/grpc-transport"
+import { Multiaddr } from "@textile/multiaddr"
+import { KeyInfo, UserAuth } from "@textile/security"
+import * as pb from "@textile/threads-client-grpc/threads_pb"
 import {
-  QueryJSON,
+  API,
+  APIGetToken,
+  APIListen,
+} from "@textile/threads-client-grpc/threads_pb_service"
+import {
+  Identity,
+  Libp2pCryptoIdentity,
+  ThreadKey,
+} from "@textile/threads-core"
+import { ThreadID } from "@textile/threads-id"
+import toJsonSchema from "to-json-schema"
+import {
+  Filter,
   Instance,
   InstanceList,
-  Filter,
   Query,
+  QueryJSON,
+  ReadTransaction,
   Where,
   WriteTransaction,
-  ReadTransaction,
-} from './models'
+} from "./models"
 
 export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON }
 
@@ -31,13 +39,13 @@ export interface CollectionConfig {
   indexes: pb.Index.AsObject
 }
 
-export function maybeLocalAddr(ip: string) {
+export function maybeLocalAddr(ip: string): boolean | RegExpMatchArray {
   return (
-    ['localhost', '', '::1'].includes(ip) ||
+    ["localhost", "", "::1"].includes(ip) ||
     ip.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/) ||
-    ip.startsWith('192.168.') ||
-    ip.startsWith('10.0.') ||
-    ip.endsWith('.local')
+    ip.startsWith("192.168.") ||
+    ip.startsWith("10.0.") ||
+    ip.endsWith(".local")
   )
 }
 
@@ -103,10 +111,10 @@ export class Client {
   static withUserAuth(
     auth: UserAuth | (() => Promise<UserAuth>),
     host = defaultHost,
-    debug = false,
-  ) {
+    debug = false
+  ): Client {
     const context =
-      typeof auth === 'object'
+      typeof auth === "object"
         ? Context.fromUserAuth(auth, host)
         : Context.fromUserAuthCallback(auth, host)
     return new Client(context, debug)
@@ -126,7 +134,11 @@ export class Client {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
+  static async withKeyInfo(
+    key: KeyInfo,
+    host = defaultHost,
+    debug = false
+  ): Promise<Client> {
     const context = new Context(host)
     await context.withKeyInfo(key)
     return new Client(context, debug)
@@ -144,7 +156,7 @@ export class Client {
    * }
    * ```
    */
-  static async randomIdentity() {
+  static async randomIdentity(): Promise<Libp2pCryptoIdentity> {
     return Libp2pCryptoIdentity.fromRandom()
   }
 
@@ -166,13 +178,13 @@ export class Client {
    * }
    * ```
    */
-  async getToken(identity: Identity, ctx?: ContextInterface) {
+  async getToken(identity: Identity, ctx?: ContextInterface): Promise<string> {
     return this.getTokenChallenge(
       identity.public.toString(),
       async (challenge: Uint8Array) => {
         return identity.sign(challenge)
       },
-      ctx,
+      ctx
     )
   }
 
@@ -191,15 +203,19 @@ export class Client {
   async getTokenChallenge(
     publicKey: string,
     callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
-    ctx?: ContextInterface,
-  ) {
-    const client = grpc.client<pb.GetTokenRequest, pb.GetTokenReply, APIGetToken>(API.GetToken, {
+    ctx?: ContextInterface
+  ): Promise<string> {
+    const client = grpc.client<
+      pb.GetTokenRequest,
+      pb.GetTokenReply,
+      APIGetToken
+    >(API.GetToken, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
       debug: this.rpcOptions.debug,
     })
     return new Promise<string>((resolve, reject) => {
-      let token = ''
+      let token = ""
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
           const challenge = message.getChallenge_asU8()
@@ -212,7 +228,10 @@ export class Client {
           token = message.getToken()
         }
       })
-      client.onEnd((code: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      client.onEnd((
+        code: grpc.Code,
+        message: string /** trailers: grpc.Metadata */
+      ) => {
         client.close()
         if (code === grpc.Code.OK) {
           this.context.withToken(token)
@@ -244,7 +263,7 @@ export class Client {
    * }
    * ```
    */
-  public async newDB(threadID?: ThreadID, name?: string) {
+  public async newDB(threadID?: ThreadID, name?: string): Promise<ThreadID> {
     const dbID = threadID ?? ThreadID.fromRandom()
     const req = new pb.NewDBRequest()
     req.setDbid(dbID.toBytes())
@@ -271,11 +290,11 @@ export class Client {
    * }
    * ```
    */
-  public async open(threadID: ThreadID, name?: string) {
+  public async open(threadID: ThreadID, name?: string): Promise<void> {
     const req = new pb.ListDBsRequest()
     const res = (await this.unary(API.ListDBs, req)) as pb.ListDBsReply.AsObject
     for (const db of res.dbsList) {
-      const id = ThreadID.fromBytes(Buffer.from(db.dbid as string, 'base64'))
+      const id = ThreadID.fromBytes(Buffer.from(db.dbid as string, "base64"))
       if (id === threadID) {
         this.context.withThread(threadID.toString())
         return
@@ -298,7 +317,7 @@ export class Client {
    * }
    * ```
    */
-  public async deleteDB(threadID: ThreadID) {
+  public async deleteDB(threadID: ThreadID): Promise<void> {
     const req = new pb.DeleteDBRequest()
     req.setDbid(threadID.toBytes())
     await this.unary(API.DeleteDB, req)
@@ -310,12 +329,16 @@ export class Client {
    * @note this API is blocked on the Hub.
    * @see {listThreads} available via `@textile/hub` for an alternative.
    */
-  public async listDBs() {
+  public async listDBs(): Promise<
+    Record<string, pb.GetDBInfoReply.AsObject | undefined>
+  > {
     const req = new pb.ListDBsRequest()
     const res = (await this.unary(API.ListDBs, req)) as pb.ListDBsReply.AsObject
     const dbs: Record<string, pb.GetDBInfoReply.AsObject | undefined> = {}
     for (const db of res.dbsList) {
-      const id = ThreadID.fromBytes(Buffer.from(db.dbid as string, 'base64')).toString()
+      const id = ThreadID.fromBytes(
+        Buffer.from(db.dbid as string, "base64")
+      ).toString()
       dbs[id] = db.info
     }
     return dbs
@@ -332,9 +355,10 @@ export class Client {
   public async newCollection(
     threadID: ThreadID,
     name: string,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     schema: any,
-    indexes?: pb.Index.AsObject[],
-  ) {
+    indexes?: pb.Index.AsObject[]
+  ): Promise<void> {
     const req = new pb.NewCollectionRequest()
     const config = new pb.CollectionConfig()
     config.setName(name)
@@ -376,9 +400,10 @@ export class Client {
   public async newCollectionFromObject(
     threadID: ThreadID,
     name: string,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     obj: any,
-    indexes?: pb.Index.AsObject[],
-  ) {
+    indexes?: pb.Index.AsObject[]
+  ): Promise<void> {
     const schema = toJsonSchema(obj)
     return this.newCollection(threadID, name, schema, indexes)
   }
@@ -394,9 +419,10 @@ export class Client {
   public async updateCollection(
     threadID: ThreadID,
     name: string,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     schema: any,
-    indexes?: pb.Index.AsObject[],
-  ) {
+    indexes?: pb.Index.AsObject[]
+  ): Promise<void> {
     const req = new pb.UpdateCollectionRequest()
     const conf = new pb.CollectionConfig()
     conf.setName(name)
@@ -433,7 +459,10 @@ export class Client {
    * // const person = {name: 'Buzz', missions: 3}
    * ```
    */
-  public async deleteCollection(threadID: ThreadID, name: string) {
+  public async deleteCollection(
+    threadID: ThreadID,
+    name: string
+  ): Promise<void> {
     const req = new pb.DeleteCollectionRequest()
     req.setDbid(threadID.toBytes())
     req.setName(name)
@@ -446,13 +475,16 @@ export class Client {
    * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
    */
-  public async getCollectionIndexes(threadID: ThreadID, name: string) {
+  public async getCollectionIndexes(
+    threadID: ThreadID,
+    name: string
+  ): Promise<pb.Index.AsObject[]> {
     const req = new pb.GetCollectionIndexesRequest()
     req.setDbid(threadID.toBytes())
     req.setName(name)
     const res = (await this.unary(
       API.GetCollectionIndexes,
-      req,
+      req
     )) as pb.GetCollectionIndexesReply.AsObject
     return res.indexesList
   }
@@ -472,13 +504,15 @@ export class Client {
   public async newDBFromAddr(
     address: string,
     key: string | Uint8Array,
-    collections?: Array<{ name: string; schema: any }>,
-  ) {
+    collections?: Array<{ name: string; schema: any }>
+  ): Promise<void> {
     const req = new pb.NewDBFromAddrRequest()
     const addr = new Multiaddr(address).buffer
     req.setAddr(addr)
     // Should always be encoded string, but might already be bytes
-    req.setKey(typeof key === 'string' ? ThreadKey.fromString(key).toBytes() : key)
+    req.setKey(
+      typeof key === "string" ? ThreadKey.fromString(key).toBytes() : key
+    )
     if (collections !== undefined) {
       req.setCollectionsList(
         collections.map((c) => {
@@ -486,7 +520,7 @@ export class Client {
           config.setName(c.name)
           config.setSchema(Buffer.from(JSON.stringify(c.schema)))
           return config
-        }),
+        })
       )
     }
     await this.unary(API.NewDBFromAddr, req)
@@ -509,8 +543,8 @@ export class Client {
   public async joinFromInfo(
     info: DBInfo,
     includeLocal = false,
-    collections?: Array<{ name: string; schema: any }>,
-  ) {
+    collections?: Array<{ name: string; schema: any }>
+  ): Promise<void> {
     const req = new pb.NewDBFromAddrRequest()
     const filtered = info.addrs
       .map((addr) => new Multiaddr(addr))
@@ -518,7 +552,11 @@ export class Client {
     for (const addr of filtered) {
       req.setAddr(addr.buffer)
       // Should always be encoded string, but might already be bytes
-      req.setKey(typeof info.key === 'string' ? ThreadKey.fromString(info.key).toBytes() : info.key)
+      req.setKey(
+        typeof info.key === "string"
+          ? ThreadKey.fromString(info.key).toBytes()
+          : info.key
+      )
       if (collections !== undefined) {
         req.setCollectionsList(
           collections.map((c) => {
@@ -526,14 +564,14 @@ export class Client {
             config.setName(c.name)
             config.setSchema(Buffer.from(JSON.stringify(c.schema)))
             return config
-          }),
+          })
         )
       }
       // Try to add addrs one at a time, if one succeeds, we are done.
       await this.unary(API.NewDBFromAddr, req)
       return
     }
-    throw new Error('No viable addresses for dialing')
+    throw new Error("No viable addresses for dialing")
   }
 
   /**
@@ -544,12 +582,18 @@ export class Client {
   public async getDBInfo(threadID: ThreadID): Promise<DBInfo> {
     const req = new pb.GetDBInfoRequest()
     req.setDbid(threadID.toBytes())
-    const res = (await this.unary(API.GetDBInfo, req)) as pb.GetDBInfoReply.AsObject
-    const threadKey = Buffer.from(res.key as string, 'base64')
+    const res = (await this.unary(
+      API.GetDBInfo,
+      req
+    )) as pb.GetDBInfoReply.AsObject
+    const threadKey = Buffer.from(res.key as string, "base64")
     const key = ThreadKey.fromBytes(threadKey)
     const addrs: string[] = []
     for (const addr of res.addrsList) {
-      const a = typeof addr === 'string' ? Buffer.from(addr, 'base64') : Buffer.from(addr)
+      const a =
+        typeof addr === "string"
+          ? Buffer.from(addr, "base64")
+          : Buffer.from(addr)
       const address = new Multiaddr(a).toString()
       addrs.push(address)
     }
@@ -562,7 +606,11 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects.
    */
-  public async create(threadID: ThreadID, collectionName: string, values: any[]) {
+  public async create(
+    threadID: ThreadID,
+    collectionName: string,
+    values: any[]
+  ): Promise<string[]> {
     const req = new pb.CreateRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
@@ -581,14 +629,18 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
    */
-  public async save(threadID: ThreadID, collectionName: string, values: any[]) {
+  public async save(
+    threadID: ThreadID,
+    collectionName: string,
+    values: any[]
+  ): Promise<void> {
     const req = new pb.SaveRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
-      if (!v.hasOwnProperty('ID')) {
-        v['ID'] = '' // The server will add an ID if empty.
+      if (!v.hasOwnProperty("ID")) {
+        v["ID"] = "" // The server will add an ID if empty.
       }
       list.push(Buffer.from(JSON.stringify(v)))
     })
@@ -603,7 +655,11 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to delete.
    */
-  public async delete(threadID: ThreadID, collectionName: string, IDs: string[]) {
+  public async delete(
+    threadID: ThreadID,
+    collectionName: string,
+    IDs: string[]
+  ): Promise<void> {
     const req = new pb.DeleteRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
@@ -618,7 +674,11 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to check for.
    */
-  public async has(threadID: ThreadID, collectionName: string, IDs: string[]) {
+  public async has(
+    threadID: ThreadID,
+    collectionName: string,
+    IDs: string[]
+  ): Promise<boolean> {
     const req = new pb.HasRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
@@ -633,16 +693,20 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param query The object that describes the query. User Query class or primitive QueryJSON type.
    */
-  public async find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON) {
+  public async find<T = any>(
+    threadID: ThreadID,
+    collectionName: string,
+    query: QueryJSON
+  ): Promise<InstanceList<T>> {
     const req = new pb.FindRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     // @todo: Find a more isomorphic way to do this base64 round-trip
-    req.setQueryjson(Buffer.from(JSON.stringify(query)).toString('base64'))
+    req.setQueryjson(Buffer.from(JSON.stringify(query)).toString("base64"))
     const res = (await this.unary(API.Find, req)) as pb.FindReply.AsObject
     const ret: InstanceList<T> = {
       instancesList: res.instancesList.map((instance) =>
-        JSON.parse(Buffer.from(instance as string, 'base64').toString()),
+        JSON.parse(Buffer.from(instance as string, "base64").toString())
       ),
     }
     return ret
@@ -654,14 +718,23 @@ export class Client {
    * @param collectionName The human-readable name of the model to use.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string) {
+  public async findByID<T = any>(
+    threadID: ThreadID,
+    collectionName: string,
+    ID: string
+  ): Promise<Instance<T>> {
     const req = new pb.FindByIDRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceid(ID)
-    const res = (await this.unary(API.FindByID, req)) as pb.FindByIDReply.AsObject
+    const res = (await this.unary(
+      API.FindByID,
+      req
+    )) as pb.FindByIDReply.AsObject
     const ret: Instance<T> = {
-      instance: JSON.parse(Buffer.from(res.instance as string, 'base64').toString()),
+      instance: JSON.parse(
+        Buffer.from(res.instance as string, "base64").toString()
+      ),
     }
     return ret
   }
@@ -671,7 +744,10 @@ export class Client {
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction {
+  public readTransaction(
+    threadID: ThreadID,
+    collectionName: string
+  ): ReadTransaction {
     const client = grpc.client(API.ReadTransaction, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
@@ -685,7 +761,10 @@ export class Client {
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    */
-  public writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction {
+  public writeTransaction(
+    threadID: ThreadID,
+    collectionName: string
+  ): WriteTransaction {
     const client = grpc.client(API.WriteTransaction, {
       host: this.serviceHost,
       transport: this.rpcOptions.transport,
@@ -704,7 +783,7 @@ export class Client {
   public listen<T = any>(
     threadID: ThreadID,
     filters: Filter[],
-    callback: (reply?: Instance<T>, err?: Error) => void,
+    callback: (reply?: Instance<T>, err?: Error) => void
   ): grpc.Request {
     const req = new pb.ListenRequest()
     req.setDbid(threadID.toBytes())
@@ -718,19 +797,19 @@ export class Client {
       if (filter.actionTypes) {
         for (const at of filter.actionTypes) {
           switch (at) {
-            case 'ALL': {
+            case "ALL": {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.ALL)
               break
             }
-            case 'CREATE': {
+            case "CREATE": {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.CREATE)
               break
             }
-            case 'SAVE': {
+            case "SAVE": {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.SAVE)
               break
             }
-            case 'DELETE': {
+            case "DELETE": {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.DELETE)
               break
             }
@@ -744,21 +823,27 @@ export class Client {
 
     const decoder = new TextDecoder()
 
-    const client = grpc.client<pb.ListenRequest, pb.ListenReply, APIListen>(API.Listen, {
-      host: this.serviceHost,
-      transport: this.rpcOptions.transport,
-      debug: this.rpcOptions.debug,
-    })
+    const client = grpc.client<pb.ListenRequest, pb.ListenReply, APIListen>(
+      API.Listen,
+      {
+        host: this.serviceHost,
+        transport: this.rpcOptions.transport,
+        debug: this.rpcOptions.debug,
+      }
+    )
     client.onMessage((message: pb.ListenReply) => {
       const str = decoder.decode(message.getInstance_asU8())
       let ret: Instance<T> | undefined
-      if (str !== '') {
+      if (str !== "") {
         ret = { instance: JSON.parse(str) }
       }
       callback(ret)
     })
 
-    client.onEnd((status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+    client.onEnd((
+      status: grpc.Code,
+      message: string /** trailers: grpc.Metadata */
+    ) => {
       if (status !== grpc.Code.OK) {
         callback(undefined, new Error(message))
       }
@@ -803,5 +888,4 @@ export class Client {
   }
 }
 
-// eslint-disable-next-line import/no-default-export
 export default Client

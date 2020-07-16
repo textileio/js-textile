@@ -1,11 +1,17 @@
-import { Datastore, Key, MemoryDatastore, Query, Result } from 'interface-datastore'
-import Ajv, { ValidateFunction, ValidationError } from 'ajv'
-import { ulid } from 'ulid'
-import { reduce } from 'streaming-iterables'
-import { Query as MingoQuery } from 'mingo'
-import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
-import { Dispatcher, Instance, JsonPatchStore } from '@textile/threads-store'
-import { FilterQuery } from './query'
+import { Dispatcher, Instance, JsonPatchStore } from "@textile/threads-store"
+import Ajv, { ValidateFunction, ValidationError } from "ajv"
+import {
+  Datastore,
+  Key,
+  MemoryDatastore,
+  Query,
+  Result,
+} from "interface-datastore"
+import { JSONSchema4, JSONSchema6, JSONSchema7 } from "json-schema"
+import { Query as MingoQuery } from "mingo"
+import { reduce } from "streaming-iterables"
+import { ulid } from "ulid"
+import { FilterQuery } from "./query"
 
 export const resolve = (object: any, path: string, defaultValue?: any) =>
   path
@@ -17,10 +23,10 @@ export { FilterQuery }
 
 export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7
 
-export const existingKeyError = new Error('Existing key')
+export const existingKeyError = new Error("Existing key")
 
 interface FindOptions<T extends Instance>
-  extends Partial<Pick<Query<T>, 'limit' | 'offset' | 'keysOnly'>> {
+  extends Partial<Pick<Query<T>, "limit" | "offset" | "keysOnly">> {
   sort?: { [key in keyof T]?: 1 | -1 }
 }
 
@@ -50,7 +56,12 @@ const handler = <T extends Instance>(obj: T) => {
       }
       return Reflect.get(target, property)
     },
-    set: (_target: T | Document<T>, property: keyof T, value: any, _receiver: any) => {
+    set: (
+      _target: T | Document<T>,
+      property: keyof T,
+      value: any,
+      _receiver: any
+    ) => {
       return Reflect.set(obj, property, value)
     },
   }
@@ -129,9 +140,17 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param schema A valid JSON schema object.
    * @param options The underlying collection options.
    */
-  constructor(readonly name: string, schema: JSONSchema, options: Options<T> = defaultOptions) {
+  constructor(
+    readonly name: string,
+    schema: JSONSchema,
+    options: Options<T> = defaultOptions
+  ) {
     this.validator = new Ajv({ useDefaults: true }).compile(schema)
-    this.child = new JsonPatchStore(options.child, new Key(name), options.dispatcher)
+    this.child = new JsonPatchStore(
+      options.child,
+      new Key(name),
+      options.dispatcher
+    )
   }
 
   static fromCollection<T extends Instance>(other: Collection<T>) {
@@ -162,15 +181,18 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param query Mongodb-style filter query.
    * @param options Additional options to control query operation.
    */
-  find(query?: FilterQuery<T>, options: FindOptions<T> = {}): AsyncIterable<Result<T>> {
+  find(
+    query?: FilterQuery<T>,
+    options: FindOptions<T> = {}
+  ): AsyncIterable<Result<T>> {
     // @fixme(github.com/kofrasa/mingo/issues/141) Hack around some strange es issues in some JS envs
     const qry: FilterQuery<T> = query || {}
     Object.keys(qry).forEach((key: keyof T) => {
-      if (typeof qry[key] === 'object' && !Array.isArray(qry[key])) {
+      if (typeof qry[key] === "object" && !Array.isArray(qry[key])) {
         qry[key] = Object.assign(new Object(), qry[key])
       }
     })
-    const m: MingoQuery = new MingoQuery(qry, { idKey: '_id' })
+    const m: MingoQuery = new MingoQuery(qry, { idKey: "_id" })
     const filters: Query.Filter<T>[] = [({ value }) => m.test(value)]
     const orders: Query.Order<T>[] = []
     if (options.sort) {
@@ -178,7 +200,7 @@ export class ReadonlyCollection<T extends Instance = any> {
         orders.push((items) =>
           items.sort((a, b) => {
             return cmp(resolve(a.value, key), resolve(b.value, key), value || 1)
-          }),
+          })
         )
       }
     }
@@ -197,7 +219,7 @@ export class ReadonlyCollection<T extends Instance = any> {
    */
   findOne(
     query: FilterQuery<T>,
-    options: FindOptions<T> = {},
+    options: FindOptions<T> = {}
   ): Promise<IteratorResult<Result<T>, any>> {
     const it = this.find(query, options)
     return it[Symbol.asyncIterator]().next()
@@ -216,14 +238,20 @@ export class ReadonlyCollection<T extends Instance = any> {
 /**
  * Collection is a store of entities defined by a single schema.
  */
-export class Collection<T extends Instance = any> extends ReadonlyCollection<T> {
+export class Collection<T extends Instance = any> extends ReadonlyCollection<
+  T
+> {
   /**
    * Collection creates a new collection.
    * @param name A name for the collection.
    * @param schema A valid JSON schema object.
    * @param options The underlying collection options.
    */
-  constructor(readonly name: string, schema: JSONSchema, options: Options<T> = defaultOptions) {
+  constructor(
+    readonly name: string,
+    schema: JSONSchema,
+    options: Options<T> = defaultOptions
+  ) {
     super(name, schema, options)
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const c = this
@@ -279,7 +307,7 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
    */
   async insert(...instances: T[]) {
     // By convention we'll use insert here, but could use a specific key instead
-    const lockKey = new Key('insert')
+    const lockKey = new Key("insert")
     await this.child.readLock(lockKey)
     try {
       const batch = this.child.batch()
@@ -308,8 +336,11 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
    * @note Currenrly, transactions are not atomic, or even really transactions in the normal sense.
    * They only provide locking for multi-read/single-write access to the given collection.
    */
-  async readTransaction(cb: (c: ReadonlyCollection<T>) => Promise<void> | void, timeout?: number) {
-    const lockKey = new Key('transaction')
+  async readTransaction(
+    cb: (c: ReadonlyCollection<T>) => Promise<void> | void,
+    timeout?: number
+  ) {
+    const lockKey = new Key("transaction")
     await this.child.readLock(lockKey, timeout)
     try {
       return await cb(ReadonlyCollection.fromCollection(this))
@@ -326,8 +357,11 @@ export class Collection<T extends Instance = any> extends ReadonlyCollection<T> 
    * @note Currenrly, transactions are not atomic, or even really transactions in the normal sense.
    * They only provide locking for multi-read/single-write access to the given collection.
    */
-  async writeTransaction(cb: (c: Collection<T>) => Promise<void> | void, timeout?: number) {
-    const lockKey = new Key('transaction')
+  async writeTransaction(
+    cb: (c: Collection<T>) => Promise<void> | void,
+    timeout?: number
+  ) {
+    const lockKey = new Key("transaction")
     await this.child.writeLock(lockKey, timeout)
     try {
       return await cb(this)

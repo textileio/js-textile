@@ -1,9 +1,9 @@
-import { randomBytes } from '@textile/threads-crypto'
-import log from 'loglevel'
-import { Block, Event, EventNode, EventHeader } from '@textile/threads-core'
-import { Options, defaultOptions, encodeBlock } from './coding'
+import { Block, Event, EventHeader, EventNode } from "@textile/threads-core"
+import { randomBytes } from "@textile/threads-crypto"
+import log from "loglevel"
+import { defaultOptions, encodeBlock, Options } from "./coding"
 
-const logger = log.getLogger('encoding:event')
+const logger = log.getLogger("encoding:event")
 
 /**
  * CreateEvent creates a new Event object using the input raw Event body.
@@ -16,9 +16,9 @@ export async function createEvent(
   body: Block,
   readKey: Uint8Array,
   key?: Uint8Array,
-  opts: Options = defaultOptions,
-) {
-  logger.debug('creating event')
+  opts: Options = defaultOptions
+): Promise<Event> {
+  logger.debug("creating event")
   const keyiv = Buffer.from(key || randomBytes(32))
   const codedBody = await encodeBlock(body, keyiv)
   const header: EventHeader = { key: keyiv }

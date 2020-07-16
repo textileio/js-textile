@@ -2,17 +2,17 @@
  * Maps an IPFS hash name to its node-forge equivalent.
  * See https://github.com/multiformats/multihash/blob/master/hashtable.csv
  */
-export type HashType = 'SHA1' | 'SHA256' | 'SHA512'
+export type HashType = "SHA1" | "SHA256" | "SHA512"
 
 /**
  * Supported curve types.
  */
-export type CurveType = 'P-256' | 'P-384' | 'P-521'
+export type CurveType = "P-256" | "P-384" | "P-521"
 
 /**
  * Supported cipher types.
  */
-export type CipherType = 'AES-128' | 'AES-256' | 'Blowfish'
+export type CipherType = "AES-128" | "AES-256" | "Blowfish"
 
 /**
  * Generic public key interface.

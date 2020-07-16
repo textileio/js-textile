@@ -2,39 +2,45 @@
  * @packageDocumentation
  * @module @textile/threads-client/models
  */
-import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface } from '@textile/context'
+import { grpc } from "@improbable-eng/grpc-web"
+import { ContextInterface } from "@textile/context"
 import {
   CreateRequest,
-  SaveRequest,
   DeleteRequest,
-  HasRequest,
-  FindRequest,
   FindByIDRequest,
+  FindRequest,
+  HasRequest,
+  SaveRequest,
   StartTransactionRequest,
-  WriteTransactionRequest,
   WriteTransactionReply,
-} from '@textile/threads-client-grpc/threads_pb'
-import { ThreadID } from '@textile/threads-id'
-import { Instance, InstanceList, QueryJSON } from './query'
-import { Transaction } from './Transaction'
+  WriteTransactionRequest,
+} from "@textile/threads-client-grpc/threads_pb"
+import { ThreadID } from "@textile/threads-id"
+import { Instance, InstanceList, QueryJSON } from "./query"
+import { Transaction } from "./Transaction"
 
 /**
  * WriteTransaction performs a mutating bulk transaction on the underlying store.
  */
-export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
+export class WriteTransaction extends Transaction<
+  WriteTransactionRequest,
+  WriteTransactionReply
+> {
   constructor(
     protected readonly context: ContextInterface,
-    protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>,
+    protected readonly client: grpc.Client<
+      WriteTransactionRequest,
+      WriteTransactionReply
+    >,
     protected readonly threadID: ThreadID,
-    protected readonly modelName: string,
+    protected readonly modelName: string
   ) {
     super(client, threadID, modelName)
   }
   /**
    * start begins the transaction. All operations between start and end will be applied as a single transaction upon a call to end.
    */
-  public async start() {
+  public async start(): Promise<void> {
     const startReq = new StartTransactionRequest()
     startReq.setDbid(this.threadID.toBytes())
     startReq.setCollectionname(this.modelName)
@@ -48,7 +54,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * create creates a new model instance in the given store.
    * @param values An array of model instances as JSON/JS objects.
    */
-  public async create<T = any>(values: any[]) {
+  public async create<T = any>(values: any[]): Promise<string[] | undefined> {
     return new Promise<Array<string> | undefined>((resolve, reject) => {
       const createReq = new CreateRequest()
       const list: any[] = []
@@ -75,20 +81,20 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * save saves changes to an existing model instance in the given store.
    * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
    */
-  public async save(values: any[]) {
+  public async save(values: any[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const saveReq = new SaveRequest()
       const list: any[] = []
       values.forEach((v) => {
-        if (!v.hasOwnProperty('ID')) {
-          v['ID'] = '' // The server will add an ID if empty.
+        if (!v.hasOwnProperty("ID")) {
+          v["ID"] = "" // The server will add an ID if empty.
         }
         list.push(Buffer.from(JSON.stringify(v)))
       })
       saveReq.setInstancesList(list)
       const req = new WriteTransactionRequest()
       req.setSaverequest(saveReq)
-      this.client.onMessage((_message: WriteTransactionReply) => {
+      this.client.onMessage((/** message: WriteTransactionReply */) => {
         resolve()
       })
       super.setReject(reject)
@@ -100,13 +106,13 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * delete deletes an existing model instance from the given store.
    * @param IDs An array of instance ids to delete.
    */
-  public async delete(IDs: string[]) {
+  public async delete(IDs: string[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const deleteReq = new DeleteRequest()
       deleteReq.setInstanceidsList(IDs)
       const req = new WriteTransactionRequest()
       req.setDeleterequest(deleteReq)
-      this.client.onMessage((_message: WriteTransactionReply) => {
+      this.client.onMessage((/** message: WriteTransactionReply */) => {
         resolve()
       })
       super.setReject(reject)
@@ -117,7 +123,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * has checks whether a given instance exists in the given store.
    * @param IDs An array of instance ids to check for.
    */
-  public async has(IDs: string[]) {
+  public async has(IDs: string[]): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       const hasReq = new HasRequest()
       hasReq.setInstanceidsList(IDs)
@@ -135,7 +141,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * find queries the store for entities matching the given query parameters. See Query for options.
    * @param query The object that describes the query. See Query for options. Alternatively, see QueryJSON for the basic interface.
    */
-  public async find<T = any>(query: QueryJSON) {
+  public async find<T = any>(query: QueryJSON): Promise<InstanceList<T>> {
     return new Promise<InstanceList<T>>((resolve, reject) => {
       const findReq = new FindRequest()
       findReq.setQueryjson(Buffer.from(JSON.stringify(query)))
@@ -150,7 +156,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
             instancesList: reply
               .toObject()
               .instancesList.map((instance) =>
-                JSON.parse(Buffer.from(instance as string, 'base64').toString()),
+                JSON.parse(Buffer.from(instance as string, "base64").toString())
               ),
           }
           resolve(ret)
@@ -165,7 +171,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
    * findByID queries the store for the id of an instance.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(ID: string) {
+  public async findByID<T = any>(ID: string): Promise<Instance<T> | undefined> {
     return new Promise<Instance<T> | undefined>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
@@ -178,7 +184,10 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
         } else {
           const ret: Instance<T> = {
             instance: JSON.parse(
-              Buffer.from(reply.toObject().instance as string, 'base64').toString(),
+              Buffer.from(
+                reply.toObject().instance as string,
+                "base64"
+              ).toString()
             ),
           }
           resolve(ret)

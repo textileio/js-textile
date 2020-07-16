@@ -1,3 +1,3 @@
-export * from './dispatcher'
-export * from './datastores'
-export * from './stores'
+export * from "./datastores"
+export * from "./dispatcher"
+export * from "./stores"

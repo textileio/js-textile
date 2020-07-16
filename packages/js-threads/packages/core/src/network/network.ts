@@ -1,9 +1,9 @@
-import CID from 'cids'
-import { Multiaddr } from '@textile/multiaddr'
-import { ThreadID } from '@textile/threads-id'
-import { ThreadInfo, NewThreadOptions, LogID } from '../thread'
-import { Identity } from '../identity'
-import { ThreadRecord, LogRecord } from './record'
+import { Multiaddr } from "@textile/multiaddr"
+import { ThreadID } from "@textile/threads-id"
+import CID from "cids"
+import { Identity } from "../identity"
+import { LogID, NewThreadOptions, ThreadInfo } from "../thread"
+import { LogRecord, ThreadRecord } from "./record"
 
 export interface Closer {
   close(): void
@@ -92,5 +92,8 @@ export interface Network {
    * @param cb The callback to call on each new thread record.
    * @param threads A (variadic) set of threads to subscribe to.
    */
-  subscribe(cb: (rec?: ThreadRecord, err?: Error) => void, threads?: ThreadID[]): Closer
+  subscribe(
+    cb: (rec?: ThreadRecord, err?: Error) => void,
+    threads?: ThreadID[]
+  ): Closer
 }

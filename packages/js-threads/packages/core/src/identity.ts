@@ -1,12 +1,16 @@
-import { keys, PrivateKey, PublicKey } from '@textile/threads-crypto'
-import multibase from 'multibase'
+import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
+import multibase from "multibase"
 
 export function publicKeyToString(key: PublicKey): string {
-  return multibase.encode('base32', keys.marshalPublicKey(key) as Buffer).toString()
+  return multibase
+    .encode("base32", keys.marshalPublicKey(key) as Buffer)
+    .toString()
 }
 
 export function privateKeyToString(key: PrivateKey): string {
-  return multibase.encode('base32', keys.marshalPrivateKey(key) as Buffer).toString()
+  return multibase
+    .encode("base32", keys.marshalPrivateKey(key) as Buffer)
+    .toString()
 }
 
 export function privateKeyFromString(str: string): Promise<PrivateKey> {
@@ -38,21 +42,21 @@ export class Libp2pCryptoPublicKey implements Public {
    * @param data The data to verify.
    * @param sig The signature to verify.
    */
-  verify(data: Uint8Array, sig: Uint8Array) {
+  verify(data: Uint8Array, sig: Uint8Array): Promise<boolean> {
     return this.key.verify(data, sig)
   }
 
   /**
    * Returns base32 encoded Public key representation.
    */
-  toString() {
+  toString(): string {
     return publicKeyToString(this.key)
   }
 
   /**
    * The raw bytes of the Public key.
    */
-  get bytes() {
+  get bytes(): Uint8Array {
     return this.key.bytes
   }
 }
@@ -64,27 +68,29 @@ export class Libp2pCryptoIdentity implements Identity {
    * Signs the given data with the Private key,
    * @param data Data to be signed.
    */
-  sign(data: Uint8Array) {
+  sign(data: Uint8Array): Promise<Uint8Array> {
     return this.key.sign(data)
   }
 
   /**
    * Returns the Public key.
    */
-  get public() {
+  get public(): Libp2pCryptoPublicKey {
     return new Libp2pCryptoPublicKey(this.key.public)
   }
   /**
    * Create a random Ed25519 Identity.
    */
-  static async fromRandom() {
-    return new Libp2pCryptoIdentity(await keys.supportedKeys.ed25519.generateKeyPair())
+  static async fromRandom(): Promise<Libp2pCryptoIdentity> {
+    return new Libp2pCryptoIdentity(
+      await keys.supportedKeys.ed25519.generateKeyPair()
+    )
   }
 
   /**
    * Returns base32 encoded private key representation.
    */
-  toString() {
+  toString(): string {
     return privateKeyToString(this.key)
   }
 
@@ -92,7 +98,7 @@ export class Libp2pCryptoIdentity implements Identity {
    * Creates key key from base32 encoded string representation
    * @param str
    */
-  static async fromString(str: string) {
+  static async fromString(str: string): Promise<Libp2pCryptoIdentity> {
     return new Libp2pCryptoIdentity(await privateKeyFromString(str))
   }
 }

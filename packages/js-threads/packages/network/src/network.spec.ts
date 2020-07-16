@@ -1,24 +1,24 @@
-import { expect } from 'chai'
-import { randomBytes, keys } from '@textile/threads-crypto'
+import { Context } from "@textile/context"
 import {
-  ThreadID,
-  ThreadInfo,
   Block,
-  ThreadRecord,
-  Multiaddr,
-  ThreadKey,
+  Identity,
   Libp2pCryptoIdentity,
   LogID,
-  Identity,
-} from '@textile/threads-core'
-import { createEvent, createRecord } from '@textile/threads-encoding'
-import { Context } from '@textile/context'
-import { Client } from '@textile/threads-network-client'
-import { MemoryDatastore } from 'interface-datastore'
-import { Network } from '.'
+  Multiaddr,
+  ThreadID,
+  ThreadInfo,
+  ThreadKey,
+  ThreadRecord,
+} from "@textile/threads-core"
+import { keys, randomBytes } from "@textile/threads-crypto"
+import { createEvent, createRecord } from "@textile/threads-encoding"
+import { Client } from "@textile/threads-network-client"
+import { expect } from "chai"
+import { MemoryDatastore } from "interface-datastore"
+import { Network } from "."
 
-const proxyAddr1 = 'http://127.0.0.1:6007'
-const proxyAddr2 = 'http://127.0.0.1:6207'
+const proxyAddr1 = "http://127.0.0.1:6007"
+const proxyAddr2 = "http://127.0.0.1:6207"
 const ed25519 = keys.supportedKeys.ed25519
 
 async function createThread(client: Network | Client) {
@@ -33,21 +33,24 @@ function threadAddr(hostAddr: Multiaddr, hostID: string, info: ThreadInfo) {
   return hostAddr.encapsulate(pa.encapsulate(ta)) as any
 }
 
-describe('Network...', () => {
+describe("Network...", () => {
   let client: Network | Client
   let identity: Identity
   before(async () => {
-    client = new Network(new MemoryDatastore(), new Client(new Context(proxyAddr1)))
+    client = new Network(
+      new MemoryDatastore(),
+      new Client(new Context(proxyAddr1))
+    )
     identity = await Libp2pCryptoIdentity.fromRandom()
     await client.getToken(identity)
   })
-  describe('Basic...', () => {
-    it('should return a remote host peer id', async () => {
+  describe("Basic...", () => {
+    it("should return a remote host peer id", async () => {
       const id = await client.getHostID()
       expect(id.length).to.be.greaterThan(41)
     })
 
-    it('should create a remote thread', async () => {
+    it("should create a remote thread", async () => {
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       const threadKey = ThreadKey.fromRandom()
       const info = await client.createThread(id, { threadKey })
@@ -56,10 +59,10 @@ describe('Network...', () => {
       expect(info.key?.service).to.not.be.undefined
     })
 
-    it('should add a remote thread', async () => {
+    it("should add a remote thread", async () => {
       const hostID = await client.getHostID()
       const info1 = await createThread(client)
-      const hostAddr = new Multiaddr('/dns4/threads1/tcp/4006')
+      const hostAddr = new Multiaddr("/dns4/threads1/tcp/4006")
       const addr = threadAddr(hostAddr, hostID, info1)
       const client2 = new Client(new Context(proxyAddr2))
       // Create temporary identity
@@ -69,13 +72,13 @@ describe('Network...', () => {
       expect(info2.id.toString()).to.equal(info1.id.toString())
     })
 
-    it('should add and then get a remote thread', async () => {
+    it("should add and then get a remote thread", async () => {
       const info1 = await createThread(client)
       const info2 = await client.getThread(info1.id)
       expect(info2.id.toString()).to.equal(info1.id.toString())
     })
 
-    it('should pull a thread for records', async () => {
+    it("should pull a thread for records", async () => {
       const info = await createThread(client)
       try {
         await client.pullThread(info.id)
@@ -84,7 +87,7 @@ describe('Network...', () => {
       }
     })
 
-    it('should delete an existing thread', async () => {
+    it("should delete an existing thread", async () => {
       const info = await createThread(client)
       const info2 = await client.getThread(info.id)
       expect(info2.id.toString()).to.equal(info.id.toString())
@@ -95,13 +98,13 @@ describe('Network...', () => {
       }
       try {
         await client.getThread(info.id)
-        throw new Error('should not have throw')
+        throw new Error("should not have throw")
       } catch (err) {
-        expect(err.toString()).to.equal('Error: thread not found')
+        expect(err.toString()).to.equal("Error: thread not found")
       }
     })
 
-    it('should add a replicator to a thread', async () => {
+    it("should add a replicator to a thread", async () => {
       const client2 = new Client(new Context(proxyAddr2))
       const hostID2 = await client2.getHostID()
       const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
@@ -114,21 +117,21 @@ describe('Network...', () => {
       expect(pid).to.equal(hostID2)
     })
 
-    it('should create a new record', async () => {
+    it("should create a new record", async () => {
       const info = await createThread(client)
-      const body = { foo: 'bar', baz: Buffer.from('howdy') }
+      const body = { foo: "bar", baz: Buffer.from("howdy") }
       const rec = await client.createRecord(info.id, body)
       expect(rec?.threadID.toString()).to.equal(info.id.toString())
       expect(rec?.logID).to.not.be.undefined
       if (rec?.record) {
         const block = rec.record.block
-        expect(block).to.have.ownProperty('body')
+        expect(block).to.have.ownProperty("body")
       } else {
-        throw new Error('expected record to be defined')
+        throw new Error("expected record to be defined")
       }
     })
 
-    it('should be able to add a pre-formed record', async () => {
+    it("should be able to add a pre-formed record", async () => {
       // Create a thread, keeping read key and log private key on the client
       const id = ThreadID.fromRandom(ThreadID.Variant.Raw, 32)
       const threadKey = ThreadKey.fromRandom(false)
@@ -136,9 +139,9 @@ describe('Network...', () => {
       const logKey = privKey.public
       const info = await client.createThread(id, { threadKey, logKey })
 
-      const body = { foo: 'bar', baz: Buffer.from('howdy') }
+      const body = { foo: "bar", baz: Buffer.from("howdy") }
       const readKey = randomBytes(32)
-      const block = Block.encoder(body, 'dag-cbor')
+      const block = Block.encoder(body, "dag-cbor")
       const event = await createEvent(block, readKey)
       // Re-use log key for pub key
       const record = await createRecord(event, {
@@ -151,7 +154,7 @@ describe('Network...', () => {
       await client.addRecord(info.id, logID, record)
       const record2 = await client.getRecord(info.id, cid1)
       if (!record2) {
-        throw new Error('expected record to be defined')
+        throw new Error("expected record to be defined")
       }
       const cid2 = await record2.value.cid()
       expect(cid1.toString()).to.equal(cid2.toString())
@@ -160,24 +163,27 @@ describe('Network...', () => {
       expect(b1.toString()).to.equal(b2.toString())
     })
 
-    it('should be able to retrieve a remote record', async () => {
+    it("should be able to retrieve a remote record", async () => {
       const info = await createThread(client)
-      const body = { foo: 'bar', baz: Buffer.from('howdy') }
+      const body = { foo: "bar", baz: Buffer.from("howdy") }
       const rec1 = await client.createRecord(info.id, body)
       const cid1 = await rec1?.record?.value.cid()
-      if (!cid1) throw new Error('expected valid record')
+      if (!cid1) throw new Error("expected valid record")
       const rec2 = await client.getRecord(info.id, cid1)
       const cid2 = await rec2.value.cid()
       expect(cid1.toString()).to.equal(cid2.toString())
     })
 
-    describe('subscribe', () => {
+    describe("subscribe", () => {
       let client2: Client | Network
       let info: ThreadInfo
 
       before(async function () {
         this.timeout(5000)
-        client2 = new Network(new MemoryDatastore(), new Client(new Context(proxyAddr2)))
+        client2 = new Network(
+          new MemoryDatastore(),
+          new Client(new Context(proxyAddr2))
+        )
         const hostID2 = await client2.getHostID()
         const hostAddr2 = new Multiaddr(`/dns4/threads2/tcp/4006`)
         const peerAddr = hostAddr2.encapsulate(new Multiaddr(`/p2p/${hostID2}`))
@@ -188,9 +194,8 @@ describe('Network...', () => {
         await client2.getToken(identity)
       })
 
-      it('should handle updates and close cleanly', (done) => {
+      it("should handle updates and close cleanly", (done) => {
         let count = 0
-        let timeOne = 0
         const res = client2.subscribe(
           (rec?: ThreadRecord, err?: Error) => {
             expect(rec).to.not.be.undefined
@@ -201,11 +206,10 @@ describe('Network...', () => {
               done()
             }
           },
-          [info.id],
+          [info.id]
         )
-        timeOne = Date.now()
-        client.createRecord(info.id, { foo: 'bar1' }).then(() => {
-          client.createRecord(info.id, { foo: 'bar2' })
+        client.createRecord(info.id, { foo: "bar1" }).then(() => {
+          client.createRecord(info.id, { foo: "bar2" })
         })
       }).timeout(10000)
     })

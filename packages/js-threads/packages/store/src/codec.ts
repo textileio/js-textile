@@ -1,5 +1,6 @@
-import { Key, Datastore, Result } from 'interface-datastore'
-import { Event } from './dispatcher'
+import { Key } from "interface-datastore"
+import type { Datastore, Result } from "interface-datastore"
+import { Event } from "./dispatcher"
 
 /**
  * Codec interface describes the methods/function required to implement a custom store.
@@ -35,7 +36,7 @@ export class BasicCodec<T = any> implements Codec<T> {
   /**
    * onDelete always deletes the given key from the store.
    */
-  async onDelete(_store: Datastore<T>, _key: Key) {
+  async onDelete(/** store: Datastore<T>, key: Key */): Promise<undefined> {
     return undefined
   }
 
@@ -45,7 +46,7 @@ export class BasicCodec<T = any> implements Codec<T> {
    * @param _key Ignored
    * @param value The data to add/replace any existing data.
    */
-  async onPut(_store: Datastore<T>, _key: Key, value: T) {
+  async onPut(_store: Datastore<T>, _key: Key, value: T): Promise<T> {
     return value
   }
 
@@ -54,7 +55,10 @@ export class BasicCodec<T = any> implements Codec<T> {
    * @param store A reference to the corresponding datastore used for storage.
    * @param events The set of incoming store Events.
    */
-  async onReduce(store: Datastore<T>, ...events: Result<Event<T>>[]) {
+  async onReduce(
+    store: Datastore<T>,
+    ...events: Result<Event<T>>[]
+  ): Promise<void> {
     const batch = store.batch()
     for (const { value } of events) {
       const newKey = new Key(value.id)

@@ -1,10 +1,10 @@
-import log from 'loglevel'
-import { ulid } from 'ulid'
-import { Datastore, Key, Result, MemoryDatastore } from 'interface-datastore'
-import { RWLock } from 'async-rwlock'
-import { DomainDatastore, CborEncoder } from './datastores'
+import { RWLock } from "async-rwlock"
+import { Datastore, Key, MemoryDatastore, Result } from "interface-datastore"
+import log from "loglevel"
+import { ulid } from "ulid"
+import { CborEncoder, DomainDatastore } from "./datastores"
 
-const logger = log.getLogger('store:dispatcher')
+const logger = log.getLogger("store:dispatcher")
 
 /**
  * Reducer applies an event to an existing state.
@@ -38,14 +38,17 @@ export class Dispatcher extends RWLock {
    */
   constructor(child?: Datastore) {
     super()
-    this.child = new DomainDatastore(child || new MemoryDatastore(), new Key('dispatcher'))
+    this.child = new DomainDatastore(
+      child || new MemoryDatastore(),
+      new Key("dispatcher")
+    )
   }
 
   /**
    * Register takes a reducer to be invoked with each dispatched event.
    * @param reducer A reducer for processing dispatched events.
    */
-  register<T extends Event>(reducer: Reducer<T>) {
+  register<T extends Event>(reducer: Reducer<T>): void {
     this.reducers.add(reducer)
     logger.debug(`registered reducers: ${this.reducers.size}`)
   }
@@ -54,19 +57,23 @@ export class Dispatcher extends RWLock {
    * Dispatch dispatches a payload to all registered reducers.
    * @param events The (variadic list of) events to dispatch.
    */
-  async dispatch<T extends Event>(...events: Result<T>[]) {
+  async dispatch<T extends Event>(...events: Result<T>[]): Promise<void> {
     await this.writeLock()
     try {
       if (this.child) {
-        logger.debug('persisting events')
+        logger.debug("persisting events")
         const batch = this.child.batch()
         for (const { key, value } of events) {
           batch.put(key.instance(ulid()), CborEncoder.encode(value))
         }
         await batch.commit()
       }
-      logger.debug('dispatching')
-      await Promise.all([...this.reducers].map((reducer: Reducer<T>) => reducer.reduce(...events)))
+      logger.debug("dispatching")
+      await Promise.all(
+        [...this.reducers].map((reducer: Reducer<T>) =>
+          reducer.reduce(...events)
+        )
+      )
     } finally {
       this.unlock()
     }
