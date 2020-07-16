@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prepare": "npm run build:node",
+    "prepare": "npm run build",
     "prebuild": "npm run clean",
     "build": "tsc -b tsconfig.json",
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
