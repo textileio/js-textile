@@ -4,6 +4,10 @@
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
   "main": "dist/index",
   "types": "dist/index",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
   "publishConfig": {
     "access": "public"
   },
