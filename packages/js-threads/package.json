@@ -13,6 +13,7 @@
     "publish": "lerna publish",
     "compile": "lerna run compile",
     "build": "lerna run build --stream",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "lint:check": "eslint --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",
@@ -63,6 +64,11 @@
     "ws": "^7.2.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "husky": {
     "hooks": {
