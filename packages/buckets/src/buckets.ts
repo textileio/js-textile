@@ -226,11 +226,6 @@ export class Buckets extends BucketsGrpcClient {
    *    const links = await buckets.links(bucketKey)
    *    return links
    * }
-   *
-   * const getIpfs = async (buckets: Buckets, bucketKey: string) => {
-   *    const links = await buckets.links(bucketKey)
-   *    return links.ipfs
-   * }
    * ```
    */
   async links(key: string): Promise<LinksReply.AsObject> {

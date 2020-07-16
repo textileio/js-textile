@@ -157,11 +157,6 @@ export async function bucketsRoot(
  *    const links = await buckets.links(bucketKey)
  *    return links
  * }
- *
- * const getIpfs = async (buckets: Buckets, bucketKey: string) => {
- *    const links = await buckets.links(bucketKey)
- *    return links.ipfs
- * }
  * ```
  */
 export async function bucketsLinks(
