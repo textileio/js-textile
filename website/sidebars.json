@@ -26,11 +26,12 @@
       }
     ],
     "ThreadDB": [
-      "hub.client",
       {
         "type": "subcategory",
-        "label": "Methods",
+        "label": "Client Methods",
+        "collapse": true,
         "ids": [
+          "hub.client",
           "hub.client.withuserauth",
           "hub.client.withkeyinfo",
           "hub.client.gettoken",
@@ -55,6 +56,31 @@
           "hub.client.has",
           "hub.client.readtransaction",
           "hub.client.writetransaction"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Database Methods",
+        "collapse": true,
+        "ids": [
+          "hub.database",
+          "hub.database.withkeyinfo",
+          "hub.database.withuserauth",
+          "hub.database.startfrominfo",
+          "hub.database.getdbinfo",
+          "hub.database.start",
+          "hub.database.close",
+          "hub.database.emitter",
+          "hub.database.collections",
+          "hub.database.newcollection",
+          "hub.database.newcollectionfromobject",
+          "hub.collection",
+          "hub.collection.insert",
+          "hub.collection.save",
+          "hub.collection.delete",
+          "hub.collection.name",
+          "hub.config.name",
+          "hub.config.schema"
         ]
       }
     ],

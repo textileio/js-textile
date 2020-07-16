@@ -5,6 +5,7 @@ import multibase from 'multibase'
 import * as pb from '@textile/hub-grpc/hub_pb'
 import { APIClient, ServiceError } from '@textile/hub-grpc/hub_pb_service'
 import { ContextInterface } from '@textile/context'
+import { WebsocketTransport } from '@textile/grpc-transport'
 
 export const createUsername = (size = 12) => {
   return Array(size)
@@ -30,7 +31,7 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
   return new Promise<pb.GetKeyReply.AsObject>((resolve, reject) => {
     const req = new pb.CreateKeyRequest()
     req.setType(pb.KeyType[kind])
-    const client = new APIClient(ctx.host, { transport: ctx.transport, debug: ctx.debug })
+    const client = new APIClient(ctx.host, { transport: WebsocketTransport() })
     ctx.toMetadata().then((meta) => {
       return client.createKey(req, meta, (err: ServiceError | null, message: pb.GetKeyReply | null) => {
         if (err) reject(err)
@@ -48,7 +49,7 @@ export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSec
       const req = new pb.SignupRequest()
       req.setEmail(email)
       req.setUsername(username)
-      const client = new APIClient(ctx.host, { transport: ctx.transport, debug: ctx.debug })
+      const client = new APIClient(ctx.host, { transport: WebsocketTransport() })
       ctx.toMetadata().then((meta) => {
         client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
           if (err) reject(err)

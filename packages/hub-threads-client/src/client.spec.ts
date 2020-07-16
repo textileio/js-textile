@@ -21,7 +21,7 @@ const sessionSecret = 'hubsession'
 
 describe('Threads Client...', () => {
   describe('getThread', () => {
-    const ctx = new Context(addrApiurl, undefined)
+    const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
@@ -120,7 +120,7 @@ describe('Threads Client...', () => {
   })
 
   describe('listThreads', () => {
-    const ctx = new Context(addrApiurl, undefined)
+    const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
     let dev: SignupReply.AsObject
     before(async function () {
@@ -159,7 +159,7 @@ describe('Threads Client...', () => {
       }
     })
     it('should handle account keys', async () => {
-      const tmp = new Context(addrApiurl, undefined)
+      const tmp = new Context(addrApiurl)
       const key = await createKey(tmp.withSession(dev.session), 'ACCOUNT')
       await ctx.withAPIKey(key.key).withKeyInfo(key)
       // Empty

@@ -17,7 +17,7 @@ const wrongError = new Error('wrong error!')
 const sessionSecret = 'hubsession'
 
 describe('Buckets...', () => {
-  const ctx = new Context(addrApiurl, undefined)
+  const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
   let buck: InitReply.AsObject
   let fileSize: number

@@ -56,7 +56,7 @@ const siteConfig = {
   },
 
   stylesheets: [
-    'http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900'
+    'http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900',
   ],
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
