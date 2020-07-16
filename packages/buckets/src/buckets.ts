@@ -1,40 +1,40 @@
-import log from 'loglevel'
-import { Context, defaultHost } from '@textile/context'
-import { Client } from '@textile/hub-threads-client'
-import { Identity } from '@textile/threads-core'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { ThreadID } from '@textile/threads-id'
 import {
-  Root,
-  InitReply,
-  LinksReply,
-  ListPathReply,
-  ListPathItem,
+  ArchiveInfoReply,
   ArchiveReply,
   ArchiveStatusReply,
-  ArchiveInfoReply,
-} from '@textile/buckets-grpc/buckets_pb'
+  InitReply,
+  LinksReply,
+  ListPathItem,
+  ListPathReply,
+  Root,
+} from "@textile/buckets-grpc/buckets_pb"
+import { Context, defaultHost } from "@textile/context"
+import { Client } from "@textile/hub-threads-client"
+import { KeyInfo, UserAuth } from "@textile/security"
+import { Identity } from "@textile/threads-core"
+import { ThreadID } from "@textile/threads-id"
+import log from "loglevel"
 import {
-  BucketsGrpcClient,
-  bucketsArchiveWatch,
+  bucketsArchive,
   bucketsArchiveInfo,
   bucketsArchiveStatus,
-  bucketsArchive,
-  bucketsRemovePath,
-  bucketsRemove,
+  bucketsArchiveWatch,
+  BucketsGrpcClient,
+  bucketsInit,
+  bucketsLinks,
+  bucketsList,
+  bucketsListIpfsPath,
+  bucketsListPath,
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPushPath,
-  bucketsListIpfsPath,
-  bucketsListPath,
-  bucketsList,
-  bucketsLinks,
+  bucketsRemove,
+  bucketsRemovePath,
   bucketsRoot,
-  bucketsInit,
   PushPathResult,
-} from './api'
+} from "./api"
 
-const logger = log.getLogger('buckets')
+const logger = log.getLogger("buckets")
 
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
@@ -65,9 +65,15 @@ export class Buckets extends BucketsGrpcClient {
    * Creates a new gRPC client instance for accessing the Textile Buckets API.
    * @param auth The user auth object.
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    host = defaultHost,
+    debug = false
+  ): Buckets {
     const context =
-      typeof auth === 'object' ? Context.fromUserAuth(auth, host) : Context.fromUserAuthCallback(auth, host)
+      typeof auth === "object"
+        ? Context.fromUserAuth(auth, host)
+        : Context.fromUserAuthCallback(auth, host)
     return new Buckets(context, debug)
   }
 
@@ -75,7 +81,11 @@ export class Buckets extends BucketsGrpcClient {
    * Create a new gRPC client Bucket instance from a supplied key and secret
    * @param key The KeyInfo object containing {key: string, secret: string}
    */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
+  static async withKeyInfo(
+    key: KeyInfo,
+    host = defaultHost,
+    debug = false
+  ): Promise<Buckets> {
     const context = new Context(host)
     await context.withKeyInfo(key)
     return new Buckets(context, debug)
@@ -85,7 +95,7 @@ export class Buckets extends BucketsGrpcClient {
    * Scopes to a Thread by ID
    * @param threadId the ID of the thread
    */
-  withThread(threadID?: string) {
+  withThread(threadID?: string): this | undefined {
     if (threadID === undefined) return this
     this.context.withThread(threadID)
   }
@@ -110,9 +120,9 @@ export class Buckets extends BucketsGrpcClient {
    */
   async open(
     name: string,
-    threadName = 'buckets',
+    threadName = "buckets",
     isPrivate = false,
-    threadID?: string,
+    threadID?: string
   ): Promise<Root.AsObject | undefined> {
     const client = new Client(this.context)
     if (threadID) {
@@ -127,10 +137,13 @@ export class Buckets extends BucketsGrpcClient {
     } else {
       try {
         const res = await client.getThread(threadName)
-        const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
+        const existingId =
+          typeof res.id === "string"
+            ? res.id
+            : ThreadID.fromBytes(res.id).toString()
         this.withThread(existingId)
       } catch (error) {
-        if (error.message !== 'Thread not found') {
+        if (error.message !== "Thread not found") {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
@@ -152,7 +165,7 @@ export class Buckets extends BucketsGrpcClient {
    * Obtain a token for interacting with the remote API.
    * @param identity A user identity to use for interacting with buckets.
    */
-  async getToken(identity: Identity) {
+  async getToken(identity: Identity): Promise<string> {
     const client = new Client(this.context)
     return client.getToken(identity)
   }
@@ -166,7 +179,7 @@ export class Buckets extends BucketsGrpcClient {
    */
   async getTokenChallenge(
     publicKey: string,
-    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>
   ): Promise<string> {
     const client = new Client(this.context)
     return client.getTokenChallenge(publicKey, callback)
@@ -179,7 +192,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @example
    * Initialize a Bucket called "app-name-files"
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const init = async (buckets: Buckets) => {
@@ -188,7 +201,7 @@ export class Buckets extends BucketsGrpcClient {
    * ```
    */
   async init(name: string, isPrivate = false): Promise<InitReply.AsObject> {
-    logger.debug('init request')
+    logger.debug("init request")
     return bucketsInit(this, name, isPrivate)
   }
 
@@ -196,8 +209,8 @@ export class Buckets extends BucketsGrpcClient {
    * Returns the bucket root CID
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async root(key: string) {
-    logger.debug('root request')
+  async root(key: string): Promise<Root.AsObject | undefined> {
+    logger.debug("root request")
     return bucketsRoot(this, key)
   }
 
@@ -206,7 +219,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @example
    * Generate the HTTP, IPNS, and IPFS links for a Bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const getLinks = async (buckets: Buckets) => {
@@ -221,7 +234,7 @@ export class Buckets extends BucketsGrpcClient {
    * ```
    */
   async links(key: string): Promise<LinksReply.AsObject> {
-    logger.debug('link request')
+    logger.debug("link request")
     return bucketsLinks(this, key)
   }
 
@@ -238,8 +251,8 @@ export class Buckets extends BucketsGrpcClient {
    * }
    * ````
    */
-  async list() {
-    logger.debug('list request')
+  async list(): Promise<Root.AsObject[]> {
+    logger.debug("list request")
     return bucketsList(this)
   }
 
@@ -249,7 +262,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param path A file/object (sub)-path within a bucket.
    */
   async listPath(key: string, path: string): Promise<ListPathReply.AsObject> {
-    logger.debug('list path request')
+    logger.debug("list path request")
     return bucketsListPath(this, key, path)
   }
 
@@ -258,7 +271,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param path UnixFS path
    */
   async listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined> {
-    logger.debug('list path request')
+    logger.debug("list path request")
     return bucketsListIpfsPath(this, path)
   }
 
@@ -272,7 +285,7 @@ export class Buckets extends BucketsGrpcClient {
    * This will return the resolved path and the bucket's new root path.
    * @example
    * Push a file to the root of a bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const pushFile = async (content: string, bucketKey: string) => {
@@ -284,8 +297,9 @@ export class Buckets extends BucketsGrpcClient {
   async pushPath(
     key: string,
     path: string,
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     input: any,
-    opts?: { progress?: (num?: number) => void },
+    opts?: { progress?: (num?: number) => void }
   ): Promise<PushPathResult> {
     return bucketsPushPath(this, key, path, input, opts)
   }
@@ -296,7 +310,11 @@ export class Buckets extends BucketsGrpcClient {
    * @param path A file/object (sub)-path within a bucket.
    * @param opts Options to control response stream. Currently only supports a progress function.
    */
-  pullPath(key: string, path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+  pullPath(
+    key: string,
+    path: string,
+    opts?: { progress?: (num?: number) => void }
+  ): AsyncIterableIterator<Uint8Array> {
     return bucketsPullPath(this, key, path, opts)
   }
 
@@ -305,7 +323,10 @@ export class Buckets extends BucketsGrpcClient {
    * @param path A file/object (sub)-path within a bucket.
    * @param opts Options to control response stream. Currently only supports a progress function.
    */
-  pullIpfsPath(path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+  pullIpfsPath(
+    path: string,
+    opts?: { progress?: (num?: number) => void }
+  ): AsyncIterableIterator<Uint8Array> {
     return bucketsPullIpfsPath(this, path, opts)
   }
 
@@ -313,8 +334,8 @@ export class Buckets extends BucketsGrpcClient {
    * Removes an entire bucket. Files and directories will be unpinned.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async remove(key: string) {
-    logger.debug('remove request')
+  async remove(key: string): Promise<void> {
+    logger.debug("remove request")
     return bucketsRemove(this, key)
   }
 
@@ -324,8 +345,8 @@ export class Buckets extends BucketsGrpcClient {
    * @param path A file/object (sub)-path within a bucket.
    * @param root optional to specify a root
    */
-  async removePath(key: string, path: string, root?: string) {
-    logger.debug('remove path request')
+  async removePath(key: string, path: string, root?: string): Promise<void> {
+    logger.debug("remove path request")
     return bucketsRemovePath(this, key, path, root)
   }
 
@@ -335,7 +356,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
   async archive(key: string): Promise<ArchiveReply.AsObject> {
-    logger.debug('archive request')
+    logger.debug("archive request")
     return bucketsArchive(this, key)
   }
 
@@ -345,7 +366,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
   async archiveStatus(key: string): Promise<ArchiveStatusReply.AsObject> {
-    logger.debug('archive status request')
+    logger.debug("archive status request")
     return bucketsArchiveStatus(this, key)
   }
 
@@ -355,7 +376,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
   async archiveInfo(key: string): Promise<ArchiveInfoReply.AsObject> {
-    logger.debug('archive info request')
+    logger.debug("archive info request")
     return bucketsArchiveInfo(this, key)
   }
 
@@ -364,8 +385,14 @@ export class Buckets extends BucketsGrpcClient {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archiveWatch(key: string, callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void) {
-    logger.debug('archive watch request')
+  async archiveWatch(
+    key: string,
+    callback: (
+      reply?: { id: string | undefined; msg: string },
+      err?: Error
+    ) => void
+  ): Promise<() => void> {
+    logger.debug("archive watch request")
     return bucketsArchiveWatch(this, key, callback)
   }
 }

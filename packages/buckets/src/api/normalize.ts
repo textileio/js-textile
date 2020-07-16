@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Buffer } from 'buffer'
+import { Buffer } from "buffer"
 
 export interface File {
   path: string
@@ -55,14 +55,15 @@ export interface File {
  * @param {Object} input
  * @return AsyncInterable<{ path, content: AsyncIterable<Buffer> }>
  */
-export function normaliseInput(input: any) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function normaliseInput(input: any): AsyncGenerator<File> {
   // must give us something
   if (input === null || input === undefined) {
     throw new Error(`Unexpected input: ${input}`)
   }
 
   // String
-  if (typeof input === 'string' || input instanceof String) {
+  if (typeof input === "string" || input instanceof String) {
     return (async function* () {
       // eslint-disable-line require-await
       yield toFileObject(input)
@@ -93,7 +94,7 @@ export function normaliseInput(input: any) {
           (function* () {
             yield first.value
             yield* iterator
-          })(),
+          })()
         )
         return
       }
@@ -101,7 +102,11 @@ export function normaliseInput(input: any) {
       // Iterable<Bloby>
       // Iterable<String>
       // Iterable<{ path, content }>
-      if (isFileObject(first.value) || isBloby(first.value) || typeof first.value === 'string') {
+      if (
+        isFileObject(first.value) ||
+        isBloby(first.value) ||
+        typeof first.value === "string"
+      ) {
         yield toFileObject(first.value)
         for (const obj of iterator) {
           yield toFileObject(obj)
@@ -109,12 +114,12 @@ export function normaliseInput(input: any) {
         return
       }
 
-      throw new Error('Unexpected input: ' + typeof input)
+      throw new Error("Unexpected input: " + typeof input)
     })()
   }
 
   // window.ReadableStream
-  if (typeof input.getReader === 'function') {
+  if (typeof input.getReader === "function") {
     return (async function* () {
       for await (const obj of browserStreamToIt(input)) {
         yield toFileObject(obj)
@@ -136,7 +141,7 @@ export function normaliseInput(input: any) {
             // eslint-disable-line require-await
             yield first.value
             yield* iterator
-          })(),
+          })()
         )
         return
       }
@@ -144,7 +149,11 @@ export function normaliseInput(input: any) {
       // AsyncIterable<Bloby>
       // AsyncIterable<String>
       // AsyncIterable<{ path, content }>
-      if (isFileObject(first.value) || isBloby(first.value) || typeof first.value === 'string') {
+      if (
+        isFileObject(first.value) ||
+        isBloby(first.value) ||
+        typeof first.value === "string"
+      ) {
         yield toFileObject(first.value)
         for await (const obj of iterator) {
           yield toFileObject(obj)
@@ -152,7 +161,7 @@ export function normaliseInput(input: any) {
         return
       }
 
-      throw new Error('Unexpected input: ' + typeof input)
+      throw new Error("Unexpected input: " + typeof input)
     })()
   }
 
@@ -166,12 +175,12 @@ export function normaliseInput(input: any) {
     })()
   }
 
-  throw new Error('Unexpected input: ' + typeof input)
+  throw new Error("Unexpected input: " + typeof input)
 }
 
 function toFileObject(input: any) {
   const obj: File = {
-    path: input.path || '',
+    path: input.path || "",
     mode: input.mode,
     mtime: input.mtime,
   }
@@ -188,7 +197,7 @@ function toFileObject(input: any) {
 
 function toAsyncIterable(input: any) {
   // Bytes | String
-  if (isBytes(input) || typeof input === 'string') {
+  if (isBytes(input) || typeof input === "string") {
     return (async function* () {
       // eslint-disable-line require-await
       yield toBuffer(input)
@@ -201,7 +210,7 @@ function toAsyncIterable(input: any) {
   }
 
   // Browser stream
-  if (typeof input.getReader === 'function') {
+  if (typeof input.getReader === "function") {
     return browserStreamToIt(input)
   }
 
@@ -220,8 +229,8 @@ function toAsyncIterable(input: any) {
             (function* () {
               yield first.value
               yield* iterator
-            })(),
-          ) as any,
+            })()
+          ) as any
         )
         return
       }
@@ -235,7 +244,7 @@ function toAsyncIterable(input: any) {
         return
       }
 
-      throw new Error('Unexpected input: ' + typeof input)
+      throw new Error("Unexpected input: " + typeof input)
     })()
   }
 
@@ -256,25 +265,27 @@ function toBuffer(chunk: Buffer | ArrayBuffer): Buffer | ArrayBuffer {
 }
 
 function isBytes(obj: Buffer | ArrayBuffer) {
-  return Buffer.isBuffer(obj) || ArrayBuffer.isView(obj) || obj instanceof ArrayBuffer
+  return (
+    Buffer.isBuffer(obj) ||
+    ArrayBuffer.isView(obj) ||
+    obj instanceof ArrayBuffer
+  )
 }
 
 function isBloby(obj: any) {
-  return typeof globalThis.Blob !== 'undefined' && obj instanceof globalThis.Blob
+  return (
+    typeof globalThis.Blob !== "undefined" && obj instanceof globalThis.Blob
+  )
 }
 
 // An object with a path or content property
 function isFileObject(obj: any) {
-  return typeof obj === 'object' && (obj.path || obj.content)
+  return typeof obj === "object" && (obj.path || obj.content)
 }
 
 function blobToAsyncGenerator(blob: Blob) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  if (typeof blob.stream === 'function') {
+  if (typeof blob.stream === "function") {
     // firefox < 69 does not support blob.stream()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
     return browserStreamToIt(blob.stream())
   }
 

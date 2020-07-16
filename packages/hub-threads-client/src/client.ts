@@ -1,23 +1,31 @@
-import log from 'loglevel'
-import { GetThreadReply, ListThreadsReply, GetThreadRequest, ListThreadsRequest } from '@textile/users-grpc/users_pb'
-import { APIClient } from '@textile/users-grpc/users_pb_service'
-import { ServiceError } from '@textile/hub-grpc/hub_pb_service'
-import { Client } from '@textile/threads-client'
-import { ThreadID } from '@textile/threads-id'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { Context } from '@textile/context'
+import { Context } from "@textile/context"
+import { ServiceError } from "@textile/hub-grpc/hub_pb_service"
+import { KeyInfo, UserAuth } from "@textile/security"
+import { Client } from "@textile/threads-client"
+import { ThreadID } from "@textile/threads-id"
+import {
+  GetThreadReply,
+  GetThreadRequest,
+  ListThreadsReply,
+  ListThreadsRequest,
+} from "@textile/users-grpc/users_pb"
+import { APIClient } from "@textile/users-grpc/users_pb_service"
+import log from "loglevel"
 
-const logger = log.getLogger('users')
+const logger = log.getLogger("users")
 
-declare module '@textile/threads-client' {
+declare module "@textile/threads-client" {
   interface Client {
     getThread(name: string, ctx?: Context): Promise<GetThreadReply.AsObject>
     listThreads(ctx?: Context): Promise<ListThreadsReply.AsObject>
   }
 }
 
-Client.prototype.getThread = async function (name: string, ctx?: Context): Promise<GetThreadReply.AsObject> {
-  logger.debug('get thread request')
+Client.prototype.getThread = async function (
+  name: string,
+  ctx?: Context
+): Promise<GetThreadReply.AsObject> {
+  logger.debug("get thread request")
   const client = new APIClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
@@ -28,14 +36,20 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.getThread(req, meta, (err: ServiceError | null, message: GetThreadReply | null) => {
-          if (err) reject(err)
-          const msg = message?.toObject()
-          if (msg) {
-            msg.id = ThreadID.fromBytes(Buffer.from(msg.id as string, 'base64')).toString()
+        client.getThread(
+          req,
+          meta,
+          (err: ServiceError | null, message: GetThreadReply | null) => {
+            if (err) reject(err)
+            const msg = message?.toObject()
+            if (msg) {
+              msg.id = ThreadID.fromBytes(
+                Buffer.from(msg.id as string, "base64")
+              ).toString()
+            }
+            resolve(msg)
           }
-          resolve(msg)
-        })
+        )
       })
       .catch((err: Error) => {
         reject(err)
@@ -49,8 +63,10 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
  * These will be merged with any internal credentials.
  * @note Threads can be created using the threads or threads network clients.
  */
-Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThreadsReply.AsObject> {
-  logger.debug('list threads request')
+Client.prototype.listThreads = async function (
+  ctx?: Context
+): Promise<ListThreadsReply.AsObject> {
+  logger.debug("list threads request")
   const client = new APIClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
@@ -60,16 +76,22 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThrea
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.listThreads(req, meta, (err: ServiceError | null, message: ListThreadsReply | null) => {
-          if (err) reject(err)
-          const msg = message?.toObject()
-          if (msg) {
-            msg.listList.forEach((thread) => {
-              thread.id = ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString()
-            })
+        client.listThreads(
+          req,
+          meta,
+          (err: ServiceError | null, message: ListThreadsReply | null) => {
+            if (err) reject(err)
+            const msg = message?.toObject()
+            if (msg) {
+              msg.listList.forEach((thread) => {
+                thread.id = ThreadID.fromBytes(
+                  Buffer.from(thread.id as string, "base64")
+                ).toString()
+              })
+            }
+            resolve(msg)
           }
-          resolve(msg)
-        })
+        )
       })
       .catch((err: Error) => {
         reject(err)

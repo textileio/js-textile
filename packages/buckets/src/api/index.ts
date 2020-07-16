@@ -1,46 +1,46 @@
-import log from 'loglevel'
+import { grpc } from "@improbable-eng/grpc-web"
 import {
-  Root,
-  LinksReply,
-  ListIpfsPathReply,
-  RootReply,
-  RootRequest,
-  ArchiveWatchReply,
-  InitReply,
-  ListPathItem,
-  ListPathReply,
-  ListReply,
-  PullIpfsPathReply,
-  PullPathReply,
-  PushPathReply,
-  InitRequest,
-  LinksRequest,
-  ListRequest,
-  ListPathRequest,
-  ListIpfsPathRequest,
-  PushPathRequest,
-  PullPathRequest,
-  PullIpfsPathRequest,
-  RemoveRequest,
-  RemovePathRequest,
-  ArchiveRequest,
-  ArchiveStatusRequest,
-  ArchiveWatchRequest,
+  ArchiveInfoReply,
   ArchiveInfoRequest,
   ArchiveReply,
+  ArchiveRequest,
   ArchiveStatusReply,
-  ArchiveInfoReply,
-} from '@textile/buckets-grpc/buckets_pb'
-import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
-import CID from 'cids'
-import { EventIterator } from 'event-iterator'
-import nextTick from 'next-tick'
-import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface, Context } from '@textile/context'
-import { WebsocketTransport } from '@textile/grpc-transport'
-import { normaliseInput, File } from './normalize'
+  ArchiveStatusRequest,
+  ArchiveWatchReply,
+  ArchiveWatchRequest,
+  InitReply,
+  InitRequest,
+  LinksReply,
+  LinksRequest,
+  ListIpfsPathReply,
+  ListIpfsPathRequest,
+  ListPathItem,
+  ListPathReply,
+  ListPathRequest,
+  ListReply,
+  ListRequest,
+  PullIpfsPathReply,
+  PullIpfsPathRequest,
+  PullPathReply,
+  PullPathRequest,
+  PushPathReply,
+  PushPathRequest,
+  RemovePathRequest,
+  RemoveRequest,
+  Root,
+  RootReply,
+  RootRequest,
+} from "@textile/buckets-grpc/buckets_pb"
+import { API, APIPushPath } from "@textile/buckets-grpc/buckets_pb_service"
+import { Context, ContextInterface } from "@textile/context"
+import { WebsocketTransport } from "@textile/grpc-transport"
+import CID from "cids"
+import { EventIterator } from "event-iterator"
+import log from "loglevel"
+import nextTick from "next-tick"
+import { File, normaliseInput } from "./normalize"
 
-const logger = log.getLogger('buckets-api')
+const logger = log.getLogger("buckets-api")
 
 /**
  * The expected result format from pushing a path to a bucket
@@ -119,9 +119,9 @@ export async function bucketsInit(
   api: BucketsGrpcClient,
   name: string,
   isPrivate = false,
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): Promise<InitReply.AsObject> {
-  logger.debug('init request')
+  logger.debug("init request")
   const req = new InitRequest()
   req.setName(name)
   req.setPrivate(isPrivate)
@@ -136,9 +136,9 @@ export async function bucketsInit(
 export async function bucketsRoot(
   api: BucketsGrpcClient,
   key: string,
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): Promise<Root.AsObject | undefined> {
-  logger.debug('root request')
+  logger.debug("root request")
   const req = new RootRequest()
   req.setKey(key)
   const res: RootReply = await api.unary(API.Root, req, ctx)
@@ -167,9 +167,9 @@ export async function bucketsRoot(
 export async function bucketsLinks(
   api: BucketsGrpcClient,
   key: string,
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): Promise<LinksReply.AsObject> {
-  logger.debug('link request')
+  logger.debug("link request")
   const req = new LinksRequest()
   req.setKey(key)
   const res: LinksReply = await api.unary(API.Links, req, ctx)
@@ -189,8 +189,11 @@ export async function bucketsLinks(
  * }
  * ````
  */
-export async function bucketsList(api: BucketsGrpcClient, ctx?: ContextInterface): Promise<Array<Root.AsObject>> {
-  logger.debug('list request')
+export async function bucketsList(
+  api: BucketsGrpcClient,
+  ctx?: ContextInterface
+): Promise<Array<Root.AsObject>> {
+  logger.debug("list request")
   const req = new ListRequest()
   const res: ListReply = await api.unary(API.List, req, ctx)
   return res.toObject().rootsList
@@ -205,9 +208,9 @@ export async function bucketsListPath(
   api: BucketsGrpcClient,
   key: string,
   path: string,
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): Promise<ListPathReply.AsObject> {
-  logger.debug('list path request')
+  logger.debug("list path request")
   const req = new ListPathRequest()
   req.setKey(key)
   req.setPath(path)
@@ -222,9 +225,9 @@ export async function bucketsListPath(
 export async function bucketsListIpfsPath(
   api: BucketsGrpcClient,
   path: string,
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): Promise<ListPathItem.AsObject | undefined> {
-  logger.debug('list path request')
+  logger.debug("list path request")
   const req = new ListIpfsPathRequest()
   req.setPath(path)
   const res: ListIpfsPathReply = await api.unary(API.ListIpfsPath, req, ctx)
@@ -254,18 +257,22 @@ export async function bucketsPushPath(
   api: BucketsGrpcClient,
   key: string,
   path: string,
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   input: any,
   opts?: { progress?: (num?: number) => void },
-  ctx?: ContextInterface,
-) {
+  ctx?: ContextInterface
+): Promise<PushPathResult> {
   return new Promise<PushPathResult>(async (resolve, reject) => {
     // Only process the first  input if there are more than one
     const source: File | undefined = (await normaliseInput(input).next()).value
-    const client = grpc.client<PushPathRequest, PushPathReply, APIPushPath>(API.PushPath, {
-      host: api.serviceHost,
-      transport: api.rpcOptions.transport,
-      debug: api.rpcOptions.debug,
-    })
+    const client = grpc.client<PushPathRequest, PushPathReply, APIPushPath>(
+      API.PushPath,
+      {
+        host: api.serviceHost,
+        transport: api.rpcOptions.transport,
+        debug: api.rpcOptions.debug,
+      }
+    )
     client.onMessage((message) => {
       if (message.hasError()) {
         // Reject on first error
@@ -274,23 +281,25 @@ export async function bucketsPushPath(
         const event = message.getEvent()?.toObject()
         if (event?.path) {
           // @todo: Is there an standard library/tool for this step in JS?
-          const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
+          const pth = event.path.startsWith("/ipfs/")
+            ? event.path.split("/ipfs/")[1]
+            : event.path
           const cid = new CID(pth)
           const res: PushPathResult = {
             path: {
               path: `/ipfs/${cid.toString()}`,
               cid: cid,
               root: cid,
-              remainder: '',
+              remainder: "",
             },
-            root: event.root?.path ?? '',
+            root: event.root?.path ?? "",
           }
           resolve(res)
         } else if (opts?.progress) {
           opts.progress(event?.bytes)
         }
       } else {
-        reject(new Error('Invalid reply'))
+        reject(new Error("Invalid reply"))
       }
     })
     client.onEnd((code) => {
@@ -333,7 +342,7 @@ export function bucketsPullPath(
   key: string,
   path: string,
   opts?: { progress?: (num?: number) => void },
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): AsyncIterableIterator<Uint8Array> {
   const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
   const request = new PullPathRequest()
@@ -355,7 +364,11 @@ export function bucketsPullPath(
           opts.progress(written)
         }
       },
-      onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      onEnd: async (
+        status: grpc.Code,
+        message: string
+        /** trailers: grpc.Metadata */
+      ) => {
         if (status !== grpc.Code.OK) {
           fail(new Error(message))
         }
@@ -382,7 +395,7 @@ export function bucketsPullIpfsPath(
   api: BucketsGrpcClient,
   path: string,
   opts?: { progress?: (num?: number) => void },
-  ctx?: ContextInterface,
+  ctx?: ContextInterface
 ): AsyncIterableIterator<Uint8Array> {
   const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
   const request = new PullIpfsPathRequest()
@@ -403,7 +416,11 @@ export function bucketsPullIpfsPath(
           opts.progress(written)
         }
       },
-      onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      onEnd: async (
+        status: grpc.Code,
+        message: string
+        /** trailers: grpc.Metadata */
+      ) => {
         if (status !== grpc.Code.OK) {
           fail(new Error(message))
         }
@@ -425,8 +442,12 @@ export function bucketsPullIpfsPath(
  * Removes an entire bucket. Files and directories will be unpinned.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
-  logger.debug('remove request')
+export async function bucketsRemove(
+  api: BucketsGrpcClient,
+  key: string,
+  ctx?: ContextInterface
+): Promise<void> {
+  logger.debug("remove request")
   const req = new RemoveRequest()
   req.setKey(key)
   await api.unary(API.Remove, req, ctx)
@@ -444,9 +465,9 @@ export async function bucketsRemovePath(
   key: string,
   path: string,
   root?: string,
-  ctx?: ContextInterface,
-) {
-  logger.debug('remove path request')
+  ctx?: ContextInterface
+): Promise<void> {
+  logger.debug("remove path request")
   const req = new RemovePathRequest()
   req.setKey(key)
   req.setPath(path)
@@ -460,8 +481,12 @@ export async function bucketsRemovePath(
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
-  logger.debug('archive request')
+export async function bucketsArchive(
+  api: BucketsGrpcClient,
+  key: string,
+  ctx?: ContextInterface
+): Promise<ArchiveReply.AsObject> {
+  logger.debug("archive request")
   const req = new ArchiveRequest()
   req.setKey(key)
   const res: ArchiveReply = await api.unary(API.Archive, req, ctx)
@@ -473,8 +498,12 @@ export async function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: 
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
-  logger.debug('archive status request')
+export async function bucketsArchiveStatus(
+  api: BucketsGrpcClient,
+  key: string,
+  ctx?: ContextInterface
+): Promise<ArchiveStatusReply.AsObject> {
+  logger.debug("archive status request")
   const req = new ArchiveStatusRequest()
   req.setKey(key)
   const res: ArchiveStatusReply = await api.unary(API.ArchiveStatus, req, ctx)
@@ -486,8 +515,12 @@ export async function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, 
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
-  logger.debug('archive info request')
+export async function bucketsArchiveInfo(
+  api: BucketsGrpcClient,
+  key: string,
+  ctx?: ContextInterface
+): Promise<ArchiveInfoReply.AsObject> {
+  logger.debug("archive info request")
   const req = new ArchiveInfoRequest()
   req.setKey(key)
   const res: ArchiveInfoReply = await api.unary(API.ArchiveInfo, req, ctx)
@@ -502,10 +535,13 @@ export async function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ct
 export async function bucketsArchiveWatch(
   api: BucketsGrpcClient,
   key: string,
-  callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void,
-  ctx?: ContextInterface,
-) {
-  logger.debug('archive watch request')
+  callback: (
+    reply?: { id: string | undefined; msg: string },
+    err?: Error
+  ) => void,
+  ctx?: ContextInterface
+): Promise<() => void> {
+  logger.debug("archive watch request")
   const req = new ArchiveWatchRequest()
   req.setKey(key)
 
@@ -521,7 +557,10 @@ export async function bucketsArchiveWatch(
       }
       nextTick(() => callback(response))
     },
-    onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+    onEnd: (
+      status: grpc.Code,
+      message: string /** trailers: grpc.Metadata */
+    ) => {
       if (status !== grpc.Code.OK) {
         return callback(undefined, new Error(message))
       }

@@ -3,4 +3,4 @@
  * @packageDocumentation
  */
 
-export { Client } from './client'
+export { Client } from "./client"
