@@ -222,13 +222,13 @@ export class Buckets extends BucketsGrpcClient {
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
-   * const getLinks = async (buckets: Buckets) => {
-   *    const links = buckets.links(bucketKey)
-   *    return links.ipfs
+   * const getLinks = async (buckets: Buckets, bucketKey: string) => {
+   *    const links = await buckets.links(bucketKey)
+   *    return links
    * }
    *
-   * const getIpfs = async (buckets: Buckets) => {
-   *    const links = buckets.links(bucketKey)
+   * const getIpfs = async (buckets: Buckets, bucketKey: string) => {
+   *    const links = await buckets.links(bucketKey)
    *    return links.ipfs
    * }
    * ```
@@ -288,7 +288,7 @@ export class Buckets extends BucketsGrpcClient {
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
-   * const pushFile = async (content: string, bucketKey: string) => {
+   * const pushFile = async (buckets: Buckets, content: string, bucketKey: string) => {
    *    const file = { path: '/index.html', content: Buffer.from(content) }
    *    return await buckets.pushPath(bucketKey!, 'index.html', file)
    * }
