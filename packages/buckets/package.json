@@ -11,8 +11,7 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build:node",
     "prebuild": "npm run clean",
-    "build:node": "npm run compile",
-    "compile": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json",
     "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },

@@ -1,8 +1,7 @@
 {
   "docs": {
     "Getting Started": [
-      "index", 
-      "hub"
+      "index"
     ],
     "Buckets": [
       "hub.buckets"

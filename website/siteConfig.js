@@ -37,7 +37,12 @@ const siteConfig = {
   //   organizationName: 'JoelMarcey'
 
   // For no header links in the top nav bar -> headerLinks: [],
-  headerLinks: [],
+  headerLinks: [
+    { doc: 'index', label: 'Introduction' },
+    { doc: 'hub.buckets', label: 'Buckets' },
+    { doc: 'hub.client', label: 'Threads' },
+    { href: 'https://docs.textile.io', label: 'Textile Docs' },
+  ],
 
   /* path to images for header/footer */
   headerIcon: 'img/hex.svg',

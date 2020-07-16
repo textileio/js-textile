@@ -645,7 +645,13 @@
         "title": "Introduction"
       }
     },
-    "links": {},
+    "links": {
+      "Introduction": "Introduction",
+      "Buckets": "Buckets",
+      "Threads": "Threads",
+      "Issues": "Issues",
+      "Support": "Support"
+    },
     "categories": {
       "Getting Started": "Getting Started",
       "Buckets": "Buckets",
