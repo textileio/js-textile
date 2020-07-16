@@ -1,4 +1,4 @@
-import { Datastore, Key, MemoryDatastore, Query } from 'interface-datastore'
+import { Datastore, Key, MemoryDatastore, Query, Result } from 'interface-datastore'
 import Ajv, { ValidateFunction, ValidationError } from 'ajv'
 import { ulid } from 'ulid'
 import { reduce } from 'streaming-iterables'
@@ -162,7 +162,7 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param query Mongodb-style filter query.
    * @param options Additional options to control query operation.
    */
-  find(query?: FilterQuery<T>, options: FindOptions<T> = {}) {
+  find(query?: FilterQuery<T>, options: FindOptions<T> = {}): AsyncIterable<Result<T>> {
     // @fixme(github.com/kofrasa/mingo/issues/141) Hack around some strange es issues in some JS envs
     const qry: FilterQuery<T> = query || {}
     Object.keys(qry).forEach((key: keyof T) => {
@@ -195,7 +195,10 @@ export class ReadonlyCollection<T extends Instance = any> {
    * @param query Mongodb-style filter query.
    * @param options Additional search options.
    */
-  findOne(query: FilterQuery<T>, options: FindOptions<T> = {}) {
+  findOne(
+    query: FilterQuery<T>,
+    options: FindOptions<T> = {},
+  ): Promise<IteratorResult<Result<T>, any>> {
     const it = this.find(query, options)
     return it[Symbol.asyncIterator]().next()
   }
