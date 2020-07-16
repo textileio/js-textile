@@ -21,7 +21,7 @@ const sessionSecret = 'hubsession'
 describe('Users...', () => {
   describe('Buckets and accounts', () => {
     context('a developer', () => {
-      const ctx = new Context(addrApiurl, undefined)
+      const ctx = new Context(addrApiurl)
       let dev: SignupReply.AsObject
       it('should sign-up, create an API key, and sign it for the requests', async () => {
         // @note This should be done using the cli
@@ -61,7 +61,7 @@ describe('Users...', () => {
     })
     context('a developer with a user', function () {
       this.timeout(5000)
-      const ctx = new Context(addrApiurl, undefined)
+      const ctx = new Context(addrApiurl)
       let dev: SignupReply.AsObject
       let users: Client
       it('should sign-up, create an API key, and a new user', async function () {

@@ -37,7 +37,12 @@ const siteConfig = {
   //   organizationName: 'JoelMarcey'
 
   // For no header links in the top nav bar -> headerLinks: [],
-  headerLinks: [],
+  headerLinks: [
+    { doc: 'index', label: 'Introduction' },
+    { doc: 'hub.buckets', label: 'Buckets' },
+    { doc: 'hub.client', label: 'Threads' },
+    { href: 'https://docs.textile.io', label: 'Textile Docs' },
+  ],
 
   /* path to images for header/footer */
   headerIcon: 'img/hex.svg',
@@ -56,7 +61,7 @@ const siteConfig = {
   },
 
   stylesheets: [
-    'http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900'
+    'http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900',
   ],
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
@@ -82,7 +87,7 @@ const siteConfig = {
   },
   enableUpdateTime: true,
   enableUpdateBy: true,
-  docsSideNavCollapsible: true,
+  docsSideNavCollapsible: false,
 }
 
 module.exports = siteConfig

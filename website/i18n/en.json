@@ -254,14 +254,149 @@
       "hub.client.writetransaction": {
         "title": "Client.writeTransaction() method"
       },
+      "hub.collection._constructor_": {
+        "title": "Collection.(constructor)"
+      },
+      "hub.collection._new_": {
+        "title": "Collection.(new)"
+      },
+      "hub.collection.delete": {
+        "title": "Collection.delete() method"
+      },
+      "hub.collection.insert": {
+        "title": "Collection.insert() method"
+      },
+      "hub.collection": {
+        "title": "Collection interface"
+      },
+      "hub.collection.name": {
+        "title": "Collection.name property"
+      },
+      "hub.collection.readtransaction": {
+        "title": "Collection.readTransaction() method"
+      },
+      "hub.collection.save": {
+        "title": "Collection.save() method"
+      },
+      "hub.collection.writetransaction": {
+        "title": "Collection.writeTransaction() method"
+      },
+      "hub.config": {
+        "title": "Config interface"
+      },
+      "hub.config.name": {
+        "title": "Config.name property"
+      },
+      "hub.config.schema": {
+        "title": "Config.schema property"
+      },
       "hub.createapisig": {
         "title": "createAPISig() function"
       },
       "hub.createuserauth": {
         "title": "createUserAuth() function"
       },
+      "hub.database._constructor_": {
+        "title": "Database.(constructor)"
+      },
+      "hub.database.child": {
+        "title": "Database.child property"
+      },
+      "hub.database.close": {
+        "title": "Database.close() method"
+      },
+      "hub.database.collections": {
+        "title": "Database.collections property"
+      },
+      "hub.database.dispatcher": {
+        "title": "Database.dispatcher property"
+      },
+      "hub.database.emitter": {
+        "title": "Database.emitter property"
+      },
+      "hub.database.eventbus": {
+        "title": "Database.eventBus property"
+      },
+      "hub.database.getdbinfo": {
+        "title": "Database.getDBInfo() method"
+      },
+      "hub.database": {
+        "title": "Database class"
+      },
+      "hub.database.network": {
+        "title": "Database.network property"
+      },
+      "hub.database.newcollection": {
+        "title": "Database.newCollection() method"
+      },
+      "hub.database.newcollectionfromobject": {
+        "title": "Database.newCollectionFromObject() method"
+      },
+      "hub.database.ownloginfo": {
+        "title": "Database.ownLogInfo() method"
+      },
+      "hub.database.randomidentity": {
+        "title": "Database.randomIdentity() method"
+      },
+      "hub.database.start": {
+        "title": "Database.start() method"
+      },
+      "hub.database.startfromaddress": {
+        "title": "Database.startFromAddress() method"
+      },
+      "hub.database.startfrominfo": {
+        "title": "Database.startFromInfo() method"
+      },
+      "hub.database.threadid": {
+        "title": "Database.threadID property"
+      },
+      "hub.database.withkeyinfo": {
+        "title": "Database.withKeyInfo() method"
+      },
+      "hub.database.withuserauth": {
+        "title": "Database.withUserAuth() method"
+      },
+      "hub.databasesettings.child": {
+        "title": "DatabaseSettings.child property"
+      },
+      "hub.databasesettings.dispatcher": {
+        "title": "DatabaseSettings.dispatcher property"
+      },
+      "hub.databasesettings.eventbus": {
+        "title": "DatabaseSettings.eventBus property"
+      },
+      "hub.databasesettings": {
+        "title": "DatabaseSettings interface"
+      },
+      "hub.databasesettings.network": {
+        "title": "DatabaseSettings.network property"
+      },
+      "hub.document_2._constructor_": {
+        "title": "Document\\_2.(constructor)"
+      },
+      "hub.document_2.exists": {
+        "title": "Document\\_2.exists() method"
+      },
+      "hub.document_2": {
+        "title": "Document\\_2 class"
+      },
+      "hub.document_2.remove": {
+        "title": "Document\\_2.remove() method"
+      },
+      "hub.document_2.save": {
+        "title": "Document\\_2.save() method"
+      },
+      "hub.document_2.tojson": {
+        "title": "Document\\_2.toJSON() method"
+      },
+      "hub.existingkeyerror": {
+        "title": "existingKeyError variable"
+      },
       "hub.expirationerror": {
         "title": "expirationError variable"
+      },
+      "hub.filterquery": {
+        "title": "FilterQuery type"
       },
       "hub.grpcbucketapi._constructor_": {
         "title": "GrpcBucketApi.(constructor)"
@@ -353,6 +488,9 @@
       "hub.init": {
         "title": "init() function"
       },
+      "hub.jsonschema": {
+        "title": "JSONSchema type"
+      },
       "hub.keyinfo": {
         "title": "KeyInfo type"
       },
@@ -370,6 +508,21 @@
       },
       "hub": {
         "title": "Package Overview"
+      },
+      "hub.mismatcherror": {
+        "title": "mismatchError variable"
+      },
+      "hub.missingidentity": {
+        "title": "missingIdentity variable"
+      },
+      "hub.options.child": {
+        "title": "Options.child property"
+      },
+      "hub.options.dispatcher": {
+        "title": "Options.dispatcher property"
+      },
+      "hub.options": {
+        "title": "Options interface"
       },
       "hub.pullipfspath": {
         "title": "pullIpfsPath() function"
@@ -389,6 +542,39 @@
       "hub.pushpathresult.root": {
         "title": "PushPathResult.root property"
       },
+      "hub.readonlycollection._constructor_": {
+        "title": "ReadonlyCollection.(constructor)"
+      },
+      "hub.readonlycollection.child": {
+        "title": "ReadonlyCollection.child property"
+      },
+      "hub.readonlycollection.count": {
+        "title": "ReadonlyCollection.count() method"
+      },
+      "hub.readonlycollection.find": {
+        "title": "ReadonlyCollection.find() method"
+      },
+      "hub.readonlycollection.findbyid": {
+        "title": "ReadonlyCollection.findById() method"
+      },
+      "hub.readonlycollection.findone": {
+        "title": "ReadonlyCollection.findOne() method"
+      },
+      "hub.readonlycollection.fromcollection": {
+        "title": "ReadonlyCollection.fromCollection() method"
+      },
+      "hub.readonlycollection.has": {
+        "title": "ReadonlyCollection.has() method"
+      },
+      "hub.readonlycollection": {
+        "title": "ReadonlyCollection class"
+      },
+      "hub.readonlycollection.name": {
+        "title": "ReadonlyCollection.name property"
+      },
+      "hub.readonlycollection.validator": {
+        "title": "ReadonlyCollection.validator property"
+      },
       "hub.remove": {
         "title": "remove() function"
       },
@@ -397,6 +583,15 @@
       },
       "hub.root": {
         "title": "root() function"
+      },
+      "hub.startoptions.collections": {
+        "title": "StartOptions.collections property"
+      },
+      "hub.startoptions": {
+        "title": "StartOptions interface"
+      },
+      "hub.startoptions.threadid": {
+        "title": "StartOptions.threadID property"
       },
       "hub.threadid._constructor_": {
         "title": "ThreadID.(constructor)"
@@ -450,12 +645,22 @@
         "title": "Introduction"
       }
     },
-    "links": {},
+    "links": {
+      "Introduction": "Introduction",
+      "Buckets": "Buckets",
+      "Threads": "Threads",
+      "Issues": "Issues",
+      "Support": "Support"
+    },
     "categories": {
       "Getting Started": "Getting Started",
       "Buckets": "Buckets",
-      "ThreadDB": "ThreadDB",
-      "Other Types & Methods": "Other Types & Methods"
+      "Threads": "Threads",
+      "Other Types & Methods": "Other Types & Methods",
+      "Client": "Client",
+      "Database": "Database",
+      "Collections": "Collections",
+      "Config": "Config"
     }
   },
   "pages-strings": {

@@ -37,6 +37,7 @@ import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface, Context } from '@textile/context'
+import { WebsocketTransport } from '@textile/grpc-transport'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets-api')
@@ -61,11 +62,11 @@ export class BucketsGrpcClient {
    * Creates a new gRPC client instance for accessing the Textile Buckets API.
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
-  constructor(public context: ContextInterface = new Context()) {
+  constructor(public context: ContextInterface = new Context(), debug = false) {
     this.serviceHost = context.host
     this.rpcOptions = {
-      transport: context.transport,
-      debug: context.debug,
+      transport: WebsocketTransport(),
+      debug,
     }
   }
 
@@ -436,12 +437,20 @@ export async function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: C
  * Returns information about a bucket path.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param path A file/object (sub)-path within a bucket.
+ * @param root optional to specify a root
  */
-export async function bucketsRemovePath(api: BucketsGrpcClient, key: string, path: string, ctx?: ContextInterface) {
+export async function bucketsRemovePath(
+  api: BucketsGrpcClient,
+  key: string,
+  path: string,
+  root?: string,
+  ctx?: ContextInterface,
+) {
   logger.debug('remove path request')
   const req = new RemovePathRequest()
   req.setKey(key)
   req.setPath(path)
+  if (root) req.setRoot(root)
   await api.unary(API.RemovePath, req, ctx)
   return
 }

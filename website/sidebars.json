@@ -1,62 +1,14 @@
 {
   "docs": {
-    "Getting Started": ["index", "hub"],
-    "Buckets": [
-      "hub.buckets",
-      {
-        "type": "subcategory",
-        "label": "Methods",
-        "collapse": true,
-        "ids": [
-          "hub.buckets.withuserauth",
-          "hub.buckets.withkeyinfo",
-          "hub.buckets.open",
-          "hub.buckets.init",
-          "hub.buckets.root",
-          "hub.buckets.links",
-          "hub.buckets.list",
-          "hub.buckets.listpath",
-          "hub.buckets.listipfspath",
-          "hub.buckets.pushpath",
-          "hub.buckets.pullpath",
-          "hub.buckets.pullipfspath",
-          "hub.buckets.remove",
-          "hub.buckets.removepath"
-        ]
-      }
+    "Getting Started": [
+      "index"
     ],
-    "ThreadDB": [
+    "Buckets": [
+      "hub.buckets"
+    ],
+    "Threads": [
       "hub.client",
-      {
-        "type": "subcategory",
-        "label": "Methods",
-        "ids": [
-          "hub.client.withuserauth",
-          "hub.client.withkeyinfo",
-          "hub.client.gettoken",
-          "hub.client.gettokenchallenge",
-          "hub.client.newdb",
-          "hub.client.deletedb",
-          "hub.client.getdbinfo",
-          "hub.client.joinfrominfo",
-          "hub.client.newdbfromaddr",
-          "hub.client.randomidentity",
-          "hub.client.listen",
-          "hub.client.newcollection",
-          "hub.client.newcollectionfromobject",
-          "hub.client.deletecollection",
-          "hub.client.updatecollection",
-          "hub.client.getcollectionindexes",
-          "hub.client.create",
-          "hub.client.save",
-          "hub.client.delete",
-          "hub.client.find",
-          "hub.client.findbyid",
-          "hub.client.has",
-          "hub.client.readtransaction",
-          "hub.client.writetransaction"
-        ]
-      }
+      "hub.database"
     ],
     "Other Types & Methods": [
       "hub.threadid",
@@ -65,6 +17,79 @@
       "hub.userauth",
       "hub.apisig",
       "hub.keyinfo"
+    ]
+  },
+  "bucket-docs": {
+    "Buckets": [
+      "hub.buckets.withuserauth",
+      "hub.buckets.withkeyinfo",
+      "hub.buckets.gettoken",
+      "hub.buckets.open",
+      "hub.buckets.init",
+      "hub.buckets.root",
+      "hub.buckets.links",
+      "hub.buckets.list",
+      "hub.buckets.listpath",
+      "hub.buckets.listipfspath",
+      "hub.buckets.pushpath",
+      "hub.buckets.pullpath",
+      "hub.buckets.pullipfspath",
+      "hub.buckets.remove",
+      "hub.buckets.removepath",
+      "hub.buckets.archive",
+      "hub.buckets.archiveInfo",
+      "hub.buckets.archiveStatus",
+      "hub.buckets.archiveWatch"
+    ]
+  },
+  "client-docs": {
+    "Client": [
+      "hub.client.withuserauth",
+      "hub.client.withkeyinfo",
+      "hub.client.gettoken",
+      "hub.client.gettokenchallenge",
+      "hub.client.newdb",
+      "hub.client.deletedb",
+      "hub.client.getdbinfo",
+      "hub.client.joinfrominfo",
+      "hub.client.newdbfromaddr",
+      "hub.client.randomidentity",
+      "hub.client.listen",
+      "hub.client.newcollection",
+      "hub.client.newcollectionfromobject",
+      "hub.client.deletecollection",
+      "hub.client.updatecollection",
+      "hub.client.getcollectionindexes",
+      "hub.client.create",
+      "hub.client.save",
+      "hub.client.delete",
+      "hub.client.find",
+      "hub.client.findbyid",
+      "hub.client.has",
+      "hub.client.readtransaction",
+      "hub.client.writetransaction"
+    ]
+  },
+  "db-docs": {
+    "Database": [
+      "hub.database.withkeyinfo",
+      "hub.database.withuserauth",
+      "hub.database.startfrominfo",
+      "hub.database.getdbinfo",
+      "hub.database.start",
+      "hub.database.close",
+      "hub.database.emitter"
+    ],
+    "Collections": [
+      "hub.collection",
+      "hub.collection.insert",
+      "hub.collection.save",
+      "hub.collection.delete",
+      "hub.collection.name"
+    ],
+    "Config": [
+      "hub.config.name",
+      "hub.config.schema"
     ]
   }
 }

@@ -67,10 +67,8 @@ export class Buckets extends BucketsGrpcClient {
    */
   static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
     const context =
-      typeof auth === 'object'
-        ? Context.fromUserAuth(auth, host, debug)
-        : Context.fromUserAuthCallback(auth, host, debug)
-    return new Buckets(context)
+      typeof auth === 'object' ? Context.fromUserAuth(auth, host) : Context.fromUserAuthCallback(auth, host)
+    return new Buckets(context, debug)
   }
 
   /**
@@ -78,9 +76,9 @@ export class Buckets extends BucketsGrpcClient {
    * @param key The KeyInfo object containing {key: string, secret: string}
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const context = new Context(host, debug)
+    const context = new Context(host)
     await context.withKeyInfo(key)
-    return new Buckets(context)
+    return new Buckets(context, debug)
   }
 
   /**
@@ -324,10 +322,11 @@ export class Buckets extends BucketsGrpcClient {
    * Returns information about a bucket path.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
+   * @param root optional to specify a root
    */
-  async removePath(key: string, path: string) {
+  async removePath(key: string, path: string, root?: string) {
     logger.debug('remove path request')
-    return bucketsRemovePath(this, key, path)
+    return bucketsRemovePath(this, key, path, root)
   }
 
   /**
