@@ -1,7 +1,5 @@
 import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
 
-export * from "@textile/multiaddr"
-export * from "@textile/threads-id"
 export * from "./identity"
 export { Block } from "./ipld"
 export * from "./network"

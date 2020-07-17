@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { LogID, ThreadID } from "@textile/threads-core"
+import { LogID } from "@textile/threads-core"
 import { keys, PrivateKey } from "@textile/threads-crypto"
+import { ThreadID } from "@textile/threads-id"
 import { expect } from "chai"
 import { MemoryDatastore } from "interface-datastore"
 import { KeyBook } from "./keybook"

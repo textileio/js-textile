@@ -1,3 +1,4 @@
+import { Multiaddr } from "@textile/multiaddr"
 import {
   Block,
   Closer,
@@ -5,10 +6,8 @@ import {
   LogID,
   LogInfo,
   LogRecord,
-  Multiaddr,
   Network as Interface,
   NewThreadOptions,
-  ThreadID,
   ThreadInfo,
   ThreadKey,
   ThreadRecord,
@@ -20,6 +19,7 @@ import {
   randomBytes,
 } from "@textile/threads-crypto"
 import { createEvent, createRecord } from "@textile/threads-encoding"
+import { ThreadID } from "@textile/threads-id"
 import { Client } from "@textile/threads-network-client"
 import CID from "cids"
 import { Datastore } from "interface-datastore"

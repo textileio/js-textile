@@ -1,4 +1,5 @@
-import { Closer, ThreadID, ThreadRecord } from "@textile/threads-core"
+import { Closer, ThreadRecord } from "@textile/threads-core"
+import { ThreadID } from "@textile/threads-id"
 import { Network } from "@textile/threads-network"
 import retry, { Options } from "async-retry"
 import merge from "deepmerge"

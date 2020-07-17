@@ -24,6 +24,8 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.6.2",
     "@textile/grpc-transport": "^0.0.1",
+    "@textile/multiaddr": "^0.0.22",
+    "@textile/threads-id": "^0.1.11",
     "@textile/threads-core": "^0.1.31",
     "@textile/threads-crypto": "^0.1.2",
     "@textile/threads-encoding": "^0.1.31",

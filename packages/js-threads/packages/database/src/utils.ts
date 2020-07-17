@@ -1,13 +1,13 @@
+import { Multiaddr } from "@textile/multiaddr"
 import {
   EventHeader,
-  Multiaddr,
-  ThreadID,
   ThreadInfo,
   ThreadKey,
   ThreadRecord,
 } from "@textile/threads-core"
 import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
 import { decodeBlock } from "@textile/threads-encoding"
+import { ThreadID } from "@textile/threads-id"
 import { Network } from "@textile/threads-network"
 
 const ed25519 = keys.supportedKeys.ed25519

@@ -22,9 +22,11 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@textile/context": "^0.6.2",
+    "@textile/multiaddr": "^0.0.22",
     "@textile/threads-core": "^0.1.31",
     "@textile/threads-crypto": "^0.1.2",
     "@textile/threads-encoding": "^0.1.31",
+    "@textile/threads-id": "^0.1.11",
     "@textile/threads-network-client": "^0.6.2",
     "@types/datastore-core": "^0.7.0",
     "@types/interface-datastore": "^0.8.0",

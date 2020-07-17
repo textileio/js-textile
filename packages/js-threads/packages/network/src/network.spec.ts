@@ -1,17 +1,17 @@
 import { Context } from "@textile/context"
+import { Multiaddr } from "@textile/multiaddr"
 import {
   Block,
   Identity,
   Libp2pCryptoIdentity,
   LogID,
-  Multiaddr,
-  ThreadID,
   ThreadInfo,
   ThreadKey,
   ThreadRecord,
 } from "@textile/threads-core"
 import { keys, randomBytes } from "@textile/threads-crypto"
 import { createEvent, createRecord } from "@textile/threads-encoding"
+import { ThreadID } from "@textile/threads-id"
 import { Client } from "@textile/threads-network-client"
 import { expect } from "chai"
 import { MemoryDatastore } from "interface-datastore"

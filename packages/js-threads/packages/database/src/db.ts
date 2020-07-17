@@ -1,16 +1,17 @@
 import { Context, defaultHost } from "@textile/context"
+import { Multiaddr } from "@textile/multiaddr"
 import { KeyInfo, UserAuth } from "@textile/security"
 import {
   Identity,
   Libp2pCryptoIdentity,
   LogInfo,
-  Multiaddr,
-  ThreadID,
   ThreadInfo,
   ThreadKey,
   ThreadRecord,
 } from "@textile/threads-core"
-import { Client, Network } from "@textile/threads-network"
+import { ThreadID } from "@textile/threads-id"
+import { Network } from "@textile/threads-network"
+import { Client } from "@textile/threads-network-client"
 import {
   Dispatcher,
   DomainDatastore,

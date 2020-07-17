@@ -1,6 +1,7 @@
 import { grpc } from "@improbable-eng/grpc-web"
 import { Context, ContextInterface } from "@textile/context"
 import { WebsocketTransport } from "@textile/grpc-transport"
+import { Multiaddr } from "@textile/multiaddr"
 import {
   Block,
   Identity,
@@ -9,17 +10,16 @@ import {
   LogInfo,
   LogRecord,
   marshalKey,
-  Multiaddr,
   Network,
   NewThreadOptions,
   PeerId,
-  ThreadID,
   ThreadInfo,
   ThreadKey,
   ThreadRecord,
 } from "@textile/threads-core"
 import { keys } from "@textile/threads-crypto"
 import { recordFromProto, recordToProto } from "@textile/threads-encoding"
+import { ThreadID } from "@textile/threads-id"
 import * as pb from "@textile/threads-net-grpc/threadsnet_pb"
 import {
   API,
