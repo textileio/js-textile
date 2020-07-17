@@ -56,7 +56,7 @@ jobs:
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: chore: update changelogs & versions [skip-ci]
+          commit-message: "chore: update changelogs & versions [skip-ci]"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           title: "Auto-release"
