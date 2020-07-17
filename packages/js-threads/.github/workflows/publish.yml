@@ -50,7 +50,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.MACHINE_PAT }}
-        run: npx lerna publish --yes
+        run: npx lerna publish --yes --no-push
+      - name: Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: chore: update changelogs & versions [skip-ci]
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Auto-release"
+          body: |
+            This should be merged!
   docs:
     needs: publish
     name: Docs
