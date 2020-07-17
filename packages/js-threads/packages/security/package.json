@@ -1,6 +1,6 @@
 {
   "name": "@textile/security",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Common types/interfaces for Textile security including authentication and authorization.",
   "main": "dist/index",
   "types": "dist/index",
