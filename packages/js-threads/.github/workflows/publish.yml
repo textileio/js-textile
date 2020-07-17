@@ -49,7 +49,7 @@ jobs:
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.MACHINE_PAT }}
+          GH_TOKEN: ${{ secrets.MACHINE_PAT }}
         run: npx lerna publish --yes --no-push
       - name: Pull Request
         id: cpr
@@ -68,12 +68,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Docs
+      - name: Build Docs
         run: npm run docs
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v2
-        env:
-          ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: docs
+      - name: Deploy Docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
