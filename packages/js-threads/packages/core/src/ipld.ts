@@ -1,7 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import _Block from "@ipld/block/defaults.js"
 import CID from "cids"
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _Block = require("@ipld/block") as BlockConstructor
 
 export type Codec = any
 
@@ -13,7 +13,7 @@ export interface Reader<T> {
 
 export interface Options {
   source?: any
-  data?: Buffer
+  data?: Uint8Array
   codec?: string
   cid?: CID | string
   algo?: string
@@ -25,8 +25,8 @@ export interface Block<T = any> {
   source(): T | null
   cid(): Promise<CID>
   validate(): boolean
-  encode(): Buffer
-  encodeUnsafe(): Buffer
+  encode(): Uint8Array
+  encodeUnsafe(): Uint8Array
   decode(): T
   decodeUnsafe(): T
   reader(): Reader<T>
@@ -35,9 +35,13 @@ export interface Block<T = any> {
 export interface BlockConstructor {
   new <T>(opts: Options): Block<T>
   getCodec(codec: string): Codec
-  encoder<T>(source: T, codec: string, algo?: string): Block<T>
-  decoder<T = any>(data: Buffer, codec: string, algo: string): Block<T>
-  create<T = any>(data: Buffer, cid: CID /*, validate: boolean */): Block<T>
+  encoder<T>(source: T, codec: string, algorithm?: string): Block<T>
+  decoder<T = any>(
+    data: Uint8Array,
+    codec: string,
+    algorithm?: string
+  ): Block<T>
+  create<T = any>(data: Uint8Array, cid: CID): Block<T>
 }
 
 export const Block: BlockConstructor = _Block

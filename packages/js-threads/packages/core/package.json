@@ -37,7 +37,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@ipld/block": "^4.0.0",
+    "@ipld/block": "^6.0.1",
     "@textile/multiaddr": "^0.0.24",
     "@textile/threads-crypto": "^0.1.4",
     "@textile/threads-id": "^0.1.13",

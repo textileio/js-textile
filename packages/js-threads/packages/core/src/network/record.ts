@@ -11,7 +11,7 @@ export interface LogRecord {
   /**
    * The node structure of the record.
    */
-  value: Block<Buffer>
+  value: Block<Uint8Array>
   /**
    * The underlying event block.
    */
@@ -29,7 +29,7 @@ export interface RecordNode {
   /**
    * Signature of current and previous blocks from the log key.
    */
-  sig: Buffer
+  sig: Uint8Array
   /**
    * CID of inner block.
    */
@@ -42,7 +42,7 @@ export interface RecordNode {
   /**
    * Public of the identity used to author this record.
    */
-  pubKey?: Buffer
+  pubKey?: Uint8Array
 }
 
 /**

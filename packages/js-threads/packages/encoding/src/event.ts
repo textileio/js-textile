@@ -1,7 +1,7 @@
 import { Block, Event, EventHeader, EventNode } from "@textile/threads-core"
 import { randomBytes } from "@textile/threads-crypto"
 import log from "loglevel"
-import { defaultOptions, encodeBlock, Options } from "./coding"
+import { encodeBlock } from "./coding"
 
 const logger = log.getLogger("encoding:event")
 
@@ -15,15 +15,14 @@ const logger = log.getLogger("encoding:event")
 export async function createEvent(
   body: Block,
   readKey: Uint8Array,
-  key?: Uint8Array,
-  opts: Options = defaultOptions
+  key?: Uint8Array
 ): Promise<Event> {
   logger.debug("creating event")
   const keyiv = Buffer.from(key || randomBytes(32))
   const codedBody = await encodeBlock(body, keyiv)
   const header: EventHeader = { key: keyiv }
-  const eventHeader = Block.encoder(header, opts.codec, opts.algo)
-  const codedHeader = await encodeBlock(eventHeader, readKey, opts)
+  const eventHeader = Block.encoder(header, "dag-cbor")
+  const codedHeader = await encodeBlock(eventHeader, readKey)
   // Encode to create the caches
   codedBody.encode()
   codedHeader.encode()
@@ -31,7 +30,7 @@ export async function createEvent(
     body: await codedBody.cid(),
     header: await codedHeader.cid(),
   }
-  const codedEvent = Block.encoder(obj, opts.codec, opts.algo)
+  const codedEvent = Block.encoder(obj, "dag-cbor")
   codedEvent.encode()
   // @todo: We don't support a dag here yet, but this is where we'd add this data to IPFS!
   const event: Event = {

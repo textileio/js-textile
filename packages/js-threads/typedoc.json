@@ -3,10 +3,7 @@
   "name": "@textile/threads",
   "mode": "modules",
   "out": "docs",
-  "exclude": [
-    "**/*.spec.ts",
-    "**/node_modules/**"
-  ],
+  "exclude": ["**/*.spec.ts", "**/node_modules/**"],
   "lernaExclude": [
     "@textile/context",
     "@textile/multiaddr",

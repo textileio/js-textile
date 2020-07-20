@@ -1,7 +1,7 @@
 import { Block, EventHeader, RecordNode } from "@textile/threads-core"
 import { keys, randomBytes } from "@textile/threads-crypto"
 import { expect } from "chai"
-import { decodeBlock, defaultOptions } from "./coding"
+import { decodeBlock } from "./coding"
 import { createEvent } from "./event"
 import { createRecord } from "./record"
 
@@ -13,7 +13,7 @@ describe("Encoding...", () => {
   describe("Event...", () => {
     it("should encode and encrypt log events", async () => {
       const key = randomBytes(32)
-      const body = Block.encoder(raw, defaultOptions.codec)
+      const body = Block.encoder(raw, "dag-cbor")
       const obj = await createEvent(body, readKey, key)
       expect(obj).to.have.haveOwnProperty("value")
       expect(obj).to.have.haveOwnProperty("body")
@@ -30,7 +30,7 @@ describe("Encoding...", () => {
   describe("Record...", () => {
     it("should encode and encrypt a log record", async () => {
       const privKey = await keys.generateKeyPair("Ed25519", 32)
-      const body = Block.encoder(raw, defaultOptions.codec)
+      const body = Block.encoder(raw, "dag-cbor")
       const event = await createEvent(body, readKey)
       // We just use the public key from the private key here for testing
       const pubKey = privKey.public
