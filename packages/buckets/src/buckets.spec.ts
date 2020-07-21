@@ -1,6 +1,3 @@
-/* eslint-disable import/first */
-;(global as any).WebSocket = require('isomorphic-ws')
-
 import fs from 'fs'
 import path from 'path'
 import { isBrowser, isNode } from 'browser-or-node'

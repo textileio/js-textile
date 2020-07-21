@@ -1,6 +1,3 @@
-/* eslint-disable import/first */
-;(global as any).WebSocket = require('isomorphic-ws')
-
 import path from 'path'
 import fs from 'fs'
 import { ThreadID } from '@textile/threads-id'

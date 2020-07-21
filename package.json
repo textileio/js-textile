@@ -72,7 +72,6 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "isomorphic-ws": "^4.0.1",
     "lerna": "^3.19.0",
     "mocha": "^7.2.0",
     "npm-check-updates": "^7.0.1",
@@ -90,7 +89,6 @@
     "typescript-docs-verifier": "^1.1.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0",
-    "ws": "^7.3.0"
+    "webpack-dev-server": "^3.9.0"
   }
 }

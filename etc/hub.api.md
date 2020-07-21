@@ -31,7 +31,7 @@ import { ListPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { ListReply } from '@textile/buckets-grpc/buckets_pb';
 import log from 'loglevel';
 import { LogInfo } from '@textile/threads-core';
-import { Multiaddr } from '@textile/threads-core';
+import { Multiaddr } from '@textile/multiaddr';
 import { name as name_2 } from 'multibase';
 import { Network } from '@textile/threads-network';
 import { Options as Options_2 } from 'async-retry';
@@ -48,7 +48,6 @@ import { Result } from 'interface-datastore';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { RootReply } from '@textile/buckets-grpc/buckets_pb';
 import { SetPathReply } from '@textile/buckets-grpc/buckets_pb';
-import { ThreadID as ThreadID_2 } from '@textile/threads-core';
 import { ThreadKey } from '@textile/threads-core';
 import { ThreadRecord } from '@textile/threads-core';
 import { ValidateFunction } from 'ajv';
@@ -278,8 +277,8 @@ export class Database implements DatabaseSettings {
     start(identity: Identity, opts?: StartOptions): Promise<void>;
     startFromAddress(identity: Identity, addr: Multiaddr, threadKey?: ThreadKey, opts?: StartOptions): Promise<void>;
     // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
-    startFromInfo(identity: Identity, info: DBInfo, includeLocal?: boolean, opts?: StartOptions): Promise<void | Error>;
-    threadID?: ThreadID_2;
+    startFromInfo(identity: Identity, info: DBInfo, includeLocal?: boolean, opts?: StartOptions): Promise<undefined | Error>;
+    threadID?: ThreadID;
     // (undocumented)
     static withKeyInfo(keyInfo: KeyInfo, store: string | Datastore, options?: Partial<DatabaseSettings>, host?: string, debug?: boolean): Promise<Database>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), store: string | Datastore, options?: Partial<DatabaseSettings>, host?: string, debug?: boolean): Database;
@@ -404,7 +403,7 @@ export { SetPathReply }
 // @public (undocumented)
 export interface StartOptions {
     collections?: Config[];
-    threadID?: ThreadID_2;
+    threadID?: ThreadID;
 }
 
 // @public
