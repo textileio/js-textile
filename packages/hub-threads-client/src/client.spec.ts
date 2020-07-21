@@ -1,8 +1,3 @@
-/* eslint-disable import/first */
-;(global as any).WebSocket = require('isomorphic-ws')
-
-import path from 'path'
-import fs from 'fs'
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
