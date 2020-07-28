@@ -20,7 +20,7 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
-    "@improbable-eng/grpc-web": "^0.12.0",
+    "@improbable-eng/grpc-web": "^0.13.0",
     "@types/ws": "^7.2.6",
     "isomorphic-ws": "^4.0.1",
     "loglevel": "^1.6.6",
