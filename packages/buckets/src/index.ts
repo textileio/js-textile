@@ -1,5 +1,7 @@
 export * from './api'
 export * from './buckets'
+export * from './utils'
+
 // Exports all API response types for typescript users
 export {
   Root,

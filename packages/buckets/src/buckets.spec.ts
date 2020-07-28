@@ -136,6 +136,25 @@ describe('Buckets...', () => {
     rep = await client.listPath(rootKey, 'dir1/file1.jpg')
     expect(rep.item?.path.endsWith('file1.jpg')).to.be.true
     expect(rep.item?.isdir).to.be.false
+
+    // Recursive dir
+    const item = await client.listPathRecursive(rootKey, '')
+    expect(item?.isdir).to.be.true
+    expect(item?.itemsList).to.have.length(3)
+
+    // Recursive dir
+    // [
+    //   'mybuck',
+    //   'mybuck/.textileseed',
+    //   'mybuck/dir1',
+    //   'mybuck/dir1/file1.jpg',
+    //   'mybuck/path',
+    //   'mybuck/path/to',
+    //   'mybuck/path/to/file2.jpg'
+    // ]
+    const list = await client.listPathRecursiveFlat(rootKey, '')
+    console.log(list)
+    expect(list).to.have.length(7)
   })
 
   it('should pull files by path and write to file on node', async function () {

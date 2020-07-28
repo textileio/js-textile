@@ -88,6 +88,8 @@ export class Buckets extends BucketsGrpcClient {
     list(): Promise<Root.AsObject[]>;
     listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined>;
     listPath(key: string, path: string): Promise<ListPathReply.AsObject>;
+    listPathRecursive(key: string, path: string): Promise<ListPathRecursive>;
+    listPathRecursiveFlat(key: string, path: string): Promise<ListPathRecursiveFlat>;
     open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<Root.AsObject | undefined>;
     pullIpfsPath(path: string, opts?: {
         progress?: (num?: number) => void;
@@ -336,6 +338,12 @@ export { ListIpfsPathReply }
 
 export { ListPathItem }
 
+// @public (undocumented)
+export type ListPathRecursive = ReturnType<typeof utilListPathRecursive>;
+
+// @public (undocumented)
+export type ListPathRecursiveFlat = ReturnType<typeof utilListPathRecursiveFlat>;
+
 export { ListPathReply }
 
 export { ListReply }
@@ -433,6 +441,15 @@ export type UserAuth = {
     msg: string;
     token?: string;
 };
+
+// @public
+export function utilBufToArray(chunk: Buffer, size?: number): Buffer[];
+
+// @public
+export function utilListPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string): Promise<ListPathItem.AsObject | undefined>;
+
+// @public
+export function utilListPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string): Promise<string[]>;
 
 // @public
 export enum Variant {

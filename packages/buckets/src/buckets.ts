@@ -33,6 +33,7 @@ import {
   bucketsInit,
   PushPathResult,
 } from './api'
+import { utilListPathRecursive, utilListPathRecursiveFlat, ListPathRecursive, ListPathRecursiveFlat } from './utils'
 
 const logger = log.getLogger('buckets')
 
@@ -251,6 +252,45 @@ export class Buckets extends BucketsGrpcClient {
   async listPath(key: string, path: string): Promise<ListPathReply.AsObject> {
     logger.debug('list path request')
     return bucketsListPath(this, key, path)
+  }
+
+  /**
+   * Returns information about a bucket path.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A file/object (sub)-path within a bucket.
+   */
+  async listPathRecursive(key: string, path: string): Promise<ListPathRecursive> {
+    logger.debug('list path recursive request')
+    return await utilListPathRecursive(this, key, path)
+  }
+
+  /**
+   * listPathRecursive returns a nested object of all paths (and info) in a bucket
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A file/object (sub)-path within a bucket.
+   *
+   * @example
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function printPaths(buckets: Buckets, bucketKey: string) {
+   *   const list = await buckets.listPathRecursiveFlat(bucketKey, '')
+   *   console.log(list)
+   * }
+   * // [
+   * //   'mybuck',
+   * //   'mybuck/.textileseed',
+   * //   'mybuck/dir1',
+   * //   'mybuck/dir1/file1.jpg',
+   * //   'mybuck/path',
+   * //   'mybuck/path/to',
+   * //   'mybuck/path/to/file2.jpg'
+   * // ]
+   * ```
+   */
+  async listPathRecursiveFlat(key: string, path: string): Promise<ListPathRecursiveFlat> {
+    logger.debug('list path recursive request')
+    return await utilListPathRecursiveFlat(this, key, path)
   }
 
   /**

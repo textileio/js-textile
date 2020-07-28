@@ -239,6 +239,7 @@ export async function bucketsListIpfsPath(
  * @param opts Options to control response stream. Currently only supports a progress function.
  * @remarks
  * This will return the resolved path and the bucket's new root path.
+ * Data must be broken into <4mb chunks. See bufToArray() for help.
  * @example
  * Push a file to the root of a bucket
  * ```tyepscript
