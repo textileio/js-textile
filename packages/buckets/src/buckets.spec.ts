@@ -152,9 +152,13 @@ describe('Buckets...', () => {
     //   'mybuck/path/to',
     //   'mybuck/path/to/file2.jpg'
     // ]
-    const list = await client.listPathRecursiveFlat(rootKey, '')
+    let list = await client.listPathRecursiveFlat(rootKey, '')
     console.log(list)
     expect(list).to.have.length(7)
+
+    list = await client.listPathRecursiveFlat(rootKey, '', false)
+    console.log(list)
+    expect(list).to.have.length(3)
   })
 
   it('should pull files by path and write to file on node', async function () {

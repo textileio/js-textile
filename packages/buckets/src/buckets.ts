@@ -268,6 +268,7 @@ export class Buckets extends BucketsGrpcClient {
    * listPathRecursive returns a nested object of all paths (and info) in a bucket
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
+   * @param dirs (optional) if false will include only file paths
    *
    * @example
    * ```typescript
@@ -288,9 +289,9 @@ export class Buckets extends BucketsGrpcClient {
    * // ]
    * ```
    */
-  async listPathRecursiveFlat(key: string, path: string): Promise<ListPathRecursiveFlat> {
+  async listPathRecursiveFlat(key: string, path: string, dirs = true): Promise<ListPathRecursiveFlat> {
     logger.debug('list path recursive request')
-    return await utilListPathRecursiveFlat(this, key, path)
+    return await utilListPathRecursiveFlat(this, key, path, dirs)
   }
 
   /**
