@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import { Buffer } from 'buffer'
 import { ListPathItem, ListPathReply } from '@textile/buckets-grpc/buckets_pb'
 import { bucketsListPath, BucketsGrpcClient } from './api'
 /**
- * utilBufToArray converts a buffer into <4mb chunks for use with grpc API
- * @param chunk an input Buffer
+ * bytesToArray converts a buffer into <4mb chunks for use with grpc API
+ * @param chunk an input Buffer or Uint8Array
  */
-export function bufToArray(chunk: Buffer, size = 1024 * 1024 * 3) {
+export function bytesToArray(chunk: Uint8Array, size = 1024 * 1024 * 3) {
   const result = []
   const len = chunk.length
   let i = 0
