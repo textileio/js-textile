@@ -25,7 +25,8 @@ describe('Buckets...', () => {
   })
 
   it('should open a bucket by name without thread info', async () => {
-    const root = await client.open('initbuck')
+    const { root, threadID } = await client.getOrInit('initbuck')
+    expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
     expect(root).to.have.ownProperty('createdat')
@@ -136,6 +137,27 @@ describe('Buckets...', () => {
     rep = await client.listPath(rootKey, 'dir1/file1.jpg')
     expect(rep.item?.path.endsWith('file1.jpg')).to.be.true
     expect(rep.item?.isdir).to.be.false
+
+    // Recursive dir
+    rep = await client.listPath(rootKey, '', 3)
+    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.itemsList).to.have.length(3)
+
+    // Recursive dir
+    // [
+    //   'mybuck',
+    //   'mybuck/.textileseed',
+    //   'mybuck/dir1',
+    //   'mybuck/dir1/file1.jpg',
+    //   'mybuck/path',
+    //   'mybuck/path/to',
+    //   'mybuck/path/to/file2.jpg'
+    // ]
+    let list = await client.listPathFlat(rootKey, '')
+    expect(list).to.have.length(7)
+
+    list = await client.listPathFlat(rootKey, '', false)
+    expect(list).to.have.length(3)
   })
 
   it('should pull files by path and write to file on node', async function () {
