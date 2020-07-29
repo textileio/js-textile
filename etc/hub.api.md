@@ -87,8 +87,7 @@ export class Buckets extends BucketsGrpcClient {
     links(key: string): Promise<LinksReply.AsObject>;
     list(): Promise<Root.AsObject[]>;
     listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined>;
-    listPath(key: string, path: string): Promise<ListPathReply.AsObject>;
-    listPathRecursive(key: string, path: string): Promise<ListPathRecursive>;
+    listPath(key: string, path: string, recursive?: boolean): Promise<ListPathReply.AsObject>;
     listPathRecursiveFlat(key: string, path: string, dirs?: boolean): Promise<ListPathRecursiveFlat>;
     open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<Root.AsObject | undefined>;
     pullIpfsPath(path: string, opts?: {
@@ -174,6 +173,9 @@ export function bucketsRemovePath(api: BucketsGrpcClient, key: string, path: str
 
 // @public
 export function bucketsRoot(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
+
+// @public
+export function bufToArray(chunk: Buffer, size?: number): Buffer[];
 
 // @public
 export class Client {
@@ -339,10 +341,16 @@ export { ListIpfsPathReply }
 export { ListPathItem }
 
 // @public (undocumented)
-export type ListPathRecursive = ReturnType<typeof utilListPathRecursive>;
+export type ListPathRecursive = ReturnType<typeof listPathRecursive>;
+
+// @public
+export function listPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string): Promise<ListPathReply.AsObject>;
 
 // @public (undocumented)
-export type ListPathRecursiveFlat = ReturnType<typeof utilListPathRecursiveFlat>;
+export type ListPathRecursiveFlat = ReturnType<typeof listPathRecursiveFlat>;
+
+// @public
+export function listPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs?: boolean): Promise<string[]>;
 
 export { ListPathReply }
 
@@ -441,15 +449,6 @@ export type UserAuth = {
     msg: string;
     token?: string;
 };
-
-// @public
-export function utilBufToArray(chunk: Buffer, size?: number): Buffer[];
-
-// @public
-export function utilListPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string): Promise<ListPathItem.AsObject | undefined>;
-
-// @public
-export function utilListPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs?: boolean): Promise<string[]>;
 
 // @public
 export enum Variant {

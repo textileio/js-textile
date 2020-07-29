@@ -138,9 +138,9 @@ describe('Buckets...', () => {
     expect(rep.item?.isdir).to.be.false
 
     // Recursive dir
-    const item = await client.listPathRecursive(rootKey, '')
-    expect(item?.isdir).to.be.true
-    expect(item?.itemsList).to.have.length(3)
+    rep = await client.listPath(rootKey, '', true)
+    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.itemsList).to.have.length(3)
 
     // Recursive dir
     // [
@@ -153,11 +153,9 @@ describe('Buckets...', () => {
     //   'mybuck/path/to/file2.jpg'
     // ]
     let list = await client.listPathRecursiveFlat(rootKey, '')
-    console.log(list)
     expect(list).to.have.length(7)
 
     list = await client.listPathRecursiveFlat(rootKey, '', false)
-    console.log(list)
     expect(list).to.have.length(3)
   })
 

@@ -33,20 +33,34 @@ import {
   bucketsInit,
   PushPathResult,
 } from './api'
-import { utilListPathRecursive, utilListPathRecursiveFlat, ListPathRecursive, ListPathRecursiveFlat } from './utils'
+import { listPathRecursive, listPathRecursiveFlat, ListPathRecursive, ListPathRecursiveFlat } from './utils'
 
 const logger = log.getLogger('buckets')
 
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
  * @example
- * Initialize a the Bucket API
+ * Initialize a the Bucket API and open an existing bucket.
  * ```typescript
  * import { Buckets, UserAuth } from '@textile/hub'
  *
- * const init = async (auth: UserAuth) => {
- *     const buckets = Buckets.withUserAuth(auth)
- *     return buckets
+ * const openOrInit = async (auth: UserAuth, bucketName: string) => {
+ *   const buckets = Buckets.withUserAuth(auth)
+ *   // Automatically scopes future calls to the Thread containing the bucket
+ *   const bucketKey = await buckets.open(bucketName)
+ *   return { buckets, bucketKey }
+ * }
+ * ```
+ *
+ * @example
+ * Print the links for the bucket
+ * ```typescript
+ * import { Buckets } from '@textile/hub'
+ *
+ * // This method requires that you run "open" or have specified "withThread"
+ * async function logLinks (buckets: Buckets, bucketKey: string) {
+ *   const links = await buckets.links(bucketKey)
+ *   console.log(links)
  * }
  * ```
  *
@@ -55,6 +69,8 @@ const logger = log.getLogger('buckets')
  * ```typescript
  * import { Buckets } from '@textile/hub'
  *
+ * // This method requires that you already specify the Thread containing
+ * // the bucket with buckets.withThread(<thread name>).
  * const exists = async (buckets: Buckets, bucketName: string) => {
  *     const roots = await buckets.list();
  *     return roots.find((bucket) => bucket.name === bucketName)
@@ -248,20 +264,14 @@ export class Buckets extends BucketsGrpcClient {
    * Returns information about a bucket path.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
+   * @param recursive (optional) if true will walk the entire bucket dir
    */
-  async listPath(key: string, path: string): Promise<ListPathReply.AsObject> {
+  async listPath(key: string, path: string, recursive = false): Promise<ListPathReply.AsObject> {
     logger.debug('list path request')
+    if (recursive) {
+      return await listPathRecursive(this, key, path)
+    }
     return bucketsListPath(this, key, path)
-  }
-
-  /**
-   * Returns information about a bucket path.
-   * @param key Unique (IPNS compatible) identifier key for a bucket.
-   * @param path A file/object (sub)-path within a bucket.
-   */
-  async listPathRecursive(key: string, path: string): Promise<ListPathRecursive> {
-    logger.debug('list path recursive request')
-    return await utilListPathRecursive(this, key, path)
   }
 
   /**
@@ -291,7 +301,7 @@ export class Buckets extends BucketsGrpcClient {
    */
   async listPathRecursiveFlat(key: string, path: string, dirs = true): Promise<ListPathRecursiveFlat> {
     logger.debug('list path recursive request')
-    return await utilListPathRecursiveFlat(this, key, path, dirs)
+    return await listPathRecursiveFlat(this, key, path, dirs)
   }
 
   /**

@@ -6,7 +6,7 @@ import { bucketsListPath, BucketsGrpcClient } from './api'
  * utilBufToArray converts a buffer into <4mb chunks for use with grpc API
  * @param chunk an input Buffer
  */
-export function utilBufToArray(chunk: Buffer, size = 1024 * 1024 * 3) {
+export function bufToArray(chunk: Buffer, size = 1024 * 1024 * 3) {
   const result = []
   const len = chunk.length
   let i = 0
@@ -16,26 +16,25 @@ export function utilBufToArray(chunk: Buffer, size = 1024 * 1024 * 3) {
   return result
 }
 
-export type ListPathRecursive = ReturnType<typeof utilListPathRecursive>
+export type ListPathRecursive = ReturnType<typeof listPathRecursive>
 /**
  * listPathRecursive returns a nested object of all paths (and info) in a bucket
  */
-export async function utilListPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string) {
+export async function listPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string) {
   const rootPath = path === '' || path === '.' || path === '/' ? '' : `${path}/`
   const tree = await bucketsListPath(grpc, bucketKey, path)
-  const { item } = tree
-  if (item) {
-    for (let i = 0; i < item.itemsList.length; i++) {
-      const obj = item.itemsList[i]
+  if (tree.item) {
+    for (let i = 0; i < tree.item.itemsList.length; i++) {
+      const obj = tree.item.itemsList[i]
       if (!obj.isdir) continue
       const dirPath = `${rootPath}${obj.name}`
-      const dir = await utilListPathRecursive(grpc, bucketKey, dirPath)
-      if (dir) {
-        item.itemsList[i] = dir
+      const { item } = await listPathRecursive(grpc, bucketKey, dirPath)
+      if (item) {
+        tree.item.itemsList[i] = item
       }
     }
   }
-  return item
+  return tree
 }
 
 async function treeToPaths(tree: ListPathItem.AsObject, path?: string, dirs = true): Promise<Array<string>> {
@@ -52,13 +51,13 @@ async function treeToPaths(tree: ListPathItem.AsObject, path?: string, dirs = tr
   return result
 }
 
-export type ListPathRecursiveFlat = ReturnType<typeof utilListPathRecursiveFlat>
+export type ListPathRecursiveFlat = ReturnType<typeof listPathRecursiveFlat>
 
 /**
  * utilPathsList returns a string array of all paths in a bucket
  */
-export async function utilListPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs = true) {
-  const tree = await utilListPathRecursive(grpc, bucketKey, path)
-  if (!tree) return []
-  return treeToPaths(tree, undefined, dirs)
+export async function listPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs = true) {
+  const tree = await listPathRecursive(grpc, bucketKey, path)
+  if (!tree.item) return []
+  return treeToPaths(tree.item, undefined, dirs)
 }
