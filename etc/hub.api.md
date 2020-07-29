@@ -183,7 +183,7 @@ export function bucketsRemovePath(api: BucketsGrpcClient, key: string, path: str
 export function bucketsRoot(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
 
 // @public
-export function bufToArray(chunk: Buffer, size?: number): Buffer[];
+export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
 
 // @public
 export class Client {
