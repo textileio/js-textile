@@ -36,7 +36,7 @@
     "@textile/users-grpc": "^1.0.13",
     "cids": "^0.8.0",
     "loglevel": "^1.6.8",
-    "multihashes": "0.4.19"
+    "multihashes": "1.0.1"
   },
   "devDependencies": {
     "@textile/hub-grpc": "^1.0.13",
