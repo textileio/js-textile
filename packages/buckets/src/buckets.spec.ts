@@ -26,6 +26,7 @@ describe('Buckets...', () => {
 
   it('should open a bucket by name without thread info', async () => {
     const { root, threadID } = await client.getOrInitBucket('initbuck')
+    expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
     expect(root).to.have.ownProperty('createdat')
@@ -152,10 +153,10 @@ describe('Buckets...', () => {
     //   'mybuck/path/to',
     //   'mybuck/path/to/file2.jpg'
     // ]
-    let list = await client.listPathRecursiveFlat(rootKey, '')
+    let list = await client.listPathFlat(rootKey, '')
     expect(list).to.have.length(7)
 
-    list = await client.listPathRecursiveFlat(rootKey, '', false)
+    list = await client.listPathFlat(rootKey, '', false)
     expect(list).to.have.length(3)
   })
 

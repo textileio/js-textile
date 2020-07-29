@@ -92,7 +92,7 @@ export class Buckets extends BucketsGrpcClient {
     list(): Promise<Root.AsObject[]>;
     listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<ListPathReply.AsObject>;
-    listPathRecursiveFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<ListPathRecursiveFlat>;
+    listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<ListPathFlat>;
     // @deprecated
     open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: Root.AsObject;
@@ -346,6 +346,12 @@ export { LinksReply }
 
 export { ListIpfsPathReply }
 
+// @public (undocumented)
+export type ListPathFlat = ReturnType<typeof listPathFlat>;
+
+// @public
+export function listPathFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<string[]>;
+
 export { ListPathItem }
 
 // @public (undocumented)
@@ -353,12 +359,6 @@ export type ListPathRecursive = ReturnType<typeof listPathRecursive>;
 
 // @public
 export function listPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<ListPathReply.AsObject>;
-
-// @public (undocumented)
-export type ListPathRecursiveFlat = ReturnType<typeof listPathRecursiveFlat>;
-
-// @public
-export function listPathRecursiveFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<string[]>;
 
 export { ListPathReply }
 

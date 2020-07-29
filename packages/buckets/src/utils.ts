@@ -57,12 +57,12 @@ async function treeToPaths(tree: ListPathItem.AsObject, path?: string, dirs = tr
   return result
 }
 
-export type ListPathRecursiveFlat = ReturnType<typeof listPathRecursiveFlat>
+export type ListPathFlat = ReturnType<typeof listPathFlat>
 
 /**
  * utilPathsList returns a string array of all paths in a bucket
  */
-export async function listPathRecursiveFlat(
+export async function listPathFlat(
   grpc: BucketsGrpcClient,
   bucketKey: string,
   path: string,

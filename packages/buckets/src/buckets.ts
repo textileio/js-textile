@@ -32,7 +32,7 @@ import {
   bucketsInit,
   PushPathResult,
 } from './api'
-import { listPathRecursive, listPathRecursiveFlat, ListPathRecursive, ListPathRecursiveFlat } from './utils'
+import { listPathRecursive, listPathFlat, ListPathRecursive, ListPathFlat } from './utils'
 
 const logger = log.getLogger('buckets')
 
@@ -302,7 +302,7 @@ export class Buckets extends BucketsGrpcClient {
    * import { Buckets } from '@textile/hub'
    *
    * async function printPaths(buckets: Buckets, bucketKey: string) {
-   *   const list = await buckets.listPathRecursiveFlat(bucketKey, '')
+   *   const list = await buckets.listPathFlat(bucketKey, '')
    *   console.log(list)
    * }
    * // [
@@ -316,9 +316,9 @@ export class Buckets extends BucketsGrpcClient {
    * // ]
    * ```
    */
-  async listPathRecursiveFlat(key: string, path: string, dirs = true, depth = 5): Promise<ListPathRecursiveFlat> {
+  async listPathFlat(key: string, path: string, dirs = true, depth = 5): Promise<ListPathFlat> {
     logger.debug('list path recursive request')
-    return await listPathRecursiveFlat(this, key, path, dirs, depth)
+    return await listPathFlat(this, key, path, dirs, depth)
   }
 
   /**
