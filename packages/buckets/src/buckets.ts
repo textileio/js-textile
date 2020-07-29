@@ -26,7 +26,6 @@ import {
   bucketsPullPath,
   bucketsPushPath,
   bucketsListIpfsPath,
-  bucketsListPath,
   bucketsList,
   bucketsLinks,
   bucketsRoot,
@@ -40,14 +39,16 @@ const logger = log.getLogger('buckets')
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
  * @example
- * Initialize a the Bucket API and open an existing bucket.
+ * Initialize a the Bucket API and open an existing bucket (or init if new).
  * ```typescript
  * import { Buckets, UserAuth } from '@textile/hub'
  *
- * const openOrInit = async (auth: UserAuth, bucketName: string) => {
+ * const getOrInit = async (auth: UserAuth, bucketName: string) => {
  *   const buckets = Buckets.withUserAuth(auth)
  *   // Automatically scopes future calls to the Thread containing the bucket
- *   const bucketKey = await buckets.open(bucketName)
+ *   const { root, threadID } = await buckets.getOrInitBucket(bucketName)
+ *   if (!root) throw new Error('bucket not created')
+ *   const bucketKey = root.key
  *   return { buckets, bucketKey }
  * }
  * ```
@@ -113,6 +114,23 @@ export class Buckets extends BucketsGrpcClient {
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
+   * @deprecated Open has been replaced with getOrInitBucket
+   */
+  async open(
+    name: string,
+    threadName = 'buckets',
+    isPrivate = false,
+    threadID?: string,
+  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
+    return this.getOrInitBucket(name, threadName, isPrivate, threadID)
+  }
+
+  /**
+   * Open a new / existing bucket by bucket name and ThreadID (init not required)
+   * @param name name of bucket
+   * @param threadName the name of the thread where the bucket is stored (default `buckets`)
+   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param threadID id of thread where bucket is stored
    * @example
    * Initialize a Bucket called "app-name-files"
    * ```tyepscript
@@ -120,22 +138,22 @@ export class Buckets extends BucketsGrpcClient {
    *
    * const open = async (auth: UserAuth, name: string) => {
    *     const buckets = Buckets.withUserAuth(auth)
-   *     await buckets.open(name)
-   *     return buckets
+   *     const { root, threadID } = await buckets.getOrInitBucket(name)
+   *     return { buckets, root, threadID }
    * }
    * ```
    */
-  async open(
+  async getOrInitBucket(
     name: string,
     threadName = 'buckets',
     isPrivate = false,
     threadID?: string,
-  ): Promise<Root.AsObject | undefined> {
+  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
       const res = await client.listThreads()
-      const exists = res.listList.find((thread) => thread.id === id)
+      const exists = res.listList.find((thread: any) => thread.id === id)
       if (!exists) {
         const id = ThreadID.fromString(threadID)
         await client.newDB(id, threadName)
@@ -152,17 +170,18 @@ export class Buckets extends BucketsGrpcClient {
         }
         const newId = ThreadID.fromRandom()
         await client.newDB(newId, threadName)
-        this.withThread(newId.toString())
+        threadID = newId.toString()
+        this.withThread(threadID)
       }
     }
 
     const roots = await this.list()
     const existing = roots.find((bucket) => bucket.name === name)
     if (existing) {
-      return existing
+      return { root: existing, threadID }
     }
     const created = await this.init(name, isPrivate)
-    return created.root
+    return { root: created.root, threadID }
   }
 
   /**
@@ -264,14 +283,11 @@ export class Buckets extends BucketsGrpcClient {
    * Returns information about a bucket path.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
-   * @param recursive (optional) if true will walk the entire bucket dir
+   * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, recursive = false): Promise<ListPathReply.AsObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<ListPathReply.AsObject> {
     logger.debug('list path request')
-    if (recursive) {
-      return await listPathRecursive(this, key, path)
-    }
-    return bucketsListPath(this, key, path)
+    return await listPathRecursive(this, key, path, depth)
   }
 
   /**
@@ -279,6 +295,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
    * @param dirs (optional) if false will include only file paths
+   * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    *
    * @example
    * ```typescript
@@ -299,9 +316,9 @@ export class Buckets extends BucketsGrpcClient {
    * // ]
    * ```
    */
-  async listPathRecursiveFlat(key: string, path: string, dirs = true): Promise<ListPathRecursiveFlat> {
+  async listPathRecursiveFlat(key: string, path: string, dirs = true, depth = 5): Promise<ListPathRecursiveFlat> {
     logger.debug('list path recursive request')
-    return await listPathRecursiveFlat(this, key, path, dirs)
+    return await listPathRecursiveFlat(this, key, path, dirs, depth)
   }
 
   /**

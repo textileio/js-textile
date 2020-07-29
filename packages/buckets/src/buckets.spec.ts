@@ -25,7 +25,7 @@ describe('Buckets...', () => {
   })
 
   it('should open a bucket by name without thread info', async () => {
-    const root = await client.open('initbuck')
+    const { root, threadID } = await client.getOrInitBucket('initbuck')
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
     expect(root).to.have.ownProperty('createdat')
@@ -138,7 +138,7 @@ describe('Buckets...', () => {
     expect(rep.item?.isdir).to.be.false
 
     // Recursive dir
-    rep = await client.listPath(rootKey, '', true)
+    rep = await client.listPath(rootKey, '', 3)
     expect(rep.item?.isdir).to.be.true
     expect(rep.item?.itemsList).to.have.length(3)
 
