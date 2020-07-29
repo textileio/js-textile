@@ -63,19 +63,36 @@
 </span></code></pre>
 <p><b>Extends:</b> <a href="/js-hub/docs/hub.bucketsgrpcclient">BucketsGrpcClient</a></p>
 <h2><a class="anchor" aria-hidden="true" id="example-1"></a><a href="#example-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example 1</h2>
-<p>Initialize a the Bucket API</p>
+<p>Initialize a the Bucket API and open an existing bucket (or init if new).</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-keyword">const</span> init = <span class="hljs-keyword">async</span> (auth: UserAuth) =&gt; {
-    <span class="hljs-keyword">const</span> buckets = Buckets.withUserAuth(auth)
-    <span class="hljs-keyword">return</span> buckets
+<span class="hljs-keyword">const</span> getOrInit = <span class="hljs-keyword">async</span> (auth: UserAuth, bucketName: <span class="hljs-built_in">string</span>) =&gt; {
+  <span class="hljs-keyword">const</span> buckets = Buckets.withUserAuth(auth)
+  <span class="hljs-comment">// Automatically scopes future calls to the Thread containing the bucket</span>
+  <span class="hljs-keyword">const</span> { root, threadID } = <span class="hljs-keyword">await</span> buckets.getOrInit(bucketName)
+  <span class="hljs-keyword">if</span> (!root) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'bucket not created'</span>)
+  <span class="hljs-keyword">const</span> bucketKey = root.key
+  <span class="hljs-keyword">return</span> { buckets, bucketKey }
 }
 
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="example-2"></a><a href="#example-2" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example 2</h2>
+<p>Print the links for the bucket</p>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
+
+<span class="hljs-comment">// This method requires that you run "getOrInit" or have specified "withThread"</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logLinks</span> (<span class="hljs-params">buckets: Buckets, bucketKey: <span class="hljs-built_in">string</span></span>) </span>{
+  <span class="hljs-keyword">const</span> links = <span class="hljs-keyword">await</span> buckets.links(bucketKey)
+  <span class="hljs-built_in">console</span>.log(links)
+}
+
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="example-3"></a><a href="#example-3" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Example 3</h2>
 <p>Find an existing Bucket</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Buckets } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
+<span class="hljs-comment">// This method requires that you already specify the Thread containing</span>
+<span class="hljs-comment">// the bucket with buckets.withThread(&lt;thread name&gt;).</span>
 <span class="hljs-keyword">const</span> exists = <span class="hljs-keyword">async</span> (buckets: Buckets, bucketName: <span class="hljs-built_in">string</span>) =&gt; {
     <span class="hljs-keyword">const</span> roots = <span class="hljs-keyword">await</span> buckets.list();
     <span class="hljs-keyword">return</span> roots.find(<span class="hljs-function">(<span class="hljs-params">bucket</span>) =&gt;</span> bucket.name === bucketName)
@@ -92,13 +109,15 @@
 <tr><td><a href="/js-hub/docs/hub.buckets.archiveinfo">archiveInfo(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.archivestatus">archiveStatus(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.archivewatch">archiveWatch(key, callback)</a></td><td></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.getorinit">getOrInit(name, threadName, isPrivate, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID (init not required)</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.gettoken">getToken(identity)</a></td><td></td><td>Obtain a token for interacting with the remote API.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.gettokenchallenge">getTokenChallenge(publicKey, callback)</a></td><td></td><td>Obtain a token for interacting with the remote API.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.init">init(name, isPrivate)</a></td><td></td><td>Initializes a new bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.links">links(key)</a></td><td></td><td>Returns a list of bucket links.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.list">list()</a></td><td></td><td>Returns a list of all bucket roots.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.listipfspath">listIpfsPath(path)</a></td><td></td><td>listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.buckets.listpath">listPath(key, path)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.listpath">listPath(key, path, depth)</a></td><td></td><td>Returns information about a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.listpathflat">listPathFlat(key, path, dirs, depth)</a></td><td></td><td>listPathRecursive returns a nested object of all paths (and info) in a bucket</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.open">open(name, threadName, isPrivate, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID (init not required)</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.pullipfspath">pullIpfsPath(path, opts)</a></td><td></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, opts)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
@@ -111,4 +130,4 @@
 <tr><td><a href="/js-hub/docs/hub.buckets.withuserauth">withUserAuth(auth, host, debug)</a></td><td><code>static</code></td><td>Creates a new gRPC client instance for accessing the Textile Buckets API.</td></tr>
 </tbody>
 </table>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/js-hub/docs/index"><span class="arrow-prev">← </span><span>Introduction</span></a><a class="docs-next button" href="/js-hub/docs/hub.client"><span>Client class</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#buckets-class">Buckets class</a></li><li><a href="#example-1">Example 1</a></li><li><a href="#example-2">Example 2</a></li><li><a href="#methods">Methods</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/js-hub/" class="nav-home"><img src="/js-hub/img/hex.svg" alt="Hub JS Package" width="66" height="58"/></a><div><h5>Docs</h5><a href="/js-hub/docs/index">Getting Started</a><a href="/js-hub/docs/hub.client">ThreadDB</a><a href="/js-hub/docs/hub.buckets">Buckets</a></div><div><h5>Resources</h5><a href="https://docs.textile.io/" target="_blank" rel="noreferrer noopener">All Documentation</a><a href="https://slack.textile.io/" target="_blank" rel="noreferrer noopener">Project Slack</a><a href="https://blog.textile.io/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/textileio">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/textileio/js-threads/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/textileio" class="twitter-follow-button">Follow @textileio</a></div></div></section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/js-hub/docs/index"><span class="arrow-prev">← </span><span>Introduction</span></a><a class="docs-next button" href="/js-hub/docs/hub.client"><span>Client class</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#buckets-class">Buckets class</a></li><li><a href="#example-1">Example 1</a></li><li><a href="#example-2">Example 2</a></li><li><a href="#example-3">Example 3</a></li><li><a href="#methods">Methods</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/js-hub/" class="nav-home"><img src="/js-hub/img/hex.svg" alt="Hub JS Package" width="66" height="58"/></a><div><h5>Docs</h5><a href="/js-hub/docs/index">Getting Started</a><a href="/js-hub/docs/hub.client">ThreadDB</a><a href="/js-hub/docs/hub.buckets">Buckets</a></div><div><h5>Resources</h5><a href="https://docs.textile.io/" target="_blank" rel="noreferrer noopener">All Documentation</a><a href="https://slack.textile.io/" target="_blank" rel="noreferrer noopener">Project Slack</a><a href="https://blog.textile.io/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/textileio">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/textileio/js-threads/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/textileio" class="twitter-follow-button">Follow @textileio</a></div></div></section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
