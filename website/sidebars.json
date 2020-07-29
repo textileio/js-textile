@@ -24,7 +24,7 @@
       "hub.buckets.withuserauth",
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
-      "hub.buckets.getOrInitBucket",
+      "hub.buckets.getOrInit",
       "hub.buckets.init",
       "hub.buckets.root",
       "hub.buckets.links",

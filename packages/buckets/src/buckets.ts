@@ -46,7 +46,7 @@ const logger = log.getLogger('buckets')
  * const getOrInit = async (auth: UserAuth, bucketName: string) => {
  *   const buckets = Buckets.withUserAuth(auth)
  *   // Automatically scopes future calls to the Thread containing the bucket
- *   const { root, threadID } = await buckets.getOrInitBucket(bucketName)
+ *   const { root, threadID } = await buckets.getOrInit(bucketName)
  *   if (!root) throw new Error('bucket not created')
  *   const bucketKey = root.key
  *   return { buckets, bucketKey }
@@ -58,7 +58,7 @@ const logger = log.getLogger('buckets')
  * ```typescript
  * import { Buckets } from '@textile/hub'
  *
- * // This method requires that you run "open" or have specified "withThread"
+ * // This method requires that you run "getOrInit" or have specified "withThread"
  * async function logLinks (buckets: Buckets, bucketKey: string) {
  *   const links = await buckets.links(bucketKey)
  *   console.log(links)
@@ -114,7 +114,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
-   * @deprecated Open has been replaced with getOrInitBucket
+   * @deprecated Open has been replaced with getOrInit
    */
   async open(
     name: string,
@@ -122,7 +122,7 @@ export class Buckets extends BucketsGrpcClient {
     isPrivate = false,
     threadID?: string,
   ): Promise<{ root?: Root.AsObject; threadID?: string }> {
-    return this.getOrInitBucket(name, threadName, isPrivate, threadID)
+    return this.getOrInit(name, threadName, isPrivate, threadID)
   }
 
   /**
@@ -138,12 +138,12 @@ export class Buckets extends BucketsGrpcClient {
    *
    * const open = async (auth: UserAuth, name: string) => {
    *     const buckets = Buckets.withUserAuth(auth)
-   *     const { root, threadID } = await buckets.getOrInitBucket(name)
+   *     const { root, threadID } = await buckets.getOrInit(name)
    *     return { buckets, root, threadID }
    * }
    * ```
    */
-  async getOrInitBucket(
+  async getOrInit(
     name: string,
     threadName = 'buckets',
     isPrivate = false,

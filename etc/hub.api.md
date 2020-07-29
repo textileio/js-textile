@@ -81,7 +81,7 @@ export class Buckets extends BucketsGrpcClient {
         id: string | undefined;
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
-    getOrInitBucket(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+    getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: Root.AsObject;
         threadID?: string;
     }>;

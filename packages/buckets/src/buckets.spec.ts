@@ -25,7 +25,7 @@ describe('Buckets...', () => {
   })
 
   it('should open a bucket by name without thread info', async () => {
-    const { root, threadID } = await client.getOrInitBucket('initbuck')
+    const { root, threadID } = await client.getOrInit('initbuck')
     expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
