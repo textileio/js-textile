@@ -10,47 +10,27 @@ import { ArchiveStatusReply } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveWatchReply } from '@textile/buckets-grpc/buckets_pb';
 import CID from 'cids';
 import { ContextInterface } from '@textile/context';
-import { Datastore } from 'interface-datastore';
-import { Dispatcher } from '@textile/threads-store';
-import { DomainDatastore } from '@textile/threads-store';
-import { EventEmitter } from 'tsee';
-import { EventEmitter2 } from 'eventemitter2';
 import { grpc } from '@improbable-eng/grpc-web';
 import { Identity } from '@textile/threads-core';
 import { InitReply } from '@textile/buckets-grpc/buckets_pb';
-import { Instance } from '@textile/threads-store';
-import { JsonPatchStore } from '@textile/threads-store';
-import { JSONSchema4 } from 'json-schema';
-import { JSONSchema6 } from 'json-schema';
-import { JSONSchema7 } from 'json-schema';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { LinksReply } from '@textile/buckets-grpc/buckets_pb';
 import { ListIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathItem } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { ListReply } from '@textile/buckets-grpc/buckets_pb';
-import log from 'loglevel';
-import { LogInfo } from '@textile/threads-core';
-import { Multiaddr } from '@textile/multiaddr';
 import { name as name_2 } from 'multibase';
-import { Network } from '@textile/threads-network';
-import { Options as Options_2 } from 'async-retry';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import { PullIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { PullPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { PushPathReply } from '@textile/buckets-grpc/buckets_pb';
-import { Query } from 'interface-datastore';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 import { RemovePathReply } from '@textile/buckets-grpc/buckets_pb';
 import { RemoveReply } from '@textile/buckets-grpc/buckets_pb';
-import { Result } from 'interface-datastore';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { RootReply } from '@textile/buckets-grpc/buckets_pb';
 import { SetPathReply } from '@textile/buckets-grpc/buckets_pb';
-import { ThreadKey } from '@textile/threads-core';
-import { ThreadRecord } from '@textile/threads-core';
-import { ValidateFunction } from 'ajv';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -198,20 +178,20 @@ export class Client {
     // Warning: (ae-forgotten-export) The symbol "InstanceList" needs to be exported by the entry point index.d.ts
     find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<InstanceList<T>>;
     // Warning: (ae-forgotten-export) The symbol "Instance" needs to be exported by the entry point index.d.ts
-    findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance_2<T>>;
+    findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
     getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
-    getDBInfo(threadID: ThreadID): Promise<DBInfo_2>;
+    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
     getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
     has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
     // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
-    joinFromInfo(info: DBInfo_2, includeLocal?: boolean, collections?: Array<{
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<{
         name: string;
         schema: any;
     }>): Promise<void>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Instance_2<T>, err?: Error) => void): grpc.Request;
+    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Instance<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
@@ -235,106 +215,18 @@ export class Client {
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
-// @public (undocumented)
-export interface Collection<T extends Instance = any> {
-    // (undocumented)
-    (data: Partial<T>): Document_2<T> & T;
-    // (undocumented)
-    new (data: Partial<T>): Document_2<T> & T;
-}
-
-// @public
-export class Collection<T extends Instance = any> extends ReadonlyCollection<T> {
-    constructor(name: string, schema: JSONSchema, options?: Options<T>);
-    delete(...ids: string[]): Promise<void>;
-    insert(...instances: T[]): Promise<void>;
-    // (undocumented)
-    readonly name: string;
-    readTransaction(cb: (c: ReadonlyCollection<T>) => Promise<void> | void, timeout?: number): Promise<void>;
-    save(...entities: T[]): Promise<void>;
-    writeTransaction(cb: (c: Collection<T>) => Promise<void> | void, timeout?: number): Promise<void>;
-}
-
-// @public (undocumented)
-export interface Config {
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    schema: JSONSchema;
-}
-
 // @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
 
-// @public (undocumented)
-export class Database implements DatabaseSettings {
-    constructor(store: Datastore<any> | string, options?: Partial<DatabaseSettings>);
-    child: DomainDatastore<any>;
-    close(): Promise<void>;
-    collections: Map<string, Collection>;
-    dispatcher: Dispatcher;
-    emitter: EventEmitter2;
-    // Warning: (ae-forgotten-export) The symbol "EventBus" needs to be exported by the entry point index.d.ts
-    eventBus: EventBus;
-    getDBInfo(asStrings?: boolean): Promise<DBInfo | undefined>;
-    network: Network;
-    newCollection<T extends Instance>(name: string, schema: JSONSchema): Promise<Collection<T>>;
-    newCollectionFromObject<T extends Instance>(name: string, data: T): Promise<Collection<T>>;
-    // (undocumented)
-    ownLogInfo(): Promise<LogInfo | undefined>;
-    static randomIdentity(): Promise<Libp2pCryptoIdentity>;
-    start(identity: Identity, opts?: StartOptions): Promise<void>;
-    startFromAddress(identity: Identity, addr: Multiaddr, threadKey?: ThreadKey, opts?: StartOptions): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
-    startFromInfo(identity: Identity, info: DBInfo, includeLocal?: boolean, opts?: StartOptions): Promise<undefined | Error>;
-    threadID?: ThreadID;
-    // (undocumented)
-    static withKeyInfo(keyInfo: KeyInfo, store: string | Datastore, options?: Partial<DatabaseSettings>, host?: string, debug?: boolean): Promise<Database>;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), store: string | Datastore, options?: Partial<DatabaseSettings>, host?: string, debug?: boolean): Database;
-}
-
-// @public
-export interface DatabaseSettings {
-    child: Datastore<any>;
-    dispatcher: Dispatcher;
-    eventBus: EventBus;
-    network: Network;
-}
-
-// @public
-class Document_2<T extends Instance = any> {
-    constructor(_collection: Collection<T>, _data: T);
-    exists(): Promise<boolean>;
-    remove(): Promise<void>;
-    save(): Promise<void>;
-    toJSON(): T;
-}
-
-export { Document_2 as Document }
-
-// @public (undocumented)
-export const existingKeyError: Error;
-
 // @public
 export const expirationError: Error;
-
-// Warning: (ae-forgotten-export) The symbol "Condition" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "RootQuerySelector" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
-export type FilterQuery<T = any> = {
-    [P in keyof T]?: Condition<T[P]>;
-} & RootQuerySelector<T>;
 
 export { Identity }
 
 export { InitReply }
-
-// @public (undocumented)
-export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 
 // @public
 export type KeyInfo = {
@@ -364,20 +256,6 @@ export { ListPathReply }
 
 export { ListReply }
 
-// @public (undocumented)
-export const mismatchError: Error;
-
-// @public (undocumented)
-export const missingIdentity: Error;
-
-// @public
-export interface Options<T extends Instance> {
-    // (undocumented)
-    child?: Datastore<T>;
-    // (undocumented)
-    dispatcher?: Dispatcher;
-}
-
 export { PullIpfsPathReply }
 
 export { PullPathReply }
@@ -397,23 +275,6 @@ export interface PushPathResult {
     root: string;
 }
 
-// @public (undocumented)
-export class ReadonlyCollection<T extends Instance = any> {
-    constructor(name: string, schema: JSONSchema, options?: Options<T>);
-    child: JsonPatchStore<T>;
-    count(query: FilterQuery<T>, options?: FindOptions<T>): Promise<number>;
-    // Warning: (ae-forgotten-export) The symbol "FindOptions" needs to be exported by the entry point index.d.ts
-    find(query?: FilterQuery<T>, options?: FindOptions<T>): AsyncIterable<Result<T>>;
-    findById(id: string): Promise<T>;
-    findOne(query: FilterQuery<T>, options?: FindOptions<T>): Promise<IteratorResult<Result<T>, any>>;
-    // (undocumented)
-    static fromCollection<T extends Instance>(other: Collection<T>): ReadonlyCollection<any>;
-    has(id: string): Promise<boolean>;
-    // (undocumented)
-    readonly name: string;
-    validator: ValidateFunction;
-}
-
 export { RemovePathReply }
 
 export { RemoveReply }
@@ -423,12 +284,6 @@ export { Root }
 export { RootReply }
 
 export { SetPathReply }
-
-// @public (undocumented)
-export interface StartOptions {
-    collections?: Config[];
-    threadID?: ThreadID;
-}
 
 // @public
 export class ThreadID {
