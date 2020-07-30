@@ -78,7 +78,7 @@ const logger = log.getLogger('buckets')
  * }
  * ```
  *
- *  * @example
+ * @example
  * Push an folder in node.js
  * ```typescript
  * import fs from 'fs'
@@ -371,6 +371,31 @@ export class Buckets extends BucketsGrpcClient {
    * const pushFile = async (content: string, bucketKey: string) => {
    *    const file = { path: '/index.html', content: Buffer.from(content) }
    *    return await buckets.pushPath(bucketKey!, 'index.html', file)
+   * }
+   * ```
+   * 
+   * @example
+   * Push an folder in node.js
+   * ```typescript
+   * import fs from 'fs'
+   * import util from 'util'
+   * import glob from 'glob'
+   * import { Buckets } from '@textile/hub'
+   *
+   * const globDir = util.promisify(glob)
+   *
+   * // expects an already setup buckets session using getOrInit or withThread
+   * const exists = async (buckets: Buckets, bucketKey: string, dir: string) => {
+   *   const files = await globDir('<dir glob options>')
+   *   return await Promise.all(files.map(async (file) => {
+   *     const filePath = dir + '/' + file
+   *     var content = fs.createReadStream(filePath, { highWaterMark: 1024 * 1024 * 3 });
+   *     const upload = {
+   *       path: file,
+   *       content
+   *     }
+   *     return await buckets.pushPath(bucketKey, file, upload)
+   *   }))
    * }
    * ```
    */
