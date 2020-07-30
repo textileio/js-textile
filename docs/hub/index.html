@@ -11,10 +11,6 @@
 <tr><td><a href="/js-hub/docs/hub.buckets">Buckets</a></td><td>Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.bucketsgrpcclient">BucketsGrpcClient</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.client">Client</a></td><td>Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile's 'DB' API, which is defined here: <a href="https://github.com/textileio/go-threads/blob/master/api/pb/api.proto">https://github.com/textileio/go-threads/blob/master/api/pb/api.proto</a>.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.collection">Collection</a></td><td>Collection is a store of entities defined by a single schema.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.database">Database</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.document_2">Document_2</a></td><td>Document is a wrapper around a Collection and a (proxy to) an Instance object.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.readonlycollection">ReadonlyCollection</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.threadid">ThreadID</a></td><td>ThreadID represents a self-describing Thread identifier.<!-- -->It is formed by a Version, a Variant, and a random number of a given length.</td></tr>
 </tbody>
 </table>
@@ -61,12 +57,7 @@
 <tr><th>Interface</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.collection">Collection</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.config">Config</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.databasesettings">DatabaseSettings</a></td><td>DatabaseSettings specifies a set of settings to control the operation of the Database. Implementations should provide reasonable defaults.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.options">Options</a></td><td>Options for creating a new collection.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.pushpathresult">PushPathResult</a></td><td>The expected result format from pushing a path to a bucket</td></tr>
-<tr><td><a href="/js-hub/docs/hub.startoptions">StartOptions</a></td><td></td></tr>
 </tbody>
 </table>
 <h2><a class="anchor" aria-hidden="true" id="variables"></a><a href="#variables" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Variables</h2>
@@ -75,10 +66,7 @@
 <tr><th>Variable</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.existingkeyerror">existingKeyError</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.expirationerror">expirationError</a></td><td>expirationError is an error your app will receive anytime your credentials have expired.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.mismatcherror">mismatchError</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.missingidentity">missingIdentity</a></td><td></td></tr>
 </tbody>
 </table>
 <h2><a class="anchor" aria-hidden="true" id="type-aliases"></a><a href="#type-aliases" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Type Aliases</h2>
@@ -88,8 +76,6 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-hub/docs/hub.apisig">APISig</a></td><td>Create an API signature for use in authenticated systems. Generate with <a href="/js-hub/docs/hub.createapisig">createAPISig()</a><!-- -->.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.filterquery">FilterQuery</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.jsonschema">JSONSchema</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.keyinfo">KeyInfo</a></td><td>KeyInfo is a type that contains the API Secret. It should never be shared in insecure environments. Type 0=ACCOUNT, 1=USER.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.listpathflat">ListPathFlat</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.listpathrecursive">ListPathRecursive</a></td><td></td></tr>
