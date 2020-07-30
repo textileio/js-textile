@@ -373,7 +373,7 @@ export class Buckets extends BucketsGrpcClient {
    *    return await buckets.pushPath(bucketKey!, 'index.html', file)
    * }
    * ```
-   * 
+   *
    * @example
    * Push an folder in node.js
    * ```typescript

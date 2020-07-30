@@ -154,7 +154,6 @@ describe('Buckets...', () => {
     // ]
     let list = await client.listPathFlat(rootKey, '')
     expect(list).to.have.length(6)
-    console.log(list)
     expect(list).to.contain('dir1/file1.jpg')
 
     list = await client.listPathFlat(rootKey, '', false)
