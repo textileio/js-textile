@@ -32,7 +32,7 @@ import {
   bucketsInit,
   PushPathResult,
 } from './api'
-import { listPathRecursive, listPathFlat, ListPathRecursive, ListPathFlat } from './utils'
+import { listPathRecursive, listPathFlat } from './utils'
 
 const logger = log.getLogger('buckets')
 
@@ -45,7 +45,7 @@ const logger = log.getLogger('buckets')
  *
  * const getOrInit = async (auth: UserAuth, bucketName: string) => {
  *   const buckets = Buckets.withUserAuth(auth)
- *   // Automatically scopes future calls to the Thread containing the bucket
+ *   // Automatically scopes future calls on `buckets` to the Thread containing the bucket
  *   const { root, threadID } = await buckets.getOrInit(bucketName)
  *   if (!root) throw new Error('bucket not created')
  *   const bucketKey = root.key
@@ -75,6 +75,31 @@ const logger = log.getLogger('buckets')
  * const exists = async (buckets: Buckets, bucketName: string) => {
  *     const roots = await buckets.list();
  *     return roots.find((bucket) => bucket.name === bucketName)
+ * }
+ * ```
+ *
+ *  * @example
+ * Push an folder in node.js
+ * ```typescript
+ * import fs from 'fs'
+ * import util from 'util'
+ * import glob from 'glob'
+ * import { Buckets } from '@textile/hub'
+ *
+ * const globDir = util.promisify(glob)
+ *
+ * // expects an already setup buckets session using getOrInit or withThread
+ * const exists = async (buckets: Buckets, bucketKey: string, dir: string) => {
+ *   const files = await globDir('<dir glob options>')
+ *   return await Promise.all(files.map(async (file) => {
+ *     const filePath = dir + '/' + file
+ *     var content = fs.createReadStream(filePath, { highWaterMark: 1024 * 1024 * 3 });
+ *     const upload = {
+ *       path: file,
+ *       content
+ *     }
+ *     return await buckets.pushPath(bucketKey, file, upload)
+ *   }))
  * }
  * ```
  */
@@ -127,6 +152,7 @@ export class Buckets extends BucketsGrpcClient {
 
   /**
    * Open a new / existing bucket by bucket name and ThreadID (init not required)
+   * Replaces `open` command in older versions.
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
@@ -306,17 +332,16 @@ export class Buckets extends BucketsGrpcClient {
    *   console.log(list)
    * }
    * // [
-   * //   'mybuck',
-   * //   'mybuck/.textileseed',
-   * //   'mybuck/dir1',
-   * //   'mybuck/dir1/file1.jpg',
-   * //   'mybuck/path',
-   * //   'mybuck/path/to',
-   * //   'mybuck/path/to/file2.jpg'
+   * //   '.textileseed',
+   * //   'dir1',
+   * //   'dir1/file1.jpg',
+   * //   'path',
+   * //   'path/to',
+   * //   'path/to/file2.jpg'
    * // ]
    * ```
    */
-  async listPathFlat(key: string, path: string, dirs = true, depth = 5): Promise<ListPathFlat> {
+  async listPathFlat(key: string, path: string, dirs = true, depth = 5): Promise<Array<string>> {
     logger.debug('list path recursive request')
     return await listPathFlat(this, key, path, dirs, depth)
   }
