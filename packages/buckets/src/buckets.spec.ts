@@ -145,16 +145,16 @@ describe('Buckets...', () => {
 
     // Recursive dir
     // [
-    //   'mybuck',
-    //   'mybuck/.textileseed',
-    //   'mybuck/dir1',
-    //   'mybuck/dir1/file1.jpg',
-    //   'mybuck/path',
-    //   'mybuck/path/to',
-    //   'mybuck/path/to/file2.jpg'
+    //   '.textileseed',
+    //   'dir1',
+    //   'dir1/file1.jpg',
+    //   'path',
+    //   'path/to',
+    //   'path/to/file2.jpg'
     // ]
     let list = await client.listPathFlat(rootKey, '')
-    expect(list).to.have.length(7)
+    expect(list).to.have.length(6)
+    expect(list).to.contain('dir1/file1.jpg')
 
     list = await client.listPathFlat(rootKey, '', false)
     expect(list).to.have.length(3)
