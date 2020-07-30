@@ -14,7 +14,6 @@ export function bytesToArray(chunk: Uint8Array, size = 1024 * 1024 * 3) {
   return result
 }
 
-export type ListPathRecursive = ReturnType<typeof listPathRecursive>
 /**
  * listPathRecursive returns a nested object of all paths (and info) in a bucket
  */
@@ -24,10 +23,10 @@ export async function listPathRecursive(
   path: string,
   depth: number,
   currentDepth = 0,
-) {
+): Promise<ListPathReply.AsObject> {
   const rootPath = path === '' || path === '.' || path === '/' ? '' : `${path}/`
   const tree = await bucketsListPath(grpc, bucketKey, path)
-  if (tree.item && (currentDepth + 1 <= depth || depth == -1)) {
+  if (tree.item && (currentDepth + 1 <= depth || depth === -1)) {
     for (let i = 0; i < tree.item.itemsList.length; i++) {
       const obj = tree.item.itemsList[i]
       if (!obj.isdir) continue
@@ -41,24 +40,27 @@ export async function listPathRecursive(
   return tree
 }
 
-async function treeToPaths(tree: ListPathItem.AsObject, path?: string, dirs = true, depth = 5): Promise<Array<string>> {
+async function treeToPaths(
+  tree: ListPathItem.AsObject[],
+  path?: string,
+  dirs = true,
+  depth = 5,
+  currentDepth = 0,
+): Promise<Array<string>> {
   const result = []
-  const fp = path ? `${path}/${tree.name}` : `${tree.name}`
-  // Only push if dirs included or not a dir
-  if (dirs || !tree.isdir) result.push(fp)
-  if (tree.isdir) {
-    for (const item of tree.itemsList) {
-      const downtree = await treeToPaths(item, fp, dirs, depth)
+  for (const item of tree) {
+    const newPath = path === '' ? `${item.name}` : `${path}/${item.name}`
+    if (dirs || !item.isdir) result.push(newPath)
+    if (item.isdir && (currentDepth < depth || depth === -1)) {
+      const downtree = await treeToPaths(item.itemsList, newPath, dirs, depth, currentDepth + 1)
       result.push(...downtree)
     }
   }
   return result
 }
 
-export type ListPathFlat = ReturnType<typeof listPathFlat>
-
 /**
- * utilPathsList returns a string array of all paths in a bucket
+ * listPathFlat returns a string array of all paths in a bucket
  */
 export async function listPathFlat(
   grpc: BucketsGrpcClient,
@@ -66,8 +68,8 @@ export async function listPathFlat(
   path: string,
   dirs: boolean,
   depth: number,
-) {
+): Promise<Array<string>> {
   const tree = await listPathRecursive(grpc, bucketKey, path, depth)
   if (!tree.item) return []
-  return treeToPaths(tree.item, undefined, dirs)
+  return treeToPaths(tree.item.itemsList, path, dirs)
 }
