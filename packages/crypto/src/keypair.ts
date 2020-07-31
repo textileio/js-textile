@@ -9,7 +9,12 @@ const privateKeyBytes = 32
 const ephemeralPublicKeyBytes = 32 // Length of nacl ephemeral public key
 
 export class PublicKey implements Public {
-  constructor(public pubKey: Uint8Array) {}
+  constructor(public pubKey: Uint8Array, public type: string = 'ed25519') {
+    if (type !== 'ed25519') {
+      throw new Error('Invalid keys type')
+    }
+    this.type = type || 'ed25519'
+  }
   /**
    * Verifies if `signature` for `data` is valid.
    * @param data Signed data
@@ -30,19 +35,23 @@ export class PublicKey implements Public {
       Data: this.pubKey,
     })
   }
+
+  async encrypt(data: Uint8Array): Promise<Uint8Array> {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return encrypt(data, this.pubKey, this.type)
+  }
 }
 
 export class PrivateKey implements Private {
   pubKey: Uint8Array
   seed: Uint8Array
   privKey: Uint8Array
-  type: 'ed25519'
   /**
    * Constructor
    * @param secretKey Raw secret key (32-byte secret seed in ed25519`)
    * @param type Public-key signature system name. (currently only `ed25519` keys are supported)
    */
-  constructor(secretKey: Uint8Array, type?: 'ed25519') {
+  constructor(secretKey: Uint8Array, public type: string = 'ed25519') {
     if (type !== 'ed25519') {
       throw new Error('Invalid keys type')
     }
@@ -60,7 +69,7 @@ export class PrivateKey implements Private {
   /**
    * Returns `true` if this `Keypair` object contains secret key and can sign.
    */
-  canSign() {
+  canSign(): boolean {
     return !!this.privKey
   }
 
@@ -68,7 +77,7 @@ export class PrivateKey implements Private {
    * Signs data.
    * @param data Data to sign
    */
-  async sign(data: Uint8Array) {
+  async sign(data: Uint8Array): Promise<Uint8Array> {
     if (!this.canSign()) {
       throw new Error('cannot sign: no secret key available')
     }
@@ -91,25 +100,30 @@ export class PrivateKey implements Private {
    *
    * @param rawSeed Raw 32-byte ed25519 secret key seed
    */
-  static fromRawEd25519Seed(rawSeed: Uint8Array) {
+  static fromRawEd25519Seed(rawSeed: Uint8Array): PrivateKey {
     return new this(rawSeed, 'ed25519')
   }
   /**
-   * Create a random `Keypair` object.
+   * Create a random `PrivateKey` object.
    */
-  static fromRandom() {
+  static fromRandom(): PrivateKey {
     const secret = nacl.randomBytes(32)
     return this.fromRawEd25519Seed(secret)
   }
 
-  toString() {
+  toString(): string {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return privateKeyToString(this)
   }
 
-  static fromString(str: string) {
+  static fromString(str: string): PrivateKey {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return privateKeyFromString(str)
+  }
+
+  async decrypt(ciphertext: Uint8Array): Promise<Uint8Array> {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return decrypt(ciphertext, this.privKey, this.type)
   }
 }
 
@@ -122,7 +136,7 @@ export class PrivateKey implements Private {
  * @note See https://github.com/dchest/ed2curve-js for conversion details.
  * @param ciphertext Data to decrypt
  */
-export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: 'ed25519') {
+export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type = 'ed25519') {
   if (type !== 'ed25519') {
     throw Error(`'${type}' type keys are not currently supported`)
   }
@@ -149,7 +163,7 @@ export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: 'ed2
  * @note See https://github.com/dchest/ed2curve-js for conversion details.
  * @param data Data to encrypt
  */
-export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: 'ed25519') {
+export function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25519') {
   if (type !== 'ed25519') {
     throw Error(`'${type}' type keys are not currently supported`)
   }
