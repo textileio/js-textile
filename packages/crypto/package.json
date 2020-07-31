@@ -1,0 +1,44 @@
+{
+  "name": "@textile/crypto",
+  "version": "0.0.0",
+  "description": "Various crypto modules for use with Textile tools/libraries.",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
+    "prebuild": "npm run clean",
+    "build": "npm run build:protos && npm run build:compile",
+    "build:compile": "tsc -b tsconfig.json",
+    "build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/textileio/js-hub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/textileio/js-hub/issues"
+  },
+  "author": "Textile",
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.7"
+  },
+  "references": [],
+  "dependencies": {
+    "@types/ed2curve": "^0.2.2",
+    "ed2curve": "^0.3.0",
+    "multibase": "^3.0.0",
+    "tweetnacl": "^1.0.3"
+  }
+}
