@@ -103,36 +103,7 @@ const logger = log.getLogger('buckets')
  * }
  * ```
  */
-export class Buckets extends BucketsGrpcClient {
-  /**
-   * Creates a new gRPC client instance for accessing the Textile Buckets API.
-   * @param auth The user auth object.
-   */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
-    const context =
-      typeof auth === 'object' ? Context.fromUserAuth(auth, host) : Context.fromUserAuthCallback(auth, host)
-    return new Buckets(context, debug)
-  }
-
-  /**
-   * Create a new gRPC client Bucket instance from a supplied key and secret
-   * @param key The KeyInfo object containing {key: string, secret: string}
-   */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const context = new Context(host)
-    await context.withKeyInfo(key)
-    return new Buckets(context, debug)
-  }
-
-  /**
-   * Scopes to a Thread by ID
-   * @param threadId the ID of the thread
-   */
-  withThread(threadID?: string) {
-    if (threadID === undefined) return this
-    this.context.withThread(threadID)
-  }
-
+export class Buckets extends GrpcAuthentication {
   /**
    * Open a new / existing bucket by bucket name and ThreadID (init not required)
    * @param name name of bucket
