@@ -15,14 +15,9 @@ import {
   ReadInboxMessageReply,
   DeleteMessageRequest,
 } from '@textile/users-grpc/users_pb'
-import { API, ServiceError } from '@textile/users-grpc/users_pb_service'
-// import { APIClient } from '@textile/users-grpc/users_pb_service'
-// import CID from 'cids'
-// import { EventIterator } from 'event-iterator'
-// import nextTick from 'next-tick'
-import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface, Context } from '@textile/context'
-import { WebsocketTransport } from '@textile/grpc-transport'
+import { API } from '@textile/users-grpc/users_pb_service'
+import { GrpcConnection } from '@textile/grpc-connection'
+import { ContextInterface } from '@textile/context'
 import { ThreadID } from '@textile/threads-id'
 import { Libp2pCryptoPublicKey } from '@textile/threads-core'
 
@@ -36,58 +31,8 @@ export enum Status {
 
 export type StatusInt = 0 | 1 | 2
 
-export class UsersGrpcClient {
-  public serviceHost: string
-  public rpcOptions: grpc.RpcOptions
-  /**
-   * Creates a new gRPC client instance for accessing the Textile Buckets API.
-   * @param context The context to use for interacting with the APIs. Can be modified later.
-   */
-  constructor(public context: ContextInterface = new Context(), debug = false) {
-    this.serviceHost = context.host
-    this.rpcOptions = {
-      transport: WebsocketTransport(),
-      debug,
-    }
-  }
-
-  public unary<
-    R extends grpc.ProtobufMessage,
-    T extends grpc.ProtobufMessage,
-    M extends grpc.UnaryMethodDefinition<R, T>
-  >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-      grpc.unary(methodDescriptor, {
-        request: req,
-        host: this.serviceHost,
-        transport: this.rpcOptions.transport,
-        debug: this.rpcOptions.debug,
-        metadata,
-        onEnd: (res: grpc.UnaryOutput<T>) => {
-          const { status, statusMessage, message } = res
-          if (status === grpc.Code.OK) {
-            if (message) {
-              resolve(message)
-            } else {
-              resolve()
-            }
-          } else {
-            const err: ServiceError = {
-              message: statusMessage,
-              code: status,
-              metadata,
-            }
-            reject(err)
-          }
-        },
-      })
-    })
-  }
-}
-
 export async function listThreads(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   ctx?: ContextInterface,
 ): Promise<Array<GetThreadReply.AsObject>> {
   logger.debug('list threads request')
@@ -101,7 +46,7 @@ export async function listThreads(
 }
 
 export async function getThread(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   name: string,
   ctx?: ContextInterface,
 ): Promise<GetThreadReply.AsObject> {
@@ -115,7 +60,7 @@ export async function getThread(
 }
 
 export async function setupMailbox(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   ctx?: ContextInterface,
 ): Promise<{ mailboxID: Uint8Array | string }> {
   logger.debug('setup mailbox request')
@@ -126,7 +71,7 @@ export async function setupMailbox(
 }
 
 export async function sendMessage(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   to: Libp2pCryptoPublicKey,
   toBody: string | Uint8Array,
   toSignature: string | Uint8Array,
@@ -147,7 +92,7 @@ export async function sendMessage(
 }
 
 export async function listInboxMessages(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   seek: string,
   limit: number,
   ascending: boolean,
@@ -165,7 +110,7 @@ export async function listInboxMessages(
 }
 
 export async function listSentboxMessages(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   seek: string,
   limit: number,
   ascending: boolean,
@@ -181,7 +126,7 @@ export async function listSentboxMessages(
 }
 
 export async function readInboxMessage(
-  api: UsersGrpcClient,
+  api: GrpcConnection,
   id: string,
   ctx?: ContextInterface,
 ): Promise<{ readAt: number }> {
@@ -192,14 +137,14 @@ export async function readInboxMessage(
   return { readAt: res.toObject().readat }
 }
 
-export async function deleteInboxMessage(api: UsersGrpcClient, id: string, ctx?: ContextInterface): Promise<{}> {
+export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}> {
   logger.debug('delete inbox message request')
   const req = new DeleteMessageRequest()
   req.setId(id)
   return await api.unary(API.DeleteInboxMessage, req, ctx)
 }
 
-export async function deleteSentboxMessage(api: UsersGrpcClient, id: string, ctx?: ContextInterface): Promise<{}> {
+export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}> {
   logger.debug('delete sentbox message request')
   const req = new DeleteMessageRequest()
   req.setId(id)

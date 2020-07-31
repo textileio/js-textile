@@ -31,13 +31,13 @@ import {
   ArchiveStatusReply,
   ArchiveInfoReply,
 } from '@textile/buckets-grpc/buckets_pb'
-import { API, APIPushPath, ServiceError } from '@textile/buckets-grpc/buckets_pb_service'
+import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface, Context } from '@textile/context'
-import { WebsocketTransport } from '@textile/grpc-transport'
+import { ContextInterface } from '@textile/context'
+import { GrpcConnection } from '@textile/grpc-connection'
 import { normaliseInput, File } from './normalize'
 
 const logger = log.getLogger('buckets-api')
@@ -53,56 +53,6 @@ export interface PushPathResult {
     remainder: string
   }
   root: string
-}
-
-export class BucketsGrpcClient {
-  public serviceHost: string
-  public rpcOptions: grpc.RpcOptions
-  /**
-   * Creates a new gRPC client instance for accessing the Textile Buckets API.
-   * @param context The context to use for interacting with the APIs. Can be modified later.
-   */
-  constructor(public context: ContextInterface = new Context(), debug = false) {
-    this.serviceHost = context.host
-    this.rpcOptions = {
-      transport: WebsocketTransport(),
-      debug,
-    }
-  }
-
-  public unary<
-    R extends grpc.ProtobufMessage,
-    T extends grpc.ProtobufMessage,
-    M extends grpc.UnaryMethodDefinition<R, T>
-  >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
-      grpc.unary(methodDescriptor, {
-        request: req,
-        host: this.serviceHost,
-        transport: this.rpcOptions.transport,
-        debug: this.rpcOptions.debug,
-        metadata,
-        onEnd: (res: grpc.UnaryOutput<T>) => {
-          const { status, statusMessage, message } = res
-          if (status === grpc.Code.OK) {
-            if (message) {
-              resolve(message)
-            } else {
-              resolve()
-            }
-          } else {
-            const err: ServiceError = {
-              message: statusMessage,
-              code: status,
-              metadata,
-            }
-            reject(err)
-          }
-        },
-      })
-    })
-  }
 }
 
 /**
@@ -121,7 +71,7 @@ export class BucketsGrpcClient {
  * ```
  */
 export async function bucketsInit(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   name: string,
   isPrivate = false,
   ctx?: ContextInterface,
@@ -139,7 +89,7 @@ export async function bucketsInit(
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsRoot(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   ctx?: ContextInterface,
 ): Promise<Root.AsObject | undefined> {
@@ -170,7 +120,7 @@ export async function bucketsRoot(
  * ```
  */
 export async function bucketsLinks(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   ctx?: ContextInterface,
 ): Promise<LinksReply.AsObject> {
@@ -194,7 +144,7 @@ export async function bucketsLinks(
  * }
  * ````
  */
-export async function bucketsList(api: BucketsGrpcClient, ctx?: ContextInterface): Promise<Array<Root.AsObject>> {
+export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root.AsObject>> {
   logger.debug('list request')
   const req = new ListRequest()
   const res: ListReply = await api.unary(API.List, req, ctx)
@@ -207,7 +157,7 @@ export async function bucketsList(api: BucketsGrpcClient, ctx?: ContextInterface
  * @param path A file/object (sub)-path within a bucket.
  */
 export async function bucketsListPath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   path: string,
   ctx?: ContextInterface,
@@ -225,7 +175,7 @@ export async function bucketsListPath(
  * @param path UnixFS path
  */
 export async function bucketsListIpfsPath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   path: string,
   ctx?: ContextInterface,
 ): Promise<ListPathItem.AsObject | undefined> {
@@ -257,7 +207,7 @@ export async function bucketsListIpfsPath(
  * ```
  */
 export async function bucketsPushPath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   path: string,
   input: any,
@@ -335,7 +285,7 @@ export async function bucketsPushPath(
  * @param opts Options to control response stream. Currently only supports a progress function.
  */
 export function bucketsPullPath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   path: string,
   opts?: { progress?: (num?: number) => void },
@@ -385,7 +335,7 @@ export function bucketsPullPath(
  * @param opts Options to control response stream. Currently only supports a progress function.
  */
 export function bucketsPullIpfsPath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   path: string,
   opts?: { progress?: (num?: number) => void },
   ctx?: ContextInterface,
@@ -431,7 +381,7 @@ export function bucketsPullIpfsPath(
  * Removes an entire bucket. Files and directories will be unpinned.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
+export async function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('remove request')
   const req = new RemoveRequest()
   req.setKey(key)
@@ -446,7 +396,7 @@ export async function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: C
  * @param root optional to specify a root
  */
 export async function bucketsRemovePath(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   path: string,
   root?: string,
@@ -466,7 +416,7 @@ export async function bucketsRemovePath(
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
+export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
@@ -479,7 +429,7 @@ export async function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: 
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive status request')
   const req = new ArchiveStatusRequest()
   req.setKey(key)
@@ -492,7 +442,7 @@ export async function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, 
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive info request')
   const req = new ArchiveInfoRequest()
   req.setKey(key)
@@ -506,7 +456,7 @@ export async function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ct
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsArchiveWatch(
-  api: BucketsGrpcClient,
+  api: GrpcConnection,
   key: string,
   callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void,
   ctx?: ContextInterface,
