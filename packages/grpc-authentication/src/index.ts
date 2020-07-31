@@ -34,7 +34,6 @@ export class GrpcAuthentication extends GrpcConnection {
     this.context.withThread(threadID)
   }
 
-
   /**
    * Obtain a token for interacting with the remote API.
    * @param identity A user identity to use for interacting with APIs.
@@ -60,5 +59,4 @@ export class GrpcAuthentication extends GrpcConnection {
     const client = new Client(this.context)
     return client.getTokenChallenge(publicKey, callback)
   }
-
 }
