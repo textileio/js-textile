@@ -1,5 +1,6 @@
 import { expect } from 'chai'
-import { PrivateKey, encrypt, decrypt, publicKeyFromString } from './keypair'
+import { PrivateKey, PublicKey } from './keypair'
+import { encrypt, decrypt } from './utils'
 
 describe('Keypair', () => {
   it('should be able to serialize and recover identities', async () => {
@@ -30,22 +31,22 @@ describe('Keypair', () => {
 
     it('should be able to encrypt/decrypt using separate keys', async () => {
       // Someone else
-      const someone = PrivateKey.fromRandom()
+      const privKey = PrivateKey.fromRandom()
 
       // They send me this...
-      const publicKey = someone.public.toString()
+      const publicKey = privKey.public.toString()
 
       // I encode a message...
       const msg = new TextEncoder().encode('howdy!')
 
       // I decode their key...
-      const { pubKey } = publicKeyFromString(publicKey)
+      const pubKey = PublicKey.fromString(publicKey)
 
       // I encrypt it...
-      const ciphertext = await encrypt(msg, pubKey) // Don't use bytes!
+      const ciphertext = await encrypt(msg, pubKey.pubKey) // Don't use bytes!
 
       // They decrypt it...
-      const plaintext = await decrypt(ciphertext, someone.privKey)
+      const plaintext = await decrypt(ciphertext, privKey.privKey)
 
       expect(plaintext).to.deep.equal(msg)
     })
