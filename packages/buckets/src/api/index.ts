@@ -31,7 +31,7 @@ import {
   ArchiveStatusReply,
   ArchiveInfoReply,
 } from '@textile/buckets-grpc/buckets_pb'
-import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
+import { API, APIPushPath, ServiceError } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
@@ -92,7 +92,12 @@ export class BucketsGrpcClient {
               resolve()
             }
           } else {
-            reject(new Error(statusMessage))
+            const err: ServiceError = {
+              message: statusMessage,
+              code: status,
+              metadata,
+            }
+            reject(err)
           }
         },
       })

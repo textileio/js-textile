@@ -15,7 +15,7 @@ const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const sessionSecret = 'hubsession'
 
-describe('Users...', () => {
+describe('All apis...', () => {
   describe('Buckets and accounts', () => {
     context('a developer', () => {
       const ctx = new Context(addrApiurl)
