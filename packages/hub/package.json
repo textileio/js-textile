@@ -32,13 +32,13 @@
     "@textile/threads-client": "^0.8.4",
     "@textile/threads-core": "^0.1.33",
     "@textile/threads-id": "^0.1.13",
-    "@textile/users-grpc": "^1.0.13",
+    "@textile/users-grpc": "^1.0.14",
     "cids": "^0.8.0",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
   },
   "devDependencies": {
-    "@textile/hub-grpc": "^1.0.13",
+    "@textile/hub-grpc": "^1.0.14",
     "@textile/threads-core": "^0.1.33",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
