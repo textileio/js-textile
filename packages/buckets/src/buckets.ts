@@ -104,14 +104,6 @@ const logger = log.getLogger('buckets')
  */
 export class Buckets extends GrpcAuthentication {
   /**
-   * Get the authenticated API session from the Buckets class.
-   * Use this method to pass an authenticated session to other API
-   * class such as Users.
-   */
-  getAuth(): GrpcAuthentication {
-    return this as GrpcAuthentication
-  }
-  /**
    * Use the Buckets APIs with the sessions already created when using
    * other API classes, such as Users.
    *
@@ -120,8 +112,7 @@ export class Buckets extends GrpcAuthentication {
    * import { Buckets, Users } from "@textile/hub"
    *
    * function transferAuth(user: Users): buckets {
-   *   const auth = users.getAuth()
-   *   const buckets = Buckets.withAuth(auth)
+   *   const buckets = Buckets.withAuth(user)
    *   return buckets
    * }
    */
