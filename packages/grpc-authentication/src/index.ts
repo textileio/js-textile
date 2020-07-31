@@ -1,5 +1,6 @@
 import { Context, defaultHost } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
+import { Identity } from '@textile/threads-core'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { Client } from '@textile/hub-threads-client'
 

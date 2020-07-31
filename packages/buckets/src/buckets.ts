@@ -2,7 +2,7 @@ import log from 'loglevel'
 import { Context, defaultHost } from '@textile/context'
 import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/threads-core'
-import { UserAuth, KeyInfo } from '@textile/security'
+import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
 import {
   Root,
@@ -15,7 +15,6 @@ import {
   ArchiveInfoReply,
 } from '@textile/buckets-grpc/buckets_pb'
 import {
-  BucketsGrpcClient,
   bucketsArchiveWatch,
   bucketsArchiveInfo,
   bucketsArchiveStatus,

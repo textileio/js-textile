@@ -1,12 +1,8 @@
 import log from 'loglevel'
-import { Context, defaultHost } from '@textile/context'
-import { Client } from '@textile/hub-threads-client'
-import { Identity, Libp2pCryptoIdentity, Libp2pCryptoPublicKey } from '@textile/threads-core'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { ThreadID } from '@textile/threads-id'
-import { GetThreadReply, SetupMailboxReply, ListMessagesReply } from '@textile/users-grpc/users_pb'
+import { GrpcAuthentication } from '@textile/grpc-authentication'
+import { Libp2pCryptoIdentity, Libp2pCryptoPublicKey } from '@textile/threads-core'
+import { GetThreadReply, ListMessagesReply } from '@textile/users-grpc/users_pb'
 import {
-  UsersGrpcClient,
   getThread,
   listInboxMessages,
   listThreads,

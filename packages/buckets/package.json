@@ -32,6 +32,8 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/buckets-grpc": "^1.0.14",
     "@textile/context": "^0.6.4",
+    "@textile/grpc-connection": "^0.0.1",
+    "@textile/grpc-authentication": "^0.0.1",
     "@textile/grpc-transport": "^0.0.2",
     "@textile/hub-threads-client": "^0.3.1",
     "@textile/security": "^0.2.4",
@@ -57,6 +59,12 @@
   "references": [
     {
       "path": "../hub-threads-client"
+    },
+    {
+      "path": "../grpc-authentication"
+    },
+    {
+      "path": "../grpc-connection"
     }
   ]
 }
