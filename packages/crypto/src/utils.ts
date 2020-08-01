@@ -68,9 +68,13 @@ export async function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25
   return Uint8Array.from(merged)
 }
 
-export function publicKeyToString(key: Public): string {
-  const encoded = multibase.encode('base32', key.bytes as Buffer)
+export function publicKeyBytesToString(bytes: Uint8Array): string {
+  const encoded = multibase.encode('base32', bytes as Buffer)
   return new TextDecoder().decode(encoded)
+}
+
+export function publicKeyToString(key: Public): string {
+  return publicKeyBytesToString(key.bytes)
 }
 
 export function publicKeyBytesFromString(str: string) {

@@ -4,6 +4,7 @@ import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Context } from '@textile/context'
+import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { expirationError } from '@textile/security'
 import { signUp, createKey, createAPISig } from './spec.util'
@@ -208,8 +209,10 @@ describe('Users...', () => {
       expect(res[0].name).to.equal('foo')
     })
   })
+
   describe('mailbox', async () => {
-    const user1 = await Libp2pCryptoIdentity.fromRandom()
+    const user1 = await PrivateKey.fromRandom()
+    const user2 = await PrivateKey.fromRandom()
     const ctx = new Context(addrApiurl)
     let dev: SignupReply.AsObject
     before(async function () {
@@ -235,6 +238,15 @@ describe('Users...', () => {
       ctx.withToken(token) // to skip regen in later calls
       const res = await user.setupMailbox()
       expect(res.mailboxID).to.not.be.undefined
+    })
+    it('should send a message to user2', async () => {
+      const user = new Users(ctx)
+      const nowish = Math.floor(new Date().getTime())
+      const encoder = new TextEncoder()
+      const res = await user.sendMessage(user1, user2.public.toString(), encoder.encode('first'))
+      const sentish = Math.floor(res.createdAt)
+      expect(res.id).to.not.be.undefined
+      expect(Math.abs(sentish - nowish)).to.be.lessThan(10000)
     })
   })
 })
