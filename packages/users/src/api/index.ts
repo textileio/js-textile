@@ -19,7 +19,7 @@ import { API } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
 import { ThreadID } from '@textile/threads-id'
-import { Libp2pCryptoPublicKey } from '@textile/threads-core'
+import { PrivateKey, PublicKey, Public, Private } from '@textile/crypto'
 
 const logger = log.getLogger('users-api')
 
@@ -72,7 +72,7 @@ export async function setupMailbox(
 
 export async function sendMessage(
   api: GrpcConnection,
-  to: Libp2pCryptoPublicKey,
+  to: string,
   toBody: string | Uint8Array,
   toSignature: string | Uint8Array,
   fromBody: string | Uint8Array,
@@ -81,7 +81,7 @@ export async function sendMessage(
 ): Promise<{ id: string; createdAt: number }> {
   logger.debug('send message request')
   const req = new SendMessageRequest()
-  req.setTo(to.toString())
+  req.setTo(to)
   req.setTobody(toBody)
   req.setTosignature(toSignature)
   req.setFrombody(fromBody)
