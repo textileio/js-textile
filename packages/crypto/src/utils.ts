@@ -92,3 +92,9 @@ export function privateKeyFromString(str: string) {
   // bytes on the end (no need to check it either)
   return bytes.slice(0, privateKeyBytes)
 }
+
+export function extractPublicKeyBytes(key: Public): Uint8Array {
+  const obj = decodePublicKey(key.bytes)
+  const bytes = obj.Data
+  return bytes.slice(0, publicKeyBytes)
+}

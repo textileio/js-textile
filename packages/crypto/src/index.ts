@@ -7,4 +7,5 @@ export {
   publicKeyBytesToString,
   publicKeyBytesFromString,
   privateKeyFromString,
+  extractPublicKeyBytes,
 } from './utils'

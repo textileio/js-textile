@@ -1,6 +1,6 @@
 import log from 'loglevel'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
-import { encrypt, Identity, privateKeyFromString } from '@textile/crypto'
+import { encrypt, Identity, publicKeyBytesFromString, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { GetThreadReply, ListMessagesReply } from '@textile/users-grpc/users_pb'
 import {
   getThread,
@@ -15,7 +15,6 @@ import {
   deleteInboxMessage,
   deleteSentboxMessage,
 } from './api'
-import { publicKeyBytesFromString } from '@textile/crypto/dist/utils'
 
 const logger = log.getLogger('users')
 
@@ -50,14 +49,15 @@ export class Users extends GrpcAuthentication {
     return setupMailbox(this)
   }
 
-  async sendMessage(from: Identity, to: string, body: Uint8Array): Promise<{ id: string; createdAt: number }> {
+  async sendMessage(from: Identity, to: Public, body: Uint8Array): Promise<{ id: string; createdAt: number }> {
     logger.debug('send message using keys')
-    const toBytes = publicKeyBytesFromString(to)
-    const fromBody = await encrypt(body, from.public.bytes)
+    const toBytes = extractPublicKeyBytes(to)
+    const fromBytes = extractPublicKeyBytes(from.public)
+    const fromBody = await encrypt(body, fromBytes)
     const fromSig = await from.sign(fromBody)
     const toBody = await encrypt(body, toBytes)
     const toSig = await from.sign(toBody)
-    return sendMessage(this, to, toBody, toSig, fromBody, fromSig)
+    return sendMessage(this, to.toString(), toBody, toSig, fromBody, fromSig)
   }
 
   async listInboxMessages(

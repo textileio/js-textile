@@ -211,9 +211,10 @@ describe('Users...', () => {
   })
 
   describe('mailbox', async () => {
-    const user1 = await PrivateKey.fromRandom()
-    const user2 = await PrivateKey.fromRandom()
+    const userId1 = await PrivateKey.fromRandom()
+    const userId2 = await PrivateKey.fromRandom()
     const ctx = new Context(addrApiurl)
+    const ctx2 = new Context(addrApiurl)
     let dev: SignupReply.AsObject
     before(async function () {
       this.timeout(10000)
@@ -222,6 +223,7 @@ describe('Users...', () => {
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'USER')
       await ctx.withAPIKey(key.key).withKeyInfo(key)
+      await ctx2.withAPIKey(key.key).withKeyInfo(key)
     })
     it('should setup mailbox', async () => {
       const user = new Users(ctx)
@@ -234,19 +236,24 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
 
-      const token = await user.getToken(user1)
+      const token = await user.getToken(userId1)
       ctx.withToken(token) // to skip regen in later calls
       const res = await user.setupMailbox()
       expect(res.mailboxID).to.not.be.undefined
+      
+      // Should setup user2 mailbox without error
+      const user2 = new Users(ctx2)
+      const token2 = await user2.getToken(userId2)
+      ctx2.withToken(token2) // to skip regen in later calls
     })
     it('should send a message to user2', async () => {
       const user = new Users(ctx)
       const nowish = Math.floor(new Date().getTime())
       const encoder = new TextEncoder()
-      const res = await user.sendMessage(user1, user2.public.toString(), encoder.encode('first'))
+      const res = await user.sendMessage(userId1, userId2.public, encoder.encode('first'))
       const sentish = Math.floor(res.createdAt)
       expect(res.id).to.not.be.undefined
-      expect(Math.abs(sentish - nowish)).to.be.lessThan(10000)
+      expect(Math.abs(sentish - nowish)).to.be.lessThan(3000)
     })
   })
 })
