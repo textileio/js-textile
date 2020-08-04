@@ -7,7 +7,7 @@
  * It is meant to be implemented by external libraries, though in practice,
  * implementations are provided by the `@textile/crypto` library.
  *
- * If using in your on application, see the {@link PrivateKey} class.
+ * If using in your own application, see the {@link PrivateKey} class.
  */
 export interface Identity {
   /**
