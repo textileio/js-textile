@@ -16,8 +16,7 @@
     "prepare": "npm run build",
     "prebuild": "npm run clean",
     "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
-    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "repository": {
     "type": "git",
