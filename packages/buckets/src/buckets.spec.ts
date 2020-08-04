@@ -6,6 +6,7 @@ import { InitReply } from '@textile/buckets-grpc/buckets_pb'
 import { Context } from '@textile/context'
 import { Buckets } from './buckets'
 import { signUp } from './spec.util'
+import { InitObject } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -16,7 +17,7 @@ const sessionSecret = 'hubsession'
 describe('Buckets...', () => {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
-  let buck: InitReply.AsObject
+  let buck: InitObject
   let fileSize: number
 
   before(async () => {
@@ -53,8 +54,8 @@ describe('Buckets...', () => {
     const root = roots[index]
     expect(root).to.have.ownProperty('key', buck.root?.key)
     expect(root).to.have.ownProperty('path', buck.root?.path)
-    expect(root).to.have.ownProperty('createdat', buck.root?.createdat)
-    expect(root).to.have.ownProperty('updatedat', buck.root?.updatedat)
+    expect(root).to.have.ownProperty('createdat', buck.root?.createdAt)
+    expect(root).to.have.ownProperty('updatedat', buck.root?.updatedAt)
   })
 
   it('should list empty bucket content at path', async () => {

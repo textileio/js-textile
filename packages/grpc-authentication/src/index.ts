@@ -18,7 +18,9 @@ export class GrpcAuthentication extends GrpcConnection {
    * This will copy any existing authentication and authorization info, including:
    *
    *   - Information created withKeyInfo and withUserAuth.
+   *
    *   - Any token generated from getToken or getTokenChallenge.
+   *
    *   - If you scoped the instance to a specific thread using withThread
    *
    * @param auth any authenticated API class such as Users or Buckets.

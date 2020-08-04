@@ -67,7 +67,7 @@ export { ArchiveWatchReply }
 // @public
 export class Buckets extends GrpcAuthentication {
     // @beta
-    archive(key: string): Promise<ArchiveReply.AsObject>;
+    archive(key: string): Promise<void>;
     // @beta
     archiveInfo(key: string): Promise<ArchiveInfoReply.AsObject>;
     // @beta
@@ -79,20 +79,20 @@ export class Buckets extends GrpcAuthentication {
     }, err?: Error) => void): Promise<() => void>;
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): Buckets;
     getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
-        root?: Root.AsObject;
+        root?: RootObject;
         threadID?: string;
     }>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    init(name: string, isPrivate?: boolean): Promise<InitReply.AsObject>;
-    links(key: string): Promise<LinksReply.AsObject>;
-    list(): Promise<Root.AsObject[]>;
-    listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined>;
-    listPath(key: string, path: string, depth?: number): Promise<ListPathReply.AsObject>;
+    init(name: string, isPrivate?: boolean): Promise<InitObject>;
+    links(key: string): Promise<LinksObject>;
+    list(): Promise<RootObject[]>;
+    listIpfsPath(path: string): Promise<ListPathItemObject | undefined>;
+    listPath(key: string, path: string, depth?: number): Promise<ListPathObject>;
     listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<Array<string>>;
     // @deprecated
     open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
-        root?: Root.AsObject;
+        root?: RootObject;
         threadID?: string;
     }>;
     pullIpfsPath(path: string, opts?: {
@@ -106,14 +106,14 @@ export class Buckets extends GrpcAuthentication {
     }): Promise<PushPathResult>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
-    root(key: string): Promise<Root.AsObject | undefined>;
+    root(key: string): Promise<RootObject | undefined>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
 }
 
 // @beta
-export function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveReply.AsObject>;
+export function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<void>;
 
 // @beta
 export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfoReply.AsObject>;
@@ -128,19 +128,19 @@ export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: 
 }, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
 
 // @public
-export function bucketsInit(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitReply.AsObject>;
+export function bucketsInit(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitObject>;
 
 // @public
-export function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksReply.AsObject>;
+export function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject>;
 
 // @public
-export function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root.AsObject>>;
+export function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>>;
 
 // @public
-export function bucketsListIpfsPath(api: GrpcConnection, path: string, ctx?: ContextInterface): Promise<ListPathItem.AsObject | undefined>;
+export function bucketsListIpfsPath(api: GrpcConnection, path: string, ctx?: ContextInterface): Promise<ListPathItemObject | undefined>;
 
 // @public
-export function bucketsListPath(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<ListPathReply.AsObject>;
+export function bucketsListPath(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<ListPathObject>;
 
 // @public
 export function bucketsPullIpfsPath(api: GrpcConnection, path: string, opts?: {
@@ -164,7 +164,7 @@ export function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInt
 export function bucketsRemovePath(api: GrpcConnection, key: string, path: string, root?: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
-export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
+export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<RootObject | undefined>;
 
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
@@ -218,6 +218,9 @@ export class Client {
     // Warning: (ae-forgotten-export) The symbol "WriteTransaction" needs to be exported by the entry point index.d.ts
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
+
+// @public (undocumented)
+export const convertPathItem: (item: ListPathItem) => ListPathItemObject;
 
 // @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
@@ -294,12 +297,27 @@ export interface InboxListOptions {
     status?: Status | StatusInt;
 }
 
+// @public (undocumented)
+export type InitObject = {
+    seed: Uint8Array;
+    seedCid: string;
+    root?: RootObject;
+    links?: LinksObject;
+};
+
 export { InitReply }
 
 // @public
 export type KeyInfo = {
     key: string;
     secret?: string;
+};
+
+// @public (undocumented)
+export type LinksObject = {
+    www: string;
+    ipns: string;
+    url: string;
 };
 
 export { LinksReply }
@@ -318,8 +336,24 @@ export function listPathFlat(grpc: GrpcConnection, bucketKey: string, path: stri
 
 export { ListPathItem }
 
+// @public (undocumented)
+export type ListPathItemObject = {
+    cid: string;
+    name: string;
+    path: string;
+    size: number;
+    isdir: boolean;
+    itemsList: Array<ListPathItemObject>;
+};
+
+// @public (undocumented)
+export type ListPathObject = {
+    item?: ListPathItemObject;
+    root?: RootObject;
+};
+
 // @public
-export function listPathRecursive(grpc: GrpcConnection, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<ListPathReply.AsObject>;
+export function listPathRecursive(grpc: GrpcConnection, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<ListPathObject>;
 
 export { ListPathReply }
 
@@ -441,6 +475,16 @@ export { RemoveReply }
 
 export { Root }
 
+// @public (undocumented)
+export type RootObject = {
+    key: string;
+    name: string;
+    path: string;
+    createdAt: number;
+    updatedAt: number;
+    thread: string;
+};
+
 export { RootReply }
 
 // @public (undocumented)
@@ -535,7 +579,7 @@ export interface UserMessage {
     to: string;
 }
 
-// @public (undocumented)
+// @public
 export class Users extends GrpcAuthentication {
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): Users;
     deleteInboxMessage(id: string): Promise<{}>;
