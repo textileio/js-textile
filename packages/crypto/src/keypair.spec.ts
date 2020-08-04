@@ -8,8 +8,8 @@ describe('Keypair', () => {
   // Type checking/external lib support
   it('should support libp2p keys that match our interfaces', async () => {
     const ed25519: Private = await keys.generateKeyPair('Ed25519', 256)
-    const rsa: Private = await keys.generateKeyPair('RSA', 256)
-    const secp256k1: Private = await keys.generateKeyPair('secp256k1', 256)
+    const rsa: Private = await keys.generateKeyPair('RSA', 512)
+    const secp256k1: Private = await keys.generateKeyPair('secp256k1', 512)
     expect(ed25519).to.haveOwnProperty('sign')
     expect(rsa).to.haveOwnProperty('sign')
     expect(secp256k1).to.haveOwnProperty('sign')
