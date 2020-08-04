@@ -3,7 +3,9 @@
  * @packageDocumentation
  */
 export { ThreadID, Variant } from '@textile/threads-id'
-export { Identity } from '@textile/threads-core'
 export { Client } from '@textile/hub-threads-client'
 export * from '@textile/buckets'
+export * from '@textile/crypto'
 export * from '@textile/security'
+export * from '@textile/users'
+export * from '@textile/grpc-authentication'

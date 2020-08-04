@@ -14,6 +14,7 @@ import {
   ArchiveStatusReply,
   ArchiveInfoReply,
 } from '@textile/buckets-grpc/buckets_pb'
+import { KeyInfo, UserAuth } from '@textile/security'
 import {
   bucketsArchiveWatch,
   bucketsArchiveInfo,
@@ -104,21 +105,73 @@ const logger = log.getLogger('buckets')
  */
 export class Buckets extends GrpcAuthentication {
   /**
-   * Use the Buckets APIs with the sessions already created when using
-   * other API classes, such as Users.
-   *
+   * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
+   * 
    * @example
-   * ```typescript
-   * import { Buckets, Users } from "@textile/hub"
+   * Copy an authenticated Users api instance to Buckets.
+   * ```tyepscript
+   * import { Buckets, Users } from '@textile/hub'
    *
-   * function transferAuth(user: Users): buckets {
-   *   const buckets = Buckets.withAuth(user)
+   * const usersToBuckets = async (user: Users) => {
+   *   const buckets = Buckets.copyAuth(user)
    *   return buckets
    * }
+   * ```
+   *
+   * @example
+   * Copy an authenticated Buckets api instance to Users.
+   * ```tyepscript
+   * import { Buckets, Users } from '@textile/hub'
+   *
+   * const bucketsToUsers = async (buckets: Buckets) => {
+   *   const user = Users.copyAuth(buckets)
+   *   return user
+   * }
+   * ```
    */
-  withAuth(auth: GrpcAuthentication) {
-    return new Buckets(auth.context)
+  static copyAuth(auth: GrpcAuthentication, debug = false) {
+    return new Buckets(auth.context, debug)
   }
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
+   */
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
+    const res = super.withUserAuth(auth, host, debug)
+    return this.copyAuth(res, debug)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withKeyInfo}
+   */
+  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
+    const auth = await super.withKeyInfo(key, host, debug)
+    return this.copyAuth(auth, debug)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withThread}
+   */
+  withThread(threadID?: string) {
+    return super.withThread(threadID)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   */
+  async getToken(identity: Identity) {
+    return super.getToken(identity)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
+   */
+  async getTokenChallenge(
+    publicKey: string,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
+  ): Promise<string> {
+    return super.getTokenChallenge(publicKey, callback)
+  }
+
   /**
    * Open a new / existing bucket by bucket name and ThreadID (init not required)
    * @param name name of bucket
@@ -194,30 +247,6 @@ export class Buckets extends GrpcAuthentication {
     }
     const created = await this.init(name, isPrivate)
     return { root: created.root, threadID }
-  }
-
-  /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   */
-  async getToken(identity: Identity) {
-    const client = new Client(this.context)
-    return client.getToken(identity)
-  }
-
-  /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   * @param callback A callback function that takes a `challenge` argument and returns a signed
-   * message using the input challenge and the private key associated with `publicKey`.
-   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
-   */
-  async getTokenChallenge(
-    publicKey: string,
-    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
-  ): Promise<string> {
-    const client = new Client(this.context)
-    return client.getTokenChallenge(publicKey, callback)
   }
 
   /**

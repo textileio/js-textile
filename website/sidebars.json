@@ -1,7 +1,11 @@
 {
   "docs": {
     "Getting Started": [
-      "index"
+      "index",
+      "hub"
+    ],
+    "Users API": [
+      "hub.users"
     ],
     "Buckets": [
       "hub.buckets"
@@ -18,11 +22,51 @@
       "hub.keyinfo"
     ]
   },
+  "users-docs": {
+    "Users API": [
+      "hub.users.copyauth",
+      "hub.users.withuserauth",
+      "hub.users.withkeyinfo",
+      "hub.users.gettoken",
+      "hub.users.gettokenchallenge",
+      "hub.users.setupmailbox",
+      "hub.users.sendmessage",
+      "hub.users.listsentboxmessages",
+      "hub.users.deletesentboxmessage",
+      "hub.users.listinboxmessages",
+      "hub.users.readinboxmessage",
+      "hub.users.deleteinboxmessage",
+      "hub.users.listthreads",
+      "hub.users.getthreads"
+    ],
+    "Generic User Identity": [
+      "hub.identity",
+      "hub.identity.public",
+      "hub.identity.sign"
+    ],
+    "Public Keys": [
+      "hub.public",
+      "hub.public.bytes",
+      "hub.public.tostring",
+      "hub.public.verify"
+    ],
+    "Private Keys": [
+      "hub.private",
+      "hub.privatekey",
+      "hub.privatekey.fromrandom",
+      "hub.privatekey.fromstring",
+      "hub.privatekey.sign",
+      "hub.privatekey.decrypt",
+      "hub.privatekey.bytes",
+      "hub.privatekey.public"
+    ]
+  },
   "bucket-docs": {
     "Buckets": [
       "hub.buckets.withuserauth",
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
+      "hub.buckets.gettokenchallenge",
       "hub.buckets.getorinit",
       "hub.buckets.init",
       "hub.buckets.root",

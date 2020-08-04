@@ -1,8 +1,9 @@
 import nacl from 'tweetnacl'
 import { convertPublicKey, convertSecretKey } from 'ed2curve'
 import multibase from 'multibase'
-import type { Public } from './identity'
+import type { Public, Private } from './identity'
 import { decodePrivateKey, decodePublicKey } from './proto.keys'
+import { PrivateKey } from './keypair'
 
 const nonceBytes = 24 // Length of nacl nonce
 const privateKeyBytes = 32

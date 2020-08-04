@@ -10,27 +10,43 @@ import { ArchiveStatusReply } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveWatchReply } from '@textile/buckets-grpc/buckets_pb';
 import CID from 'cids';
 import { ContextInterface } from '@textile/context';
+import { DeleteMessageReply } from '@textile/users-grpc/users_pb';
+import { DeleteMessageRequest } from '@textile/users-grpc/users_pb';
+import { GetThreadReply } from '@textile/users-grpc/users_pb';
+import { GetThreadRequest } from '@textile/users-grpc/users_pb';
 import { grpc } from '@improbable-eng/grpc-web';
-import { Identity } from '@textile/threads-core';
+import { GrpcConnection } from '@textile/grpc-connection';
+import { Identity as Identity_2 } from '@textile/threads-core';
 import { InitReply } from '@textile/buckets-grpc/buckets_pb';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { LinksReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListInboxMessagesRequest } from '@textile/users-grpc/users_pb';
 import { ListIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListMessagesReply } from '@textile/users-grpc/users_pb';
 import { ListPathItem } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { ListReply } from '@textile/buckets-grpc/buckets_pb';
+import { ListSentboxMessagesRequest } from '@textile/users-grpc/users_pb';
+import { ListThreadsReply } from '@textile/users-grpc/users_pb';
+import { ListThreadsRequest } from '@textile/users-grpc/users_pb';
 import { name as name_2 } from 'multibase';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import { PullIpfsPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { PullPathReply } from '@textile/buckets-grpc/buckets_pb';
 import { PushPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { ReadInboxMessageReply } from '@textile/users-grpc/users_pb';
+import { ReadInboxMessageRequest } from '@textile/users-grpc/users_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 import { RemovePathReply } from '@textile/buckets-grpc/buckets_pb';
 import { RemoveReply } from '@textile/buckets-grpc/buckets_pb';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { RootReply } from '@textile/buckets-grpc/buckets_pb';
+import { SendMessageReply } from '@textile/users-grpc/users_pb';
+import { SendMessageRequest } from '@textile/users-grpc/users_pb';
 import { SetPathReply } from '@textile/buckets-grpc/buckets_pb';
+import { SetupMailboxReply } from '@textile/users-grpc/users_pb';
+import { SetupMailboxRequest } from '@textile/users-grpc/users_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -49,7 +65,7 @@ export { ArchiveStatusReply }
 export { ArchiveWatchReply }
 
 // @public
-export class Buckets extends BucketsGrpcClient {
+export class Buckets extends GrpcAuthentication {
     // @beta
     archive(key: string): Promise<ArchiveReply.AsObject>;
     // @beta
@@ -61,11 +77,12 @@ export class Buckets extends BucketsGrpcClient {
         id: string | undefined;
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
+    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Buckets;
     getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: Root.AsObject;
         threadID?: string;
     }>;
-    getToken(identity: Identity): Promise<string>;
+    getToken(identity: Identity_2): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     init(name: string, isPrivate?: boolean): Promise<InitReply.AsObject>;
     links(key: string): Promise<LinksReply.AsObject>;
@@ -96,71 +113,58 @@ export class Buckets extends BucketsGrpcClient {
 }
 
 // @beta
-export function bucketsArchive(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveReply.AsObject>;
+export function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveReply.AsObject>;
 
 // @beta
-export function bucketsArchiveInfo(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveInfoReply.AsObject>;
+export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfoReply.AsObject>;
 
 // @beta
-export function bucketsArchiveStatus(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<ArchiveStatusReply.AsObject>;
+export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatusReply.AsObject>;
 
 // @beta
-export function bucketsArchiveWatch(api: BucketsGrpcClient, key: string, callback: (reply?: {
+export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: (reply?: {
     id: string | undefined;
     msg: string;
 }, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
 
-// @public (undocumented)
-export class BucketsGrpcClient {
-    constructor(context?: ContextInterface, debug?: boolean);
-    // (undocumented)
-    context: ContextInterface;
-    // (undocumented)
-    rpcOptions: grpc.RpcOptions;
-    // (undocumented)
-    serviceHost: string;
-    // (undocumented)
-    unary<R extends grpc.ProtobufMessage, T extends grpc.ProtobufMessage, M extends grpc.UnaryMethodDefinition<R, T>>(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T>;
-}
+// @public
+export function bucketsInit(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitReply.AsObject>;
 
 // @public
-export function bucketsInit(api: BucketsGrpcClient, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitReply.AsObject>;
+export function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksReply.AsObject>;
 
 // @public
-export function bucketsLinks(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<LinksReply.AsObject>;
+export function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root.AsObject>>;
 
 // @public
-export function bucketsList(api: BucketsGrpcClient, ctx?: ContextInterface): Promise<Array<Root.AsObject>>;
+export function bucketsListIpfsPath(api: GrpcConnection, path: string, ctx?: ContextInterface): Promise<ListPathItem.AsObject | undefined>;
 
 // @public
-export function bucketsListIpfsPath(api: BucketsGrpcClient, path: string, ctx?: ContextInterface): Promise<ListPathItem.AsObject | undefined>;
+export function bucketsListPath(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<ListPathReply.AsObject>;
 
 // @public
-export function bucketsListPath(api: BucketsGrpcClient, key: string, path: string, ctx?: ContextInterface): Promise<ListPathReply.AsObject>;
-
-// @public
-export function bucketsPullIpfsPath(api: BucketsGrpcClient, path: string, opts?: {
+export function bucketsPullIpfsPath(api: GrpcConnection, path: string, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
 
 // @public
-export function bucketsPullPath(api: BucketsGrpcClient, key: string, path: string, opts?: {
+export function bucketsPullPath(api: GrpcConnection, key: string, path: string, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
 
 // @public
-export function bucketsPushPath(api: BucketsGrpcClient, key: string, path: string, input: any, opts?: {
+export function bucketsPushPath(api: GrpcConnection, key: string, path: string, input: any, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): Promise<PushPathResult>;
 
 // @public
-export function bucketsRemove(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<void>;
+export function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
-export function bucketsRemovePath(api: BucketsGrpcClient, key: string, path: string, root?: string, ctx?: ContextInterface): Promise<void>;
+export function bucketsRemovePath(api: GrpcConnection, key: string, path: string, root?: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
-export function bucketsRoot(api: BucketsGrpcClient, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
+export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root.AsObject | undefined>;
 
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
@@ -181,7 +185,7 @@ export class Client {
     findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
     getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
     getDBInfo(threadID: ThreadID): Promise<DBInfo>;
-    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
+    getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
     has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
     // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
@@ -222,9 +226,73 @@ export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
 
 // @public
+export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: string): Promise<Uint8Array>;
+
+// @public (undocumented)
+export function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}>;
+
+export { DeleteMessageReply }
+
+export { DeleteMessageRequest }
+
+// @public (undocumented)
+export function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}>;
+
+// @public
+export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: string): Promise<Uint8Array>;
+
+// @public
 export const expirationError: Error;
 
-export { Identity }
+// @public (undocumented)
+export function extractPublicKeyBytes(key: Public): Uint8Array;
+
+// @public (undocumented)
+export function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadReplyObj>;
+
+export { GetThreadReply }
+
+// @public (undocumented)
+export interface GetThreadReplyObj {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    isDB: boolean;
+    // (undocumented)
+    name: string;
+}
+
+export { GetThreadRequest }
+
+// @public (undocumented)
+export class GrpcAuthentication extends GrpcConnection {
+    static copyAuth(auth: GrpcAuthentication, debug?: boolean): GrpcAuthentication;
+    getToken(identity: Identity_2): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<GrpcAuthentication>;
+    withThread(threadID?: string): this | undefined;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): GrpcAuthentication;
+}
+
+// @public
+export interface Identity {
+    // (undocumented)
+    public: Public;
+    // (undocumented)
+    sign(data: Uint8Array): Promise<Uint8Array>;
+}
+
+// @public (undocumented)
+export interface InboxListOptions {
+    // (undocumented)
+    ascending?: boolean;
+    // (undocumented)
+    limit?: number;
+    // (undocumented)
+    seek?: string;
+    // (undocumented)
+    status?: Status | StatusInt;
+}
 
 export { InitReply }
 
@@ -236,19 +304,108 @@ export type KeyInfo = {
 
 export { LinksReply }
 
+// @public (undocumented)
+export function listInboxMessages(api: GrpcConnection, opts?: InboxListOptions, ctx?: ContextInterface): Promise<Array<UserMessage>>;
+
+export { ListInboxMessagesRequest }
+
 export { ListIpfsPathReply }
 
+export { ListMessagesReply }
+
 // @public
-export function listPathFlat(grpc: BucketsGrpcClient, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<Array<string>>;
+export function listPathFlat(grpc: GrpcConnection, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<Array<string>>;
 
 export { ListPathItem }
 
 // @public
-export function listPathRecursive(grpc: BucketsGrpcClient, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<ListPathReply.AsObject>;
+export function listPathRecursive(grpc: GrpcConnection, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<ListPathReply.AsObject>;
 
 export { ListPathReply }
 
 export { ListReply }
+
+// @public (undocumented)
+export function listSentboxMessages(api: GrpcConnection, opts?: SentboxListOptions, ctx?: ContextInterface): Promise<Array<UserMessage>>;
+
+export { ListSentboxMessagesRequest }
+
+// @public (undocumented)
+export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadReplyObj>>;
+
+export { ListThreadsReply }
+
+export { ListThreadsRequest }
+
+// @public (undocumented)
+export type Private = Identity;
+
+// @public (undocumented)
+export class PrivateKey implements Private {
+    constructor(secretKey: Uint8Array, type?: string);
+    // (undocumented)
+    get bytes(): Uint8Array;
+    canSign(): boolean;
+    // (undocumented)
+    decrypt(ciphertext: Uint8Array): Promise<Uint8Array>;
+    static fromRandom(): PrivateKey;
+    static fromRawEd25519Seed(rawSeed: Uint8Array): PrivateKey;
+    // (undocumented)
+    static fromString(str: string): PrivateKey;
+    // (undocumented)
+    privKey: Uint8Array;
+    // (undocumented)
+    pubKey: Uint8Array;
+    // (undocumented)
+    get public(): PublicKey;
+    // (undocumented)
+    seed: Uint8Array;
+    sign(data: Uint8Array): Promise<Uint8Array>;
+    // (undocumented)
+    toString(): string;
+    // (undocumented)
+    type: string;
+}
+
+// @public (undocumented)
+export function privateKeyFromString(str: string): Uint8Array;
+
+// @public (undocumented)
+export interface Public {
+    // (undocumented)
+    bytes: Uint8Array;
+    // (undocumented)
+    toString(): string;
+    // (undocumented)
+    verify(data: Uint8Array, sig: Uint8Array): Promise<boolean>;
+}
+
+// @public (undocumented)
+export class PublicKey implements Public {
+    constructor(pubKey: Uint8Array, type?: string);
+    // (undocumented)
+    get bytes(): Uint8Array;
+    // (undocumented)
+    encrypt(data: Uint8Array): Promise<Uint8Array>;
+    // (undocumented)
+    static fromString(str: string): PublicKey;
+    // (undocumented)
+    pubKey: Uint8Array;
+    // (undocumented)
+    toString(): string;
+    // (undocumented)
+    type: string;
+    verify(data: Uint8Array, signature: Uint8Array): Promise<boolean>;
+}
+
+// @public (undocumented)
+export function publicKeyBytesFromString(str: string): Uint8Array;
+
+// @public (undocumented)
+export function publicKeyBytesToString(bytes: Uint8Array): string;
+
+// @public (undocumented)
+export function publicKeyToString(key: Public): string;
 
 export { PullIpfsPathReply }
 
@@ -269,6 +426,15 @@ export interface PushPathResult {
     root: string;
 }
 
+// @public (undocumented)
+export function readInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{
+    readAt: number;
+}>;
+
+export { ReadInboxMessageReply }
+
+export { ReadInboxMessageRequest }
+
 export { RemovePathReply }
 
 export { RemoveReply }
@@ -277,7 +443,51 @@ export { Root }
 
 export { RootReply }
 
+// @public (undocumented)
+export function sendMessage(api: GrpcConnection, from: string, to: string, toBody: Uint8Array, toSignature: Uint8Array, fromBody: Uint8Array, fromSignature: Uint8Array, ctx?: ContextInterface): Promise<UserMessage>;
+
+export { SendMessageReply }
+
+export { SendMessageRequest }
+
+// @public (undocumented)
+export interface SentboxListOptions {
+    // (undocumented)
+    ascending?: boolean;
+    // (undocumented)
+    limit?: number;
+    // (undocumented)
+    seek?: string;
+}
+
 export { SetPathReply }
+
+// @public (undocumented)
+export function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<{
+    mailboxID: Uint8Array;
+}>;
+
+export { SetupMailboxReply }
+
+export { SetupMailboxRequest }
+
+// @public (undocumented)
+export type StaticThis<T> = {
+    new (context: ContextInterface, debug?: boolean): T;
+};
+
+// @public (undocumented)
+export enum Status {
+    // (undocumented)
+    ALL = 0,
+    // (undocumented)
+    READ = 1,
+    // (undocumented)
+    UNREAD = 2
+}
+
+// @public (undocumented)
+export type StatusInt = 0 | 1 | 2;
 
 // @public
 export class ThreadID {
@@ -306,6 +516,47 @@ export type UserAuth = {
     msg: string;
     token?: string;
 };
+
+// @public (undocumented)
+export interface UserMessage {
+    // (undocumented)
+    body: Uint8Array;
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    from: string;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    readAt?: number;
+    // (undocumented)
+    signature: Uint8Array;
+    // (undocumented)
+    to: string;
+}
+
+// @public (undocumented)
+export class Users extends GrpcAuthentication {
+    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Users;
+    deleteInboxMessage(id: string): Promise<{}>;
+    deleteSentboxMessage(id: string): Promise<{}>;
+    getThread(name: string): Promise<GetThreadReplyObj>;
+    getToken(identity: Identity): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    listInboxMessages(opts?: InboxListOptions): Promise<Array<UserMessage>>;
+    listSentboxMessages(opts?: SentboxListOptions): Promise<Array<UserMessage>>;
+    listThreads(): Promise<Array<GetThreadReplyObj>>;
+    readInboxMessage(id: string): Promise<{
+        readAt: number;
+    }>;
+    sendMessage(from: Identity, to: Public, body: Uint8Array): Promise<UserMessage>;
+    setupMailbox(): Promise<{
+        mailboxID: Uint8Array;
+    }>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Users>;
+    withThread(threadID?: string): this | undefined;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Users;
+}
 
 // @public
 export enum Variant {

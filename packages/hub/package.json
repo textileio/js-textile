@@ -27,7 +27,9 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/buckets": "^0.5.1",
-    "@textile/hub-threads-client": "^0.3.1",
+    "@textile/users": "^0.0.1",
+    "@textile/crypto": "^0.0.0",
+    "@textile/grpc-authentication": "^0.0.1",
     "@textile/security": "^0.2.4",
     "@textile/threads-client": "^0.8.4",
     "@textile/threads-core": "^0.1.33",
@@ -50,6 +52,12 @@
   "references": [
     {
       "path": "../buckets"
+    },
+    {
+      "path": "../users"
+    },
+    {
+      "path": "../crypto"
     },
     {
       "path": "../hub-threads-client"
