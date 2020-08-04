@@ -1,6 +1,6 @@
 import { Context, defaultHost, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { Identity } from '@textile/threads-core'
+import { Identity } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { Client } from '@textile/hub-threads-client'
 
@@ -8,15 +8,22 @@ import { Client } from '@textile/hub-threads-client'
 // https://stackoverflow.com/questions/45123761/instantiating-child-class-from-a-static-method-in-base-class-using-typescript/45262288
 export type StaticThis<T> = { new (context: ContextInterface, debug?: boolean): T }
 
+/**
+ * Not a directly used class, but defines the authorization, authentication, and
+ * API scoping methods used by gRPC API client classes such as Users and Buckets.
+ */
 export class GrpcAuthentication extends GrpcConnection {
   /**
    * Copies the full scope and authentication from one API instance to this one.
    * This will copy any existing authentication and authorization info, including:
-   * * Information created withKeyInfo and withUserAuth.
-   * * Any token generated from getToken or getTokenChallenge.
-   * * If you scoped the instance to a specific thread using withThread
    *
-   * @param auth The UserAuth object.
+   *   - Information created withKeyInfo and withUserAuth.
+   *
+   *   - Any token generated from getToken or getTokenChallenge.
+   *
+   *   - If you scoped the instance to a specific thread using withThread
+   *
+   * @param auth any authenticated API class such as Users or Buckets.
    *
    * @example
    * Copy an authenticated Users api instance to Buckets.

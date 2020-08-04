@@ -1,19 +1,10 @@
 import log from 'loglevel'
-import { Context, defaultHost } from '@textile/context'
+import { defaultHost } from '@textile/context'
 import { Client } from '@textile/hub-threads-client'
-import { Identity } from '@textile/threads-core'
+import { Identity } from '@textile/crypto'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
-import {
-  Root,
-  InitReply,
-  LinksReply,
-  ListPathReply,
-  ListPathItem,
-  ArchiveReply,
-  ArchiveStatusReply,
-  ArchiveInfoReply,
-} from '@textile/buckets-grpc/buckets_pb'
+import { ArchiveStatusReply, ArchiveInfoReply } from '@textile/buckets-grpc/buckets_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import {
   bucketsArchiveWatch,
@@ -31,6 +22,11 @@ import {
   bucketsRoot,
   bucketsInit,
   PushPathResult,
+  RootObject,
+  LinksObject,
+  ListPathObject,
+  ListPathItemObject,
+  InitObject,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -106,7 +102,7 @@ const logger = log.getLogger('buckets')
 export class Buckets extends GrpcAuthentication {
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
-   * 
+   *
    * @example
    * Copy an authenticated Users api instance to Buckets.
    * ```tyepscript
@@ -185,7 +181,7 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     isPrivate = false,
     threadID?: string,
-  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
+  ): Promise<{ root?: RootObject; threadID?: string }> {
     return this.getOrInit(name, threadName, isPrivate, threadID)
   }
 
@@ -198,7 +194,7 @@ export class Buckets extends GrpcAuthentication {
    * @param threadID id of thread where bucket is stored
    * @example
    * Initialize a Bucket called "app-name-files"
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, UserAuth } from '@textile/hub'
    *
    * const open = async (auth: UserAuth, name: string) => {
@@ -213,7 +209,7 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     isPrivate = false,
     threadID?: string,
-  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
+  ): Promise<{ root?: RootObject; threadID?: string }> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
@@ -264,7 +260,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async init(name: string, isPrivate = false): Promise<InitReply.AsObject> {
+  async init(name: string, isPrivate = false): Promise<InitObject> {
     logger.debug('init request')
     return bucketsInit(this, name, isPrivate)
   }
@@ -297,7 +293,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async links(key: string): Promise<LinksReply.AsObject> {
+  async links(key: string): Promise<LinksObject> {
     logger.debug('link request')
     return bucketsLinks(this, key)
   }
@@ -326,7 +322,7 @@ export class Buckets extends GrpcAuthentication {
    * @param path A file/object (sub)-path within a bucket.
    * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, depth = 1): Promise<ListPathReply.AsObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<ListPathObject> {
     logger.debug('list path request')
     return await listPathRecursive(this, key, path, depth)
   }
@@ -365,7 +361,7 @@ export class Buckets extends GrpcAuthentication {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined> {
+  async listIpfsPath(path: string): Promise<ListPathItemObject | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }
@@ -467,7 +463,7 @@ export class Buckets extends GrpcAuthentication {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archive(key: string): Promise<ArchiveReply.AsObject> {
+  async archive(key: string) {
     logger.debug('archive request')
     return bucketsArchive(this, key)
   }

@@ -1,6 +1,8 @@
 import log from 'loglevel'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
+import { UserAuth, KeyInfo } from '@textile/security'
+import { defaultHost } from '@textile/context'
 import {
   getThread,
   listInboxMessages,
@@ -16,15 +18,64 @@ import {
   GetThreadReplyObj,
   UserMessage,
 } from './api'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { defaultHost } from '@textile/context'
 
 const logger = log.getLogger('users')
 
+/**
+ * Users provides a web-gRPC wrapper client for communicating with the Textile
+ * Hub's web-gRPC enabled Users API.
+ * 
+ * This API has the ability to:
+ * 
+ *   - Register new users with a User Group key and obtain a new API Token
+ *
+ *   - Get and List all Threads created for/by the user in your app.
+ *
+ *   - Create an inbox for the user or send message to another user's inbox.
+ *
+ *   - Check, read, and delete messages in a user's inbox.
+ * 
+ * @example
+ * Initialize a the User API and list their threads.
+ * ```typescript
+ * import { Users, UserAuth } from '@textile/hub'
+ *
+ * const example = async (auth: UserAuth) => {
+ *   const api = Users.withUserAuth(auth)
+ *   const list = api.listThreads()
+ *   return list
+ * }
+ * ```
+ *
+ * @example
+ * Create a new inbox for the user
+ * ```typescript
+ * import { Users } from '@textile/hub'
+ *
+ * // This method requires you already authenticate the Users object.
+ * async function setupMailbox (users: Users) {
+ *   await users.setupMailbox()
+ * }
+ * ```
+ *
+ * @example
+ * Send a message to a public key
+ * ```typescript
+ * import { Users, Identity, PublicKey  } from "@textile/hub"
+ *
+ * // This method requires you already authenticate the Users object.
+ *
+ * async function example(api: Users, from: Identity, to: PublicKey, message: string) {
+ *   const encoder = new TextEncoder()
+ *   const body = encoder.encode(message)
+ *   return await api.sendMessage(from, to, body)
+ * }
+ * ```
+ */
 export class Users extends GrpcAuthentication {
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
-   * 
+   *
    * @example
    * Copy an authenticated Users api instance to Buckets.
    * ```tyepscript
@@ -145,14 +196,18 @@ export class Users extends GrpcAuthentication {
   /**
    * A local user can author messages to remote user through their public-key
    *
+   * @param from defines the local, sending, user. Any object that conforms to the Identity interface.
+   * @param to defines the remote, receiving user. Any object that conforms to the Public interface.
+   * @param body is the message body bytes in UInt8Array format.
+   *
    * @example
    * ```typescript
    * import { Users, Identity, PublicKey  } from "@textile/hub"
    *
-   * async function example(api: Users, sender: Identity, recipient: PublicKey, message: string) {
+   * async function example(api: Users, from: Identity, to: PublicKey, message: string) {
    *   const encoder = new TextEncoder()
-   *   const messageBytes = encoder.encode(message)
-   *   return await api.sendMessage(sender, recipient, messageBytes)
+   *   const body = encoder.encode(message)
+   *   return await api.sendMessage(from, to, body)
    * }
    * ```
    */

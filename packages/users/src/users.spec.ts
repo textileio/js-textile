@@ -2,7 +2,6 @@ import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
-import { Libp2pCryptoIdentity } from '@textile/threads-core'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
@@ -107,7 +106,7 @@ describe('Users...', () => {
       }
       // Not found
       const db = new Client(ctx)
-      const identity = await Libp2pCryptoIdentity.fromRandom()
+      const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
       try {
         await user.getThread('foo')
@@ -198,7 +197,7 @@ describe('Users...', () => {
       }
       // Empty
       const db = new Client(ctx)
-      const identity = await Libp2pCryptoIdentity.fromRandom()
+      const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
       let res = await user.listThreads()
       expect(res).to.have.length(0)

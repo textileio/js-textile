@@ -224,6 +224,9 @@
       "hub.client.writetransaction": {
         "title": "Client.writeTransaction() method"
       },
+      "hub.convertpathitem": {
+        "title": "convertPathItem variable"
+      },
       "hub.createapisig": {
         "title": "createAPISig() function"
       },
@@ -326,14 +329,26 @@
       "hub.inboxlistoptions.status": {
         "title": "InboxListOptions.status property"
       },
+      "hub.initobject": {
+        "title": "InitObject type"
+      },
       "hub.keyinfo": {
         "title": "KeyInfo type"
+      },
+      "hub.linksobject": {
+        "title": "LinksObject type"
       },
       "hub.listinboxmessages": {
         "title": "listInboxMessages() function"
       },
       "hub.listpathflat": {
         "title": "listPathFlat() function"
+      },
+      "hub.listpathitemobject": {
+        "title": "ListPathItemObject type"
+      },
+      "hub.listpathobject": {
+        "title": "ListPathObject type"
       },
       "hub.listpathrecursive": {
         "title": "listPathRecursive() function"
@@ -457,6 +472,9 @@
       },
       "hub.readinboxmessage": {
         "title": "readInboxMessage() function"
+      },
+      "hub.rootobject": {
+        "title": "RootObject type"
       },
       "hub.sendmessage": {
         "title": "sendMessage() function"
@@ -620,12 +638,12 @@
       "Users API": "Users API",
       "Buckets": "Buckets",
       "Threads": "Threads",
-      "Other Types & Methods": "Other Types & Methods",
-      "Users": "Users",
-      "Generic User Identity": "Generic User Identity",
-      "Public Keys": "Public Keys",
-      "Private Keys": "Private Keys",
-      "Client": "Client"
+      "Common Methods & Classes": "Common Methods & Classes",
+      "Identity interfaces": "Identity interfaces",
+      "Private Key Class": "Private Key Class",
+      "Public Key Class": "Public Key Class",
+      "Client": "Client",
+      "Common Types": "Common Types"
     }
   },
   "pages-strings": {
