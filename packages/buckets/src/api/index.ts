@@ -82,6 +82,8 @@ export type ListPathObject = {
   root?: RootObject
 }
 
+export type InitObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
+
 const convertRootObject = (root: Root): RootObject => {
   return {
     key: root.getKey(),
@@ -97,7 +99,7 @@ const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
   return convertRootObject(root)
 }
 
-const convertPathItem = (item: ListPathItem): ListPathItemObject => {
+export const convertPathItem = (item: ListPathItem): ListPathItemObject => {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -133,7 +135,7 @@ export async function bucketsInit(
   name: string,
   isPrivate = false,
   ctx?: ContextInterface,
-): Promise<{ root?: RootObject; seed: Uint8Array; links?: LinksReply.AsObject }> {
+): Promise<InitObject> {
   logger.debug('init request')
   const req = new InitRequest()
   req.setName(name)
@@ -141,8 +143,9 @@ export async function bucketsInit(
   const res: InitReply = await api.unary(API.Init, req, ctx)
   const links = res.getLinks()
   return {
-    root: convertRootObjectNullable(res.getRoot()),
     seed: res.getSeed_asU8(),
+    seedCid: res.getSeedcid(),
+    root: convertRootObjectNullable(res.getRoot()),
     links: links ? links.toObject() : undefined,
   }
 }
@@ -247,7 +250,7 @@ export async function bucketsListIpfsPath(
   const req = new ListIpfsPathRequest()
   req.setPath(path)
   const res: ListIpfsPathReply = await api.unary(API.ListIpfsPath, req, ctx)
-  return res.toObject().item
+  return convertPathItemNullable(res.getItem())
 }
 
 /**
@@ -484,8 +487,8 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
-  const res: ArchiveReply = await api.unary(API.Archive, req, ctx)
-  return res.toObject()
+  await api.unary(API.Archive, req, ctx)
+  return
 }
 
 /**

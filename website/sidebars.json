@@ -137,7 +137,7 @@
       "hub.inboxlistoptions",
       "hub.sentboxlistoptions",
       "hub.usermessage",
-      "hub.pushpathresult",
+      "hub.pushpathresult"
     ]
   }
 }

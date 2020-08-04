@@ -4,11 +4,7 @@ import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/crypto'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
-import {
-  ArchiveReply,
-  ArchiveStatusReply,
-  ArchiveInfoReply,
-} from '@textile/buckets-grpc/buckets_pb'
+import { ArchiveStatusReply, ArchiveInfoReply } from '@textile/buckets-grpc/buckets_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import {
   bucketsArchiveWatch,
@@ -29,6 +25,8 @@ import {
   RootObject,
   LinksObject,
   ListPathObject,
+  ListPathItemObject,
+  InitObject,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -262,7 +260,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async init(name: string, isPrivate = false): Promise<{ root?: RootObject; seed: Uint8Array; links?: LinksObject }> {
+  async init(name: string, isPrivate = false): Promise<InitObject> {
     logger.debug('init request')
     return bucketsInit(this, name, isPrivate)
   }
@@ -363,7 +361,7 @@ export class Buckets extends GrpcAuthentication {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<ListPathObject | undefined> {
+  async listIpfsPath(path: string): Promise<ListPathItemObject | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }
@@ -465,7 +463,7 @@ export class Buckets extends GrpcAuthentication {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archive(key: string): Promise<ArchiveReply.AsObject> {
+  async archive(key: string) {
     logger.debug('archive request')
     return bucketsArchive(this, key)
   }
