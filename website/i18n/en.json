@@ -266,24 +266,6 @@
       "hub.getthreadreplyobj.name": {
         "title": "GetThreadReplyObj.name property"
       },
-      "hub.grpcauthentication._copyauth": {
-        "title": "GrpcAuthentication.\\_copyAuth() method"
-      },
-      "hub.grpcauthentication._gettoken": {
-        "title": "GrpcAuthentication.\\_getToken() method"
-      },
-      "hub.grpcauthentication._gettokenchallenge": {
-        "title": "GrpcAuthentication.\\_getTokenChallenge() method"
-      },
-      "hub.grpcauthentication._withkeyinfo": {
-        "title": "GrpcAuthentication.\\_withKeyInfo() method"
-      },
-      "hub.grpcauthentication._withthread": {
-        "title": "GrpcAuthentication.\\_withThread() method"
-      },
-      "hub.grpcauthentication._withuserauth": {
-        "title": "GrpcAuthentication.\\_withUserAuth() method"
-      },
       "hub.grpcauthentication.copyauth": {
         "title": "GrpcAuthentication.copyAuth() method"
       },
