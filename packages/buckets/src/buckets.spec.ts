@@ -29,8 +29,8 @@ describe('Buckets...', () => {
     expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
-    expect(root).to.have.ownProperty('createdat')
-    expect(root).to.have.ownProperty('updatedat')
+    expect(root).to.have.ownProperty('createdAt')
+    expect(root).to.have.ownProperty('updatedAt')
   })
 
   it('should init a new bucket on open thread', async () => {
@@ -42,8 +42,8 @@ describe('Buckets...', () => {
     expect(buck).to.have.ownProperty('root')
     expect(buck.root).to.have.ownProperty('key')
     expect(buck.root).to.have.ownProperty('path')
-    expect(buck.root).to.have.ownProperty('createdat')
-    expect(buck.root).to.have.ownProperty('updatedat')
+    expect(buck.root).to.have.ownProperty('createdAt')
+    expect(buck.root).to.have.ownProperty('updatedAt')
   })
 
   it('should list buckets', async () => {
@@ -53,8 +53,8 @@ describe('Buckets...', () => {
     const root = roots[index]
     expect(root).to.have.ownProperty('key', buck.root?.key)
     expect(root).to.have.ownProperty('path', buck.root?.path)
-    expect(root).to.have.ownProperty('createdat', buck.root?.createdAt)
-    expect(root).to.have.ownProperty('updatedat', buck.root?.updatedAt)
+    expect(root).to.have.ownProperty('createdAt', buck.root?.createdAt)
+    expect(root).to.have.ownProperty('updatedAt', buck.root?.updatedAt)
   })
 
   it('should list empty bucket content at path', async () => {
