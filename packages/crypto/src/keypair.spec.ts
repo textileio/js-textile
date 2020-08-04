@@ -10,11 +10,16 @@ describe('Keypair', () => {
     const ed25519: Private = await keys.generateKeyPair('Ed25519', 256)
     const rsa: Private = await keys.generateKeyPair('RSA', 256)
     const secp256k1: Private = await keys.generateKeyPair('secp256k1', 256)
-    expect(ed25519.public).to.haveOwnProperty('bytes')
-    expect(rsa.public).to.haveOwnProperty('bytes')
-    expect(secp256k1.public).to.haveOwnProperty('bytes')
+    expect(ed25519).to.haveOwnProperty('sign')
+    expect(rsa).to.haveOwnProperty('sign')
+    expect(secp256k1).to.haveOwnProperty('sign')
 
     const edPublic: Public = ed25519.public
+    expect(edPublic).to.haveOwnProperty('verify')
+    const rsaPublic: Public = rsa.public
+    expect(rsaPublic).to.haveOwnProperty('verify')
+    const secpPublic: Public = secp256k1.public
+    expect(secpPublic).to.haveOwnProperty('verify')
   })
 
   it('should be able to serialize and recover identities', async () => {
