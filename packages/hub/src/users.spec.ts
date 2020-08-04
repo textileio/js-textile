@@ -3,7 +3,7 @@ import fs from 'fs'
 import { ThreadID } from '@textile/threads-id'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
-import { Libp2pCryptoIdentity } from '@textile/threads-core'
+import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { Buckets } from '@textile/buckets'
 import { Context } from '@textile/context'
@@ -71,7 +71,7 @@ describe('All apis...', () => {
 
         // This should automatically generate a user identity and validate keys, though we use a random ident
         // for demo purposes here to show that it can also use custom identities
-        const identity = await Libp2pCryptoIdentity.fromRandom()
+        const identity = await PrivateKey.fromRandom()
         // We also explicitly specify a custom context here, which could be omitted as it uses reasonable defaults
         const userContext = await new Context(addrApiurl).withKeyInfo(key)
         // In the app, we simply create a new user from the provided user key, signing is done automatically

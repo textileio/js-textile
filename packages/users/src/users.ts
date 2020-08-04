@@ -145,14 +145,18 @@ export class Users extends GrpcAuthentication {
   /**
    * A local user can author messages to remote user through their public-key
    *
+   * @param from defines the local, sending, user. Any object that conforms to the Identity interface.
+   * @param to defines the remote, receiving user. Any object that conforms to the Public interface.
+   * @param body is the message body bytes in UInt8Array format.
+   *
    * @example
    * ```typescript
    * import { Users, Identity, PublicKey  } from "@textile/hub"
    *
-   * async function example(api: Users, sender: Identity, recipient: PublicKey, message: string) {
+   * async function example(api: Users, from: Identity, to: PublicKey, message: string) {
    *   const encoder = new TextEncoder()
-   *   const messageBytes = encoder.encode(message)
-   *   return await api.sendMessage(sender, recipient, messageBytes)
+   *   const body = encoder.encode(message)
+   *   return await api.sendMessage(from, to, body)
    * }
    * ```
    */

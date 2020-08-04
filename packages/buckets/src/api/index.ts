@@ -55,6 +55,64 @@ export interface PushPathResult {
   root: string
 }
 
+export type LinksObject = {
+  www: string
+  ipns: string
+  url: string
+}
+export type RootObject = {
+  key: string
+  name: string
+  path: string
+  createdAt: number
+  updatedAt: number
+  thread: string
+}
+
+export type ListPathItemObject = {
+  cid: string
+  name: string
+  path: string
+  size: number
+  isdir: boolean
+  itemsList: Array<ListPathItemObject>
+}
+export type ListPathObject = {
+  item?: ListPathItemObject
+  root?: RootObject
+}
+
+const convertRootObject = (root: Root): RootObject => {
+  return {
+    key: root.getKey(),
+    name: root.getName(),
+    path: root.getPath(),
+    createdAt: root.getCreatedat(),
+    updatedAt: root.getUpdatedat(),
+    thread: root.getThread(),
+  }
+}
+const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
+  if (!root) return
+  return convertRootObject(root)
+}
+
+const convertPathItem = (item: ListPathItem): ListPathItemObject => {
+  const list = item.getItemsList()
+  return {
+    cid: item.getCid(),
+    name: item.getName(),
+    path: item.getPath(),
+    size: item.getSize(),
+    isdir: item.getIsdir(),
+    itemsList: list ? list.map(convertPathItem) : [],
+  }
+}
+const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | undefined => {
+  if (!item) return
+  return convertPathItem(item)
+}
+
 /**
  * Initializes a new bucket.
  * @public
@@ -75,13 +133,18 @@ export async function bucketsInit(
   name: string,
   isPrivate = false,
   ctx?: ContextInterface,
-): Promise<InitReply.AsObject> {
+): Promise<{ root?: RootObject; seed: Uint8Array; links?: LinksReply.AsObject }> {
   logger.debug('init request')
   const req = new InitRequest()
   req.setName(name)
   req.setPrivate(isPrivate)
   const res: InitReply = await api.unary(API.Init, req, ctx)
-  return res.toObject()
+  const links = res.getLinks()
+  return {
+    root: convertRootObjectNullable(res.getRoot()),
+    seed: res.getSeed_asU8(),
+    links: links ? links.toObject() : undefined,
+  }
 }
 
 /**
@@ -92,12 +155,12 @@ export async function bucketsRoot(
   api: GrpcConnection,
   key: string,
   ctx?: ContextInterface,
-): Promise<Root.AsObject | undefined> {
+): Promise<RootObject | undefined> {
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
   const res: RootReply = await api.unary(API.Root, req, ctx)
-  return res.toObject().root
+  return convertRootObjectNullable(res.getRoot())
 }
 
 /**
@@ -119,11 +182,7 @@ export async function bucketsRoot(
  * }
  * ```
  */
-export async function bucketsLinks(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<LinksReply.AsObject> {
+export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject> {
   logger.debug('link request')
   const req = new LinksRequest()
   req.setKey(key)
@@ -144,11 +203,13 @@ export async function bucketsLinks(
  * }
  * ````
  */
-export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root.AsObject>> {
+export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>> {
   logger.debug('list request')
   const req = new ListRequest()
   const res: ListReply = await api.unary(API.List, req, ctx)
-  return res.toObject().rootsList
+  const roots = res.getRootsList()
+  const map = roots ? roots.map((m) => m).map((m) => convertRootObject(m)) : []
+  return map
 }
 
 /**
@@ -161,13 +222,16 @@ export async function bucketsListPath(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<ListPathReply.AsObject> {
+): Promise<ListPathObject> {
   logger.debug('list path request')
   const req = new ListPathRequest()
   req.setKey(key)
   req.setPath(path)
   const res: ListPathReply = await api.unary(API.ListPath, req, ctx)
-  return res.toObject()
+  return {
+    item: convertPathItemNullable(res.getItem()),
+    root: convertRootObjectNullable(res.getRoot()),
+  }
 }
 
 /**
@@ -178,7 +242,7 @@ export async function bucketsListIpfsPath(
   api: GrpcConnection,
   path: string,
   ctx?: ContextInterface,
-): Promise<ListPathItem.AsObject | undefined> {
+): Promise<ListPathItemObject | undefined> {
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)
