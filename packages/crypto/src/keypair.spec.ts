@@ -1,8 +1,27 @@
 import { expect } from 'chai'
+import { keys } from 'libp2p-crypto'
+import type { Private, Public } from './identity'
 import { PrivateKey, PublicKey } from './keypair'
 import { encrypt, decrypt } from './utils'
 
 describe('Keypair', () => {
+  // Type checking/external lib support
+  it('should support libp2p keys that match our interfaces', async () => {
+    const ed25519: Private = await keys.generateKeyPair('Ed25519', 256)
+    const rsa: Private = await keys.generateKeyPair('RSA', 256)
+    const secp256k1: Private = await keys.generateKeyPair('secp256k1', 256)
+    expect(ed25519).to.haveOwnProperty('sign')
+    expect(rsa).to.haveOwnProperty('sign')
+    expect(secp256k1).to.haveOwnProperty('sign')
+
+    const edPublic: Public = ed25519.public
+    expect(edPublic).to.haveOwnProperty('verify')
+    const rsaPublic: Public = rsa.public
+    expect(rsaPublic).to.haveOwnProperty('verify')
+    const secpPublic: Public = secp256k1.public
+    expect(secpPublic).to.haveOwnProperty('verify')
+  })
+
   it('should be able to serialize and recover identities', async () => {
     const id = PrivateKey.fromRandom()
     const str = id.toString()
@@ -32,22 +51,32 @@ describe('Keypair', () => {
     it('should be able to encrypt/decrypt using separate keys', async () => {
       // Someone else
       const privKey = PrivateKey.fromRandom()
-
       // They send me this...
       const publicKey = privKey.public.toString()
-
       // I encode a message...
       const msg = new TextEncoder().encode('howdy!')
-
       // I decode their key...
       const pubKey = PublicKey.fromString(publicKey)
-
       // I encrypt it...
       const ciphertext = await encrypt(msg, pubKey.pubKey) // Don't use bytes!
-
       // They decrypt it...
       const plaintext = await decrypt(ciphertext, privKey.privKey)
+      expect(plaintext).to.deep.equal(msg)
+    })
 
+    it('should be able to encrypt/decrypt using classes', async () => {
+      // Someone else
+      const privKey = PrivateKey.fromRandom()
+      // They send me this...
+      const publicKey = privKey.public.toString()
+      // I encode a message...
+      const msg = new TextEncoder().encode('howdy!')
+      // I decode their key...
+      const pubKey = PublicKey.fromString(publicKey)
+      // I encrypt it...
+      const ciphertext = await pubKey.encrypt(msg)
+      // They decrypt it...
+      const plaintext = await privKey.decrypt(ciphertext)
       expect(plaintext).to.deep.equal(msg)
     })
   })

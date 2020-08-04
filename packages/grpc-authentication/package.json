@@ -33,9 +33,11 @@
     "@textile/crypto": "^0.0.0",
     "@textile/grpc-connection": "^0.0.1",
     "@textile/hub-threads-client": "^0.3.1",
-    "@textile/security": "^0.2.4"
+    "@textile/security": "^0.2.4",
+    "@textile/threads-core": "^0.1.33"
   },
   "devDependencies": {
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.3"
   },
   "references": [
