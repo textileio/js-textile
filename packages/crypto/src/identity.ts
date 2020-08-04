@@ -43,12 +43,6 @@ export interface Public {
   verify(data: Uint8Array, sig: Uint8Array): Promise<boolean>
 
   /**
-   * Return the base32-encoded multibase string of the `bytes` of this public
-   * key. Useful for encoding the key for sharing etc.
-   */
-  toString(): string
-
-  /**
    * Return the protobuf-encoded bytes of this public key.
    */
   bytes: Uint8Array

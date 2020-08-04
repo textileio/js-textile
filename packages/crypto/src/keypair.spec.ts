@@ -1,8 +1,22 @@
 import { expect } from 'chai'
+import { keys } from 'libp2p-crypto'
+import type { Private, Public } from './identity'
 import { PrivateKey, PublicKey } from './keypair'
 import { encrypt, decrypt } from './utils'
 
 describe('Keypair', () => {
+  // Type checking/external lib support
+  it('should support libp2p keys that match our interfaces', async () => {
+    const ed25519: Private = await keys.generateKeyPair('Ed25519', 256)
+    const rsa: Private = await keys.generateKeyPair('RSA', 256)
+    const secp256k1: Private = await keys.generateKeyPair('secp256k1', 256)
+    expect(ed25519.public).to.haveOwnProperty('bytes')
+    expect(rsa.public).to.haveOwnProperty('bytes')
+    expect(secp256k1.public).to.haveOwnProperty('bytes')
+
+    const edPublic: Public = ed25519.public
+  })
+
   it('should be able to serialize and recover identities', async () => {
     const id = PrivateKey.fromRandom()
     const str = id.toString()
