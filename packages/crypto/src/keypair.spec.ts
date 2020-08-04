@@ -9,17 +9,13 @@ describe('Keypair', () => {
   it('should support libp2p keys that match our interfaces', async () => {
     const ed25519: Private = await keys.generateKeyPair('Ed25519', 256)
     const rsa: Private = await keys.generateKeyPair('RSA', 512)
-    const secp256k1: Private = await keys.generateKeyPair('secp256k1', 512)
-    expect(ed25519).to.haveOwnProperty('sign')
-    expect(rsa).to.haveOwnProperty('sign')
-    expect(secp256k1).to.haveOwnProperty('sign')
+    expect(ed25519.sign).to.not.be.undefined
+    expect(rsa.sign).to.not.be.undefined
 
     const edPublic: Public = ed25519.public
-    expect(edPublic).to.haveOwnProperty('verify')
+    expect(edPublic.verify).to.not.be.undefined
     const rsaPublic: Public = rsa.public
-    expect(rsaPublic).to.haveOwnProperty('verify')
-    const secpPublic: Public = secp256k1.public
-    expect(secpPublic).to.haveOwnProperty('verify')
+    expect(rsaPublic.verify).to.not.be.undefined
   })
 
   it('should be able to serialize and recover identities', async () => {
