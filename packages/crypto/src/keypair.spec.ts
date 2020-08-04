@@ -32,22 +32,32 @@ describe('Keypair', () => {
     it('should be able to encrypt/decrypt using separate keys', async () => {
       // Someone else
       const privKey = PrivateKey.fromRandom()
-
       // They send me this...
       const publicKey = privKey.public.toString()
-
       // I encode a message...
       const msg = new TextEncoder().encode('howdy!')
-
       // I decode their key...
       const pubKey = PublicKey.fromString(publicKey)
-
       // I encrypt it...
       const ciphertext = await encrypt(msg, pubKey.pubKey) // Don't use bytes!
-
       // They decrypt it...
       const plaintext = await decrypt(ciphertext, privKey.privKey)
+      expect(plaintext).to.deep.equal(msg)
+    })
 
+    it('should be able to encrypt/decrypt using classes', async () => {
+      // Someone else
+      const privKey = PrivateKey.fromRandom()
+      // They send me this...
+      const publicKey = privKey.public.toString()
+      // I encode a message...
+      const msg = new TextEncoder().encode('howdy!')
+      // I decode their key...
+      const pubKey = PublicKey.fromString(publicKey)
+      // I encrypt it...
+      const ciphertext = await pubKey.encrypt(msg)
+      // They decrypt it...
+      const plaintext = await privKey.decrypt(ciphertext)
       expect(plaintext).to.deep.equal(msg)
     })
   })

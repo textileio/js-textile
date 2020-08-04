@@ -1,22 +1,21 @@
 import nacl from 'tweetnacl'
 import { convertPublicKey, convertSecretKey } from 'ed2curve'
 import multibase from 'multibase'
-import type { Public, Private } from './identity'
+import type { Public } from './identity'
 import { decodePrivateKey, decodePublicKey } from './proto.keys'
-import { PrivateKey } from './keypair'
 
 const nonceBytes = 24 // Length of nacl nonce
 const privateKeyBytes = 32
 const publicKeyBytes = 32 // Length of nacl ephemeral public key
 
 /**
- * Decrypts the given `data` using a Curve25519 'variant' of the private key.
+ * Decrypts the given `data` using a Curve25519 variant of the private key.
  *
- * Assumes ciphertext includes ephemeral public key and nonce used in original encryption
- * (e.g., via `encrypt`).
+ * Assumes ciphertext includes ephemeral public key and nonce used in original
+ * encryption (e.g., via {@link encrypt} function).
  *
- * @note See https://github.com/dchest/ed2curve-js for conversion details.
- * @param ciphertext Data to decrypt
+ * @see {@link https://github.com/dchest/ed2curve-js} for conversion details.
+ * @param ciphertext Data to decrypt.
  */
 export async function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type = 'ed25519'): Promise<Uint8Array> {
   if (type !== 'ed25519') {
@@ -37,13 +36,13 @@ export async function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type 
 }
 
 /**
- * Encrypts the given `data` using a Curve25519 'variant' of the public key.
+ * Encrypts the given `data` using a Curve25519 variant of the public key.
  *
- * The encryption uses an ephemeral private key, which is prepended to the ciphertext,
- * along with a nonce of random bytes.
+ * The encryption uses an ephemeral private key, which is prepended to the
+ * ciphertext, along with a nonce of random bytes.
  *
- * @note See https://github.com/dchest/ed2curve-js for conversion details.
- * @param data Data to encrypt
+ * @see {@link https://github.com/dchest/ed2curve-js} for conversion details.
+ * @param data Data to encrypt.
  */
 export async function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25519'): Promise<Uint8Array> {
   if (type !== 'ed25519') {
@@ -69,15 +68,28 @@ export async function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25
   return Uint8Array.from(merged)
 }
 
+/**
+ * Encode the given PublicKey's protobuf-encoded bytes to its base-32 encoded
+ * multibase representation.
+ * @param bytes The protobuf-encoded bytes of a {@link Public} key.
+ */
 export function publicKeyBytesToString(bytes: Uint8Array): string {
   const encoded = multibase.encode('base32', bytes as Buffer)
   return new TextDecoder().decode(encoded)
 }
 
+/**
+ * Encode the given PublicKey to its base-32 encoded multibase representation.
+ * @param key The {@link Public} key to encode.
+ */
 export function publicKeyToString(key: Public): string {
   return publicKeyBytesToString(key.bytes)
 }
 
+/**
+ * Decode the given base-32 encoded multibase string into a {@link Public} key.
+ * @param str The base-32 encoded multibase string.
+ */
 export function publicKeyBytesFromString(str: string) {
   const decoded = multibase.decode(str)
   const obj = decodePublicKey(decoded)
@@ -85,15 +97,23 @@ export function publicKeyBytesFromString(str: string) {
   return bytes.slice(0, publicKeyBytes)
 }
 
+/**
+ * Decode the given base-32 encoded multibase string into a {@link Private} key.
+ * @param str The base-32 encoded multibase string.
+ */
 export function privateKeyFromString(str: string) {
   const decoded = multibase.decode(str)
   const obj = decodePrivateKey(decoded)
   const bytes = obj.Data
-  // We might have the public key bytes appended twice, but we can ignore the extra public
-  // bytes on the end (no need to check it either)
+  // We might have the public key bytes appended twice, but we can ignore the
+  // extra public bytes on the end (no need to check it either)
   return bytes.slice(0, privateKeyBytes)
 }
 
+/**
+ * Utility function to extract the raw bytes from a {@link Public} key.
+ * @param key The public key from which to extract raw bytes.
+ */
 export function extractPublicKeyBytes(key: Public): Uint8Array {
   const obj = decodePublicKey(key.bytes)
   const bytes = obj.Data
