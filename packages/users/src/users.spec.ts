@@ -9,6 +9,7 @@ import { Client } from '@textile/hub-threads-client'
 import { expirationError } from '@textile/security'
 import { signUp, createKey, createAPISig } from './spec.util'
 import { Users } from './users'
+import { Status } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -210,23 +211,23 @@ describe('Users...', () => {
     })
   })
 
-  describe('mailbox', async () => {
-    const userId1 = await PrivateKey.fromRandom()
-    const userId2 = await PrivateKey.fromRandom()
-    const ctx = new Context(addrApiurl)
-    const ctx2 = new Context(addrApiurl)
+  describe('mailbox', () => {
+    const user1Id = PrivateKey.fromRandom()
+    const user2Id = PrivateKey.fromRandom()
+    const user1Ctx = new Context(addrApiurl)
+    const user2Ctx = new Context(addrApiurl)
     let dev: SignupReply.AsObject
     before(async function () {
       this.timeout(10000)
-      const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
+      const { user } = await signUp(user1Ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
-      await ctx2.withAPIKey(key.key).withKeyInfo(key)
+      await user1Ctx.withAPIKey(key.key).withKeyInfo(key)
+      await user2Ctx.withAPIKey(key.key).withKeyInfo(key)
     })
     it('should setup mailbox', async () => {
-      const user = new Users(ctx)
+      const user = new Users(user1Ctx)
       // No token
       try {
         await user.setupMailbox()
@@ -236,24 +237,73 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.Unauthenticated)
       }
 
-      const token = await user.getToken(userId1)
-      ctx.withToken(token) // to skip regen in later calls
+      const token = await user.getToken(user1Id)
+      user1Ctx.withToken(token) // to skip regen in later calls
       const res = await user.setupMailbox()
       expect(res.mailboxID).to.not.be.undefined
-      
+
       // Should setup user2 mailbox without error
-      const user2 = new Users(ctx2)
-      const token2 = await user2.getToken(userId2)
-      ctx2.withToken(token2) // to skip regen in later calls
+      const user2 = new Users(user2Ctx)
+      const token2 = await user2.getToken(user2Id)
+      user2Ctx.withToken(token2) // to skip regen in later calls
+      await user2.setupMailbox()
     })
-    it('should send a message to user2', async () => {
-      const user = new Users(ctx)
-      const nowish = Math.floor(new Date().getTime())
+    it('should send a message to user2 and check sentbox', async () => {
+      const user = new Users(user1Ctx)
       const encoder = new TextEncoder()
-      const res = await user.sendMessage(userId1, userId2.public, encoder.encode('first'))
-      const sentish = Math.floor(res.createdAt)
+      const res = await user.sendMessage(user1Id, user2Id.public, encoder.encode('first'))
       expect(res.id).to.not.be.undefined
-      expect(Math.abs(sentish - nowish)).to.be.lessThan(3000)
+
+      const sent = await user.listSentboxMessages()
+      expect(sent.length).to.equal(1)
+    })
+    it('should should find and read a message', async () => {
+      const user2 = new Users(user2Ctx)
+
+      // Check inbox
+      const rec = await user2.listInboxMessages()
+      expect(rec.length).to.equal(1)
+
+      // Check signature
+      const msgBody = rec[0].body
+      const sig = rec[0].signature
+      const verify = await user1Id.public.verify(msgBody, sig)
+      expect(verify).to.be.true
+
+      // Check body
+      const bodyBytes = await user2Id.decrypt(msgBody)
+      const decoder = new TextDecoder()
+      const body = decoder.decode(bodyBytes)
+      expect(body).to.equal('first')
+
+      // Clear the inbox
+      await user2.readInboxMessage(rec[0].id)
+      const rec2 = await user2.listInboxMessages({ status: Status.UNREAD })
+      expect(rec2.length).to.equal(0)
+    })
+    it('should should delete inbox messages', async () => {
+      const user2 = new Users(user2Ctx)
+
+      // Check inbox
+      let rec = await user2.listInboxMessages()
+      expect(rec.length).to.equal(1)
+
+      // Delete
+      await user2.deleteInboxMessage(rec[0].id)
+      rec = await user2.listInboxMessages()
+      expect(rec.length).to.equal(0)
+    })
+    it('should should delete sentbox messages', async () => {
+      const user1 = new Users(user1Ctx)
+
+      // Check inbox
+      let rec = await user1.listSentboxMessages()
+      expect(rec.length).to.equal(1)
+
+      // Delete
+      await user1.deleteSentboxMessage(rec[0].id)
+      rec = await user1.listSentboxMessages()
+      expect(rec.length).to.equal(0)
     })
   })
 })
