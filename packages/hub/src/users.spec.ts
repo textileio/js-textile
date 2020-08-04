@@ -1,13 +1,13 @@
 import path from 'path'
 import fs from 'fs'
+import { expect } from 'chai'
+import { isBrowser } from 'browser-or-node'
 import { ThreadID } from '@textile/threads-id'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
-import { expect } from 'chai'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { Buckets } from '@textile/buckets'
 import { Context } from '@textile/context'
-import { isBrowser } from 'browser-or-node'
 import { signUp, createKey } from './spec.util'
 
 // Settings for localhost development and testing

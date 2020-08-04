@@ -20,11 +20,59 @@ export function privateKeyToString(key: PrivateKey) {
  * In theory, RSA, ed25519, and secp256k1 key types (and more) should be
  * supported, although currently only ed25519 has full verify and encrypt
  * capabilities.
- * @todo Support additional key types by default. For now, sticking to ed25519
+ * @privateRemarks Support additional key types by default. For now, sticking to ed25519
  * keeps our bundle smaller, but if needed, additional types can be added via
  * libp2p-crypto or tweetnacl.
- * @todo Separate out the generic PublicKey interface to include signing and
+ * @privateRemarks Separate out the generic PublicKey interface to include signing and
  * encryption methods, and then have this class implement that interface.
+ *
+ * @example
+ * Create a private key, extract the public key string
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * function example() {
+ *   const identity = PrivateKey.fromRandom()
+ *   const publicKey = identity.public.toString()
+ *   return publicKey
+ * }
+ * ```
+ *
+ * @example
+ * Encrypt a message using another person's public key (string)
+ * ```typescript
+ * import { PublicKey } from '@textile/hub'
+ *
+ * async function example(publicKey: string) {
+ *   const recipient = PublicKey.fromString(publicKey)
+ *   const msg = new TextEncoder().encode('howdy!')
+ *   const ciphertext = await recipient.encrypt(msg)
+ *   return ciphertext
+ * }
+ * ```
+ *
+ * @example
+ * Decrypt a message sent to the local user with their private key
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * async function example(identity: PrivateKey, ciphertext: Uint8Array) {
+ *   const plaintext = await identity.decrypt(ciphertext)
+ *   return plaintext
+ * }
+ * ```
+ *
+ * @example
+ * Encrypt the local user's own message for later reading.
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * async function example(identity: PrivateKey) {
+ *   const msg = new TextEncoder().encode('private message!')
+ *   const ciphertext = await identity.public.encrypt(msg)
+ *   return ciphertext // can only be decrypted by the local user
+ * }
+ * ```
  */
 export class PublicKey implements Public {
   constructor(public pubKey: Uint8Array, public type: string = 'ed25519') {
@@ -85,11 +133,59 @@ export class PublicKey implements Public {
  * In theory, RSA, ed25519, and secp256k1 key types (and more) should be
  * supported, although currently only ed25519 has full sign and decrypt
  * capabilities.
- * @todo Support additional key types by default. For now, sticking to ed25519
+ * @privateRemarks Support additional key types by default. For now, sticking to ed25519
  * keeps our bundle smaller, but if needed, additional types can be added via
  * libp2p-crypto or tweetnacl.
- * @todo Separate out the generic PrivateKey interface to include signing and
+ * @privateRemarks Separate out the generic PrivateKey interface to include signing and
  * encryption methods, and then have this class implement that interface.
+ *
+ * @example
+ * Create a private key, extract the public key string
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * function example() {
+ *   const identity = PrivateKey.fromRandom()
+ *   const publicKey = identity.public.toString()
+ *   return publicKey
+ * }
+ * ```
+ *
+ * @example
+ * Encrypt a message using another person's public key (string)
+ * ```typescript
+ * import { PublicKey } from '@textile/hub'
+ *
+ * async function example(publicKey: string) {
+ *   const recipient = PublicKey.fromString(publicKey)
+ *   const msg = new TextEncoder().encode('howdy!')
+ *   const ciphertext = await recipient.encrypt(msg)
+ *   return ciphertext
+ * }
+ * ```
+ *
+ * @example
+ * Decrypt a message sent to the local user with their private key
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * async function example(identity: PrivateKey, ciphertext: Uint8Array) {
+ *   const plaintext = await identity.decrypt(ciphertext)
+ *   return plaintext
+ * }
+ * ```
+ *
+ * @example
+ * Encrypt the local user's own message for later reading.
+ * ```typescript
+ * import { PrivateKey } from '@textile/hub'
+ *
+ * async function example(identity: PrivateKey) {
+ *   const msg = new TextEncoder().encode('private message!')
+ *   const ciphertext = await identity.public.encrypt(msg)
+ *   return ciphertext // can only be decrypted by the local user
+ * }
+ * ```
  */
 export class PrivateKey implements Private {
   /**

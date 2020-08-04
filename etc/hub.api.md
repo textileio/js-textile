@@ -247,7 +247,7 @@ export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: string): Pr
 // @public
 export const expirationError: Error;
 
-// @public (undocumented)
+// @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
 // @public (undocumented)
@@ -279,9 +279,7 @@ export class GrpcAuthentication extends GrpcConnection {
 
 // @public
 export interface Identity {
-    // (undocumented)
     public: Public;
-    // (undocumented)
     sign(data: Uint8Array): Promise<Uint8Array>;
 }
 
@@ -371,74 +369,58 @@ export { ListThreadsReply }
 
 export { ListThreadsRequest }
 
-// @public (undocumented)
+// @public
 export type Private = Identity;
 
-// @public (undocumented)
+// @public
 export class PrivateKey implements Private {
     constructor(secretKey: Uint8Array, type?: string);
-    // (undocumented)
     get bytes(): Uint8Array;
     canSign(): boolean;
-    // (undocumented)
     decrypt(ciphertext: Uint8Array): Promise<Uint8Array>;
     static fromRandom(): PrivateKey;
     static fromRawEd25519Seed(rawSeed: Uint8Array): PrivateKey;
-    // (undocumented)
     static fromString(str: string): PrivateKey;
-    // (undocumented)
     privKey: Uint8Array;
-    // (undocumented)
     pubKey: Uint8Array;
-    // (undocumented)
     get public(): PublicKey;
-    // (undocumented)
     seed: Uint8Array;
     sign(data: Uint8Array): Promise<Uint8Array>;
-    // (undocumented)
     toString(): string;
     // (undocumented)
     type: string;
 }
 
-// @public (undocumented)
+// @public
 export function privateKeyFromString(str: string): Uint8Array;
 
-// @public (undocumented)
+// @public
 export interface Public {
-    // (undocumented)
     bytes: Uint8Array;
-    // (undocumented)
-    toString(): string;
-    // (undocumented)
     verify(data: Uint8Array, sig: Uint8Array): Promise<boolean>;
 }
 
-// @public (undocumented)
+// @public
 export class PublicKey implements Public {
     constructor(pubKey: Uint8Array, type?: string);
-    // (undocumented)
     get bytes(): Uint8Array;
-    // (undocumented)
     encrypt(data: Uint8Array): Promise<Uint8Array>;
-    // (undocumented)
     static fromString(str: string): PublicKey;
     // (undocumented)
     pubKey: Uint8Array;
-    // (undocumented)
     toString(): string;
     // (undocumented)
     type: string;
     verify(data: Uint8Array, signature: Uint8Array): Promise<boolean>;
 }
 
-// @public (undocumented)
+// @public
 export function publicKeyBytesFromString(str: string): Uint8Array;
 
-// @public (undocumented)
+// @public
 export function publicKeyBytesToString(bytes: Uint8Array): string;
 
-// @public (undocumented)
+// @public
 export function publicKeyToString(key: Public): string;
 
 export { PullIpfsPathReply }

@@ -59,7 +59,8 @@
       "hub.privatekey.sign",
       "hub.privatekey.seed",
       "hub.privatekey.tostring",
-      "hub.privatekey.type"
+      "hub.privatekey.type",
+      "hub.privatekey.fromrawed25519seed"
     ],
     "Public Key Class": [
       "hub.publickey",
@@ -71,6 +72,7 @@
       "hub.publickey.bytes",
       "hub.publickey.type",
       "hub.publickey.pubkey"
+      
     ]
   },
   "bucket-docs": {

@@ -11,6 +11,16 @@
 	"publishConfig": {
 		"access": "public"
 	},
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
+		"prebuild": "npm run clean",
+		"build": "npm run build:protos && npm run build:compile",
+    "build:compile": "tsc -b tsconfig.json",
+    "build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+  },
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/textileio/js-hub.git"
