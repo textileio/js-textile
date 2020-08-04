@@ -621,10 +621,9 @@
       "Buckets": "Buckets",
       "Threads": "Threads",
       "Other Types & Methods": "Other Types & Methods",
-      "Users": "Users",
-      "Generic User Identity": "Generic User Identity",
-      "Public Keys": "Public Keys",
-      "Private Keys": "Private Keys",
+      "Identity interfaces": "Identity interfaces",
+      "Private Key Class": "Private Key Class",
+      "Public Key Class": "Public Key Class",
       "Client": "Client"
     }
   },

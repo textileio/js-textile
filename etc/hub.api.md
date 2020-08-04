@@ -82,7 +82,7 @@ export class Buckets extends GrpcAuthentication {
         root?: Root.AsObject;
         threadID?: string;
     }>;
-    getToken(identity: Identity_2): Promise<string>;
+    getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     init(name: string, isPrivate?: boolean): Promise<InitReply.AsObject>;
     links(key: string): Promise<LinksReply.AsObject>;
@@ -264,10 +264,10 @@ export interface GetThreadReplyObj {
 
 export { GetThreadRequest }
 
-// @public (undocumented)
+// @public
 export class GrpcAuthentication extends GrpcConnection {
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): GrpcAuthentication;
-    getToken(identity: Identity_2): Promise<string>;
+    getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<GrpcAuthentication>;
     withThread(threadID?: string): this | undefined;
