@@ -3,7 +3,7 @@ import { Context } from "@textile/context"
 import { Identity, Libp2pCryptoIdentity } from "@textile/threads-core"
 import { ThreadID } from "@textile/threads-id"
 import { expect } from "chai"
-import { Client } from "./index"
+import { Client, Update } from "./index"
 import { ReadTransaction, Where, WriteTransaction } from "./models"
 
 const personSchema = {
@@ -304,7 +304,7 @@ describe("Client", function () {
       expect(instance).to.have.property("lastName", "Doe")
       expect(instance).to.have.property("age", 21)
       expect(instance).to.have.property("_id")
-      expect(instance["_id"]).to.deep.equal(existingPersonID)
+      expect(instance?._id).to.deep.equal(existingPersonID)
     })
     it("should be able to close/end an transaction", async () => {
       await transaction!.end()
@@ -344,7 +344,7 @@ describe("Client", function () {
       expect(instance).to.have.property("lastName", "Doe")
       expect(instance).to.have.property("age", 21)
       expect(instance).to.have.property("_id")
-      expect(instance["_id"]).to.deep.equal(existingPersonID)
+      expect(instance?._id).to.deep.equal(existingPersonID)
     })
     it("should be able to save an existing instance", async () => {
       person.age = 99
@@ -365,7 +365,7 @@ describe("Client", function () {
       person._id = entities[0]
     })
     it("should stream responses.", (done) => {
-      const callback = (reply: any, err?: Error) => {
+      const callback = (reply?: Update<Person>, err?: Error) => {
         if (err) {
           throw err
         }
@@ -401,11 +401,11 @@ describe("Client", function () {
     }).timeout(5000) // Make sure our test doesn't timeout
 
     it("should handle deletes.", (done) => {
-      const callback = (reply: any, err?: Error) => {
+      const callback = (reply?: Update<Person>, err?: Error) => {
         if (err) {
           throw err
         }
-        expect(reply).to.be.undefined
+        expect(reply?.instance).to.be.undefined
         if (listener.close) {
           listener.close()
         }

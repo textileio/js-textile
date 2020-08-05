@@ -39,6 +39,8 @@ export interface CollectionConfig {
   indexes: pb.Index.AsObject
 }
 
+const encoder = new TextEncoder()
+
 export function maybeLocalAddr(ip: string): boolean | RegExpMatchArray {
   return (
     ["localhost", "", "::1"].includes(ip) ||
@@ -47,6 +49,18 @@ export function maybeLocalAddr(ip: string): boolean | RegExpMatchArray {
     ip.startsWith("10.0.") ||
     ip.endsWith(".local")
   )
+}
+
+export enum Action {
+  CREATE = 0,
+  SAVE,
+  DELETE,
+}
+
+export interface Update<T = any> extends Instance<T> {
+  collectionName: string
+  instanceID: string
+  action: Action
 }
 
 /**
@@ -362,7 +376,7 @@ export class Client {
     const req = new pb.NewCollectionRequest()
     const config = new pb.CollectionConfig()
     config.setName(name)
-    config.setSchema(Buffer.from(JSON.stringify(schema)))
+    config.setSchema(encoder.encode(JSON.stringify(schema)))
     const idx: pb.Index[] = []
     for (const item of indexes ?? []) {
       const index = new pb.Index()
@@ -426,7 +440,7 @@ export class Client {
     const req = new pb.UpdateCollectionRequest()
     const conf = new pb.CollectionConfig()
     conf.setName(name)
-    conf.setSchema(Buffer.from(JSON.stringify(schema)))
+    conf.setSchema(encoder.encode(JSON.stringify(schema)))
     const idx: pb.Index[] = []
     for (const item of indexes ?? []) {
       const index = new pb.Index()
@@ -518,7 +532,7 @@ export class Client {
         collections.map((c) => {
           const config = new pb.CollectionConfig()
           config.setName(c.name)
-          config.setSchema(Buffer.from(JSON.stringify(c.schema)))
+          config.setSchema(encoder.encode(JSON.stringify(c.schema)))
           return config
         })
       )
@@ -562,7 +576,7 @@ export class Client {
           collections.map((c) => {
             const config = new pb.CollectionConfig()
             config.setName(c.name)
-            config.setSchema(Buffer.from(JSON.stringify(c.schema)))
+            config.setSchema(encoder.encode(JSON.stringify(c.schema)))
             return config
           })
         )
@@ -616,7 +630,7 @@ export class Client {
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
-      list.push(Buffer.from(JSON.stringify(v)))
+      list.push(encoder.encode(JSON.stringify(v)))
     })
     req.setInstancesList(list)
     const res = (await this.unary(API.Create, req)) as pb.CreateReply.AsObject
@@ -642,7 +656,7 @@ export class Client {
       if (!v.hasOwnProperty("ID")) {
         v["ID"] = "" // The server will add an ID if empty.
       }
-      list.push(Buffer.from(JSON.stringify(v)))
+      list.push(encoder.encode(JSON.stringify(v)))
     })
     req.setInstancesList(list)
     await this.unary(API.Save, req)
@@ -702,7 +716,7 @@ export class Client {
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     // @todo: Find a more isomorphic way to do this base64 round-trip
-    req.setQueryjson(Buffer.from(JSON.stringify(query)).toString("base64"))
+    req.setQueryjson(encoder.encode(JSON.stringify(query)))
     const res = (await this.unary(API.Find, req)) as pb.FindReply.AsObject
     const ret: InstanceList<T> = {
       instancesList: res.instancesList.map((instance) =>
@@ -783,7 +797,7 @@ export class Client {
   public listen<T = any>(
     threadID: ThreadID,
     filters: Filter[],
-    callback: (reply?: Instance<T>, err?: Error) => void
+    callback: (reply?: Update<T>, err?: Error) => void
   ): grpc.Request {
     const req = new pb.ListenRequest()
     req.setDbid(threadID.toBytes())
@@ -832,10 +846,21 @@ export class Client {
       }
     )
     client.onMessage((message: pb.ListenReply) => {
-      const str = decoder.decode(message.getInstance_asU8())
-      let ret: Instance<T> | undefined
-      if (str !== "") {
-        ret = { instance: JSON.parse(str) }
+      // Pull it apart explicitly
+      const instanceString = decoder.decode(message.getInstance_asU8())
+      const actionInt = message.getAction()
+      const action = (Action[actionInt] as unknown) as Action
+      const collectionName = message.getCollectionname()
+      const instanceID = message.getInstanceid()
+
+      const ret: Update<T> = {
+        collectionName,
+        instanceID,
+        action,
+        instance: undefined,
+      }
+      if (instanceString !== "") {
+        ret.instance = JSON.parse(instanceString)
       }
       callback(ret)
     })

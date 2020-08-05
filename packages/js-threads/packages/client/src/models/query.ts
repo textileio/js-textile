@@ -20,7 +20,7 @@ export interface Filter {
  * Instance is a singular Model instance.
  */
 export interface Instance<T> {
-  instance: T
+  instance: T | undefined
 }
 
 /**
