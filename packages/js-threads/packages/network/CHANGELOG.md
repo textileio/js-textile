@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/textileio/js-threads/compare/@textile/threads-network@0.5.5...@textile/threads-network@0.6.0) (2020-08-05)
+
+
+### Features
+
+* update imports and bump version ([1f1b777](https://github.com/textileio/js-threads/commit/1f1b7773cdec4caf9bb5c579fb6300bafce8a883))
+
+
+
+
+
 ## [0.5.5](https://github.com/textileio/js-threads/compare/@textile/threads-network@0.5.4...@textile/threads-network@0.5.5) (2020-08-05)
 
 **Note:** Version bump only for package @textile/threads-network

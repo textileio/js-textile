@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/textileio/js-threads/compare/@textile/threads-encoding@0.2.0...@textile/threads-encoding@0.3.0) (2020-08-05)
+
+
+### Features
+
+* implement + export block and friends ([6d73263](https://github.com/textileio/js-threads/commit/6d73263130813ec73330d83847e9b0fdf09f72a5))
+* move block and interfaces to encoding ([ac47a64](https://github.com/textileio/js-threads/commit/ac47a6495b5a9acb5340bb9949f4f666fa806a54))
+
+
+
+
+
 # [0.2.0](https://github.com/textileio/js-threads/compare/@textile/threads-encoding@0.1.33...@textile/threads-encoding@0.2.0) (2020-08-05)
 
 
