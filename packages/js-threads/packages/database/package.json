@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-database",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -43,15 +43,15 @@
     "test:browser": "npx polendina --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
-    "@textile/context": "^0.6.4",
+    "@textile/context": "^0.6.5",
     "@textile/multiaddr": "^0.0.24",
-    "@textile/security": "^0.2.4",
-    "@textile/threads-core": "^0.1.33",
+    "@textile/security": "^0.2.5",
+    "@textile/threads-core": "^0.2.0",
     "@textile/threads-crypto": "^0.1.4",
-    "@textile/threads-encoding": "^0.1.33",
+    "@textile/threads-encoding": "^0.2.0",
     "@textile/threads-id": "^0.1.13",
-    "@textile/threads-network": "^0.5.4",
-    "@textile/threads-network-client": "^0.6.4",
+    "@textile/threads-network": "^0.5.5",
+    "@textile/threads-network-client": "^0.6.5",
     "@textile/threads-store": "^0.1.20",
     "@types/async-retry": "^1.4.1",
     "@types/datastore-core": "^0.7.0",
