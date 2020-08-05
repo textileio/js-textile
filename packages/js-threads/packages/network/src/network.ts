@@ -1,16 +1,11 @@
 import { Multiaddr } from "@textile/multiaddr"
 import {
-  Block,
-  Closer,
   Identity,
   LogID,
   LogInfo,
-  LogRecord,
-  Network as Interface,
   NewThreadOptions,
   ThreadInfo,
   ThreadKey,
-  ThreadRecord,
 } from "@textile/threads-core"
 import {
   keys,
@@ -18,7 +13,13 @@ import {
   PublicKey,
   randomBytes,
 } from "@textile/threads-crypto"
-import { createEvent, createRecord } from "@textile/threads-encoding"
+import {
+  Block,
+  createEvent,
+  createRecord,
+  LogRecord,
+  ThreadRecord,
+} from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import { Client } from "@textile/threads-network-client"
 import CID from "cids"
@@ -33,7 +34,7 @@ const ed25519 = keys.supportedKeys.ed25519
 /**
  * Network is the Network interface for Thread orchestration.
  */
-export class Network implements Interface {
+export class Network {
   public store: LogStore
   /**
    * Create a new network Network.
@@ -239,7 +240,7 @@ export class Network implements Interface {
   subscribe(
     cb: (rec?: ThreadRecord, err?: Error) => void,
     threads: ThreadID[] = []
-  ): Closer {
+  ): { close: () => void } {
     return this.client.subscribe(cb, threads)
   }
 

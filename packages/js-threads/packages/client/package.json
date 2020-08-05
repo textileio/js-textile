@@ -52,7 +52,7 @@
     "@types/google-protobuf": "^3.7.2",
     "@types/multibase": "^0.6.0",
     "@types/to-json-schema": "^0.2.0",
-    "cids": "^0.8.0",
+    "cids": "^0.8.3",
     "google-protobuf": "^3.10.0",
     "to-json-schema": "^0.2.5"
   },

@@ -1,16 +1,19 @@
 import { Context } from "@textile/context"
 import { Multiaddr } from "@textile/multiaddr"
 import {
-  Block,
   Identity,
   Libp2pCryptoIdentity,
   LogID,
   ThreadInfo,
   ThreadKey,
-  ThreadRecord,
 } from "@textile/threads-core"
 import { keys, randomBytes } from "@textile/threads-crypto"
-import { createEvent, createRecord } from "@textile/threads-encoding"
+import {
+  Block,
+  createEvent,
+  createRecord,
+  ThreadRecord,
+} from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import { expect } from "chai"
 import { Client } from "."

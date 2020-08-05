@@ -1,4 +1,4 @@
-import { Closer, ThreadRecord } from "@textile/threads-core"
+import type { ThreadRecord } from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import { Network } from "@textile/threads-network"
 import retry, { Options } from "async-retry"
@@ -24,7 +24,7 @@ export type EventJob<T> = { id: Buffer; body: T }
 
 export class EventBus<T = any> extends EventEmitter<Events> {
   isStarted = false
-  private closer?: Closer
+  private closer?: { close: () => void }
   public queue: Queue<EventJob<T>>
   constructor(
     queue: Queue<EventJob<T>> | Datastore<any>,

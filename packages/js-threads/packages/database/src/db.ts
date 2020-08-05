@@ -7,8 +7,8 @@ import {
   LogInfo,
   ThreadInfo,
   ThreadKey,
-  ThreadRecord,
 } from "@textile/threads-core"
+import type { ThreadRecord } from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import { Network } from "@textile/threads-network"
 import { Client } from "@textile/threads-network-client"

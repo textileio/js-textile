@@ -1,4 +1,4 @@
-import { Multiaddr } from "@textile/multiaddr"
+import type { Multiaddr } from "@textile/multiaddr"
 import { keys, multihash, PrivateKey, PublicKey } from "@textile/threads-crypto"
 import CID from "cids"
 import multibase from "multibase"

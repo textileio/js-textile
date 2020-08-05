@@ -1,15 +1,9 @@
-import {
-  Block,
-  Event,
-  EventNode,
-  Identity,
-  LogRecord,
-  Public,
-  RecordNode,
-} from "@textile/threads-core"
+import { Identity, Public } from "@textile/threads-core"
 import CID from "cids"
 import log from "loglevel"
 import { decodeBlock, encodeBlock } from "./coding"
+import type { Event, EventNode, LogRecord, RecordNode } from "./interfaces"
+import { Block } from "./ipld"
 
 const logger = log.getLogger("encoding:record")
 
@@ -56,18 +50,23 @@ export async function createRecord(
   config: CreateRecordConfig
 ): Promise<LogRecord> {
   logger.debug("creating record")
-  const block = await data.value.cid()
-  let payload = block.buffer
+  const block = (await data.value.cid()) as any
+  let payload = Buffer.from(block.bytes ?? block.buffer)
   const pubKey = Buffer.from(config.pubKey.bytes)
-  if (config.prev && CID.isCID(config.prev)) {
-    payload = Buffer.concat([payload, config.prev.buffer])
+  const { prev } = config
+  if (prev && CID.isCID(prev)) {
+    // Bit of a hack to deal with CID mismatches
+    payload = Buffer.concat([
+      payload,
+      Buffer.from((prev as any).bytes ?? (prev as any).buffer),
+    ])
   } else {
     payload = pubKey
   }
   const sig = await config.privKey.sign(payload)
   const obj: RecordNode = { block, sig, pubKey }
   // Don't include prev unless it is defined
-  if (config.prev) obj.prev = config.prev
+  if (prev) obj.prev = config.prev
   const node = Block.encoder(obj, "dag-cbor")
   const value = await encodeBlock(node, config.servKey)
   // @todo: We don't support a dag here yet, but this is where we'd add this data to IPFS!

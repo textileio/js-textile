@@ -1,7 +1,8 @@
-import { Block, Event, EventHeader, EventNode } from "@textile/threads-core"
 import { randomBytes } from "@textile/threads-crypto"
 import log from "loglevel"
 import { encodeBlock } from "./coding"
+import { Event, EventHeader, EventNode } from "./interfaces"
+import { Block } from "./ipld"
 
 const logger = log.getLogger("encoding:event")
 

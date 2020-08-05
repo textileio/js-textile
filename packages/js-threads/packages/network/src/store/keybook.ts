@@ -1,4 +1,4 @@
-import { Closer, LogID } from "@textile/threads-core"
+import { LogID } from "@textile/threads-core"
 import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
 import { ThreadID } from "@textile/threads-id"
 import { NamespaceDatastore } from "datastore-core"
@@ -21,7 +21,7 @@ const getKey = (id: ThreadID, log: LogID, suffix?: string) => {
 /**
  * KeyBook stores Thread/Log keys.
  */
-export class KeyBook implements Closer {
+export class KeyBook {
   constructor(private datastore: Datastore<Buffer>) {
     this.datastore = new NamespaceDatastore(datastore, baseKey)
   }

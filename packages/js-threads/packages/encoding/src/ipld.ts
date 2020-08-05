@@ -11,7 +11,7 @@ export interface Reader<T> {
   tree(): IterableIterator<string>
 }
 
-export interface Options {
+export interface BlockOptions {
   source?: any
   data?: Uint8Array
   codec?: string
@@ -20,7 +20,7 @@ export interface Options {
 }
 
 export interface Block<T = any> {
-  opts: Options
+  opts: BlockOptions
   readonly codec: string
   source(): T | null
   cid(): Promise<CID>
@@ -33,7 +33,7 @@ export interface Block<T = any> {
 }
 
 export interface BlockConstructor {
-  new <T>(opts: Options): Block<T>
+  new <T>(opts: BlockOptions): Block<T>
   getCodec(codec: string): Codec
   encoder<T>(source: T, codec: string, algorithm?: string): Block<T>
   decoder<T = any>(

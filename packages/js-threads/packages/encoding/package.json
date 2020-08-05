@@ -20,10 +20,12 @@
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
+    "@ipld/block": "^6.0.1",
     "@textile/threads-core": "^0.2.0",
     "@textile/threads-crypto": "^0.1.4",
+    "@textile/threads-id": "^0.1.13",
     "@types/node": "^14.0.1",
-    "cids": "^0.8.0",
+    "cids": "^0.8.3",
     "loglevel": "^1.6.6"
   },
   "references": [
@@ -32,6 +34,9 @@
     },
     {
       "path": "../crypto"
+    },
+    {
+      "path": "../id"
     }
   ],
   "devDependencies": {

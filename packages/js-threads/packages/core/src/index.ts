@@ -1,8 +1,6 @@
 import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
 
 export * from "./identity"
-export { Block } from "./ipld"
-export * from "./network"
 export * from "./thread"
 
 export const marshalKey = (key: PublicKey | PrivateKey): Uint8Array => {

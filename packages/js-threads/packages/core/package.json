@@ -32,22 +32,18 @@
     }
   ],
   "devDependencies": {
-    "cids": "^0.8.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@ipld/block": "^6.0.1",
+    "cids": "^0.8.3",
     "@textile/multiaddr": "^0.0.24",
     "@textile/threads-crypto": "^0.1.4",
     "@textile/threads-id": "^0.1.13",
-    "@types/multiaddr": "^7.2.0",
     "@types/multibase": "^0.6.0",
     "@types/node": "^14.0.5",
     "@types/varint": "^5.0.0",
-    "multiaddr": "^7.4.2",
     "multibase": "^1.0.1",
-    "multihashes": "1.0.1",
     "varint": "^5.0.0"
   },
   "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"

@@ -1,12 +1,11 @@
 import { Multiaddr } from "@textile/multiaddr"
-import {
-  EventHeader,
-  ThreadInfo,
-  ThreadKey,
-  ThreadRecord,
-} from "@textile/threads-core"
+import { ThreadInfo, ThreadKey } from "@textile/threads-core"
 import { keys, PrivateKey, PublicKey } from "@textile/threads-crypto"
-import { decodeBlock } from "@textile/threads-encoding"
+import {
+  decodeBlock,
+  EventHeader,
+  ThreadRecord,
+} from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import { Network } from "@textile/threads-network"
 
@@ -15,7 +14,7 @@ const ed25519 = keys.supportedKeys.ed25519
 export async function decodeRecord<T = any>(
   rec: ThreadRecord,
   info: ThreadInfo
-) {
+): Promise<T | undefined> {
   if (!info.key || !rec.record) return // Don't have the right keys!
   const event = rec.record.block
   if (info.key.read === undefined) return

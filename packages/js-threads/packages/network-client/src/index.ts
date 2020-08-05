@@ -3,22 +3,24 @@ import { Context, ContextInterface } from "@textile/context"
 import { WebsocketTransport } from "@textile/grpc-transport"
 import { Multiaddr } from "@textile/multiaddr"
 import {
-  Block,
   Identity,
   Libp2pCryptoIdentity,
   LogID,
   LogInfo,
-  LogRecord,
   marshalKey,
-  Network,
   NewThreadOptions,
   PeerId,
   ThreadInfo,
   ThreadKey,
-  ThreadRecord,
 } from "@textile/threads-core"
 import { keys } from "@textile/threads-crypto"
-import { recordFromProto, recordToProto } from "@textile/threads-encoding"
+import {
+  Block,
+  LogRecord,
+  recordFromProto,
+  recordToProto,
+  ThreadRecord,
+} from "@textile/threads-encoding"
 import { ThreadID } from "@textile/threads-id"
 import * as pb from "@textile/threads-net-grpc/threadsnet_pb"
 import {
@@ -99,7 +101,7 @@ async function threadInfoFromProto(
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
  * This client library can be used to interact with a local or remote Threads gRPC Network.
  */
-export class Client implements Network {
+export class Client {
   /**
    * Controls the remote API settings.
    */
@@ -389,7 +391,7 @@ export class Client implements Network {
     if (info.key === undefined) throw new Error("Missing thread keys")
     const req = new pb.GetRecordRequest()
     req.setThreadid(id.toBytes())
-    req.setRecordid(rec.buffer)
+    req.setRecordid(rec.buffer ?? (rec as any).bytes)
     const proto: pb.GetRecordReply = await this.unary(API.GetRecord, req, ctx)
     const record = proto.toObject()
     if (!record.record) throw new Error("Missing return value")

@@ -1,5 +1,5 @@
-import { Block } from "@textile/threads-core"
 import { aes } from "@textile/threads-crypto"
+import { Block } from "./ipld"
 
 export interface Options {
   codec: string

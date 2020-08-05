@@ -7,9 +7,7 @@
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "license": "MIT",
   "scripts": {
     "prepublishOnly": "npm run build",

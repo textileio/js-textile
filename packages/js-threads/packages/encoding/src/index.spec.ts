@@ -1,8 +1,9 @@
-import { Block, EventHeader, RecordNode } from "@textile/threads-core"
 import { keys, randomBytes } from "@textile/threads-crypto"
 import { expect } from "chai"
 import { decodeBlock } from "./coding"
 import { createEvent } from "./event"
+import { EventHeader, RecordNode } from "./interfaces"
+import { Block } from "./ipld"
 import { createRecord } from "./record"
 
 const readKey = randomBytes(32)
