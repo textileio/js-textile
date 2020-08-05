@@ -17,6 +17,9 @@ import {
   SentboxListOptions,
   GetThreadReplyObj,
   UserMessage,
+  getMailboxID,
+  watchMailbox,
+  MailboxEvent,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -24,9 +27,9 @@ const logger = log.getLogger('users')
 /**
  * Users provides a web-gRPC wrapper client for communicating with the Textile
  * Hub's web-gRPC enabled Users API.
- * 
+ *
  * This API has the ability to:
- * 
+ *
  *   - Register new users with a User Group key and obtain a new API Token
  *
  *   - Get and List all Threads created for/by the user in your app.
@@ -34,7 +37,7 @@ const logger = log.getLogger('users')
  *   - Create an inbox for the user or send message to another user's inbox.
  *
  *   - Check, read, and delete messages in a user's inbox.
- * 
+ *
  * @example
  * Initialize a the User API and list their threads.
  * ```typescript
@@ -180,6 +183,8 @@ export class Users extends GrpcAuthentication {
    * An inbox must be setup by the inbox owner (keys) before
    * messages can be sent to it.
    *
+   * @returns {string} mailboxID
+   *
    * @example
    * ```typescript
    * import { Users } from "@textile/hub"
@@ -189,8 +194,17 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async setupMailbox(): Promise<{ mailboxID: Uint8Array }> {
+  async setupMailbox(): Promise<string> {
     return setupMailbox(this)
+  }
+
+  /**
+   * Returns the mailboxID of the current user if it exists.
+   *
+   * @returns {string} mailboxID
+   */
+  async getMailboxID(): Promise<string> {
+    return getMailboxID(this)
   }
 
   /**
@@ -319,5 +333,13 @@ export class Users extends GrpcAuthentication {
    */
   async deleteSentboxMessage(id: string): Promise<{}> {
     return deleteSentboxMessage(this, id)
+  }
+
+  async watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void) {
+    return watchMailbox(this, id, 'inbox', callback)
+  }
+
+  async watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void) {
+    return watchMailbox(this, id, 'sentbox', callback)
   }
 }

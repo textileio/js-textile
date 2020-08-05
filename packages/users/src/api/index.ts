@@ -19,9 +19,16 @@ import {
 import { API } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
+import { Client } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
+
+export const MailConfig = {
+  ThreadName: 'hubmail',
+  InboxCollectionName: 'inbox',
+  SentboxCollectionName: 'sentbox',
+}
 
 export enum Status {
   ALL,
@@ -58,6 +65,10 @@ export interface UserMessage {
   signature: Uint8Array
   createdAt: number
   readAt?: number
+}
+
+export interface Instance<T> {
+  instance: T
 }
 
 function convertMessageObj(input: Message): UserMessage {
@@ -100,12 +111,18 @@ export async function getThread(api: GrpcConnection, name: string, ctx?: Context
   }
 }
 
-export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<{ mailboxID: Uint8Array }> {
+export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
   const res: SetupMailboxReply = await api.unary(API.SetupMailbox, req, ctx)
-  const mailboxID = res.getMailboxid_asU8()
-  return { mailboxID }
+  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxid_asB64() as string, 'base64')).toString()
+  return mailboxID
+}
+
+export async function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
+  logger.debug('setup mailbox request')
+  const thread = await getThread(api, MailConfig.ThreadName, ctx)
+  return thread.id
 }
 
 export async function sendMessage(
@@ -190,3 +207,59 @@ export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?
   req.setId(id)
   return await api.unary(API.DeleteSentboxMessage, req, ctx)
 }
+
+export enum MailboxEventType {
+  CREATE,
+  SAVE,
+  DELETE,
+}
+export interface MailboxEvent {
+  type: MailboxEventType
+  messageID: string
+  message: UserMessage
+}
+export async function watchMailbox(
+  api: GrpcConnection,
+  id: string,
+  box: 'inbox' | 'sentbox',
+  callback: (reply?: MailboxEvent, err?: Error) => void,
+  ctx?: ContextInterface,
+) {
+  logger.debug('new watch inbox request')
+  const client = new Client(ctx || api.context)
+  const threadID = ThreadID.fromString(id)
+  interface IntermediateMessage {
+    _id: string
+    from: string
+    to: string
+    body: string
+    signature: string
+    created_at: number
+    read_at: number
+  }
+  const retype = (reply?: Instance<IntermediateMessage>, err?: Error) => {
+    if (!reply) {
+      callback(reply, err)
+    } else {
+      const instance = reply.instance
+      const message: MailboxEvent = {
+        type: MailboxEventType.CREATE,
+        messageID: instance._id,
+        message: {
+          id: instance._id,
+          from: instance.from,
+          to: instance.to,
+          body: new Uint8Array(Buffer.from(instance.body, 'base64')),
+          signature: new Uint8Array(Buffer.from(instance.signature, 'base64')),
+          createdAt: instance.created_at,
+          readAt: instance.read_at,
+        },
+      }
+      callback(message)
+    }
+  }
+  const collectionName = box === 'inbox' ? MailConfig.InboxCollectionName : MailConfig.SentboxCollectionName
+  return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
+}
+
+// Instance<T>

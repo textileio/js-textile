@@ -3,12 +3,12 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
-import { PrivateKey } from '@textile/crypto'
+import { PrivateKey, PublicKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { expirationError } from '@textile/security'
 import { signUp, createKey, createAPISig } from './spec.util'
 import { Users } from './users'
-import { Status } from './api'
+import { Status, MailboxEvent, MailboxEventType } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -238,8 +238,8 @@ describe('Users...', () => {
 
       const token = await user.getToken(user1Id)
       user1Ctx.withToken(token) // to skip regen in later calls
-      const res = await user.setupMailbox()
-      expect(res.mailboxID).to.not.be.undefined
+      const mailboxID = await user.setupMailbox()
+      expect(mailboxID).to.not.be.undefined
 
       // Should setup user2 mailbox without error
       const user2 = new Users(user2Ctx)
@@ -304,5 +304,143 @@ describe('Users...', () => {
       rec = await user1.listSentboxMessages()
       expect(rec.length).to.equal(0)
     })
+    it('mailboxID should exist', async () => {
+      const user1 = new Users(user1Ctx)
+      const mailboxID = await user1.getMailboxID()
+      expect(mailboxID).to.not.be.undefined
+    })
+
+    it('inbox listen should return new messages', (done) => {
+      const user1 = new Users(user1Ctx)
+      let hitCallback = false
+      const callback = async (reply?: MailboxEvent, err?: Error) => {
+        expect(err).to.be.undefined
+        expect(reply).to.not.be.undefined
+        if (!reply) return done()
+        expect(reply.type).to.equal(MailboxEventType.CREATE)
+
+        const bodyBytes = await user1Id.decrypt(reply.message.body)
+        const decoder = new TextDecoder()
+        const body = decoder.decode(bodyBytes)
+        expect(body).to.equal('watch')
+        hitCallback = true
+      }
+      setTimeout(async () => {
+        const mailboxID = await user1.getMailboxID()
+        expect(mailboxID).to.not.be.undefined
+        const closer = await user1.watchInbox(mailboxID, callback)
+        const user2 = new Users(user2Ctx)
+        await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
+        setTimeout(() => {
+          closer.close()
+          expect(hitCallback).to.be.true
+          done()
+        }, 250)
+      }, 500)
+    }).timeout(5000)
+
+    it('sentbox listen should return new messages', (done) => {
+      const user2 = new Users(user2Ctx)
+      let hitCallback = false
+      const callback = async (reply?: MailboxEvent, err?: Error) => {
+        expect(err).to.be.undefined
+        expect(reply).to.not.be.undefined
+        if (!reply) return done()
+        expect(reply.type).to.equal(MailboxEventType.CREATE)
+
+        const bodyBytes = await user2Id.decrypt(reply.message.body)
+        console.log(bodyBytes)
+        const decoder = new TextDecoder()
+        const body = decoder.decode(bodyBytes)
+        expect(body).to.equal('watch')
+        hitCallback = true
+      }
+      setTimeout(async () => {
+        const mailboxID = await user2.getMailboxID()
+        expect(mailboxID).to.not.be.undefined
+        const closer = await user2.watchSentbox(mailboxID, callback)
+        await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
+        setTimeout(() => {
+          closer.close()
+          expect(hitCallback).to.be.true
+          done()
+        }, 250)
+      }, 500)
+    }).timeout(5000)
+
+    it('sentbox listen should return deletes', (done) => {
+      const user2 = new Users(user2Ctx)
+      let hitCallback = false
+      const callback = async (reply?: MailboxEvent, err?: Error) => {
+        expect(err).to.be.undefined
+        expect(reply).to.not.be.undefined
+        if (!reply) return done()
+        expect(reply.type).to.equal(MailboxEventType.DELETE)
+        hitCallback = true
+      }
+      setTimeout(async () => {
+        const mailboxID = await user2.getMailboxID()
+        expect(mailboxID).to.not.be.undefined
+        const closer = await user2.watchSentbox(mailboxID, callback)
+        const sentMessages = await user2.listSentboxMessages()
+        expect(sentMessages.length).to.be.greaterThan(0)
+        await user2.deleteSentboxMessage(sentMessages[0].id)
+        setTimeout(() => {
+          closer.close()
+          expect(hitCallback).to.be.true
+          done()
+        }, 250)
+      }, 500)
+    }).timeout(5000)
+
+    it('inbox listen should return saves', (done) => {
+      const user1 = new Users(user1Ctx)
+      let hitCallback = false
+      const callback = async (reply?: MailboxEvent, err?: Error) => {
+        expect(err).to.be.undefined
+        expect(reply).to.not.be.undefined
+        if (!reply) return done()
+        expect(reply.type).to.equal(MailboxEventType.SAVE)
+        hitCallback = true
+      }
+      setTimeout(async () => {
+        const mailboxID = await user1.getMailboxID()
+        expect(mailboxID).to.not.be.undefined
+        const closer = await user1.watchInbox(mailboxID, callback)
+        const inbox = await user1.listInboxMessages()
+        expect(inbox.length).to.be.greaterThan(0)
+        await user1.readInboxMessage(inbox[0].id)
+        setTimeout(() => {
+          closer.close()
+          expect(hitCallback).to.be.true
+          done()
+        }, 250)
+      }, 500)
+    }).timeout(5000)
+
+    it('inbox listen should return deletes', (done) => {
+      const user1 = new Users(user1Ctx)
+      let hitCallback = false
+      const callback = async (reply?: MailboxEvent, err?: Error) => {
+        expect(err).to.be.undefined
+        expect(reply).to.not.be.undefined
+        if (!reply) return done()
+        expect(reply.type).to.equal(MailboxEventType.DELETE)
+        hitCallback = true
+      }
+      setTimeout(async () => {
+        const mailboxID = await user1.getMailboxID()
+        expect(mailboxID).to.not.be.undefined
+        const closer = await user1.watchInbox(mailboxID, callback)
+        const inbox = await user1.listSentboxMessages()
+        expect(inbox.length).to.be.greaterThan(0)
+        await user1.deleteInboxMessage(inbox[0].id)
+        setTimeout(() => {
+          closer.close()
+          expect(hitCallback).to.be.true
+          done()
+        }, 250)
+      }, 500)
+    }).timeout(5000)
   })
 })
