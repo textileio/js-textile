@@ -1,4 +1,5 @@
 import log from 'loglevel'
+import { grpc } from "@improbable-eng/grpc-web"
 import {
   SetupMailboxRequest,
   SetupMailboxReply,
@@ -20,6 +21,7 @@ import { API } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
 import { Client } from '@textile/hub-threads-client'
+import { Action, Update } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
@@ -67,8 +69,20 @@ export interface UserMessage {
   readAt?: number
 }
 
-export interface Instance<T> {
-  instance: T
+export interface MailboxEvent {
+  type: Action
+  messageID: string
+  message?: UserMessage
+}
+
+interface IntermediateMessage {
+  _id: string
+  from: string
+  to: string
+  body: string
+  signature: string
+  created_at: number
+  read_at: number
 }
 
 function convertMessageObj(input: Message): UserMessage {
@@ -208,58 +222,39 @@ export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?
   return await api.unary(API.DeleteSentboxMessage, req, ctx)
 }
 
-export enum MailboxEventType {
-  CREATE,
-  SAVE,
-  DELETE,
-}
-export interface MailboxEvent {
-  type: MailboxEventType
-  messageID: string
-  message: UserMessage
-}
-export async function watchMailbox(
+export function watchMailbox(
   api: GrpcConnection,
   id: string,
   box: 'inbox' | 'sentbox',
   callback: (reply?: MailboxEvent, err?: Error) => void,
   ctx?: ContextInterface,
-) {
+): grpc.Request {
   logger.debug('new watch inbox request')
   const client = new Client(ctx || api.context)
   const threadID = ThreadID.fromString(id)
-  interface IntermediateMessage {
-    _id: string
-    from: string
-    to: string
-    body: string
-    signature: string
-    created_at: number
-    read_at: number
-  }
-  const retype = (reply?: Instance<IntermediateMessage>, err?: Error) => {
+  const retype = (reply?: Update<IntermediateMessage>, err?: Error) => {
     if (!reply) {
       callback(reply, err)
     } else {
+      const result: MailboxEvent = {
+        type: reply.action,
+        messageID: reply.instanceID,
+      }
       const instance = reply.instance
-      const message: MailboxEvent = {
-        type: MailboxEventType.CREATE,
-        messageID: instance._id,
-        message: {
-          id: instance._id,
+      if (instance) {
+        result.message = {
+          id: reply.instanceID,
           from: instance.from,
           to: instance.to,
           body: new Uint8Array(Buffer.from(instance.body, 'base64')),
           signature: new Uint8Array(Buffer.from(instance.signature, 'base64')),
           createdAt: instance.created_at,
           readAt: instance.read_at,
-        },
+        }
       }
-      callback(message)
+      callback(result)
     }
   }
   const collectionName = box === 'inbox' ? MailConfig.InboxCollectionName : MailConfig.SentboxCollectionName
   return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
 }
-
-// Instance<T>

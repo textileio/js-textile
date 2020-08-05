@@ -1,4 +1,5 @@
 import log from 'loglevel'
+import { grpc } from "@improbable-eng/grpc-web"
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
@@ -335,11 +336,11 @@ export class Users extends GrpcAuthentication {
     return deleteSentboxMessage(this, id)
   }
 
-  async watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void) {
+  watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
     return watchMailbox(this, id, 'inbox', callback)
   }
 
-  async watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void) {
+  watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
     return watchMailbox(this, id, 'sentbox', callback)
   }
 }

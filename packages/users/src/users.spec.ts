@@ -3,12 +3,13 @@ import { grpc } from '@improbable-eng/grpc-web'
 import { SignupReply } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
-import { PrivateKey, PublicKey } from '@textile/crypto'
+import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
+import { Action } from '@textile/threads-client'
 import { expirationError } from '@textile/security'
 import { signUp, createKey, createAPISig } from './spec.util'
 import { Users } from './users'
-import { Status, MailboxEvent, MailboxEventType } from './api'
+import { Status, MailboxEvent } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -316,8 +317,8 @@ describe('Users...', () => {
       const callback = async (reply?: MailboxEvent, err?: Error) => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
-        if (!reply) return done()
-        expect(reply.type).to.equal(MailboxEventType.CREATE)
+        if (!reply || !reply.message) return done()
+        expect(reply.type).to.equal(Action.CREATE)
 
         const bodyBytes = await user1Id.decrypt(reply.message.body)
         const decoder = new TextDecoder()
@@ -345,8 +346,8 @@ describe('Users...', () => {
       const callback = async (reply?: MailboxEvent, err?: Error) => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
-        if (!reply) return done()
-        expect(reply.type).to.equal(MailboxEventType.CREATE)
+        if (!reply || !reply.message) return done()
+        expect(reply.type).to.equal(Action.CREATE)
 
         const bodyBytes = await user2Id.decrypt(reply.message.body)
         console.log(bodyBytes)
@@ -375,7 +376,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(MailboxEventType.DELETE)
+        expect(reply.type).to.equal(Action.DELETE)
         hitCallback = true
       }
       setTimeout(async () => {
@@ -400,7 +401,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(MailboxEventType.SAVE)
+        expect(reply.type).to.equal(Action.SAVE)
         hitCallback = true
       }
       setTimeout(async () => {
@@ -425,7 +426,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(MailboxEventType.DELETE)
+        expect(reply.type).to.equal(Action.DELETE)
         hitCallback = true
       }
       setTimeout(async () => {
