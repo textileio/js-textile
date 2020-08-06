@@ -55,6 +55,15 @@ export class GrpcAuthentication extends GrpcConnection {
    * using User Group key authentication. This method is recommended for
    * public apps where API secrets need to remain hidden from end users.
    * @param auth The UserAuth object.
+   *
+   * @example
+   * ```@typescript
+   * import { Client, UserAuth } from '@textile/hub'
+   *
+   * async function example (userAuth: UserAuth) {
+   *   const client = await Client.withUserAuth(userAuth)
+   * }
+   * ```
    */
   static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
     const context =
@@ -68,6 +77,19 @@ export class GrpcAuthentication extends GrpcConnection {
    * for admin or insecure implementations where the non-signing keys or
    * key with secret can be embedded directly in an app.
    * @param key The KeyInfo object containing {key: string, secret: string}
+   *
+   * @example
+   * ```@typescript
+   * import { Client, KeyInfo } from '@textile/hub'
+   *
+   * async function start () {
+   *   const keyInfo: KeyInfo = {
+   *     key: '<api key>',
+   *     secret: '<api secret>'
+   *   }
+   *   const client = await Client.withKeyInfo(keyInfo)
+   * }
+   * ```
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
     const context = new Context(host)
@@ -81,6 +103,15 @@ export class GrpcAuthentication extends GrpcConnection {
    * about which thread you are making requests against. Use `withThread`
    * to declare your target thread before making those API calls.
    * @param threadId the ID of the thread
+   *
+   * @example
+   * ```@typescript
+   * import { Client, ThreadID } from '@textile/hub'
+   *
+   * async function example (threadID: ThreadID) {
+   *   const client = await Client.withThread(threadID)
+   * }
+   * ```
    */
   withThread(threadID?: string) {
     if (threadID === undefined) return this
@@ -93,6 +124,16 @@ export class GrpcAuthentication extends GrpcConnection {
    * the API using User Group keys, you must first create a new token for
    * each new user. Tokens do not change after you create them.
    * @param identity A user identity to use for interacting with APIs.
+   *
+   * @example
+   * ```@typescript
+   * import { Client, PrivateKey } from '@textile/hub'
+   *
+   * async function example (client: Client, identity: PrivateKey) {
+   *   const token = await client.getToken(identity)
+   *   return token
+   * }
+   * ```
    */
   async getToken(identity: Identity) {
     const client = new Client(this.context)
@@ -111,6 +152,24 @@ export class GrpcAuthentication extends GrpcConnection {
    * @param callback A callback function that takes a `challenge` argument and returns a signed
    * message using the input challenge and the private key associated with `publicKey`.
    * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
+   *
+   * @example
+   * ```typescript
+   * import { Client, PrivateKey } from '@textile/hub'
+   *
+   * async function example (client: Client, identity: PrivateKey) {
+   *   const token = await client.getTokenChallenge(
+   *     identity.pubKey,
+   *     (challenge: Uint8Array) => {
+   *       return new Promise((resolve, reject) => {
+   *         // This is where you should program PrivateKey to respond to challenge
+   *         // Read more here: https://docs.textile.io/tutorials/hub/production-auth/
+   *       }
+   *     }
+   *   )
+   *   return token
+   * }
+   * ```
    */
   async getTokenChallenge(
     publicKey: string,

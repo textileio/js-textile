@@ -130,6 +130,15 @@ export class Buckets extends GrpcAuthentication {
   }
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, UserAuth } from '@textile/hub'
+   *
+   * async function example (userAuth: UserAuth) {
+   *   const buckets = await Buckets.withUserAuth(userAuth)
+   * }
+   * ```
    */
   static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
     const res = super.withUserAuth(auth, host, debug)
@@ -138,6 +147,19 @@ export class Buckets extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withKeyInfo}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, KeyInfo } from '@textile/hub'
+   *
+   * async function start () {
+   *   const keyInfo: KeyInfo = {
+   *     key: '<api key>',
+   *     secret: '<api secret>'
+   *   }
+   *   const buckets = await Buckets.withKeyInfo(keyInfo)
+   * }
+   * ```
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
     const auth = await super.withKeyInfo(key, host, debug)
@@ -146,6 +168,15 @@ export class Buckets extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withThread}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, ThreadID } from '@textile/hub'
+   *
+   * async function example (threadID: ThreadID) {
+   *   const buckets = await Buckets.withThread(threadID)
+   * }
+   * ```
    */
   withThread(threadID?: string) {
     return super.withThread(threadID)
@@ -153,6 +184,16 @@ export class Buckets extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, PrivateKey } from '@textile/hub'
+   *
+   * async function example (buckets: Buckets, identity: PrivateKey) {
+   *   const token = await buckets.getToken(identity)
+   *   return token // already added to `buckets` scope
+   * }
+   * ```
    */
   async getToken(identity: Identity) {
     return super.getToken(identity)
@@ -160,6 +201,24 @@ export class Buckets extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
+   *
+   * @example
+   * ```typescript
+   * import { Buckets, PrivateKey } from '@textile/hub'
+   *
+   * async function example (buckets: Buckets, identity: PrivateKey) {
+   *   const token = await buckets.getTokenChallenge(
+   *     identity.public.toString(),
+   *     (challenge: Uint8Array) => {
+   *       return new Promise((resolve, reject) => {
+   *         // This is where you should program PrivateKey to respond to challenge
+   *         // Read more here: https://docs.textile.io/tutorials/hub/production-auth/
+   *       })
+   *     }
+   *   )
+   *   return token
+   * }
+   * ```
    */
   async getTokenChallenge(
     publicKey: string,
