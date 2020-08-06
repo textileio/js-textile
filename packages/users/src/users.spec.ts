@@ -280,7 +280,7 @@ describe('Users...', () => {
       const rec2 = await user2.listInboxMessages({ status: Status.UNREAD })
       expect(rec2.length).to.equal(0)
     })
-    it('should should delete inbox messages', async () => {
+    it('should delete inbox messages', async () => {
       const user2 = new Users(user2Ctx)
 
       // Check inbox
@@ -292,7 +292,7 @@ describe('Users...', () => {
       rec = await user2.listInboxMessages()
       expect(rec.length).to.equal(0)
     })
-    it('should should delete sentbox messages', async () => {
+    it('should delete sentbox messages', async () => {
       const user1 = new Users(user1Ctx)
 
       // Check inbox
