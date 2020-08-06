@@ -5,9 +5,7 @@ Textile Hub
 
 ## Introduction
 
-`@textile/hub` provides access to Textile APIs in apps based on a Account Keys or User Group Keys.
-
-Go to [the docs](https://docs.textile.io/) for the full Textile documentation, including information about accounts and key generation.
+`@textile/hub` provides access to Textile APIs in apps based on Account Keys or User Group Keys. For details on getting keys, see [textileio/textile](https://docs.textile.io/hub/app-apis/) and for the full Textile documentation.
 
 Join us on our [public Slack channel](https://slack.textile.io/) for news, discussions, and status updates. [Check out our blog](https://blog.textile.io/) for the latest posts and announcements.
 
@@ -19,10 +17,14 @@ npm install @textile/hub
 
 ## Usage
 
+The Hub library contains three API clients: Users, Buckets, and Threads Client. You can use each of these to access the full set of APIs available on the Hub. To use any of them, you must first start by authenticating your app with the API. 
 
-### Authentication
+### Authentication & authorization
 
-If you use the Threads or Buckets APIs, you'll need to first authenticate with the API.
+Authentication & authorization steps is the same no matter which API client you use, Users, Buckets or Threads Client. For most applications, this will happen in two parts.
+
+1. Authentication. In this step, you will use your User Group keys or Account keys to gain access to the Hub API.
+2. User token generation. In this step, you will assign a unique API token to a new user of your app, to grant them access to your resources on the Hub.
 
 [Read more on authenticating users here](https://docs.textile.io/tutorials/hub/web-app/).
 
@@ -45,7 +47,7 @@ const auth: UserAuth = {
 
 #### KeyInfo
 
-The `KeyInfo` object holds your API secret and so should never be used in an insecure environment (such as in an application). You can use `KeyInfo` with an insecure key (signing not required) from the api by leaving `secret` as an empty string `''`.
+The `KeyInfo` object holds your API secret and so should never be used in an insecure environment (such as in an application). You can use `KeyInfo` with an insecure key (signing not required) from the api by leaving `secret` off.
 
 ```typescript
 import { KeyInfo } from '@textile/hub'
@@ -87,21 +89,75 @@ function start (callback: () => Promise<UserAuth>) {
 }
 ```
 
-### ThreadDB Client
+**Transfer Auth**
 
-Threads client to access remote threads, generate token and more.
+You can transfer authentication & authorization between Users and Buckets API clients below by using their respective `copyAuth` methods.
 
-[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.client).
-
-**List Threads**
+For example, copying a setup Users client to Buckets
 
 ```typescript
-import { Client } from '@textile/hub'
+import { Buckets, Users } from '@textile/hub'
 
-async function list (client: Client) {
-  const threads = await client.listThreads()
+const usersToBuckets = async (users: Users) => {
+  const buckets = Buckets.copyAuth(users)
+  return buckets
 }
 ```
+
+An inversely, copying a Bucket session to Users client.
+
+```typescript
+import { Buckets, Users } from '@textile/hub'
+
+const bucketsToUsers = async (buckets: Buckets) => {
+  const user = Users.copyAuth(buckets)
+  return user
+}
+```
+
+### Users client
+
+The Users client allows you to access a local (in your app) user's account information, such as a list of all their threads in your app. It also gives you access to a per-user inboxing API for transferring messages between your users based on simple private key identities.
+
+[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.users).
+
+**List a user's threads**
+
+```typescript
+import { Users } from '@textile/hub'
+
+async function list (users: Users) {
+  const threads = await users.listThreads()
+}
+```
+
+**Setup a user's mailbox**
+
+```typescript
+import { Users } from "@textile/hub"
+
+async function example(users: Users) {
+   return await users.setupMailbox()
+}
+```
+
+**Send message to another user by public key**
+
+```typescript
+import { Users, Identity, PublicKey  } from "@textile/hub"
+
+async function example(users: Users, from: Identity, to: PublicKey, message: string) {
+  const encoder = new TextEncoder()
+  const body = encoder.encode(message)
+  return await users.sendMessage(from, to, body)
+}
+```
+
+### ThreadDB client
+
+Threads client to access remote threads, create new threads, add and remove data.
+
+[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.client).
 
 **Create a thread**
 
@@ -147,7 +203,7 @@ async function createEntity (client: Client, threadId: ThreadID, jsonData: any) 
 }
 ```
 
-### Bucket Client
+### Buckets client
 
 Create, manage, and publish user and account Buckets.
 

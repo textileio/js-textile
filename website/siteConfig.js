@@ -38,7 +38,7 @@ const siteConfig = {
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    { doc: 'index', label: 'Introduction' },
+    { doc: 'hub.users', label: 'Users' },
     { doc: 'hub.buckets', label: 'Buckets' },
     { doc: 'hub.client', label: 'Threads' },
     { href: 'https://docs.textile.io', label: 'Textile Docs' },

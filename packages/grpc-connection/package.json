@@ -1,0 +1,39 @@
+{
+  "name": "@textile/grpc-connection",
+  "version": "0.0.1",
+  "description": "web-gRPC state manager for grpc-connection.",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
+    "prebuild": "npm run clean",
+    "build": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/textileio/js-hub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/textileio/js-hub/issues"
+  },
+  "author": "Textile",
+  "license": "MIT",
+  "dependencies": {
+    "@improbable-eng/grpc-web": "^0.12.0",
+    "@textile/context": "^0.6.5",
+    "@textile/grpc-transport": "^0.0.3"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.3"
+  }
+}

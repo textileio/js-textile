@@ -8,21 +8,6 @@
       "hub.apisig": {
         "title": "APISig type"
       },
-      "hub.archive": {
-        "title": "archive() function"
-      },
-      "hub.archiveinfo": {
-        "title": "archiveInfo() function"
-      },
-      "hub.archivestatus": {
-        "title": "archiveStatus() function"
-      },
-      "hub.archivewatch": {
-        "title": "archiveWatch() function"
-      },
-      "hub.buckets._constructor_": {
-        "title": "Buckets.(constructor)"
-      },
       "hub.buckets.archive": {
         "title": "Buckets.archive() method"
       },
@@ -35,8 +20,11 @@
       "hub.buckets.archivewatch": {
         "title": "Buckets.archiveWatch() method"
       },
-      "hub.buckets.context": {
-        "title": "Buckets.context property"
+      "hub.buckets.copyauth": {
+        "title": "Buckets.copyAuth() method"
+      },
+      "hub.buckets.getorinit": {
+        "title": "Buckets.getOrInit() method"
       },
       "hub.buckets.gettoken": {
         "title": "Buckets.getToken() method"
@@ -58,6 +46,9 @@
       },
       "hub.buckets.listpath": {
         "title": "Buckets.listPath() method"
+      },
+      "hub.buckets.listpathflat": {
+        "title": "Buckets.listPathFlat() method"
       },
       "hub.buckets": {
         "title": "Buckets class"
@@ -83,12 +74,6 @@
       "hub.buckets.root": {
         "title": "Buckets.root() method"
       },
-      "hub.buckets.rpcoptions": {
-        "title": "Buckets.rpcOptions property"
-      },
-      "hub.buckets.servicehost": {
-        "title": "Buckets.serviceHost property"
-      },
       "hub.buckets.withkeyinfo": {
         "title": "Buckets.withKeyInfo() method"
       },
@@ -109,24 +94,6 @@
       },
       "hub.bucketsarchivewatch": {
         "title": "bucketsArchiveWatch() function"
-      },
-      "hub.bucketsgrpcclient._constructor_": {
-        "title": "BucketsGrpcClient.(constructor)"
-      },
-      "hub.bucketsgrpcclient.context": {
-        "title": "BucketsGrpcClient.context property"
-      },
-      "hub.bucketsgrpcclient": {
-        "title": "BucketsGrpcClient class"
-      },
-      "hub.bucketsgrpcclient.rpcoptions": {
-        "title": "BucketsGrpcClient.rpcOptions property"
-      },
-      "hub.bucketsgrpcclient.servicehost": {
-        "title": "BucketsGrpcClient.serviceHost property"
-      },
-      "hub.bucketsgrpcclient.unary": {
-        "title": "BucketsGrpcClient.unary() method"
       },
       "hub.bucketsinit": {
         "title": "bucketsInit() function"
@@ -160,6 +127,9 @@
       },
       "hub.bucketsroot": {
         "title": "bucketsRoot() function"
+      },
+      "hub.bytestoarray": {
+        "title": "bytesToArray() function"
       },
       "hub.client._constructor_": {
         "title": "Client.(constructor)"
@@ -254,41 +224,8 @@
       "hub.client.writetransaction": {
         "title": "Client.writeTransaction() method"
       },
-      "hub.collection._constructor_": {
-        "title": "Collection.(constructor)"
-      },
-      "hub.collection._new_": {
-        "title": "Collection.(new)"
-      },
-      "hub.collection.delete": {
-        "title": "Collection.delete() method"
-      },
-      "hub.collection.insert": {
-        "title": "Collection.insert() method"
-      },
-      "hub.collection": {
-        "title": "Collection interface"
-      },
-      "hub.collection.name": {
-        "title": "Collection.name property"
-      },
-      "hub.collection.readtransaction": {
-        "title": "Collection.readTransaction() method"
-      },
-      "hub.collection.save": {
-        "title": "Collection.save() method"
-      },
-      "hub.collection.writetransaction": {
-        "title": "Collection.writeTransaction() method"
-      },
-      "hub.config": {
-        "title": "Config interface"
-      },
-      "hub.config.name": {
-        "title": "Config.name property"
-      },
-      "hub.config.schema": {
-        "title": "Config.schema property"
+      "hub.convertpathitem": {
+        "title": "convertPathItem variable"
       },
       "hub.createapisig": {
         "title": "createAPISig() function"
@@ -296,242 +233,236 @@
       "hub.createuserauth": {
         "title": "createUserAuth() function"
       },
-      "hub.database._constructor_": {
-        "title": "Database.(constructor)"
+      "hub.decrypt": {
+        "title": "decrypt() function"
       },
-      "hub.database.child": {
-        "title": "Database.child property"
+      "hub.deleteinboxmessage": {
+        "title": "deleteInboxMessage() function"
       },
-      "hub.database.close": {
-        "title": "Database.close() method"
+      "hub.deletesentboxmessage": {
+        "title": "deleteSentboxMessage() function"
       },
-      "hub.database.collections": {
-        "title": "Database.collections property"
-      },
-      "hub.database.dispatcher": {
-        "title": "Database.dispatcher property"
-      },
-      "hub.database.emitter": {
-        "title": "Database.emitter property"
-      },
-      "hub.database.eventbus": {
-        "title": "Database.eventBus property"
-      },
-      "hub.database.getdbinfo": {
-        "title": "Database.getDBInfo() method"
-      },
-      "hub.database": {
-        "title": "Database class"
-      },
-      "hub.database.network": {
-        "title": "Database.network property"
-      },
-      "hub.database.newcollection": {
-        "title": "Database.newCollection() method"
-      },
-      "hub.database.newcollectionfromobject": {
-        "title": "Database.newCollectionFromObject() method"
-      },
-      "hub.database.ownloginfo": {
-        "title": "Database.ownLogInfo() method"
-      },
-      "hub.database.randomidentity": {
-        "title": "Database.randomIdentity() method"
-      },
-      "hub.database.start": {
-        "title": "Database.start() method"
-      },
-      "hub.database.startfromaddress": {
-        "title": "Database.startFromAddress() method"
-      },
-      "hub.database.startfrominfo": {
-        "title": "Database.startFromInfo() method"
-      },
-      "hub.database.threadid": {
-        "title": "Database.threadID property"
-      },
-      "hub.database.withkeyinfo": {
-        "title": "Database.withKeyInfo() method"
-      },
-      "hub.database.withuserauth": {
-        "title": "Database.withUserAuth() method"
-      },
-      "hub.databasesettings.child": {
-        "title": "DatabaseSettings.child property"
-      },
-      "hub.databasesettings.dispatcher": {
-        "title": "DatabaseSettings.dispatcher property"
-      },
-      "hub.databasesettings.eventbus": {
-        "title": "DatabaseSettings.eventBus property"
-      },
-      "hub.databasesettings": {
-        "title": "DatabaseSettings interface"
-      },
-      "hub.databasesettings.network": {
-        "title": "DatabaseSettings.network property"
-      },
-      "hub.document_2._constructor_": {
-        "title": "Document\\_2.(constructor)"
-      },
-      "hub.document_2.exists": {
-        "title": "Document\\_2.exists() method"
-      },
-      "hub.document_2": {
-        "title": "Document\\_2 class"
-      },
-      "hub.document_2.remove": {
-        "title": "Document\\_2.remove() method"
-      },
-      "hub.document_2.save": {
-        "title": "Document\\_2.save() method"
-      },
-      "hub.document_2.tojson": {
-        "title": "Document\\_2.toJSON() method"
-      },
-      "hub.existingkeyerror": {
-        "title": "existingKeyError variable"
+      "hub.encrypt": {
+        "title": "encrypt() function"
       },
       "hub.expirationerror": {
         "title": "expirationError variable"
       },
-      "hub.filterquery": {
-        "title": "FilterQuery type"
+      "hub.extractpublickeybytes": {
+        "title": "extractPublicKeyBytes() function"
       },
-      "hub.grpcbucketapi._constructor_": {
-        "title": "GrpcBucketApi.(constructor)"
+      "hub.getmailboxid": {
+        "title": "getMailboxID() function"
       },
-      "hub.grpcbucketapi.context": {
-        "title": "GrpcBucketApi.context property"
+      "hub.getthread": {
+        "title": "getThread() function"
       },
-      "hub.grpcbucketapi": {
-        "title": "GrpcBucketApi class"
+      "hub.getthreadreplyobj.id": {
+        "title": "GetThreadReplyObj.id property"
       },
-      "hub.grpcbucketapi.rpcoptions": {
-        "title": "GrpcBucketApi.rpcOptions property"
+      "hub.getthreadreplyobj.isdb": {
+        "title": "GetThreadReplyObj.isDB property"
       },
-      "hub.grpcbucketapi.servicehost": {
-        "title": "GrpcBucketApi.serviceHost property"
+      "hub.getthreadreplyobj": {
+        "title": "GetThreadReplyObj interface"
       },
-      "hub.grpcbucketapi.unary": {
-        "title": "GrpcBucketApi.unary() method"
+      "hub.getthreadreplyobj.name": {
+        "title": "GetThreadReplyObj.name property"
       },
-      "hub.grpcclient._constructor_": {
-        "title": "GrpcClient.(constructor)"
+      "hub.grpcauthentication.copyauth": {
+        "title": "GrpcAuthentication.copyAuth() method"
       },
-      "hub.grpcclient.archive": {
-        "title": "GrpcClient.archive() method"
+      "hub.grpcauthentication.gettoken": {
+        "title": "GrpcAuthentication.getToken() method"
       },
-      "hub.grpcclient.archiveinfo": {
-        "title": "GrpcClient.archiveInfo() method"
+      "hub.grpcauthentication.gettokenchallenge": {
+        "title": "GrpcAuthentication.getTokenChallenge() method"
       },
-      "hub.grpcclient.archivestatus": {
-        "title": "GrpcClient.archiveStatus() method"
+      "hub.grpcauthentication": {
+        "title": "GrpcAuthentication class"
       },
-      "hub.grpcclient.archivewatch": {
-        "title": "GrpcClient.archiveWatch() method"
+      "hub.grpcauthentication.withkeyinfo": {
+        "title": "GrpcAuthentication.withKeyInfo() method"
       },
-      "hub.grpcclient.context": {
-        "title": "GrpcClient.context property"
+      "hub.grpcauthentication.withthread": {
+        "title": "GrpcAuthentication.withThread() method"
       },
-      "hub.grpcclient.init": {
-        "title": "GrpcClient.init() method"
+      "hub.grpcauthentication.withuserauth": {
+        "title": "GrpcAuthentication.withUserAuth() method"
       },
-      "hub.grpcclient.links": {
-        "title": "GrpcClient.links() method"
+      "hub.identity": {
+        "title": "Identity interface"
       },
-      "hub.grpcclient.list": {
-        "title": "GrpcClient.list() method"
+      "hub.identity.public": {
+        "title": "Identity.public property"
       },
-      "hub.grpcclient.listipfspath": {
-        "title": "GrpcClient.listIpfsPath() method"
+      "hub.identity.sign": {
+        "title": "Identity.sign() method"
       },
-      "hub.grpcclient.listpath": {
-        "title": "GrpcClient.listPath() method"
+      "hub.inboxlistoptions.ascending": {
+        "title": "InboxListOptions.ascending property"
       },
-      "hub.grpcclient": {
-        "title": "GrpcClient class"
+      "hub.inboxlistoptions.limit": {
+        "title": "InboxListOptions.limit property"
       },
-      "hub.grpcclient.pullipfspath": {
-        "title": "GrpcClient.pullIpfsPath() method"
+      "hub.inboxlistoptions": {
+        "title": "InboxListOptions interface"
       },
-      "hub.grpcclient.pullpath": {
-        "title": "GrpcClient.pullPath() method"
+      "hub.inboxlistoptions.seek": {
+        "title": "InboxListOptions.seek property"
       },
-      "hub.grpcclient.pushpath": {
-        "title": "GrpcClient.pushPath() method"
+      "hub.inboxlistoptions.status": {
+        "title": "InboxListOptions.status property"
       },
-      "hub.grpcclient.remove": {
-        "title": "GrpcClient.remove() method"
-      },
-      "hub.grpcclient.removepath": {
-        "title": "GrpcClient.removePath() method"
-      },
-      "hub.grpcclient.root": {
-        "title": "GrpcClient.root() method"
-      },
-      "hub.grpcclient.rpcoptions": {
-        "title": "GrpcClient.rpcOptions property"
-      },
-      "hub.grpcclient.servicehost": {
-        "title": "GrpcClient.serviceHost property"
-      },
-      "hub.grpcclient.withkeyinfo": {
-        "title": "GrpcClient.withKeyInfo() method"
-      },
-      "hub.grpcclient.withthread": {
-        "title": "GrpcClient.withThread() method"
-      },
-      "hub.grpcclient.withuserauth": {
-        "title": "GrpcClient.withUserAuth() method"
-      },
-      "hub.init": {
-        "title": "init() function"
-      },
-      "hub.jsonschema": {
-        "title": "JSONSchema type"
+      "hub.initobject": {
+        "title": "InitObject type"
       },
       "hub.keyinfo": {
         "title": "KeyInfo type"
       },
-      "hub.links": {
-        "title": "links() function"
+      "hub.linksobject": {
+        "title": "LinksObject type"
       },
-      "hub.list": {
-        "title": "list() function"
+      "hub.listinboxmessages": {
+        "title": "listInboxMessages() function"
       },
-      "hub.listipfspath": {
-        "title": "listIpfsPath() function"
+      "hub.listpathflat": {
+        "title": "listPathFlat() function"
       },
-      "hub.listpath": {
-        "title": "listPath() function"
+      "hub.listpathitemobject": {
+        "title": "ListPathItemObject type"
+      },
+      "hub.listpathobject": {
+        "title": "ListPathObject type"
+      },
+      "hub.listpathrecursive": {
+        "title": "listPathRecursive() function"
+      },
+      "hub.listsentboxmessages": {
+        "title": "listSentboxMessages() function"
+      },
+      "hub.listthreads": {
+        "title": "listThreads() function"
+      },
+      "hub.mailboxevent": {
+        "title": "MailboxEvent interface"
+      },
+      "hub.mailboxevent.message": {
+        "title": "MailboxEvent.message property"
+      },
+      "hub.mailboxevent.messageid": {
+        "title": "MailboxEvent.messageID property"
+      },
+      "hub.mailboxevent.type": {
+        "title": "MailboxEvent.type property"
+      },
+      "hub.mailboxeventtype": {
+        "title": "MailboxEventType enum"
+      },
+      "hub.mailconfig": {
+        "title": "MailConfig variable"
       },
       "hub": {
         "title": "Package Overview"
       },
-      "hub.mismatcherror": {
-        "title": "mismatchError variable"
+      "hub.private": {
+        "title": "Private type"
       },
-      "hub.missingidentity": {
-        "title": "missingIdentity variable"
+      "hub.privatekey._constructor_": {
+        "title": "PrivateKey.(constructor)"
       },
-      "hub.options.child": {
-        "title": "Options.child property"
+      "hub.privatekey.bytes": {
+        "title": "PrivateKey.bytes property"
       },
-      "hub.options.dispatcher": {
-        "title": "Options.dispatcher property"
+      "hub.privatekey.cansign": {
+        "title": "PrivateKey.canSign() method"
       },
-      "hub.options": {
-        "title": "Options interface"
+      "hub.privatekey.decrypt": {
+        "title": "PrivateKey.decrypt() method"
       },
-      "hub.pullipfspath": {
-        "title": "pullIpfsPath() function"
+      "hub.privatekey.fromrandom": {
+        "title": "PrivateKey.fromRandom() method"
       },
-      "hub.pullpath": {
-        "title": "pullPath() function"
+      "hub.privatekey.fromrawed25519seed": {
+        "title": "PrivateKey.fromRawEd25519Seed() method"
       },
-      "hub.pushpath": {
-        "title": "pushPath() function"
+      "hub.privatekey.fromstring": {
+        "title": "PrivateKey.fromString() method"
+      },
+      "hub.privatekey": {
+        "title": "PrivateKey class"
+      },
+      "hub.privatekey.privkey": {
+        "title": "PrivateKey.privKey property"
+      },
+      "hub.privatekey.pubkey": {
+        "title": "PrivateKey.pubKey property"
+      },
+      "hub.privatekey.public": {
+        "title": "PrivateKey.public property"
+      },
+      "hub.privatekey.seed": {
+        "title": "PrivateKey.seed property"
+      },
+      "hub.privatekey.sign": {
+        "title": "PrivateKey.sign() method"
+      },
+      "hub.privatekey.tostring": {
+        "title": "PrivateKey.toString() method"
+      },
+      "hub.privatekey.type": {
+        "title": "PrivateKey.type property"
+      },
+      "hub.privatekeyfromstring": {
+        "title": "privateKeyFromString() function"
+      },
+      "hub.public.bytes": {
+        "title": "Public.bytes property"
+      },
+      "hub.public": {
+        "title": "Public interface"
+      },
+      "hub.public.tostring": {
+        "title": "Public.toString() method"
+      },
+      "hub.public.verify": {
+        "title": "Public.verify() method"
+      },
+      "hub.publickey._constructor_": {
+        "title": "PublicKey.(constructor)"
+      },
+      "hub.publickey.bytes": {
+        "title": "PublicKey.bytes property"
+      },
+      "hub.publickey.encrypt": {
+        "title": "PublicKey.encrypt() method"
+      },
+      "hub.publickey.fromstring": {
+        "title": "PublicKey.fromString() method"
+      },
+      "hub.publickey": {
+        "title": "PublicKey class"
+      },
+      "hub.publickey.pubkey": {
+        "title": "PublicKey.pubKey property"
+      },
+      "hub.publickey.tostring": {
+        "title": "PublicKey.toString() method"
+      },
+      "hub.publickey.type": {
+        "title": "PublicKey.type property"
+      },
+      "hub.publickey.verify": {
+        "title": "PublicKey.verify() method"
+      },
+      "hub.publickeybytesfromstring": {
+        "title": "publicKeyBytesFromString() function"
+      },
+      "hub.publickeybytestostring": {
+        "title": "publicKeyBytesToString() function"
+      },
+      "hub.publickeytostring": {
+        "title": "publicKeyToString() function"
       },
       "hub.pushpathresult": {
         "title": "PushPathResult interface"
@@ -542,56 +473,38 @@
       "hub.pushpathresult.root": {
         "title": "PushPathResult.root property"
       },
-      "hub.readonlycollection._constructor_": {
-        "title": "ReadonlyCollection.(constructor)"
+      "hub.readinboxmessage": {
+        "title": "readInboxMessage() function"
       },
-      "hub.readonlycollection.child": {
-        "title": "ReadonlyCollection.child property"
+      "hub.rootobject": {
+        "title": "RootObject type"
       },
-      "hub.readonlycollection.count": {
-        "title": "ReadonlyCollection.count() method"
+      "hub.sendmessage": {
+        "title": "sendMessage() function"
       },
-      "hub.readonlycollection.find": {
-        "title": "ReadonlyCollection.find() method"
+      "hub.sentboxlistoptions.ascending": {
+        "title": "SentboxListOptions.ascending property"
       },
-      "hub.readonlycollection.findbyid": {
-        "title": "ReadonlyCollection.findById() method"
+      "hub.sentboxlistoptions.limit": {
+        "title": "SentboxListOptions.limit property"
       },
-      "hub.readonlycollection.findone": {
-        "title": "ReadonlyCollection.findOne() method"
+      "hub.sentboxlistoptions": {
+        "title": "SentboxListOptions interface"
       },
-      "hub.readonlycollection.fromcollection": {
-        "title": "ReadonlyCollection.fromCollection() method"
+      "hub.sentboxlistoptions.seek": {
+        "title": "SentboxListOptions.seek property"
       },
-      "hub.readonlycollection.has": {
-        "title": "ReadonlyCollection.has() method"
+      "hub.setupmailbox": {
+        "title": "setupMailbox() function"
       },
-      "hub.readonlycollection": {
-        "title": "ReadonlyCollection class"
+      "hub.staticthis": {
+        "title": "StaticThis type"
       },
-      "hub.readonlycollection.name": {
-        "title": "ReadonlyCollection.name property"
+      "hub.status": {
+        "title": "Status enum"
       },
-      "hub.readonlycollection.validator": {
-        "title": "ReadonlyCollection.validator property"
-      },
-      "hub.remove": {
-        "title": "remove() function"
-      },
-      "hub.removepath": {
-        "title": "removePath() function"
-      },
-      "hub.root": {
-        "title": "root() function"
-      },
-      "hub.startoptions.collections": {
-        "title": "StartOptions.collections property"
-      },
-      "hub.startoptions": {
-        "title": "StartOptions interface"
-      },
-      "hub.startoptions.threadid": {
-        "title": "StartOptions.threadID property"
+      "hub.statusint": {
+        "title": "StatusInt type"
       },
       "hub.threadid._constructor_": {
         "title": "ThreadID.(constructor)"
@@ -638,29 +551,115 @@
       "hub.userauth": {
         "title": "UserAuth type"
       },
+      "hub.usermessage.body": {
+        "title": "UserMessage.body property"
+      },
+      "hub.usermessage.createdat": {
+        "title": "UserMessage.createdAt property"
+      },
+      "hub.usermessage.from": {
+        "title": "UserMessage.from property"
+      },
+      "hub.usermessage.id": {
+        "title": "UserMessage.id property"
+      },
+      "hub.usermessage": {
+        "title": "UserMessage interface"
+      },
+      "hub.usermessage.readat": {
+        "title": "UserMessage.readAt property"
+      },
+      "hub.usermessage.signature": {
+        "title": "UserMessage.signature property"
+      },
+      "hub.usermessage.to": {
+        "title": "UserMessage.to property"
+      },
+      "hub.users.copyauth": {
+        "title": "Users.copyAuth() method"
+      },
+      "hub.users.deleteinboxmessage": {
+        "title": "Users.deleteInboxMessage() method"
+      },
+      "hub.users.deletesentboxmessage": {
+        "title": "Users.deleteSentboxMessage() method"
+      },
+      "hub.users.getmailboxid": {
+        "title": "Users.getMailboxID() method"
+      },
+      "hub.users.getthread": {
+        "title": "Users.getThread() method"
+      },
+      "hub.users.gettoken": {
+        "title": "Users.getToken() method"
+      },
+      "hub.users.gettokenchallenge": {
+        "title": "Users.getTokenChallenge() method"
+      },
+      "hub.users.listinboxmessages": {
+        "title": "Users.listInboxMessages() method"
+      },
+      "hub.users.listsentboxmessages": {
+        "title": "Users.listSentboxMessages() method"
+      },
+      "hub.users.listthreads": {
+        "title": "Users.listThreads() method"
+      },
+      "hub.users": {
+        "title": "Users class"
+      },
+      "hub.users.readinboxmessage": {
+        "title": "Users.readInboxMessage() method"
+      },
+      "hub.users.sendmessage": {
+        "title": "Users.sendMessage() method"
+      },
+      "hub.users.setupmailbox": {
+        "title": "Users.setupMailbox() method"
+      },
+      "hub.users.watchinbox": {
+        "title": "Users.watchInbox() method"
+      },
+      "hub.users.watchsentbox": {
+        "title": "Users.watchSentbox() method"
+      },
+      "hub.users.withkeyinfo": {
+        "title": "Users.withKeyInfo() method"
+      },
+      "hub.users.withthread": {
+        "title": "Users.withThread() method"
+      },
+      "hub.users.withuserauth": {
+        "title": "Users.withUserAuth() method"
+      },
       "hub.variant": {
         "title": "Variant enum"
+      },
+      "hub.watchmailbox": {
+        "title": "watchMailbox() function"
       },
       "index": {
         "title": "Introduction"
       }
     },
     "links": {
-      "Introduction": "Introduction",
+      "Users": "Users",
       "Buckets": "Buckets",
       "Threads": "Threads",
-      "Issues": "Issues",
-      "Support": "Support"
+      "Textile Docs": "Textile Docs"
     },
     "categories": {
       "Getting Started": "Getting Started",
+      "Users API": "Users API",
       "Buckets": "Buckets",
       "Threads": "Threads",
-      "Other Types & Methods": "Other Types & Methods",
+      "Common Methods & Classes": "Common Methods & Classes",
+      "ThreadID Methods": "ThreadID Methods",
+      "Identity interfaces": "Identity interfaces",
+      "Private Key Class": "Private Key Class",
+      "Public Key Class": "Public Key Class",
       "Client": "Client",
-      "Database": "Database",
-      "Collections": "Collections",
-      "Config": "Config"
+      "Common Types": "Common Types"
     }
   },
   "pages-strings": {

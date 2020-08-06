@@ -1,7 +1,11 @@
 {
   "docs": {
     "Getting Started": [
-      "index"
+      "index",
+      "hub"
+    ],
+    "Users API": [
+      "hub.users"
     ],
     "Buckets": [
       "hub.buckets"
@@ -9,13 +13,84 @@
     "Threads": [
       "hub.client"
     ],
-    "Other Types & Methods": [
+    "Common Methods & Classes": [
       "hub.threadid",
       "hub.createuserauth",
-      "hub.createapisig",
-      "hub.userauth",
-      "hub.apisig",
-      "hub.keyinfo"
+      "hub.createapisig"
+    ]
+  },
+  "thread-id-docs": {
+    "ThreadID Methods": [
+      "hub.threadid.fromrandom",
+      "hub.threadid.fromstring",
+      "hub.threadid.frombytes",
+      "hub.threadid.tostring",
+      "hub.threadid.tobytes",
+      "hub.threadid.equals",
+      "hub.threadid.isdefined",
+      "hub.threadid.variant",
+      "hub.threadid.version",
+      "hub.threadid.getencoding"
+    ]
+  },
+  "users-docs": {
+    "Users API": [
+      "hub.users.setupmailbox",
+      "hub.users.getmailboxid",
+      "hub.users.sendmessage",
+      "hub.users.watchinbox",
+      "hub.users.watchsentbox",
+      "hub.users.listsentboxmessages",
+      "hub.users.deletesentboxmessage",
+      "hub.users.listinboxmessages",
+      "hub.users.readinboxmessage",
+      "hub.users.deleteinboxmessage",
+      "hub.users.listthreads",
+      "hub.users.getthread",
+      "hub.users.copyauth",
+      "hub.users.withuserauth",
+      "hub.users.withkeyinfo",
+      "hub.users.gettoken",
+      "hub.users.gettokenchallenge",
+      "hub.users.withthread"
+    ],
+    "Identity interfaces": [
+      "hub.identity",
+      "hub.identity.public",
+      "hub.identity.sign",
+      "hub.private",
+      "hub.public",
+      "hub.public.bytes",
+      "hub.public.tostring",
+      "hub.public.verify"
+    ],
+    "Private Key Class": [
+      "hub.privatekey",
+      "hub.privatekey.bytes",
+      "hub.privatekey.cansign",
+      "hub.privatekey.decrypt",
+      "hub.privatekey.fromrandom",
+      "hub.privatekey.fromstring",
+      "hub.privatekey.privkey",
+      "hub.privatekey.pubkey",
+      "hub.privatekey.public",
+      "hub.privatekey.sign",
+      "hub.privatekey.seed",
+      "hub.privatekey.tostring",
+      "hub.privatekey.type",
+      "hub.privatekey.fromrawed25519seed"
+    ],
+    "Public Key Class": [
+      "hub.publickey",
+      "hub.publickey.fromrandom",
+      "hub.publickey.fromstring",
+      "hub.publickey.tostring",
+      "hub.publickey.verify",
+      "hub.publickey.encrypt",
+      "hub.publickey.bytes",
+      "hub.publickey.type",
+      "hub.publickey.pubkey"
+      
     ]
   },
   "bucket-docs": {
@@ -23,6 +98,8 @@
       "hub.buckets.withuserauth",
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
+      "hub.buckets.gettokenchallenge",
+      "hub.buckets.withthread",
       "hub.buckets.getorinit",
       "hub.buckets.init",
       "hub.buckets.root",
@@ -69,6 +146,22 @@
       "hub.client.has",
       "hub.client.readtransaction",
       "hub.client.writetransaction"
+    ]
+  },
+  "Types": {
+    "Common Types": [
+      "hub.userauth",
+      "hub.apisig",
+      "hub.keyinfo",
+      "hub.getthreadreplyobj",
+      "hub.inboxlistoptions",
+      "hub.sentboxlistoptions",
+      "hub.usermessage",
+      "hub.pushpathresult",
+      "hub.mailboxevent",
+      "hub.mailboxeventtype",
+      "hub.status",
+      "hub.variant"
     ]
   }
 }

@@ -1,21 +1,12 @@
 import log from 'loglevel'
-import { Context, defaultHost } from '@textile/context'
+import { defaultHost } from '@textile/context'
 import { Client } from '@textile/hub-threads-client'
-import { Identity } from '@textile/threads-core'
-import { UserAuth, KeyInfo } from '@textile/security'
+import { Identity } from '@textile/crypto'
+import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
+import { ArchiveStatusReply, ArchiveInfoReply } from '@textile/buckets-grpc/buckets_pb'
+import { KeyInfo, UserAuth } from '@textile/security'
 import {
-  Root,
-  InitReply,
-  LinksReply,
-  ListPathReply,
-  ListPathItem,
-  ArchiveReply,
-  ArchiveStatusReply,
-  ArchiveInfoReply,
-} from '@textile/buckets-grpc/buckets_pb'
-import {
-  BucketsGrpcClient,
   bucketsArchiveWatch,
   bucketsArchiveInfo,
   bucketsArchiveStatus,
@@ -31,6 +22,11 @@ import {
   bucketsRoot,
   bucketsInit,
   PushPathResult,
+  RootObject,
+  LinksObject,
+  ListPathObject,
+  ListPathItemObject,
+  InitObject,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -103,34 +99,132 @@ const logger = log.getLogger('buckets')
  * }
  * ```
  */
-export class Buckets extends BucketsGrpcClient {
+export class Buckets extends GrpcAuthentication {
   /**
-   * Creates a new gRPC client instance for accessing the Textile Buckets API.
-   * @param auth The user auth object.
+   * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
+   *
+   * @example
+   * Copy an authenticated Users api instance to Buckets.
+   * ```tyepscript
+   * import { Buckets, Users } from '@textile/hub'
+   *
+   * const usersToBuckets = async (user: Users) => {
+   *   const buckets = Buckets.copyAuth(user)
+   *   return buckets
+   * }
+   * ```
+   *
+   * @example
+   * Copy an authenticated Buckets api instance to Users.
+   * ```tyepscript
+   * import { Buckets, Users } from '@textile/hub'
+   *
+   * const bucketsToUsers = async (buckets: Buckets) => {
+   *   const user = Users.copyAuth(buckets)
+   *   return user
+   * }
+   * ```
+   */
+  static copyAuth(auth: GrpcAuthentication, debug = false) {
+    return new Buckets(auth.context, debug)
+  }
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, UserAuth } from '@textile/hub'
+   *
+   * async function example (userAuth: UserAuth) {
+   *   const buckets = await Buckets.withUserAuth(userAuth)
+   * }
+   * ```
    */
   static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
-    const context =
-      typeof auth === 'object' ? Context.fromUserAuth(auth, host) : Context.fromUserAuthCallback(auth, host)
-    return new Buckets(context, debug)
+    const res = super.withUserAuth(auth, host, debug)
+    return this.copyAuth(res, debug)
   }
 
   /**
-   * Create a new gRPC client Bucket instance from a supplied key and secret
-   * @param key The KeyInfo object containing {key: string, secret: string}
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withKeyInfo}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, KeyInfo } from '@textile/hub'
+   *
+   * async function start () {
+   *   const keyInfo: KeyInfo = {
+   *     key: '<api key>',
+   *     secret: '<api secret>'
+   *   }
+   *   const buckets = await Buckets.withKeyInfo(keyInfo)
+   * }
+   * ```
    */
   static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const context = new Context(host)
-    await context.withKeyInfo(key)
-    return new Buckets(context, debug)
+    const auth = await super.withKeyInfo(key, host, debug)
+    return this.copyAuth(auth, debug)
   }
 
   /**
-   * Scopes to a Thread by ID
-   * @param threadId the ID of the thread
+   * {@inheritDoc @textile/hub#GrpcAuthentication.withThread}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, ThreadID } from '@textile/hub'
+   *
+   * async function example (threadID: ThreadID) {
+   *   const buckets = await Buckets.withThread(threadID)
+   * }
+   * ```
    */
   withThread(threadID?: string) {
-    if (threadID === undefined) return this
-    this.context.withThread(threadID)
+    return super.withThread(threadID)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   *
+   * @example
+   * ```@typescript
+   * import { Buckets, PrivateKey } from '@textile/hub'
+   *
+   * async function example (buckets: Buckets, identity: PrivateKey) {
+   *   const token = await buckets.getToken(identity)
+   *   return token // already added to `buckets` scope
+   * }
+   * ```
+   */
+  async getToken(identity: Identity) {
+    return super.getToken(identity)
+  }
+
+  /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
+   *
+   * @example
+   * ```typescript
+   * import { Buckets, PrivateKey } from '@textile/hub'
+   *
+   * async function example (buckets: Buckets, identity: PrivateKey) {
+   *   const token = await buckets.getTokenChallenge(
+   *     identity.public.toString(),
+   *     (challenge: Uint8Array) => {
+   *       return new Promise((resolve, reject) => {
+   *         // This is where you should program PrivateKey to respond to challenge
+   *         // Read more here: https://docs.textile.io/tutorials/hub/production-auth/
+   *       })
+   *     }
+   *   )
+   *   return token
+   * }
+   * ```
+   */
+  async getTokenChallenge(
+    publicKey: string,
+    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
+  ): Promise<string> {
+    return super.getTokenChallenge(publicKey, callback)
   }
 
   /**
@@ -146,7 +240,7 @@ export class Buckets extends BucketsGrpcClient {
     threadName = 'buckets',
     isPrivate = false,
     threadID?: string,
-  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
+  ): Promise<{ root?: RootObject; threadID?: string }> {
     return this.getOrInit(name, threadName, isPrivate, threadID)
   }
 
@@ -159,7 +253,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param threadID id of thread where bucket is stored
    * @example
    * Initialize a Bucket called "app-name-files"
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, UserAuth } from '@textile/hub'
    *
    * const open = async (auth: UserAuth, name: string) => {
@@ -174,7 +268,7 @@ export class Buckets extends BucketsGrpcClient {
     threadName = 'buckets',
     isPrivate = false,
     threadID?: string,
-  ): Promise<{ root?: Root.AsObject; threadID?: string }> {
+  ): Promise<{ root?: RootObject; threadID?: string }> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
@@ -211,30 +305,6 @@ export class Buckets extends BucketsGrpcClient {
   }
 
   /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   */
-  async getToken(identity: Identity) {
-    const client = new Client(this.context)
-    return client.getToken(identity)
-  }
-
-  /**
-   * Obtain a token for interacting with the remote API.
-   * @param identity A user identity to use for interacting with buckets.
-   * @param callback A callback function that takes a `challenge` argument and returns a signed
-   * message using the input challenge and the private key associated with `publicKey`.
-   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
-   */
-  async getTokenChallenge(
-    publicKey: string,
-    callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
-  ): Promise<string> {
-    const client = new Client(this.context)
-    return client.getTokenChallenge(publicKey, callback)
-  }
-
-  /**
    * Initializes a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
@@ -249,7 +319,7 @@ export class Buckets extends BucketsGrpcClient {
    * }
    * ```
    */
-  async init(name: string, isPrivate = false): Promise<InitReply.AsObject> {
+  async init(name: string, isPrivate = false): Promise<InitObject> {
     logger.debug('init request')
     return bucketsInit(this, name, isPrivate)
   }
@@ -282,7 +352,7 @@ export class Buckets extends BucketsGrpcClient {
    * }
    * ```
    */
-  async links(key: string): Promise<LinksReply.AsObject> {
+  async links(key: string): Promise<LinksObject> {
     logger.debug('link request')
     return bucketsLinks(this, key)
   }
@@ -311,7 +381,7 @@ export class Buckets extends BucketsGrpcClient {
    * @param path A file/object (sub)-path within a bucket.
    * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, depth = 1): Promise<ListPathReply.AsObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<ListPathObject> {
     logger.debug('list path request')
     return await listPathRecursive(this, key, path, depth)
   }
@@ -350,7 +420,7 @@ export class Buckets extends BucketsGrpcClient {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<ListPathItem.AsObject | undefined> {
+  async listIpfsPath(path: string): Promise<ListPathItemObject | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }
@@ -452,7 +522,7 @@ export class Buckets extends BucketsGrpcClient {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archive(key: string): Promise<ArchiveReply.AsObject> {
+  async archive(key: string) {
     logger.debug('archive request')
     return bucketsArchive(this, key)
   }

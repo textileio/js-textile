@@ -2,10 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
-import { InitReply } from '@textile/buckets-grpc/buckets_pb'
 import { Context } from '@textile/context'
 import { Buckets } from './buckets'
 import { signUp } from './spec.util'
+import { InitObject } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -16,7 +16,7 @@ const sessionSecret = 'hubsession'
 describe('Buckets...', () => {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
-  let buck: InitReply.AsObject
+  let buck: InitObject
   let fileSize: number
 
   before(async () => {
@@ -29,8 +29,8 @@ describe('Buckets...', () => {
     expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
-    expect(root).to.have.ownProperty('createdat')
-    expect(root).to.have.ownProperty('updatedat')
+    expect(root).to.have.ownProperty('createdAt')
+    expect(root).to.have.ownProperty('updatedAt')
   })
 
   it('should init a new bucket on open thread', async () => {
@@ -42,8 +42,8 @@ describe('Buckets...', () => {
     expect(buck).to.have.ownProperty('root')
     expect(buck.root).to.have.ownProperty('key')
     expect(buck.root).to.have.ownProperty('path')
-    expect(buck.root).to.have.ownProperty('createdat')
-    expect(buck.root).to.have.ownProperty('updatedat')
+    expect(buck.root).to.have.ownProperty('createdAt')
+    expect(buck.root).to.have.ownProperty('updatedAt')
   })
 
   it('should list buckets', async () => {
@@ -53,8 +53,8 @@ describe('Buckets...', () => {
     const root = roots[index]
     expect(root).to.have.ownProperty('key', buck.root?.key)
     expect(root).to.have.ownProperty('path', buck.root?.path)
-    expect(root).to.have.ownProperty('createdat', buck.root?.createdat)
-    expect(root).to.have.ownProperty('updatedat', buck.root?.updatedat)
+    expect(root).to.have.ownProperty('createdAt', buck.root?.createdAt)
+    expect(root).to.have.ownProperty('updatedAt', buck.root?.updatedAt)
   })
 
   it('should list empty bucket content at path', async () => {

@@ -1,5 +1,7 @@
-import { ListPathItem, ListPathReply } from '@textile/buckets-grpc/buckets_pb'
-import { bucketsListPath, BucketsGrpcClient } from './api'
+import { ListPathItem } from '@textile/buckets-grpc/buckets_pb'
+import { GrpcConnection } from '@textile/grpc-connection'
+import { bucketsListPath, ListPathObject } from './api'
+
 /**
  * bytesToArray converts a buffer into <4mb chunks for use with grpc API
  * @param chunk an input Buffer or Uint8Array
@@ -18,12 +20,12 @@ export function bytesToArray(chunk: Uint8Array, size = 1024 * 1024 * 3) {
  * listPathRecursive returns a nested object of all paths (and info) in a bucket
  */
 export async function listPathRecursive(
-  grpc: BucketsGrpcClient,
+  grpc: GrpcConnection,
   bucketKey: string,
   path: string,
   depth: number,
   currentDepth = 0,
-): Promise<ListPathReply.AsObject> {
+): Promise<ListPathObject> {
   const rootPath = path === '' || path === '.' || path === '/' ? '' : `${path}/`
   const tree = await bucketsListPath(grpc, bucketKey, path)
   if (tree.item && (currentDepth + 1 <= depth || depth === -1)) {
@@ -63,7 +65,7 @@ async function treeToPaths(
  * listPathFlat returns a string array of all paths in a bucket
  */
 export async function listPathFlat(
-  grpc: BucketsGrpcClient,
+  grpc: GrpcConnection,
   bucketKey: string,
   path: string,
   dirs: boolean,
