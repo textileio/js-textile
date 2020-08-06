@@ -32,7 +32,7 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.6.4",
     "@textile/security": "^0.2.4",
-    "@textile/threads-client": "^0.8.4",
+    "@textile/threads-client": "^0.9.1",
     "@textile/threads-id": "^0.1.13",
     "@textile/users-grpc": "^1.0.13",
     "cids": "^0.8.0",
