@@ -19,6 +19,20 @@
       "hub.createapisig"
     ]
   },
+  "thread-id-docs": {
+    "ThreadID Methods": [
+      "hub.threadid.fromrandom",
+      "hub.threadid.fromstring",
+      "hub.threadid.frombytes",
+      "hub.threadid.tostring",
+      "hub.threadid.tobytes",
+      "hub.threadid.equals",
+      "hub.threadid.isdefined",
+      "hub.threadid.variant",
+      "hub.threadid.version",
+      "hub.threadid.getencoding"
+    ]
+  },
   "users-docs": {
     "Users API": [
       "hub.users.setupmailbox",
