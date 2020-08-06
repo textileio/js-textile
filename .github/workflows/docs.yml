@@ -1,7 +1,9 @@
 name: Docs
+
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - '@textile/hub@*.*.*'
 
 jobs:
   deploy:
@@ -52,10 +54,12 @@ jobs:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: gh-pages
         PUBLISH_DIR: pages
+
     - name: Zip files
-      run: zip docs-${{ github.event.release.tag_name }}.zip docs/*.md
-    - name: Upload release docs
-      uses: AButler/upload-release-assets@v2.0
+      run: zip docs-${{ github.workflow }}.zip docs/*.md
+    - name: Upload docs archive
+      uses: softprops/action-gh-release@v1
       with:
-        files: 'docs-${{ github.event.release.tag_name }}.zip'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        files: 'docs-${{ github.workflow }}.zip'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
