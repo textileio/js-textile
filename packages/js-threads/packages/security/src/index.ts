@@ -31,7 +31,7 @@ export type UserAuth = {
 }
 
 /**
- * KeyInfo is a type that contains the API Secret. It should never be shared in insecure environments. Type 0=ACCOUNT, 1=USER.
+ * KeyInfo is a type that contains the API Secret. It should never be shared in insecure environments.
  * @public
  * @example
  * Import

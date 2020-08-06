@@ -196,14 +196,6 @@ export class Database implements DatabaseSettings {
    * @param keyInfo The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
    * @param store The underlying datastore implementation to use. If a string is supplied, this is
    * used as the default store name.
-   * @example
-   * ```typescript
-   * import {KeyInfo, Database, ThreadID} from '@textile/threads'
-   *
-   * async function create (keyInfo: KeyInfo, threadID: ThreadID) {
-   *   return await Database.withKeyInfo(keyInfo, threadID.toString())
-   * }
-   * ```
    */
   static async withKeyInfo(
     keyInfo: KeyInfo,
