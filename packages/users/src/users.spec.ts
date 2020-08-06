@@ -16,6 +16,8 @@ const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const sessionSecret = 'hubsession'
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 describe('Users...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
@@ -330,12 +332,13 @@ describe('Users...', () => {
         expect(mailboxID).to.not.be.undefined
         const closer = await user1.watchInbox(mailboxID, callback)
         const user2 = new Users(user2Ctx)
+        await delay(100)
         await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
         setTimeout(() => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 400)
+        }, 350)
       }, 500)
     }).timeout(5000)
 
@@ -358,12 +361,13 @@ describe('Users...', () => {
         const mailboxID = await user2.getMailboxID()
         expect(mailboxID).to.not.be.undefined
         const closer = await user2.watchSentbox(mailboxID, callback)
+        await delay(100)
         await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
         setTimeout(() => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 250)
+        }, 350)
       }, 500)
     }).timeout(5000)
 
@@ -381,6 +385,7 @@ describe('Users...', () => {
         const mailboxID = await user2.getMailboxID()
         expect(mailboxID).to.not.be.undefined
         const closer = await user2.watchSentbox(mailboxID, callback)
+        await delay(100)
         const sentMessages = await user2.listSentboxMessages()
         expect(sentMessages.length).to.be.greaterThan(0)
         await user2.deleteSentboxMessage(sentMessages[0].id)
@@ -388,7 +393,7 @@ describe('Users...', () => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 250)
+        }, 350)
       }, 500)
     }).timeout(5000)
 
@@ -406,6 +411,7 @@ describe('Users...', () => {
         const mailboxID = await user1.getMailboxID()
         expect(mailboxID).to.not.be.undefined
         const closer = await user1.watchInbox(mailboxID, callback)
+        await delay(100)
         const inbox = await user1.listInboxMessages()
         expect(inbox.length).to.be.greaterThan(0)
         await user1.readInboxMessage(inbox[0].id)
@@ -413,7 +419,7 @@ describe('Users...', () => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 250)
+        }, 350)
       }, 500)
     }).timeout(5000)
 
@@ -431,6 +437,7 @@ describe('Users...', () => {
         const mailboxID = await user1.getMailboxID()
         expect(mailboxID).to.not.be.undefined
         const closer = await user1.watchInbox(mailboxID, callback)
+        await delay(100)
         const inbox = await user1.listInboxMessages()
         expect(inbox.length).to.be.greaterThan(0)
         await user1.deleteInboxMessage(inbox[0].id)
@@ -438,7 +445,7 @@ describe('Users...', () => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 250)
+        }, 350)
       }, 500)
     }).timeout(5000)
   })
