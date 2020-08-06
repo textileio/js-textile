@@ -1,11 +1,9 @@
 name: Docs
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
-
   deploy:
     name: Docs
     runs-on: ubuntu-latest
@@ -54,3 +52,10 @@ jobs:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: gh-pages
         PUBLISH_DIR: pages
+    - name: Zip files
+      run: zip docs-${{ github.event.release.tag_name }}.zip docs/*.md
+    - name: Upload release docs
+      uses: AButler/upload-release-assets@v2.0
+      with:
+        files: 'docs-${{ github.event.release.tag_name }}.zip'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
