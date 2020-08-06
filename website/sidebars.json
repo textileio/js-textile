@@ -21,20 +21,24 @@
   },
   "users-docs": {
     "Users API": [
-      "hub.users.copyauth",
-      "hub.users.withuserauth",
-      "hub.users.withkeyinfo",
-      "hub.users.gettoken",
-      "hub.users.gettokenchallenge",
       "hub.users.setupmailbox",
+      "hub.users.getmailboxid",
       "hub.users.sendmessage",
+      "hub.users.watchinbox",
+      "hub.users.watchsentbox",
       "hub.users.listsentboxmessages",
       "hub.users.deletesentboxmessage",
       "hub.users.listinboxmessages",
       "hub.users.readinboxmessage",
       "hub.users.deleteinboxmessage",
       "hub.users.listthreads",
-      "hub.users.getthread"
+      "hub.users.getthread",
+      "hub.users.copyauth",
+      "hub.users.withuserauth",
+      "hub.users.withkeyinfo",
+      "hub.users.gettoken",
+      "hub.users.gettokenchallenge",
+      "hub.users.withthread"
     ],
     "Identity interfaces": [
       "hub.identity",
@@ -139,7 +143,11 @@
       "hub.inboxlistoptions",
       "hub.sentboxlistoptions",
       "hub.usermessage",
-      "hub.pushpathresult"
+      "hub.pushpathresult",
+      "hub.mailboxevent",
+      "hub.mailboxeventtype",
+      "hub.status",
+      "hub.variant"
     ]
   }
 }

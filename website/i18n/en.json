@@ -251,6 +251,9 @@
       "hub.extractpublickeybytes": {
         "title": "extractPublicKeyBytes() function"
       },
+      "hub.getmailboxid": {
+        "title": "getMailboxID() function"
+      },
       "hub.getthread": {
         "title": "getThread() function"
       },
@@ -340,6 +343,24 @@
       },
       "hub.listthreads": {
         "title": "listThreads() function"
+      },
+      "hub.mailboxevent": {
+        "title": "MailboxEvent interface"
+      },
+      "hub.mailboxevent.message": {
+        "title": "MailboxEvent.message property"
+      },
+      "hub.mailboxevent.messageid": {
+        "title": "MailboxEvent.messageID property"
+      },
+      "hub.mailboxevent.type": {
+        "title": "MailboxEvent.type property"
+      },
+      "hub.mailboxeventtype": {
+        "title": "MailboxEventType enum"
+      },
+      "hub.mailconfig": {
+        "title": "MailConfig variable"
       },
       "hub": {
         "title": "Package Overview"
@@ -563,6 +584,9 @@
       "hub.users.deletesentboxmessage": {
         "title": "Users.deleteSentboxMessage() method"
       },
+      "hub.users.getmailboxid": {
+        "title": "Users.getMailboxID() method"
+      },
       "hub.users.getthread": {
         "title": "Users.getThread() method"
       },
@@ -593,6 +617,12 @@
       "hub.users.setupmailbox": {
         "title": "Users.setupMailbox() method"
       },
+      "hub.users.watchinbox": {
+        "title": "Users.watchInbox() method"
+      },
+      "hub.users.watchsentbox": {
+        "title": "Users.watchSentbox() method"
+      },
       "hub.users.withkeyinfo": {
         "title": "Users.withKeyInfo() method"
       },
@@ -605,12 +635,15 @@
       "hub.variant": {
         "title": "Variant enum"
       },
+      "hub.watchmailbox": {
+        "title": "watchMailbox() function"
+      },
       "index": {
         "title": "Introduction"
       }
     },
     "links": {
-      "Introduction": "Introduction",
+      "Users": "Users",
       "Buckets": "Buckets",
       "Threads": "Threads",
       "Textile Docs": "Textile Docs"

@@ -69,10 +69,10 @@ const logger = log.getLogger('users')
  *
  * // This method requires you already authenticate the Users object.
  *
- * async function example(api: Users, from: Identity, to: PublicKey, message: string) {
+ * async function example(users: Users, from: Identity, to: PublicKey, message: string) {
  *   const encoder = new TextEncoder()
  *   const body = encoder.encode(message)
- *   return await api.sendMessage(from, to, body)
+ *   return await users.sendMessage(from, to, body)
  * }
  * ```
  */
@@ -153,8 +153,8 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    const list = await api.listThreads()
+   * async function example(users: Users) {
+   *    const list = await users.listThreads()
    * }
    * ```
    */
@@ -169,8 +169,8 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    const thread = await api.getThread('thread-name')
+   * async function example(users: Users) {
+   *    const thread = await users.getThread('thread-name')
    *    return thread
    * }
    * ```
@@ -184,14 +184,14 @@ export class Users extends GrpcAuthentication {
    * An inbox must be setup by the inbox owner (keys) before
    * messages can be sent to it.
    *
-   * @returns {string} mailboxID
+   * @returns mailboxID
    *
    * @example
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    return await api.setupMailbox()
+   * async function example(users: Users) {
+   *    return await users.setupMailbox()
    * }
    * ```
    */
@@ -219,10 +219,10 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users, Identity, PublicKey  } from "@textile/hub"
    *
-   * async function example(api: Users, from: Identity, to: PublicKey, message: string) {
+   * async function example(users: Users, from: Identity, to: PublicKey, message: string) {
    *   const encoder = new TextEncoder()
    *   const body = encoder.encode(message)
-   *   return await api.sendMessage(from, to, body)
+   *   return await users.sendMessage(from, to, body)
    * }
    * ```
    */
@@ -244,8 +244,8 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users, Status } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    return await api.listInboxMessages({
+   * async function example(users: Users) {
+   *    return await users.listInboxMessages({
    *      limit: 5,
    *      ascending: true,
    *      status: Status.UNREAD,
@@ -264,8 +264,8 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    return await api.listSentboxMessages({
+   * async function example(users: Users) {
+   *    return await users.listSentboxMessages({
    *      limit: 5,
    *      ascending: true,
    *    })
@@ -283,12 +283,12 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    const res = await api.listInboxMessages({
+   * async function example(users: Users) {
+   *    const res = await users.listInboxMessages({
    *      limit: 1,
    *      ascending: true,
    *    })
-   *    if (res.length === 1) api.readInboxMessage(res[0].id)
+   *    if (res.length === 1) users.readInboxMessage(res[0].id)
    * }
    * ```
    */
@@ -303,16 +303,16 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    const res = await api.listInboxMessages({
+   * async function example(users: Users) {
+   *    const res = await users.listInboxMessages({
    *      limit: 1,
    *      ascending: true,
    *    })
-   *    if (res.length === 1) api.deleteInboxMessage(res[0].id)
+   *    if (res.length === 1) users.deleteInboxMessage(res[0].id)
    * }
    * ```
    */
-  async deleteInboxMessage(id: string): Promise<{}> {
+  async deleteInboxMessage(id: string) {
     return deleteInboxMessage(this, id)
   }
 
@@ -323,23 +323,105 @@ export class Users extends GrpcAuthentication {
    * ```typescript
    * import { Users } from "@textile/hub"
    *
-   * async function example(api: Users) {
-   *    const res = await api.listSentboxMessages({
+   * async function example(users: Users) {
+   *    const res = await users.listSentboxMessages({
    *      limit: 1,
    *      ascending: true,
    *    })
-   *    if (res.length === 1) api.deleteInboxMessage(res[0].id)
+   *    if (res.length === 1) users.deleteInboxMessage(res[0].id)
    * }
    * ```
    */
-  async deleteSentboxMessage(id: string): Promise<{}> {
+  async deleteSentboxMessage(id: string) {
     return deleteSentboxMessage(this, id)
   }
+
+  /**
+   * watchInbox watches the inbox for new mailbox events.
+   * Returns a listener of watch connectivity states.
+   * @returns listener. listener.close will stop watching.
+   * @param id the mailbox id
+   * @param callback handles each new mailbox event
+   *
+   * @example
+   * Listen and log all new inbox events
+   *
+   * ```typescript
+   * import { Users, MailboxEvent } from '@textile/hub'
+   *
+   * const callback = async (reply?: MailboxEvent, err?: Error) => {
+   *   if (!reply || !reply.message) return console.log('no message')
+   *   console.log(reply.type)
+   * }
+   *
+   * async function example (users: Users) {
+   *   const mailboxID = await users.getMailboxID()
+   *   const closer = await users.watchInbox(mailboxID, callback)
+   *   return closer
+   * }
+   * ```
+   *
+   * @example
+   * Decrypt a new message in local user's inbox sent by listener callback
+   *
+   * ```typescript
+   * import { Users, MailboxEvent, PrivateKey } from '@textile/hub'
+   *
+   * const userID = PrivateKey.fromRandom()
+   *
+   * const callback = async (reply?: MailboxEvent, err?: Error) => {
+   *   if (!reply || !reply.message) return console.log('no message')
+   *   const bodyBytes = await userID.decrypt(reply.message.body)
+   *
+   *   const decoder = new TextDecoder()
+   *   const body = decoder.decode(bodyBytes)
+   *
+   *   console.log(body)
+   * }
+   *
+   * // Requires userID already be authenticated to the Users API
+   * async function startListener(users: Users) {
+   *   const mailboxID = await users.getMailboxID()
+   *   const closer = await users.watchInbox(mailboxID, callback)
+   * }
+   * ```
+   */
 
   watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
     return watchMailbox(this, id, 'inbox', callback)
   }
-
+  /**
+   * watchSentbox watches the sentbox for new mailbox events.
+   * Returns a listener of watch connectivity states.
+   * @returns listener. listener.close will stop watching.
+   * @param id the mailbox id
+   * @param callback handles each new mailbox event.
+   *
+   * @example
+   * The local user's own sentbox can be decrypted with their private key
+   *
+   * ```typescript
+   * import { Users, MailboxEvent, PrivateKey } from '@textile/hub'
+   *
+   * const userID = PrivateKey.fromRandom()
+   *
+   * const callback = async (reply?: MailboxEvent, err?: Error) => {
+   *   if (!reply || !reply.message) return console.log('no message')
+   *   const bodyBytes = await userID.decrypt(reply.message.body)
+   *
+   *   const decoder = new TextDecoder()
+   *   const body = decoder.decode(bodyBytes)
+   *
+   *   console.log(body)
+   * }
+   *
+   * // Requires userID already be authenticated to the Users API
+   * async function startListener(users: Users) {
+   *   const mailboxID = await users.getMailboxID()
+   *   const closer = await users.watchInbox(mailboxID, callback)
+   * }
+   * ```
+   */
   watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
     return watchMailbox(this, id, 'sentbox', callback)
   }

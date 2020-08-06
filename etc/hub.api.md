@@ -64,6 +64,8 @@ export { ArchiveStatusReply }
 
 export { ArchiveWatchReply }
 
+// Warning: (ae-incompatible-release-tags) The symbol "Buckets" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
+//
 // @public
 export class Buckets extends GrpcAuthentication {
     // @beta
@@ -130,40 +132,60 @@ export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: 
 // @public
 export function bucketsInit(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitObject>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsLinks" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsList" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsListIpfsPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsListIpfsPath(api: GrpcConnection, path: string, ctx?: ContextInterface): Promise<ListPathItemObject | undefined>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsListPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsListPath(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<ListPathObject>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsPullIpfsPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsPullIpfsPath(api: GrpcConnection, path: string, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsPullPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsPullPath(api: GrpcConnection, key: string, path: string, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsPushPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsPushPath(api: GrpcConnection, key: string, path: string, input: any, opts?: {
     progress?: (num?: number) => void;
 }, ctx?: ContextInterface): Promise<PushPathResult>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsRemove" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<void>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsRemovePath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsRemovePath(api: GrpcConnection, key: string, path: string, root?: string, ctx?: ContextInterface): Promise<void>;
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "bucketsRoot" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<RootObject | undefined>;
 
 // @public
@@ -195,7 +217,8 @@ export class Client {
     }>): Promise<void>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Instance<T>, err?: Error) => void): grpc.Request;
+    // Warning: (ae-forgotten-export) The symbol "Update" needs to be exported by the entry point index.d.ts
+    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
@@ -219,9 +242,6 @@ export class Client {
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
-// @public (undocumented)
-export const convertPathItem: (item: ListPathItem) => ListPathItemObject;
-
 // @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
@@ -231,15 +251,19 @@ export function createUserAuth(key: string, secret: string, date?: Date, token?:
 // @public
 export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: string): Promise<Uint8Array>;
 
-// @public (undocumented)
-export function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}>;
+// Warning: (ae-internal-missing-underscore) The name "deleteInboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<void>;
 
 export { DeleteMessageReply }
 
 export { DeleteMessageRequest }
 
-// @public (undocumented)
-export function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}>;
+// Warning: (ae-internal-missing-underscore) The name "deleteSentboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
 export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: string): Promise<Uint8Array>;
@@ -250,12 +274,19 @@ export const expirationError: Error;
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "getMailboxID" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string>;
+
+// Warning: (ae-internal-missing-underscore) The name "getThread" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadReplyObj>;
 
 export { GetThreadReply }
 
-// @public (undocumented)
+// @public
 export interface GetThreadReplyObj {
     // (undocumented)
     id: string;
@@ -267,7 +298,9 @@ export interface GetThreadReplyObj {
 
 export { GetThreadRequest }
 
-// @public
+// Warning: (ae-internal-missing-underscore) The name "GrpcAuthentication" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export class GrpcAuthentication extends GrpcConnection {
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): GrpcAuthentication;
     getToken(identity: Identity): Promise<string>;
@@ -283,7 +316,7 @@ export interface Identity {
     sign(data: Uint8Array): Promise<Uint8Array>;
 }
 
-// @public (undocumented)
+// @public
 export interface InboxListOptions {
     // (undocumented)
     ascending?: boolean;
@@ -292,10 +325,10 @@ export interface InboxListOptions {
     // (undocumented)
     seek?: string;
     // (undocumented)
-    status?: Status | StatusInt;
+    status?: Status;
 }
 
-// @public (undocumented)
+// @public
 export type InitObject = {
     seed: Uint8Array;
     seedCid: string;
@@ -311,7 +344,7 @@ export type KeyInfo = {
     secret?: string;
 };
 
-// @public (undocumented)
+// @public
 export type LinksObject = {
     www: string;
     ipns: string;
@@ -320,7 +353,9 @@ export type LinksObject = {
 
 export { LinksReply }
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "listInboxMessages" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function listInboxMessages(api: GrpcConnection, opts?: InboxListOptions, ctx?: ContextInterface): Promise<Array<UserMessage>>;
 
 export { ListInboxMessagesRequest }
@@ -334,7 +369,7 @@ export function listPathFlat(grpc: GrpcConnection, bucketKey: string, path: stri
 
 export { ListPathItem }
 
-// @public (undocumented)
+// @public
 export type ListPathItemObject = {
     cid: string;
     name: string;
@@ -344,7 +379,7 @@ export type ListPathItemObject = {
     itemsList: Array<ListPathItemObject>;
 };
 
-// @public (undocumented)
+// @public
 export type ListPathObject = {
     item?: ListPathItemObject;
     root?: RootObject;
@@ -357,17 +392,48 @@ export { ListPathReply }
 
 export { ListReply }
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "listSentboxMessages" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function listSentboxMessages(api: GrpcConnection, opts?: SentboxListOptions, ctx?: ContextInterface): Promise<Array<UserMessage>>;
 
 export { ListSentboxMessagesRequest }
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "listThreads" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadReplyObj>>;
 
 export { ListThreadsReply }
 
 export { ListThreadsRequest }
+
+// @public
+export interface MailboxEvent {
+    // (undocumented)
+    message?: UserMessage;
+    // (undocumented)
+    messageID: string;
+    // (undocumented)
+    type: MailboxEventType;
+}
+
+// @public
+export enum MailboxEventType {
+    // (undocumented)
+    CREATE = 0,
+    // (undocumented)
+    DELETE = 2,
+    // (undocumented)
+    SAVE = 1
+}
+
+// @public
+export const MailConfig: {
+    ThreadName: string;
+    InboxCollectionName: string;
+    SentboxCollectionName: string;
+};
 
 // @public
 export type Private = Identity;
@@ -442,7 +508,9 @@ export interface PushPathResult {
     root: string;
 }
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "readInboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function readInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{
     readAt: number;
 }>;
@@ -457,7 +525,7 @@ export { RemoveReply }
 
 export { Root }
 
-// @public (undocumented)
+// @public
 export type RootObject = {
     key: string;
     name: string;
@@ -469,14 +537,16 @@ export type RootObject = {
 
 export { RootReply }
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "sendMessage" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
 export function sendMessage(api: GrpcConnection, from: string, to: string, toBody: Uint8Array, toSignature: Uint8Array, fromBody: Uint8Array, fromSignature: Uint8Array, ctx?: ContextInterface): Promise<UserMessage>;
 
 export { SendMessageReply }
 
 export { SendMessageRequest }
 
-// @public (undocumented)
+// @public
 export interface SentboxListOptions {
     // (undocumented)
     ascending?: boolean;
@@ -488,21 +558,16 @@ export interface SentboxListOptions {
 
 export { SetPathReply }
 
-// @public (undocumented)
-export function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<{
-    mailboxID: Uint8Array;
-}>;
+// Warning: (ae-internal-missing-underscore) The name "setupMailbox" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string>;
 
 export { SetupMailboxReply }
 
 export { SetupMailboxRequest }
 
-// @public (undocumented)
-export type StaticThis<T> = {
-    new (context: ContextInterface, debug?: boolean): T;
-};
-
-// @public (undocumented)
+// @public
 export enum Status {
     // (undocumented)
     ALL = 0,
@@ -511,9 +576,6 @@ export enum Status {
     // (undocumented)
     UNREAD = 2
 }
-
-// @public (undocumented)
-export type StatusInt = 0 | 1 | 2;
 
 // @public
 export class ThreadID {
@@ -543,7 +605,7 @@ export type UserAuth = {
     token?: string;
 };
 
-// @public (undocumented)
+// @public
 export interface UserMessage {
     // (undocumented)
     body: Uint8Array;
@@ -561,11 +623,14 @@ export interface UserMessage {
     to: string;
 }
 
+// Warning: (ae-incompatible-release-tags) The symbol "Users" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
+//
 // @public
 export class Users extends GrpcAuthentication {
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): Users;
-    deleteInboxMessage(id: string): Promise<{}>;
-    deleteSentboxMessage(id: string): Promise<{}>;
+    deleteInboxMessage(id: string): Promise<void>;
+    deleteSentboxMessage(id: string): Promise<void>;
+    getMailboxID(): Promise<string>;
     getThread(name: string): Promise<GetThreadReplyObj>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
@@ -576,9 +641,9 @@ export class Users extends GrpcAuthentication {
         readAt: number;
     }>;
     sendMessage(from: Identity, to: Public, body: Uint8Array): Promise<UserMessage>;
-    setupMailbox(): Promise<{
-        mailboxID: Uint8Array;
-    }>;
+    setupMailbox(): Promise<string>;
+    watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
+    watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Users>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Users;
@@ -591,6 +656,11 @@ export enum Variant {
     // (undocumented)
     Raw = 85
 }
+
+// Warning: (ae-internal-missing-underscore) The name "watchMailbox" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function watchMailbox(api: GrpcConnection, id: string, box: 'inbox' | 'sentbox', callback: (reply?: MailboxEvent, err?: Error) => void, ctx?: ContextInterface): grpc.Request;
 
 
 ```

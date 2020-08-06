@@ -5,7 +5,6 @@ import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
-import { Action } from '@textile/threads-client'
 import { expirationError } from '@textile/security'
 import { signUp, createKey, createAPISig } from './spec.util'
 import { Users } from './users'
@@ -257,7 +256,7 @@ describe('Users...', () => {
       const sent = await user.listSentboxMessages()
       expect(sent.length).to.equal(1)
     })
-    it('should should find and read a message', async () => {
+    it('should find and read a message', async () => {
       const user2 = new Users(user2Ctx)
 
       // Check inbox
@@ -318,7 +317,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply || !reply.message) return done()
-        expect(reply.type).to.equal(Action.CREATE)
+        expect(reply.type).to.equal('CREATE')
 
         const bodyBytes = await user1Id.decrypt(reply.message.body)
         const decoder = new TextDecoder()
@@ -336,7 +335,7 @@ describe('Users...', () => {
           closer.close()
           expect(hitCallback).to.be.true
           done()
-        }, 250)
+        }, 400)
       }, 500)
     }).timeout(5000)
 
@@ -347,10 +346,9 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply || !reply.message) return done()
-        expect(reply.type).to.equal(Action.CREATE)
+        expect(reply.type).to.equal('CREATE')
 
         const bodyBytes = await user2Id.decrypt(reply.message.body)
-        console.log(bodyBytes)
         const decoder = new TextDecoder()
         const body = decoder.decode(bodyBytes)
         expect(body).to.equal('watch')
@@ -376,7 +374,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(Action.DELETE)
+        expect(reply.type).to.equal('DELETE')
         hitCallback = true
       }
       setTimeout(async () => {
@@ -401,7 +399,7 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(Action.SAVE)
+        expect(reply.type).to.equal('SAVE')
         hitCallback = true
       }
       setTimeout(async () => {
@@ -426,14 +424,14 @@ describe('Users...', () => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
-        expect(reply.type).to.equal(Action.DELETE)
+        expect(reply.type).to.equal('DELETE')
         hitCallback = true
       }
       setTimeout(async () => {
         const mailboxID = await user1.getMailboxID()
         expect(mailboxID).to.not.be.undefined
         const closer = await user1.watchInbox(mailboxID, callback)
-        const inbox = await user1.listSentboxMessages()
+        const inbox = await user1.listInboxMessages()
         expect(inbox.length).to.be.greaterThan(0)
         await user1.deleteInboxMessage(inbox[0].id)
         setTimeout(() => {

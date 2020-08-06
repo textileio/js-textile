@@ -55,11 +55,18 @@ export interface PushPathResult {
   root: string
 }
 
+/**
+ * Response from bucket links query.
+ */
 export type LinksObject = {
   www: string
   ipns: string
   url: string
 }
+
+/**
+ * Bucket root info
+ */
 export type RootObject = {
   key: string
   name: string
@@ -69,6 +76,9 @@ export type RootObject = {
   thread: string
 }
 
+/**
+ * A bucket path item response
+ */
 export type ListPathItemObject = {
   cid: string
   name: string
@@ -77,11 +87,17 @@ export type ListPathItemObject = {
   isdir: boolean
   itemsList: Array<ListPathItemObject>
 }
+/**
+ * A bucket list path response
+ */
 export type ListPathObject = {
   item?: ListPathItemObject
   root?: RootObject
 }
 
+/**
+ * Bucket init response
+ */
 export type InitObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
 
 const convertRootObject = (root: Root): RootObject => {
@@ -94,12 +110,13 @@ const convertRootObject = (root: Root): RootObject => {
     thread: root.getThread(),
   }
 }
+
 const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
   if (!root) return
   return convertRootObject(root)
 }
 
-export const convertPathItem = (item: ListPathItem): ListPathItemObject => {
+const convertPathItem = (item: ListPathItem): ListPathItemObject => {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -110,6 +127,7 @@ export const convertPathItem = (item: ListPathItem): ListPathItemObject => {
     itemsList: list ? list.map(convertPathItem) : [],
   }
 }
+
 const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | undefined => {
   if (!item) return
   return convertPathItem(item)
@@ -129,6 +147,8 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
  *     return buckets.init("app-name-files")
  * }
  * ```
+ *
+ * @internal
  */
 export async function bucketsInit(
   api: GrpcConnection,
@@ -153,6 +173,8 @@ export async function bucketsInit(
 /**
  * Returns the bucket root CID
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsRoot(
   api: GrpcConnection,
@@ -184,6 +206,8 @@ export async function bucketsRoot(
  *    return links.ipfs
  * }
  * ```
+ *
+ * @internal
  */
 export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject> {
   logger.debug('link request')
@@ -204,7 +228,9 @@ export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: Conte
  *     const roots = await buckets.list();
  *     return roots.find((bucket) => bucket.name ===  "app-name-files")
  * }
- * ````
+ * ```
+ *
+ * @internal
  */
 export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>> {
   logger.debug('list request')
@@ -219,6 +245,8 @@ export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): 
  * Returns information about a bucket path.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param path A file/object (sub)-path within a bucket.
+ *
+ * @internal
  */
 export async function bucketsListPath(
   api: GrpcConnection,
@@ -240,6 +268,8 @@ export async function bucketsListPath(
 /**
  * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
  * @param path UnixFS path
+ *
+ * @internal
  */
 export async function bucketsListIpfsPath(
   api: GrpcConnection,
@@ -272,6 +302,8 @@ export async function bucketsListIpfsPath(
  *    return await buckets.pushPath(bucketKey!, 'index.html', file)
  * }
  * ```
+ *
+ * @internal
  */
 export async function bucketsPushPath(
   api: GrpcConnection,
@@ -350,6 +382,8 @@ export async function bucketsPushPath(
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param path A file/object (sub)-path within a bucket.
  * @param opts Options to control response stream. Currently only supports a progress function.
+ *
+ * @internal
  */
 export function bucketsPullPath(
   api: GrpcConnection,
@@ -400,6 +434,8 @@ export function bucketsPullPath(
  * pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.
  * @param path A file/object (sub)-path within a bucket.
  * @param opts Options to control response stream. Currently only supports a progress function.
+ *
+ * @internal
  */
 export function bucketsPullIpfsPath(
   api: GrpcConnection,
@@ -447,6 +483,8 @@ export function bucketsPullIpfsPath(
 /**
  * Removes an entire bucket. Files and directories will be unpinned.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('remove request')
@@ -461,6 +499,8 @@ export async function bucketsRemove(api: GrpcConnection, key: string, ctx?: Cont
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param path A file/object (sub)-path within a bucket.
  * @param root optional to specify a root
+ *
+ * @internal
  */
 export async function bucketsRemovePath(
   api: GrpcConnection,
@@ -482,6 +522,8 @@ export async function bucketsRemovePath(
  * archive creates a Filecoin bucket archive via Powergate.
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive request')
@@ -495,6 +537,8 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
  * archiveStatus returns the status of a Filecoin bucket archive.
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive status request')
@@ -508,6 +552,8 @@ export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx
  * archiveInfo returns info about a Filecoin bucket archive.
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive info request')
@@ -521,6 +567,8 @@ export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?:
  * archiveWatch watches status events from a Filecoin bucket archive.
  * @beta
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ *
+ * @internal
  */
 export async function bucketsArchiveWatch(
   api: GrpcConnection,

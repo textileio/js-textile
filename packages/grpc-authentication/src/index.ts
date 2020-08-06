@@ -4,13 +4,11 @@ import { Identity } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
 import { Client } from '@textile/hub-threads-client'
 
-// Solves child class static type creation
-// https://stackoverflow.com/questions/45123761/instantiating-child-class-from-a-static-method-in-base-class-using-typescript/45262288
-export type StaticThis<T> = { new (context: ContextInterface, debug?: boolean): T }
-
 /**
- * Not a directly used class, but defines the authorization, authentication, and
+ * Not for external use. Defines the authorization, authentication, and
  * API scoping methods used by gRPC API client classes such as Users and Buckets.
+ *
+ * @internal
  */
 export class GrpcAuthentication extends GrpcConnection {
   /**
@@ -35,7 +33,7 @@ export class GrpcAuthentication extends GrpcConnection {
    *   return buckets
    * }
    * ```
-   * 
+   *
    * @example
    * Copy an authenticated Buckets api instance to Users.
    * ```tyepscript

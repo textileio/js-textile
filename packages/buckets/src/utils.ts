@@ -1,6 +1,6 @@
 import { ListPathItem } from '@textile/buckets-grpc/buckets_pb'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { bucketsListPath, ListPathObject, convertPathItem } from './api'
+import { bucketsListPath, ListPathObject } from './api'
 
 /**
  * bytesToArray converts a buffer into <4mb chunks for use with grpc API

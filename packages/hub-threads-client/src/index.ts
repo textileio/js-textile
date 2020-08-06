@@ -3,4 +3,15 @@
  * @packageDocumentation
  */
 
+export {
+  Action,
+  Query,
+  Where,
+  WriteTransaction,
+  ReadTransaction,
+  Instance,
+  QueryJSON,
+  Update,
+} from '@textile/threads-client'
+
 export { Client } from './client'

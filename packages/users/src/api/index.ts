@@ -1,5 +1,5 @@
 import log from 'loglevel'
-import { grpc } from "@improbable-eng/grpc-web"
+import { grpc } from '@improbable-eng/grpc-web'
 import {
   SetupMailboxRequest,
   SetupMailboxReply,
@@ -20,45 +20,60 @@ import {
 import { API } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
-import { Client } from '@textile/hub-threads-client'
-import { Action, Update } from '@textile/threads-client'
+import { Client, Action, Update } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
 
+/**
+ * Global settings for mailboxes
+ */
 export const MailConfig = {
   ThreadName: 'hubmail',
   InboxCollectionName: 'inbox',
   SentboxCollectionName: 'sentbox',
 }
 
+/**
+ * The status query filter of an inbox message.
+ */
 export enum Status {
   ALL,
   READ,
   UNREAD,
 }
 
-export type StatusInt = 0 | 1 | 2
-
+/**
+ * Sentbox query options
+ */
 export interface SentboxListOptions {
   seek?: string
   limit?: number
   ascending?: boolean
 }
 
+/**
+ * Inbox query options
+ */
 export interface InboxListOptions {
   seek?: string
   limit?: number
   ascending?: boolean
-  status?: Status | StatusInt
+  status?: Status
 }
 
+/**
+ * The response type from getThread and listThreads
+ */
 export interface GetThreadReplyObj {
   isDB: boolean
   name: string
   id: string
 }
 
+/**
+ * The message format returned from inbox or sentbox
+ */
 export interface UserMessage {
   id: string
   to: string
@@ -69,8 +84,20 @@ export interface UserMessage {
   readAt?: number
 }
 
+/**
+ * The mailbox event type. CREATE, SAVE, or DELETE
+ */
+export enum MailboxEventType {
+  CREATE,
+  SAVE,
+  DELETE,
+}
+
+/**
+ * The event type returned from inbox and sentbox subscriptions
+ */
 export interface MailboxEvent {
-  type: Action
+  type: MailboxEventType
   messageID: string
   message?: UserMessage
 }
@@ -97,6 +124,9 @@ function convertMessageObj(input: Message): UserMessage {
   }
 }
 
+/**
+ * @internal
+ */
 export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadReplyObj>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
@@ -112,6 +142,9 @@ export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): 
   })
 }
 
+/**
+ * @internal
+ */
 export async function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadReplyObj> {
   logger.debug('get thread request')
   const req = new GetThreadRequest()
@@ -125,6 +158,9 @@ export async function getThread(api: GrpcConnection, name: string, ctx?: Context
   }
 }
 
+/**
+ * @internal
+ */
 export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
@@ -133,12 +169,18 @@ export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface):
   return mailboxID
 }
 
+/**
+ * @internal
+ */
 export async function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
   logger.debug('setup mailbox request')
   const thread = await getThread(api, MailConfig.ThreadName, ctx)
   return thread.id
 }
 
+/**
+ * @internal
+ */
 export async function sendMessage(
   api: GrpcConnection,
   from: string,
@@ -167,6 +209,9 @@ export async function sendMessage(
   }
 }
 
+/**
+ * @internal
+ */
 export async function listInboxMessages(
   api: GrpcConnection,
   opts?: InboxListOptions,
@@ -182,6 +227,9 @@ export async function listInboxMessages(
   return res.getMessagesList().map(convertMessageObj)
 }
 
+/**
+ * @internal
+ */
 export async function listSentboxMessages(
   api: GrpcConnection,
   opts?: SentboxListOptions,
@@ -196,6 +244,9 @@ export async function listSentboxMessages(
   return res.getMessagesList().map(convertMessageObj)
 }
 
+/**
+ * @internal
+ */
 export async function readInboxMessage(
   api: GrpcConnection,
   id: string,
@@ -208,20 +259,31 @@ export async function readInboxMessage(
   return { readAt: res.toObject().readat }
 }
 
-export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}> {
+/**
+ * @internal
+ */
+export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
   logger.debug('delete inbox message request')
   const req = new DeleteMessageRequest()
   req.setId(id)
-  return await api.unary(API.DeleteInboxMessage, req, ctx)
+  await api.unary(API.DeleteInboxMessage, req, ctx)
+  return
 }
 
-export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<{}> {
+/**
+ * @internal
+ */
+export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
   logger.debug('delete sentbox message request')
   const req = new DeleteMessageRequest()
   req.setId(id)
-  return await api.unary(API.DeleteSentboxMessage, req, ctx)
+  await api.unary(API.DeleteSentboxMessage, req, ctx)
+  return
 }
 
+/**
+ * @internal
+ */
 export function watchMailbox(
   api: GrpcConnection,
   id: string,
@@ -236,8 +298,9 @@ export function watchMailbox(
     if (!reply) {
       callback(reply, err)
     } else {
+      const type = reply.action as number
       const result: MailboxEvent = {
-        type: reply.action,
+        type,
         messageID: reply.instanceID,
       }
       const instance = reply.instance
