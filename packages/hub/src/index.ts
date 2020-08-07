@@ -3,7 +3,17 @@
  * @packageDocumentation
  */
 export { ThreadID, Variant } from '@textile/threads-id'
-export { Client } from '@textile/hub-threads-client'
+export {
+  Action,
+  Query,
+  Where,
+  WriteTransaction,
+  ReadTransaction,
+  Instance,
+  QueryJSON,
+  Update,
+  Client,
+} from '@textile/hub-threads-client'
 export * from '@textile/buckets'
 export * from '@textile/crypto'
 export * from '@textile/grpc-authentication'

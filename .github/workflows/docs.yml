@@ -56,10 +56,10 @@ jobs:
         PUBLISH_DIR: pages
 
     - name: Zip files
-      run: zip docs-${{ github.workflow }}.zip docs/*.md
+      run: zip ${{ github.workflow }}.zip docs/*.md
     - name: Upload docs archive
       uses: softprops/action-gh-release@v1
       with:
-        files: 'docs-${{ github.workflow }}.zip'
+        files: '${{ github.workflow }}.zip'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
