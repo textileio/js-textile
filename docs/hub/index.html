@@ -68,8 +68,11 @@
 <tr><td><a href="/js-hub/docs/hub.client">Client</a></td><td>Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile's 'DB' API, which is defined here: <a href="https://github.com/textileio/go-threads/blob/master/api/pb/api.proto">https://github.com/textileio/go-threads/blob/master/api/pb/api.proto</a>.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.privatekey">PrivateKey</a></td><td>Default implementation of the <a href="/js-hub/docs/hub.private">Private</a> interface, with decryption support. In theory, RSA, ed25519, and secp256k1 key types (and more) should be supported, although currently only ed25519 has full sign and decrypt capabilities.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.publickey">PublicKey</a></td><td>Default implementation of the <a href="/js-hub/docs/hub.public">Public</a> interface, with encryption support. In theory, RSA, ed25519, and secp256k1 key types (and more) should be supported, although currently only ed25519 has full verify and encrypt capabilities.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.query">Query</a></td><td>Query allows to build queries to be used to fetch data from a model.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.readtransaction">ReadTransaction</a></td><td>ReadTransaction performs a read-only bulk transaction on the underlying store.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.threadid">ThreadID</a></td><td>ThreadID represents a self-describing Thread identifier.<!-- -->It is formed by a Version, a Variant, and a random number of a given length.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.users">Users</a></td><td>Users provides a web-gRPC wrapper client for communicating with the Textile Hub's web-gRPC enabled Users API.<!-- -->This API has the ability to:<!-- -->- Register new users with a User Group key and obtain a new API Token<!-- -->- Get and List all Threads created for/by the user in your app.<!-- -->- Create an inbox for the user or send message to another user's inbox.<!-- -->- Check, read, and delete messages in a user's inbox.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.writetransaction">WriteTransaction</a></td><td>WriteTransaction performs a mutating bulk transaction on the underlying store.</td></tr>
 </tbody>
 </table>
 <h2><a class="anchor" aria-hidden="true" id="enumerations"></a><a href="#enumerations" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Enumerations</h2>
@@ -78,6 +81,7 @@
 <tr><th>Enumeration</th><th>Description</th></tr>
 </thead>
 <tbody>
+<tr><td><a href="/js-hub/docs/hub.action">Action</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.mailboxeventtype">MailboxEventType</a></td><td>The mailbox event type. CREATE, SAVE, or DELETE</td></tr>
 <tr><td><a href="/js-hub/docs/hub.status">Status</a></td><td>The status query filter of an inbox message.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.variant">Variant</a></td><td>Variant denotes Thread variant. Currently only two variants are supported.</td></tr>
@@ -89,10 +93,6 @@
 <tr><th>Function</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.bucketsarchive">bucketsArchive(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archive creates a Filecoin bucket archive via Powergate.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.bucketsarchiveinfo">bucketsArchiveInfo(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.bucketsarchivestatus">bucketsArchiveStatus(api, key, ctx)</a></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.bucketsarchivewatch">bucketsArchiveWatch(api, key, callback, ctx)</a></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.bucketsinit">bucketsInit(api, name, isPrivate, ctx)</a></td><td>Initializes a new bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.bytestoarray">bytesToArray(chunk, size)</a></td><td>bytesToArray converts a buffer into &lt;<!-- -->4mb chunks for use with grpc API</td></tr>
 <tr><td><a href="/js-hub/docs/hub.createapisig">createAPISig(secret, date)</a></td><td>createAPISig generates an authorization signature and message only.<!-- -->This function should NOT be used client-side, as it requires a key secret.</td></tr>
@@ -117,10 +117,13 @@
 <tr><td><a href="/js-hub/docs/hub.getthreadreplyobj">GetThreadReplyObj</a></td><td>The response type from getThread and listThreads</td></tr>
 <tr><td><a href="/js-hub/docs/hub.identity">Identity</a></td><td>Identity represents an entity capable of signing a message. This is a simple &quot;private key&quot; interface that must be capable of returning the associated &quot;public key&quot; for verification. In many cases, the Identity will just be a private key, but callers can use any setup that suits their needs. The interface is currently modeled after <code>libp2p-crypto</code> keys. It is meant to be implemented by external libraries, though in practice, implementations are provided by the <code>@textile/crypto</code> library.<!-- -->If using in your own application, see the <a href="/js-hub/docs/hub.privatekey">PrivateKey</a> class.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.inboxlistoptions">InboxListOptions</a></td><td>Inbox query options</td></tr>
+<tr><td><a href="/js-hub/docs/hub.instance">Instance</a></td><td>Instance is a singular Model instance.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.mailboxevent">MailboxEvent</a></td><td>The event type returned from inbox and sentbox subscriptions</td></tr>
 <tr><td><a href="/js-hub/docs/hub.public">Public</a></td><td>Public is any entity associated with a given <a href="/js-hub/docs/hub.identity">Identity</a> that is capable of verifying a signature produced by said identity. In most cases, a public key will be obtained as a property of an object implementing the <a href="/js-hub/docs/hub.identity">Identity</a> and/or <a href="/js-hub/docs/hub.private">Private</a> key interface.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.pushpathresult">PushPathResult</a></td><td>The expected result format from pushing a path to a bucket</td></tr>
+<tr><td><a href="/js-hub/docs/hub.queryjson">QueryJSON</a></td><td>QueryJSON represents a single store Query.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.sentboxlistoptions">SentboxListOptions</a></td><td>Sentbox query options</td></tr>
+<tr><td><a href="/js-hub/docs/hub.update">Update</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.usermessage">UserMessage</a></td><td>The message format returned from inbox or sentbox</td></tr>
 </tbody>
 </table>
@@ -132,6 +135,7 @@
 <tbody>
 <tr><td><a href="/js-hub/docs/hub.expirationerror">expirationError</a></td><td>expirationError is an error your app will receive anytime your credentials have expired.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.mailconfig">MailConfig</a></td><td>Global settings for mailboxes</td></tr>
+<tr><td><a href="/js-hub/docs/hub.where">Where</a></td><td>Alias Criterion to Where for a slightly nicer API (see example below)</td></tr>
 </tbody>
 </table>
 <h2><a class="anchor" aria-hidden="true" id="type-aliases"></a><a href="#type-aliases" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Type Aliases</h2>
