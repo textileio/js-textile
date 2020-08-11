@@ -61,7 +61,7 @@
     "@textile/threads": "^0.3.4",
     "@types/browser-or-node": "^1.2.0",
     "@types/chai": "^4.2.5",
-    "@types/mocha": "^7.0.1",
+    "@types/mocha": "^8.0.2",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "browser-or-node": "^1.2.1",
