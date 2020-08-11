@@ -520,10 +520,8 @@ export async function bucketsRemovePath(
 
 /**
  * archive creates a Filecoin bucket archive via Powergate.
- * @beta
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- *
  * @internal
+ * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive request')
@@ -535,10 +533,8 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
 
 /**
  * archiveStatus returns the status of a Filecoin bucket archive.
- * @beta
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- *
  * @internal
+ * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive status request')
@@ -550,10 +546,8 @@ export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx
 
 /**
  * archiveInfo returns info about a Filecoin bucket archive.
- * @beta
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- *
  * @internal
+ * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface) {
   logger.debug('archive info request')
@@ -565,10 +559,8 @@ export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?:
 
 /**
  * archiveWatch watches status events from a Filecoin bucket archive.
- * @beta
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- *
  * @internal
+ * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
 export async function bucketsArchiveWatch(
   api: GrpcConnection,

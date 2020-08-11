@@ -50,6 +50,16 @@ import { SetupMailboxRequest } from '@textile/users-grpc/users_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
+// @public (undocumented)
+export enum Action {
+    // (undocumented)
+    CREATE = 0,
+    // (undocumented)
+    DELETE = 2,
+    // (undocumented)
+    SAVE = 1
+}
+
 // @public
 export type APISig = {
     sig: string;
@@ -114,16 +124,24 @@ export class Buckets extends GrpcAuthentication {
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
 }
 
-// @beta
+// Warning: (ae-internal-missing-underscore) The name "bucketsArchive" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<void>;
 
-// @beta
+// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveInfo" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfoReply.AsObject>;
 
-// @beta
+// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveStatus" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatusReply.AsObject>;
 
-// @beta
+// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveWatch" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
 export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: (reply?: {
     id: string | undefined;
     msg: string;
@@ -200,10 +218,8 @@ export class Client {
     delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
     deleteCollection(threadID: ThreadID, name: string): Promise<void>;
     deleteDB(threadID: ThreadID): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "QueryJSON" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "InstanceList" needs to be exported by the entry point index.d.ts
     find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<InstanceList<T>>;
-    // Warning: (ae-forgotten-export) The symbol "Instance" needs to be exported by the entry point index.d.ts
     findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
     getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
     getDBInfo(threadID: ThreadID): Promise<DBInfo>;
@@ -217,7 +233,6 @@ export class Client {
     }>): Promise<void>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Update" needs to be exported by the entry point index.d.ts
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
@@ -228,7 +243,6 @@ export class Client {
     }>): Promise<void>;
     open(threadID: ThreadID, name?: string): Promise<void>;
     static randomIdentity(): Promise<Libp2pCryptoIdentity>;
-    // Warning: (ae-forgotten-export) The symbol "ReadTransaction" needs to be exported by the entry point index.d.ts
     readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
     // (undocumented)
     rpcOptions: grpc.RpcOptions;
@@ -238,7 +252,6 @@ export class Client {
     updateCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
-    // Warning: (ae-forgotten-export) The symbol "WriteTransaction" needs to be exported by the entry point index.d.ts
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
@@ -337,6 +350,12 @@ export type InitObject = {
 };
 
 export { InitReply }
+
+// @public
+export interface Instance<T> {
+    // (undocumented)
+    instance: T | undefined;
+}
 
 // @public
 export type KeyInfo = {
@@ -508,6 +527,37 @@ export interface PushPathResult {
     root: string;
 }
 
+// @public
+export class Query implements QueryJSON {
+    constructor(ands?: CriterionJSON[], ors?: QueryJSON[], sort?: SortJSON | undefined);
+    and(fieldPath: string): Criterion;
+    // Warning: (ae-forgotten-export) The symbol "CriterionJSON" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    ands: CriterionJSON[];
+    or(query: Query): Query;
+    orderBy(fieldPath: string): Query;
+    orderByDesc(fieldPath: string): Query;
+    // (undocumented)
+    ors: QueryJSON[];
+    // Warning: (ae-forgotten-export) The symbol "SortJSON" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    sort?: SortJSON | undefined;
+    // Warning: (ae-forgotten-export) The symbol "Criterion" needs to be exported by the entry point index.d.ts
+    static where(fieldPath: string): Criterion;
+}
+
+// @public
+export interface QueryJSON {
+    // (undocumented)
+    ands?: CriterionJSON[];
+    // (undocumented)
+    ors?: QueryJSON[];
+    // (undocumented)
+    sort?: SortJSON;
+}
+
 // Warning: (ae-internal-missing-underscore) The name "readInboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
@@ -518,6 +568,25 @@ export function readInboxMessage(api: GrpcConnection, id: string, ctx?: ContextI
 export { ReadInboxMessageReply }
 
 export { ReadInboxMessageRequest }
+
+// Warning: (ae-forgotten-export) The symbol "Transaction" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
+    // (undocumented)
+    protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
+    // (undocumented)
+    protected readonly context: ContextInterface;
+    find<T = any>(query: QueryJSON): Promise<InstanceList<T>>;
+    findByID<T = any>(ID: string): Promise<Instance<T>>;
+    has(IDs: string[]): Promise<boolean>;
+    // (undocumented)
+    protected readonly modelName: string;
+    start(): Promise<void>;
+    // (undocumented)
+    protected readonly threadID: ThreadID;
+}
 
 export { RemovePathReply }
 
@@ -597,6 +666,16 @@ export class ThreadID {
     version(): number;
 }
 
+// @public (undocumented)
+export interface Update<T = any> extends Instance<T> {
+    // (undocumented)
+    action: Action;
+    // (undocumented)
+    collectionName: string;
+    // (undocumented)
+    instanceID: string;
+}
+
 // @public
 export type UserAuth = {
     key: string;
@@ -661,6 +740,29 @@ export enum Variant {
 //
 // @internal (undocumented)
 export function watchMailbox(api: GrpcConnection, id: string, box: 'inbox' | 'sentbox', callback: (reply?: MailboxEvent, err?: Error) => void, ctx?: ContextInterface): grpc.Request;
+
+// @public
+export const Where: typeof Criterion;
+
+// @public
+export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    // (undocumented)
+    protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
+    // (undocumented)
+    protected readonly context: ContextInterface;
+    create<T = any>(values: any[]): Promise<string[] | undefined>;
+    delete(IDs: string[]): Promise<void>;
+    find<T = any>(query: QueryJSON): Promise<InstanceList<T>>;
+    findByID<T = any>(ID: string): Promise<Instance<T> | undefined>;
+    has(IDs: string[]): Promise<boolean>;
+    // (undocumented)
+    protected readonly modelName: string;
+    save(values: any[]): Promise<void>;
+    start(): Promise<void>;
+    // (undocumented)
+    protected readonly threadID: ThreadID;
+}
 
 
 ```
