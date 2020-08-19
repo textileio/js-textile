@@ -28,7 +28,7 @@
   "author": "Textile",
   "license": "MIT",
   "dependencies": {
-    "@textile/context": "^0.6.6",
+    "@textile/context": "^0.6.7",
     "@textile/crypto": "^0.1.0",
     "@textile/grpc-connection": "^0.1.1",
     "@textile/hub-threads-client": "^0.4.1",
