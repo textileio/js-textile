@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-client",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.6.6",
+    "@textile/context": "^0.6.7",
     "@textile/grpc-transport": "^0.0.3",
     "@textile/multiaddr": "^0.0.24",
     "@textile/security": "^0.2.6",
