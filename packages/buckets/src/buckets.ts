@@ -282,8 +282,8 @@ export class Buckets extends GrpcAuthentication {
     } else {
       try {
         const res = await client.getThread(threadName)
-        const existingId = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
-        this.withThread(existingId)
+        threadID = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
+        this.withThread(threadID)
       } catch (error) {
         if (error.message !== 'Thread not found') {
           throw new Error(error.message)
