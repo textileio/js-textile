@@ -20,7 +20,7 @@
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "dependencies": {
-    "@ipld/block": "^6.0.1",
+    "@ipld/block": "6.0.1",
     "@textile/threads-core": "^0.3.0",
     "@textile/threads-crypto": "^0.1.4",
     "@textile/threads-id": "^0.1.13",

@@ -10,11 +10,10 @@ import {
  * The set of host strings used by any gPRC clients.
  */
 export type HostString =
-  | "https://api.textile.io:3447"
-  | "https://api.staging.textile.io:3447"
+  | "https://webapi.hub.textile.io"
   | "http://127.0.0.1:3007"
   | string
-export const defaultHost: HostString = "https://api.textile.io:3447"
+export const defaultHost: HostString = "https://webapi.hub.textile.io"
 
 /**
  * Interface describing the set of default context keys.
@@ -59,7 +58,7 @@ export interface ContextKeys {
   ["x-textile-api-sig-msg"]?: string
 
   /**
-   * The service host address/url. Defaults to https://api.textile.io.
+   * The service host address/url. Defaults to https://webapi.hub.textile.io.
    */
   host?: HostString
 
@@ -76,7 +75,7 @@ export interface ContextKeys {
  */
 export interface ContextInterface {
   /**
-   * The service host address/url. Defaults to https://api.textile.io.
+   * The service host address/url. Defaults to https://webapi.hub.textile.io.
    */
   host: HostString
   /**
