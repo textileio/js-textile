@@ -9,6 +9,7 @@
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
+    "publish:from": "lerna publish from-package",
     "clean": "lerna clean && lerna run clean",
     "build": "lerna run build",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
