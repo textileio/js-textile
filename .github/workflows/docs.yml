@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '@textile/hub@*.*.*'
+      - 'docs@*'
 
 jobs:
   deploy:
