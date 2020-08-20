@@ -5,6 +5,7 @@
 export { ThreadID, Variant } from '@textile/threads-id'
 export {
   Action,
+  DBInfo,
   Query,
   Where,
   WriteTransaction,

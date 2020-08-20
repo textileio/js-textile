@@ -226,7 +226,6 @@ export class Client {
     getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
     has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
-    // Warning: (ae-forgotten-export) The symbol "DBInfo" needs to be exported by the entry point index.d.ts
     joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<{
         name: string;
         schema: any;
@@ -242,6 +241,7 @@ export class Client {
         schema: any;
     }>): Promise<void>;
     open(threadID: ThreadID, name?: string): Promise<void>;
+    // @deprecated
     static randomIdentity(): Promise<Libp2pCryptoIdentity>;
     readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
     // (undocumented)
@@ -260,6 +260,12 @@ export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
+
+// @public
+export interface DBInfo {
+    addrs: string[];
+    key: string;
+}
 
 // @public
 export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: string): Promise<Uint8Array>;
