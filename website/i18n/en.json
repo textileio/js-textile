@@ -5,6 +5,9 @@
     "previous": "Previous",
     "tagline": "A client for communicating with Textile Hub.",
     "docs": {
+      "hub.action": {
+        "title": "Action enum"
+      },
       "hub.apisig": {
         "title": "APISig type"
       },
@@ -97,36 +100,6 @@
       },
       "hub.bucketsinit": {
         "title": "bucketsInit() function"
-      },
-      "hub.bucketslinks": {
-        "title": "bucketsLinks() function"
-      },
-      "hub.bucketslist": {
-        "title": "bucketsList() function"
-      },
-      "hub.bucketslistipfspath": {
-        "title": "bucketsListIpfsPath() function"
-      },
-      "hub.bucketslistpath": {
-        "title": "bucketsListPath() function"
-      },
-      "hub.bucketspullipfspath": {
-        "title": "bucketsPullIpfsPath() function"
-      },
-      "hub.bucketspullpath": {
-        "title": "bucketsPullPath() function"
-      },
-      "hub.bucketspushpath": {
-        "title": "bucketsPushPath() function"
-      },
-      "hub.bucketsremove": {
-        "title": "bucketsRemove() function"
-      },
-      "hub.bucketsremovepath": {
-        "title": "bucketsRemovePath() function"
-      },
-      "hub.bucketsroot": {
-        "title": "bucketsRoot() function"
       },
       "hub.bytestoarray": {
         "title": "bytesToArray() function"
@@ -224,23 +197,23 @@
       "hub.client.writetransaction": {
         "title": "Client.writeTransaction() method"
       },
-      "hub.convertpathitem": {
-        "title": "convertPathItem variable"
-      },
       "hub.createapisig": {
         "title": "createAPISig() function"
       },
       "hub.createuserauth": {
         "title": "createUserAuth() function"
       },
+      "hub.dbinfo.addrs": {
+        "title": "DBInfo.addrs property"
+      },
+      "hub.dbinfo.key": {
+        "title": "DBInfo.key property"
+      },
+      "hub.dbinfo": {
+        "title": "DBInfo interface"
+      },
       "hub.decrypt": {
         "title": "decrypt() function"
-      },
-      "hub.deleteinboxmessage": {
-        "title": "deleteInboxMessage() function"
-      },
-      "hub.deletesentboxmessage": {
-        "title": "deleteSentboxMessage() function"
       },
       "hub.encrypt": {
         "title": "encrypt() function"
@@ -250,12 +223,6 @@
       },
       "hub.extractpublickeybytes": {
         "title": "extractPublicKeyBytes() function"
-      },
-      "hub.getmailboxid": {
-        "title": "getMailboxID() function"
-      },
-      "hub.getthread": {
-        "title": "getThread() function"
       },
       "hub.getthreadreplyobj.id": {
         "title": "GetThreadReplyObj.id property"
@@ -268,27 +235,6 @@
       },
       "hub.getthreadreplyobj.name": {
         "title": "GetThreadReplyObj.name property"
-      },
-      "hub.grpcauthentication.copyauth": {
-        "title": "GrpcAuthentication.copyAuth() method"
-      },
-      "hub.grpcauthentication.gettoken": {
-        "title": "GrpcAuthentication.getToken() method"
-      },
-      "hub.grpcauthentication.gettokenchallenge": {
-        "title": "GrpcAuthentication.getTokenChallenge() method"
-      },
-      "hub.grpcauthentication": {
-        "title": "GrpcAuthentication class"
-      },
-      "hub.grpcauthentication.withkeyinfo": {
-        "title": "GrpcAuthentication.withKeyInfo() method"
-      },
-      "hub.grpcauthentication.withthread": {
-        "title": "GrpcAuthentication.withThread() method"
-      },
-      "hub.grpcauthentication.withuserauth": {
-        "title": "GrpcAuthentication.withUserAuth() method"
       },
       "hub.identity": {
         "title": "Identity interface"
@@ -317,14 +263,17 @@
       "hub.initobject": {
         "title": "InitObject type"
       },
+      "hub.instance.instance": {
+        "title": "Instance.instance property"
+      },
+      "hub.instance": {
+        "title": "Instance interface"
+      },
       "hub.keyinfo": {
         "title": "KeyInfo type"
       },
       "hub.linksobject": {
         "title": "LinksObject type"
-      },
-      "hub.listinboxmessages": {
-        "title": "listInboxMessages() function"
       },
       "hub.listpathflat": {
         "title": "listPathFlat() function"
@@ -337,12 +286,6 @@
       },
       "hub.listpathrecursive": {
         "title": "listPathRecursive() function"
-      },
-      "hub.listsentboxmessages": {
-        "title": "listSentboxMessages() function"
-      },
-      "hub.listthreads": {
-        "title": "listThreads() function"
       },
       "hub.mailboxevent": {
         "title": "MailboxEvent interface"
@@ -422,9 +365,6 @@
       "hub.public": {
         "title": "Public interface"
       },
-      "hub.public.tostring": {
-        "title": "Public.toString() method"
-      },
       "hub.public.verify": {
         "title": "Public.verify() method"
       },
@@ -473,14 +413,80 @@
       "hub.pushpathresult.root": {
         "title": "PushPathResult.root property"
       },
-      "hub.readinboxmessage": {
-        "title": "readInboxMessage() function"
+      "hub.query._constructor_": {
+        "title": "Query.(constructor)"
+      },
+      "hub.query.and": {
+        "title": "Query.and() method"
+      },
+      "hub.query.ands": {
+        "title": "Query.ands property"
+      },
+      "hub.query": {
+        "title": "Query class"
+      },
+      "hub.query.or": {
+        "title": "Query.or() method"
+      },
+      "hub.query.orderby": {
+        "title": "Query.orderBy() method"
+      },
+      "hub.query.orderbydesc": {
+        "title": "Query.orderByDesc() method"
+      },
+      "hub.query.ors": {
+        "title": "Query.ors property"
+      },
+      "hub.query.sort": {
+        "title": "Query.sort property"
+      },
+      "hub.query.where": {
+        "title": "Query.where() method"
+      },
+      "hub.queryjson.ands": {
+        "title": "QueryJSON.ands property"
+      },
+      "hub.queryjson": {
+        "title": "QueryJSON interface"
+      },
+      "hub.queryjson.ors": {
+        "title": "QueryJSON.ors property"
+      },
+      "hub.queryjson.sort": {
+        "title": "QueryJSON.sort property"
+      },
+      "hub.readtransaction._constructor_": {
+        "title": "ReadTransaction.(constructor)"
+      },
+      "hub.readtransaction.client": {
+        "title": "ReadTransaction.client property"
+      },
+      "hub.readtransaction.context": {
+        "title": "ReadTransaction.context property"
+      },
+      "hub.readtransaction.find": {
+        "title": "ReadTransaction.find() method"
+      },
+      "hub.readtransaction.findbyid": {
+        "title": "ReadTransaction.findByID() method"
+      },
+      "hub.readtransaction.has": {
+        "title": "ReadTransaction.has() method"
+      },
+      "hub.readtransaction": {
+        "title": "ReadTransaction class"
+      },
+      "hub.readtransaction.modelname": {
+        "title": "ReadTransaction.modelName property"
+      },
+      "hub.readtransaction.start": {
+        "title": "ReadTransaction.start() method"
+      },
+      "hub.readtransaction.threadid": {
+        "title": "ReadTransaction.threadID property"
       },
       "hub.rootobject": {
         "title": "RootObject type"
-      },
-      "hub.sendmessage": {
-        "title": "sendMessage() function"
       },
       "hub.sentboxlistoptions.ascending": {
         "title": "SentboxListOptions.ascending property"
@@ -494,17 +500,8 @@
       "hub.sentboxlistoptions.seek": {
         "title": "SentboxListOptions.seek property"
       },
-      "hub.setupmailbox": {
-        "title": "setupMailbox() function"
-      },
-      "hub.staticthis": {
-        "title": "StaticThis type"
-      },
       "hub.status": {
         "title": "Status enum"
-      },
-      "hub.statusint": {
-        "title": "StatusInt type"
       },
       "hub.threadid._constructor_": {
         "title": "ThreadID.(constructor)"
@@ -547,6 +544,18 @@
       },
       "hub.threadid.version": {
         "title": "ThreadID.version() method"
+      },
+      "hub.update.action": {
+        "title": "Update.action property"
+      },
+      "hub.update.collectionname": {
+        "title": "Update.collectionName property"
+      },
+      "hub.update.instanceid": {
+        "title": "Update.instanceID property"
+      },
+      "hub.update": {
+        "title": "Update interface"
       },
       "hub.userauth": {
         "title": "UserAuth type"
@@ -635,8 +644,47 @@
       "hub.variant": {
         "title": "Variant enum"
       },
-      "hub.watchmailbox": {
-        "title": "watchMailbox() function"
+      "hub.where": {
+        "title": "Where variable"
+      },
+      "hub.writetransaction._constructor_": {
+        "title": "WriteTransaction.(constructor)"
+      },
+      "hub.writetransaction.client": {
+        "title": "WriteTransaction.client property"
+      },
+      "hub.writetransaction.context": {
+        "title": "WriteTransaction.context property"
+      },
+      "hub.writetransaction.create": {
+        "title": "WriteTransaction.create() method"
+      },
+      "hub.writetransaction.delete": {
+        "title": "WriteTransaction.delete() method"
+      },
+      "hub.writetransaction.find": {
+        "title": "WriteTransaction.find() method"
+      },
+      "hub.writetransaction.findbyid": {
+        "title": "WriteTransaction.findByID() method"
+      },
+      "hub.writetransaction.has": {
+        "title": "WriteTransaction.has() method"
+      },
+      "hub.writetransaction": {
+        "title": "WriteTransaction class"
+      },
+      "hub.writetransaction.modelname": {
+        "title": "WriteTransaction.modelName property"
+      },
+      "hub.writetransaction.save": {
+        "title": "WriteTransaction.save() method"
+      },
+      "hub.writetransaction.start": {
+        "title": "WriteTransaction.start() method"
+      },
+      "hub.writetransaction.threadid": {
+        "title": "WriteTransaction.threadID property"
       },
       "index": {
         "title": "Introduction"
