@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.9.3...@textile/threads-client@0.10.0) (2020-08-20)
+
+
+### Features
+
+* **docs:** adds example docs for client apis ([#501](https://github.com/textileio/js-threads/issues/501)) ([15f8b4b](https://github.com/textileio/js-threads/commit/15f8b4b3631c7590231a49653169b6ce5298509a))
+
+
+
+
+
 ## [0.9.3](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.9.2...@textile/threads-client@0.9.3) (2020-08-19)
 
 
