@@ -65,7 +65,7 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-hub/docs/hub.buckets">Buckets</a></td><td>Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.client">Client</a></td><td>Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile's 'DB' API, which is defined here: <a href="https://github.com/textileio/go-threads/blob/master/api/pb/api.proto">https://github.com/textileio/go-threads/blob/master/api/pb/api.proto</a>.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.client">Client</a></td><td>Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Threads server. This client library can be used to interact with a local or remote Textile gRPC-service It is a wrapper around Textile Thread's 'DB' API, which is defined here: <a href="https://github.com/textileio/go-threads/blob/master/api/pb/api.proto">https://github.com/textileio/go-threads/blob/master/api/pb/api.proto</a>.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.privatekey">PrivateKey</a></td><td>Default implementation of the <a href="/js-hub/docs/hub.private">Private</a> interface, with decryption support. In theory, RSA, ed25519, and secp256k1 key types (and more) should be supported, although currently only ed25519 has full sign and decrypt capabilities.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.publickey">PublicKey</a></td><td>Default implementation of the <a href="/js-hub/docs/hub.public">Public</a> interface, with encryption support. In theory, RSA, ed25519, and secp256k1 key types (and more) should be supported, although currently only ed25519 has full verify and encrypt capabilities.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.query">Query</a></td><td>Query allows to build queries to be used to fetch data from a model.</td></tr>
@@ -114,6 +114,7 @@
 <tr><th>Interface</th><th>Description</th></tr>
 </thead>
 <tbody>
+<tr><td><a href="/js-hub/docs/hub.dbinfo">DBInfo</a></td><td>DBInfo contains joining/sharing information for a Thread/DB.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.getthreadreplyobj">GetThreadReplyObj</a></td><td>The response type from getThread and listThreads</td></tr>
 <tr><td><a href="/js-hub/docs/hub.identity">Identity</a></td><td>Identity represents an entity capable of signing a message. This is a simple &quot;private key&quot; interface that must be capable of returning the associated &quot;public key&quot; for verification. In many cases, the Identity will just be a private key, but callers can use any setup that suits their needs. The interface is currently modeled after <code>libp2p-crypto</code> keys. It is meant to be implemented by external libraries, though in practice, implementations are provided by the <code>@textile/crypto</code> library.<!-- -->If using in your own application, see the <a href="/js-hub/docs/hub.privatekey">PrivateKey</a> class.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.inboxlistoptions">InboxListOptions</a></td><td>Inbox query options</td></tr>
