@@ -79,10 +79,39 @@ export interface DBInfo {
 }
 
 /**
- * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Textile server.
+ * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Threads server.
  * This client library can be used to interact with a local or remote Textile gRPC-service
- * It is a wrapper around Textile's 'DB' API, which is defined here:
+ * It is a wrapper around Textile Thread's 'DB' API, which is defined here:
  * https://github.com/textileio/go-threads/blob/master/api/pb/api.proto.
+ *
+ * @example
+ * ```typescript
+ * import {Client, Identity, UserAuth} from '@textile/threads'
+ *
+ * async function setupDB(auth: UserAuth, identity: Identity) {
+ *   // Initialize the client
+ *   const client = Client.withUserAuth(auth)
+ *
+ *   // Connect the user to your API
+ *   const userToken = await client.getToken(identity)
+ *
+ *   // Create a new DB
+ *   const threadID = await client.newDB(undefined, 'nasa')
+ *
+ *   // Create a new Collection from an Object
+ *   const buzz = {
+ *     name: 'Buzz',
+ *     missions: 2,
+ *     _id: '',
+ *   }
+ *   await client.newCollectionFromObject(threadID, 'astronauts', buzz)
+ *
+ *   // Store the buzz object in the new collection
+ *   await client.create(threadID, 'astronauts', [buzz])
+ *
+ *   return threadID
+ * }
+ * ```
  */
 export class Client {
   public serviceHost: string
@@ -160,22 +189,16 @@ export class Client {
 
   /**
    * Create a random user identity.
-   * @example
-   * ```typescript
-   * import {Client} from '@textile/threads'
-   *
-   * async function newIdentity () {
-   *   const user = await Client.randomIdentity()
-   *   return user
-   * }
-   * ```
+   * @deprecated
+   * @remarks
+   * See `PrivateKey`
    */
   static async randomIdentity(): Promise<Libp2pCryptoIdentity> {
     return Libp2pCryptoIdentity.fromRandom()
   }
 
   /**
-   * Obtain a token for interacting with the remote API.
+   * Obtain a token per user (identity) for interacting with the remote API.
    * @param identity A user identity to use for creating records in the database. A random identity
    * can be created with `Client.randomIdentity(), however, it is not easy/possible to migrate
    * identities after the fact. Please store or otherwise persist any identity information if
@@ -203,7 +226,7 @@ export class Client {
   }
 
   /**
-   * Obtain a token for interacting with the remote API.
+   * Obtain a token per user (identity) for interacting with the remote API.
    * @param publicKey The public key of a user identity to use for creating records in the database.
    * A random identity can be created with `Client.randomIdentity(), however, it is not
    * easy/possible to migrate identities after the fact. Please store or otherwise persist any
@@ -212,7 +235,7 @@ export class Client {
    * @param callback A callback function that takes a `challenge` argument and returns a signed
    * message using the input challenge and the private key associated with `publicKey`.
    * @param ctx Context object containing web-gRPC headers and settings.
-   * @note `publicKey` must be the corresponding public key of the private key used in `callback`.
+   * @remarks `publicKey` must be the corresponding public key of the private key used in `callback`.
    */
   async getTokenChallenge(
     publicKey: string,
@@ -272,8 +295,8 @@ export class Client {
    * import {Client, ThreadID} from '@textile/threads'
    *
    * async function createDB (client: Client) {
-   *   const thread: ThreadID = await client.newDB()
-   *   return thread
+   *   const threadID: ThreadID = await client.newDB()
+   *   return threadID
    * }
    * ```
    */
@@ -325,8 +348,8 @@ export class Client {
    * ```typescript
    * import {Client, ThreadID} from '@textile/threads'
    *
-   * async function deleteDB (client: Client, thread: ThreadID) {
-   *   await client.deleteDB(thread)
+   * async function deleteDB (client: Client, threadID: ThreadID) {
+   *   await client.deleteDB(threadID)
    *   return
    * }
    * ```
@@ -340,8 +363,8 @@ export class Client {
 
   /**
    * Lists all known DBs.
-   * @note this API is blocked on the Hub.
-   * @see {listThreads} available via `@textile/hub` for an alternative.
+   * @remarks this API is blocked on the Hub. Use `listThreads` when importing Client
+   * from `@textile/hub` as an alternative.
    */
   public async listDBs(): Promise<
     Record<string, pb.GetDBInfoReply.AsObject | undefined>
@@ -365,6 +388,37 @@ export class Client {
    * @param name The human-readable name for the collection.
    * @param schema The actual json-schema.org compatible schema object.
    * @param indexes A set of index definitions for indexing instance fields.
+   *
+   * @example
+   * Change a new astronauts collection
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * const astronauts = {
+   *   title: "Astronauts",
+   *   type: "object",
+   *   required: ["_id"],
+   *   properties: {
+   *     _id: {
+   *       type: "string",
+   *       description: "The instance's id.",
+   *     },
+   *     name: {
+   *       type: "string",
+   *       description: "The astronauts name.",
+   *     },
+   *     missions: {
+   *       description: "The number of missions.",
+   *       type: "integer",
+   *       minimum: 0,
+   *     },
+   *   },
+   * }
+   *
+   * async function newCollection (client: Client, threadID: ThreadID) {
+   *   return await client.updateCollection(threadID, 'astronauts', astronauts)
+   * }
+   * ```
    */
   public async newCollection(
     threadID: ThreadID,
@@ -398,17 +452,20 @@ export class Client {
    * @param name The human-readable name for the collection.
    * @param obj The actual object to attempt to extract a schema from.
    * @param indexes A set of index definitions for indexing instance fields.
+   *
    * @example
+   * Change a new astronauts collection based of Buzz
    * ```typescript
    * import {Client, ThreadID} from '@textile/threads'
    *
-   * async function fromObject (client: Client, thread: ThreadID, name: string, obj: any) {
-   *   await client.newCollectionFromObject(thread, name, obj)
-   *   return
+   * async function newCollection (client: Client, threadID: ThreadID) {
+   *   const buzz = {
+   *     name: 'Buzz',
+   *     missions: 2,
+   *     _id: '',
+   *   }
+   *   return await client.newCollectionFromObject(threadID, 'astronauts', buzz)
    * }
-   *
-   * // Example object
-   * // const person = {name: 'Buzz', missions: 3}
    * ```
    */
   public async newCollectionFromObject(
@@ -424,11 +481,42 @@ export class Client {
 
   /**
    * updateCollection updates an existing collection.
-   * Currenrly, updates can include name and schema.
+   * Currently, updates can include name and schema.
    * @todo Allow update of indexing information.
    * @param threadID the ID of the database
-   * @param name The human-readable name for the collection.
-   * @param config The new collection configuration values to use when updating.
+   * @param name the new name of the collection
+   * @param schema the new schema of the collection
+   *
+   * @example
+   * Change the name of our astronauts collection
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * const astronauts = {
+   *   title: "Astronauts",
+   *   type: "object",
+   *   required: ["_id"],
+   *   properties: {
+   *     _id: {
+   *       type: "string",
+   *       description: "The instance's id.",
+   *     },
+   *     name: {
+   *       type: "string",
+   *       description: "The astronauts name.",
+   *     },
+   *     missions: {
+   *       description: "The number of missions.",
+   *       type: "integer",
+   *       minimum: 0,
+   *     },
+   *   },
+   * }
+   *
+   * async function changeName (client: Client, threadID: ThreadID) {
+   *   return await client.updateCollection(threadID, 'toy-story-characters', astronauts)
+   * }
+   * ```
    */
   public async updateCollection(
     threadID: ThreadID,
@@ -456,7 +544,7 @@ export class Client {
   }
 
   /**
-   * deleteCollection deletes an existing collection.
+   * Deletes an existing collection.
    * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
    * @param schema The actual json-schema.org compatible schema object.
@@ -464,13 +552,10 @@ export class Client {
    * ```typescript
    * import {Client, ThreadID} from '@textile/threads'
    *
-   * async function deleteCollection (client: Client, thread: ThreadID, name: string) {
-   *   await client.deleteCollection(thread, name)
+   * async function deleteAstronauts (client: Client, thread: ThreadID) {
+   *   await client.deleteCollection(thread, 'astronauts')
    *   return
    * }
-   *
-   * // Example object
-   * // const person = {name: 'Buzz', missions: 3}
    * ```
    */
   public async deleteCollection(
@@ -485,9 +570,19 @@ export class Client {
   }
 
   /**
-   * getCollectionIndexes returns an existing collection's indexes.
+   * Returns an existing indexes for a collection.
    * @param threadID the ID of the database.
    * @param name The human-readable name for the collection.
+   *
+   * @example
+   * Return a set of indexes for our astronauts collection
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function getIndexes (client: Client, threadID: ThreadID) {
+   *   return await client.getCollectionIndexes(threadID, 'astronauts')
+   * }
+   * ```
    */
   public async getCollectionIndexes(
     threadID: ThreadID,
@@ -508,8 +603,9 @@ export class Client {
    * thread address (database). It should be called before any operation on the store, and is an
    * alternative to start, which creates a local store. newDBFromAddr should also include the
    * read/follow key, which should be a Buffer, Uint8Array or base32-encoded string.
-   * @see getDBInfo for a possible source of the address and keys.
-   * @see ThreadKey for information about thread keys.
+   * @remarks
+   * See getDBInfo for a possible source of the address and keys. See ThreadKey for
+   * information about thread keys.
    * @param address The address for the thread with which to connect.
    * Should be of the form /ip4/<url/ip-address>/tcp/<port>/p2p/<peer-id>/thread/<thread-id>
    * @param key The set of keys to use to connect to the database
@@ -542,17 +638,29 @@ export class Client {
   }
 
   /**
-   * fromInfo initializes the client with the given store, connecting to the given
-   * thread address (database). It should be called before any operation on the store, and is an
-   * alternative to start, which creates a local store. fromInfo is a helper method around
-   * newDBFromAddr that takes the 'raw' output from getDBInfo, rather than specifying an address
-   * directly.
-   * @see getDBInfo for a possible source of the address and keys.
-   * @see ThreadKey for information about thread keys.
+   * Connect client to an existing database using information in the DBInfo object
+   * This should be called before any operation on the store, and is an alternative
+   * to open, which re-opens a database already opened by the user.
+   * @remarks This is a helper method around newDBFromAddr, which takes the 'raw' output
+   * from getDBInfo. See getDBInfo for a possible source of the address and keys.
    * @param info The output from a call to getDBInfo on a separate peer.
    * @param includeLocal Whether to try dialing addresses that appear to be on the local host.
    * Defaults to false, preferring to add from public ip addresses.
    * @param collections Array of `name` and JSON schema pairs for seeding the DB with collections.
+   *
+   * @example
+   * Get DB info and use DB info to join an existing remote thread (e.g. invited)
+   * ```typescript
+   * import {Client, DBInfo, ThreadID} from '@textile/threads'
+   *
+   * async function getInfo (client: Client, threadID: ThreadID): Promise<DBInfo> {
+   *   return await client.getDBInfo(threadID)
+   * }
+   *
+   * async function joinFromInfo (client: Client, info: DBInfo) {
+   *   return await client.joinFromInfo(info)
+   * }
+   * ```
    */
   public async joinFromInfo(
     info: DBInfo,
@@ -589,9 +697,23 @@ export class Client {
   }
 
   /**
-   * getDBInfo returns invite 'links' unseful for inviting other peers to join a given store/thread.
+   * Returns a DBInfo objection containing metadata required to invite other peers to join a given thread.
    * @param threadID the ID of the database
    * @returns An object with an encoded thread key, and a list of multiaddrs.
+   *
+   * @example
+   * Get DB info and use DB info to join an existing remote thread (e.g. invited)
+   * ```typescript
+   * import {Client, DBInfo, ThreadID} from '@textile/threads'
+   *
+   * async function getInfo (client: Client, threadID: ThreadID): Promise<DBInfo> {
+   *   return await client.getDBInfo(threadID)
+   * }
+   *
+   * async function joinFromInfo (client: Client, info: DBInfo) {
+   *   return await client.joinFromInfo(info)
+   * }
+   * ```
    */
   public async getDBInfo(threadID: ThreadID): Promise<DBInfo> {
     const req = new pb.GetDBInfoRequest()
@@ -619,6 +741,28 @@ export class Client {
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects.
+   *
+   * @example
+   * Create a new entry in our collection
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function createBuzz (client: Client, threadID: ThreadID) {
+   *   const buzz: Astronaut = {
+   *     name: 'Buzz',
+   *     missions: 2,
+   *     _id: '',
+   *   }
+   *
+   *   await client.create(threadID, 'astronauts', [buzz])
+   * }
+   * ```
    */
   public async create(
     threadID: ThreadID,
@@ -642,6 +786,30 @@ export class Client {
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
+   *
+   * @example
+   * Update an existing instance
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function updateBuzz (client: Client, threadID: ThreadID) {
+   *   const query = new Where('name').eq('Buzz')
+   *   const result = await client.find<Astronaut>(threadID, 'astronauts', query)
+   *
+   *   if (result.instancesList.length < 1) return
+   *
+   *   const buzz = result.instancesList[0]
+   *   buzz.missions += 1
+   *
+   *   return await client.save(threadID, 'astronauts', [buzz])
+   * }
+   * ```
    */
   public async save(
     threadID: ThreadID,
@@ -668,6 +836,28 @@ export class Client {
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to delete.
+   *
+   * @example
+   * Delete any instances that return from a query
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function deleteBuzz (client: Client, threadID: ThreadID) {
+   *   const query = new Where('name').eq('Buzz')
+   *   const result = await client.find<Astronaut>(threadID, 'astronauts', query)
+   *
+   *   if (result.instancesList.length < 1) return
+   *
+   *   const ids = await result.instancesList.map((instance) => instance._id)
+   *   await client.delete(threadID, 'astronauts', ids)
+   * }
+   * ```
    */
   public async delete(
     threadID: ThreadID,
@@ -683,10 +873,20 @@ export class Client {
   }
 
   /**
-   * has checks whether a given instance exists in the given store.
+   * Check if a given instance exists in the collection.
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param IDs An array of instance ids to check for.
+   *
+   * @example
+   * Check if an instance exists
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * async function instanceExists (client: Client, threadID: ThreadID, id: string) {
+   *   return await client.has(threadID, 'astronauts', [id])
+   * }
+   * ```
    */
   public async has(
     threadID: ThreadID,
@@ -702,10 +902,28 @@ export class Client {
   }
 
   /**
-   * find queries the store for entities matching the given query parameters.
+   * Queries a collection for entities matching the given query parameters.
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param query The object that describes the query. User Query class or primitive QueryJSON type.
+   *
+   * @example
+   * Query with return type
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function getAstronautByName (client: Client, threadID: ThreadID, name: string) {
+   *   const query = new Where('name').eq(name)
+   *   const astronaut = await client.find<Astronaut>(threadID, 'astronauts', query)
+   *   return astronaut
+   * }
+   * ```
    */
   public async find<T = any>(
     threadID: ThreadID,
@@ -727,10 +945,37 @@ export class Client {
   }
 
   /**
-   * findByID queries the store for the id of an instance.
+   * Queries the collection by a known instance ID.
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
    * @param ID The id of the instance to search for.
+   *
+   * @example
+   * Find and cast a known model by instance ID.
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function getAstronaut (client: Client, threadID: ThreadID, id: string) {
+   *   const astronaut = await client.findByID<Astronaut>(threadID, 'astronauts', id)
+   *   return astronaut
+   * }
+   * ```
+   *
+   * @example
+   * Simple find and return any instance
+   * ```typescript
+   * import {Client, ThreadID} from '@textile/threads'
+   *
+   * async function getInstance (client: Client, threadID: ThreadID, id: string) {
+   *   return await client.findByID(threadID, 'astronauts', id)
+   * }
+   * ```
    */
   public async findByID<T = any>(
     threadID: ThreadID,
@@ -793,6 +1038,25 @@ export class Client {
    * @param threadID the ID of the database
    * @param filters contains an array of Filters
    * @param callback The callback to call on each update to the given instance.
+   *
+   * @example
+   * ```typescript
+   * import {Client, ThreadID, Update} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   * function setupListener (client: Client, threadID: ThreadID) {
+   *   const callback = (update?: Update<Astronaut>) => {
+   *     if (!update || !update.instance) return
+   *     console.log('New update:', update.instance.name, update.instance.missions)
+   *   }
+   *   const closer = client.listen(threadID, [], callback)
+   *   return closer
+   * }
+   * ```
    */
   public listen<T = any>(
     threadID: ThreadID,
