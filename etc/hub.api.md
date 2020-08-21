@@ -10,44 +10,47 @@ import { ArchiveStatusResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveWatchResponse } from '@textile/buckets-grpc/buckets_pb';
 import CID from 'cids';
 import { ContextInterface } from '@textile/context';
-import { DeleteMessageResponse } from '@textile/users-grpc/users_pb';
-import { DeleteMessageRequest } from '@textile/users-grpc/users_pb';
-import { GetThreadResponse } from '@textile/users-grpc/users_pb';
+import { CreateResponse } from '@textile/buckets-grpc/buckets_pb';
+import { DeleteInboxMessageRequest } from '@textile/users-grpc/users_pb';
+import { DeleteInboxMessageResponse } from '@textile/users-grpc/users_pb';
+import { DeleteSentboxMessageRequest } from '@textile/users-grpc/users_pb';
+import { DeleteSentboxMessageResponse } from '@textile/users-grpc/users_pb';
 import { GetThreadRequest } from '@textile/users-grpc/users_pb';
+import { GetThreadResponse } from '@textile/users-grpc/users_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
 import { Identity as Identity_2 } from '@textile/threads-core';
-import { InitResponse } from '@textile/buckets-grpc/buckets_pb';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { LinksResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ListInboxMessagesRequest } from '@textile/users-grpc/users_pb';
+import { ListInboxMessagesResponse } from '@textile/users-grpc/users_pb';
 import { ListIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ListMessagesResponse } from '@textile/users-grpc/users_pb';
 import { ListPathItem } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ListResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ListSentboxMessagesRequest } from '@textile/users-grpc/users_pb';
-import { ListThreadsResponse } from '@textile/users-grpc/users_pb';
+import { ListSentboxMessagesResponse } from '@textile/users-grpc/users_pb';
 import { ListThreadsRequest } from '@textile/users-grpc/users_pb';
+import { ListThreadsResponse } from '@textile/users-grpc/users_pb';
 import { name as name_2 } from 'multibase';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import { PullIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { PullPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { PushPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ReadInboxMessageResponse } from '@textile/users-grpc/users_pb';
 import { ReadInboxMessageRequest } from '@textile/users-grpc/users_pb';
-import { ReadTransactionResponse } from '@textile/threads-client-grpc/threads_pb';
+import { ReadInboxMessageResponse } from '@textile/users-grpc/users_pb';
+import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 import { RemovePathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { RemoveResponse } from '@textile/buckets-grpc/buckets_pb';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { RootResponse } from '@textile/buckets-grpc/buckets_pb';
-import { SendMessageResponse } from '@textile/users-grpc/users_pb';
 import { SendMessageRequest } from '@textile/users-grpc/users_pb';
+import { SendMessageResponse } from '@textile/users-grpc/users_pb';
 import { SetPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { SetupMailboxResponse } from '@textile/users-grpc/users_pb';
 import { SetupMailboxRequest } from '@textile/users-grpc/users_pb';
-import { WriteTransactionResponse } from '@textile/threads-client-grpc/threads_pb';
+import { SetupMailboxResponse } from '@textile/users-grpc/users_pb';
+import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
 // @public (undocumented)
@@ -90,13 +93,13 @@ export class Buckets extends GrpcAuthentication {
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
     static copyAuth(auth: GrpcAuthentication, debug?: boolean): Buckets;
-    getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+    create(name: string, isPrivate?: boolean): Promise<CreateObject>;
+    getOrCreate(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: RootObject;
         threadID?: string;
     }>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    init(name: string, isPrivate?: boolean): Promise<InitObject>;
     links(key: string): Promise<LinksObject>;
     list(): Promise<RootObject[]>;
     listIpfsPath(path: string): Promise<ListPathItemObject | undefined>;
@@ -148,7 +151,7 @@ export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: 
 }, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
 
 // @public
-export function bucketsInit(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<InitObject>;
+export function bucketsCreate(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<CreateObject>;
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsLinks" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -230,7 +233,7 @@ export class Client {
         name: string;
         schema: any;
     }>): Promise<void>;
-    listDBs(): Promise<Record<string, pb.GetDBInfoResponse.AsObject | undefined>>;
+    listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
@@ -259,6 +262,16 @@ export class Client {
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
+export type CreateObject = {
+    seed: Uint8Array;
+    seedCid: string;
+    root?: RootObject;
+    links?: LinksObject;
+};
+
+export { CreateResponse }
+
+// @public
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
 
 // @public
@@ -275,14 +288,18 @@ export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: stri
 // @internal (undocumented)
 export function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<void>;
 
-export { DeleteMessageResponse }
+export { DeleteInboxMessageRequest }
 
-export { DeleteMessageRequest }
+export { DeleteInboxMessageResponse }
 
 // Warning: (ae-internal-missing-underscore) The name "deleteSentboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
 export function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface): Promise<void>;
+
+export { DeleteSentboxMessageRequest }
+
+export { DeleteSentboxMessageResponse }
 
 // @public
 export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: string): Promise<Uint8Array>;
@@ -303,6 +320,8 @@ export function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promi
 // @internal (undocumented)
 export function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadResponseObj>;
 
+export { GetThreadRequest }
+
 export { GetThreadResponse }
 
 // @public
@@ -314,8 +333,6 @@ export interface GetThreadResponseObj {
     // (undocumented)
     name: string;
 }
-
-export { GetThreadRequest }
 
 // Warning: (ae-internal-missing-underscore) The name "GrpcAuthentication" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -348,16 +365,6 @@ export interface InboxListOptions {
 }
 
 // @public
-export type InitObject = {
-    seed: Uint8Array;
-    seedCid: string;
-    root?: RootObject;
-    links?: LinksObject;
-};
-
-export { InitResponse }
-
-// @public
 export interface Instance<T> {
     // (undocumented)
     instance: T | undefined;
@@ -385,9 +392,9 @@ export function listInboxMessages(api: GrpcConnection, opts?: InboxListOptions, 
 
 export { ListInboxMessagesRequest }
 
-export { ListIpfsPathResponse }
+export { ListInboxMessagesResponse }
 
-export { ListMessagesResponse }
+export { ListIpfsPathResponse }
 
 // @public
 export function listPathFlat(grpc: GrpcConnection, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<Array<string>>;
@@ -424,14 +431,16 @@ export function listSentboxMessages(api: GrpcConnection, opts?: SentboxListOptio
 
 export { ListSentboxMessagesRequest }
 
+export { ListSentboxMessagesResponse }
+
 // Warning: (ae-internal-missing-underscore) The name "listThreads" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
 export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponseObj>>;
 
-export { ListThreadsResponse }
-
 export { ListThreadsRequest }
+
+export { ListThreadsResponse }
 
 // @public
 export interface MailboxEvent {
@@ -571,17 +580,17 @@ export function readInboxMessage(api: GrpcConnection, id: string, ctx?: ContextI
     readAt: number;
 }>;
 
-export { ReadInboxMessageResponse }
-
 export { ReadInboxMessageRequest }
+
+export { ReadInboxMessageResponse }
 
 // Warning: (ae-forgotten-export) The symbol "Transaction" needs to be exported by the entry point index.d.ts
 //
 // @public
-export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionResponse> {
-    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionResponse>, threadID: ThreadID, modelName: string);
+export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
     // (undocumented)
-    protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionResponse>;
+    protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
     // (undocumented)
     protected readonly context: ContextInterface;
     find<T = any>(query: QueryJSON): Promise<InstanceList<T>>;
@@ -617,9 +626,9 @@ export { RootResponse }
 // @internal (undocumented)
 export function sendMessage(api: GrpcConnection, from: string, to: string, toBody: Uint8Array, toSignature: Uint8Array, fromBody: Uint8Array, fromSignature: Uint8Array, ctx?: ContextInterface): Promise<UserMessage>;
 
-export { SendMessageResponse }
-
 export { SendMessageRequest }
+
+export { SendMessageResponse }
 
 // @public
 export interface SentboxListOptions {
@@ -638,9 +647,9 @@ export { SetPathResponse }
 // @internal (undocumented)
 export function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string>;
 
-export { SetupMailboxResponse }
-
 export { SetupMailboxRequest }
+
+export { SetupMailboxResponse }
 
 // @public
 export enum Status {
@@ -751,10 +760,10 @@ export function watchMailbox(api: GrpcConnection, id: string, box: 'inbox' | 'se
 export const Where: typeof Criterion;
 
 // @public
-export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionResponse> {
-    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionResponse>, threadID: ThreadID, modelName: string);
+export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
     // (undocumented)
-    protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionResponse>;
+    protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
     protected readonly context: ContextInterface;
     create<T = any>(values: any[]): Promise<string[] | undefined>;

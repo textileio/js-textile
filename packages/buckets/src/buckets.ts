@@ -20,13 +20,13 @@ import {
   bucketsList,
   bucketsLinks,
   bucketsRoot,
-  bucketsInit,
+  bucketsCreate,
   PushPathResult,
   RootObject,
   LinksObject,
   ListPathObject,
   ListPathItemObject,
-  InitObject,
+  CreateObject,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -35,14 +35,14 @@ const logger = log.getLogger('buckets')
 /**
  * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
  * @example
- * Initialize a the Bucket API and open an existing bucket (or init if new).
+ * Initialize the Bucket API and open an existing bucket (or create if new).
  * ```typescript
  * import { Buckets, UserAuth } from '@textile/hub'
  *
- * const getOrInit = async (auth: UserAuth, bucketName: string) => {
+ * const getOrCreate = async (auth: UserAuth, bucketName: string) => {
  *   const buckets = Buckets.withUserAuth(auth)
  *   // Automatically scopes future calls on `buckets` to the Thread containing the bucket
- *   const { root, threadID } = await buckets.getOrInit(bucketName)
+ *   const { root, threadID } = await buckets.getOrCreate(bucketName)
  *   if (!root) throw new Error('bucket not created')
  *   const bucketKey = root.key
  *   return { buckets, bucketKey }
@@ -54,7 +54,7 @@ const logger = log.getLogger('buckets')
  * ```typescript
  * import { Buckets } from '@textile/hub'
  *
- * // This method requires that you run "getOrInit" or have specified "withThread"
+ * // This method requires that you run "getOrCreate" or have specified "withThread"
  * async function logLinks (buckets: Buckets, bucketKey: string) {
  *   const links = await buckets.links(bucketKey)
  *   console.log(links)
@@ -84,7 +84,7 @@ const logger = log.getLogger('buckets')
  *
  * const globDir = util.promisify(glob)
  *
- * // expects an already setup buckets session using getOrInit or withThread
+ * // expects an already setup buckets session using getOrCreate or withThread
  * const exists = async (buckets: Buckets, bucketKey: string, dir: string) => {
  *   const files = await globDir('<dir glob options>')
  *   return await Promise.all(files.map(async (file) => {
@@ -228,12 +228,12 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * Open a new / existing bucket by bucket name and ThreadID (init not required)
+   * Open a new / existing bucket by bucket name and ThreadID (create not required)
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
-   * @deprecated Open has been replaced with getOrInit
+   * @deprecated Open has been replaced with getOrCreate
    */
   async open(
     name: string,
@@ -241,29 +241,29 @@ export class Buckets extends GrpcAuthentication {
     isPrivate = false,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
-    return this.getOrInit(name, threadName, isPrivate, threadID)
+    return this.getOrCreate(name, threadName, isPrivate, threadID)
   }
 
   /**
-   * Open a new / existing bucket by bucket name and ThreadID (init not required)
+   * Open a new / existing bucket by bucket name and ThreadID (create not required)
    * Replaces `open` command in older versions.
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
    * @example
-   * Initialize a Bucket called "app-name-files"
+   * Create a Bucket called "app-name-files"
    * ```typescript
    * import { Buckets, UserAuth } from '@textile/hub'
    *
    * const open = async (auth: UserAuth, name: string) => {
    *     const buckets = Buckets.withUserAuth(auth)
-   *     const { root, threadID } = await buckets.getOrInit(name)
+   *     const { root, threadID } = await buckets.getOrCreate(name)
    *     return { buckets, root, threadID }
    * }
    * ```
    */
-  async getOrInit(
+  async getOrCreate(
     name: string,
     threadName = 'buckets',
     isPrivate = false,
@@ -300,28 +300,28 @@ export class Buckets extends GrpcAuthentication {
     if (existing) {
       return { root: existing, threadID }
     }
-    const created = await this.init(name, isPrivate)
+    const created = await this.create(name, isPrivate)
     return { root: created.root, threadID }
   }
 
   /**
-   * Initializes a new bucket.
+   * Creates a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @example
-   * Initialize a Bucket called "app-name-files"
+   * Create a Bucket called "app-name-files"
    * ```tyepscript
    * import { Buckets } from '@textile/hub'
    *
-   * const init = async (buckets: Buckets) => {
-   *     return buckets.init("app-name-files")
+   * const create = async (buckets: Buckets) => {
+   *     return buckets.create("app-name-files")
    * }
    * ```
    */
-  async init(name: string, isPrivate = false): Promise<InitObject> {
-    logger.debug('init request')
-    return bucketsInit(this, name, isPrivate)
+  async create(name: string, isPrivate = false): Promise<CreateObject> {
+    logger.debug('create request')
+    return bucketsCreate(this, name, isPrivate)
   }
 
   /**
@@ -454,7 +454,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * const globDir = util.promisify(glob)
    *
-   * // expects an already setup buckets session using getOrInit or withThread
+   * // expects an already setup buckets session using getOrCreate or withThread
    * const exists = async (buckets: Buckets, bucketKey: string, dir: string) => {
    *   const files = await globDir('<dir glob options>')
    *   return await Promise.all(files.map(async (file) => {

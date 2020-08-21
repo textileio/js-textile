@@ -244,7 +244,7 @@ async function run (buckets: Buckets) {
   if (existing) {
     bucketKey = existing.key;
   } else {
-    const created = await buckets.init('files');
+    const created = await buckets.create('files');
     bucketKey = created.root ? created.root.key : ''
   }
   return bucketKey

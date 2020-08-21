@@ -5,7 +5,7 @@ import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { Buckets } from './buckets'
 import { signUp } from './spec.util'
-import { InitObject } from './api'
+import { CreateObject } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -16,7 +16,7 @@ const sessionSecret = 'hubsession'
 describe('Buckets...', () => {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
-  let buck: InitObject
+  let buck: CreateObject
   let fileSize: number
 
   before(async () => {
@@ -25,7 +25,7 @@ describe('Buckets...', () => {
   })
 
   it('should open a bucket by name without thread info', async () => {
-    const { root, threadID } = await client.getOrInit('initbuck')
+    const { root, threadID } = await client.getOrCreate('createbuck')
     expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
     expect(root).to.have.ownProperty('path')
@@ -33,12 +33,12 @@ describe('Buckets...', () => {
     expect(root).to.have.ownProperty('updatedAt')
   })
 
-  it('should init a new bucket on open thread', async () => {
+  it('should create a new bucket on open thread', async () => {
     // Check that we're empty
     const list = await client.list()
     expect(list).to.have.length(1)
-    // Now initialize a bucket
-    buck = await client.init('mybuck')
+    // Now create a bucket
+    buck = await client.create('mybuck')
     expect(buck).to.have.ownProperty('root')
     expect(buck.root).to.have.ownProperty('key')
     expect(buck.root).to.have.ownProperty('path')

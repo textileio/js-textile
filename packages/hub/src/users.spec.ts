@@ -36,11 +36,11 @@ describe('All apis...', () => {
         await db.newDB(id, 'my-buckets')
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
-      it('should then initialize a new bucket in the db and push to it', async function () {
+      it('should create a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
-        // Initialize a new bucket in the db
+        // Create a new bucket in the db
         const buckets = new Buckets(ctx)
-        const buck = await buckets.init('mybuck')
+        const buck = await buckets.create('mybuck')
         expect(buck.root?.name).to.equal('mybuck')
 
         // Finally, push a file to the bucket.
@@ -86,11 +86,11 @@ describe('All apis...', () => {
         expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
 
-      it('should then initialize a new bucket in the db and push to it', async function () {
+      it('should create a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
-        // Initialize a new bucket in the db from the user context
+        // Create a new bucket in the db from the user context
         const buckets = new Buckets(users.context)
-        const buck = await buckets.init('mybuck')
+        const buck = await buckets.create('mybuck')
         expect(buck.root?.name).to.equal('mybuck')
 
         // Finally, push a file to the bucket.
