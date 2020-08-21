@@ -96,9 +96,9 @@ export type ListPathObject = {
 }
 
 /**
- * Bucket create response
+ * Bucket init response
  */
-export type CreateObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
+export type InitObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
 
 const convertRootObject = (root: Root): RootObject => {
   return {
@@ -134,7 +134,7 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
 }
 
 /**
- * Creates a new bucket.
+ * Initializes a new bucket.
  * @public
  * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
  * @param isPrivate encrypt the bucket contents (default `false`)
@@ -144,19 +144,19 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
  * import { Buckets } from '@textile/hub'
  *
  * const init = async (buckets: Buckets) => {
- *     return buckets.create("app-name-files")
+ *     return buckets.init("app-name-files")
  * }
  * ```
  *
  * @internal
  */
-export async function bucketsCreate(
+export async function bucketsInit(
   api: GrpcConnection,
   name: string,
   isPrivate = false,
   ctx?: ContextInterface,
-): Promise<CreateObject> {
-  logger.debug('create request')
+): Promise<InitObject> {
+  logger.debug('init request')
   const req = new CreateRequest()
   req.setName(name)
   req.setPrivate(isPrivate)

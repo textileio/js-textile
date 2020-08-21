@@ -1,5 +1,5 @@
 import log from 'loglevel'
-import { grpc } from "@improbable-eng/grpc-web"
+import { grpc } from '@improbable-eng/grpc-web'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
@@ -124,7 +124,7 @@ export class Users extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withKeyInfo}
-   * 
+   *
    * @example
    * ```@typescript
    * import { Users, KeyInfo } from '@textile/hub'

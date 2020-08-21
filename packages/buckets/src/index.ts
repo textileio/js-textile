@@ -14,7 +14,7 @@ export {
   ArchiveResponse,
   ArchiveStatusResponse,
   ArchiveWatchResponse,
-  InitResponse,
+  CreateResponse,
   ListPathItem,
   ListPathResponse,
   ListResponse,

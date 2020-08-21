@@ -26,8 +26,8 @@ describe('All apis...', () => {
         if (user) dev = user
         // @note This should be done using the cli
         ctx.withSession(dev.session)
-        const key = await createKey(ctx, 'ACCOUNT')
-        await ctx.withAPIKey(key.key).withKeyInfo(key)
+        const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
+        await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-api-sig')
       }).timeout(3000)
       it('should then create a db for the bucket', async () => {
@@ -67,13 +67,13 @@ describe('All apis...', () => {
         if (user) dev = user
         // @note This should be done using the cli
         // This time they create a user key
-        const key = await createKey(ctx.withSession(dev.session), 'USER')
+        const { keyInfo } = await createKey(ctx.withSession(dev.session), 'KEY_TYPE_USER')
 
         // This should automatically generate a user identity and validate keys, though we use a random ident
         // for demo purposes here to show that it can also use custom identities
         const identity = await PrivateKey.fromRandom()
         // We also explicitly specify a custom context here, which could be omitted as it uses reasonable defaults
-        const userContext = await new Context(addrApiurl).withKeyInfo(key)
+        const userContext = await new Context(addrApiurl).withKeyInfo(keyInfo)
         // In the app, we simply create a new user from the provided user key, signing is done automatically
         users = new Client(userContext)
         await users.getToken(identity)
