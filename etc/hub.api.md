@@ -234,7 +234,6 @@ export class Client {
         schema: any;
     }>): Promise<void>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    // Warning: (ae-forgotten-export) The symbol "Filter" needs to be exported by the entry point index.d.ts
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
@@ -309,6 +308,13 @@ export const expirationError: Error;
 
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
+
+// @public
+export interface Filter {
+    actionTypes?: string[];
+    collectionName?: string;
+    instanceID?: string;
+}
 
 // Warning: (ae-internal-missing-underscore) The name "getMailboxID" should be prefixed with an underscore because the declaration is marked as @internal
 //
