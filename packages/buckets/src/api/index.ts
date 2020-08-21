@@ -84,7 +84,7 @@ export type ListPathItemObject = {
   name: string
   path: string
   size: number
-  isdir: boolean
+  isDir: boolean
   itemsList: Array<ListPathItemObject>
 }
 /**
@@ -123,7 +123,7 @@ const convertPathItem = (item: ListPathItem): ListPathItemObject => {
     name: item.getName(),
     path: item.getPath(),
     size: item.getSize(),
-    isdir: item.getIsDir(),
+    isDir: item.getIsDir(),
     itemsList: list ? list.map(convertPathItem) : [],
   }
 }

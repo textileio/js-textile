@@ -62,7 +62,7 @@ describe('Buckets...', () => {
     const res = await client.listPath(buck.root?.key || '', '')
     expect(res).to.have.ownProperty('root')
     expect(res.root).to.not.be.undefined
-    expect(res.item?.isdir).to.be.true
+    expect(res.item?.isDir).to.be.true
     // @todo: Should we rename itemsList to just be items?
     expect(res.item?.itemsList).to.have.length(1) // Includes .textileseed
   })
@@ -90,7 +90,7 @@ describe('Buckets...', () => {
 
     // Root dir
     const rep = await client.listPath(rootKey, '')
-    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.isDir).to.be.true
     expect(rep.item?.itemsList).to.have.length(3) // Includes .textileseed
   })
 
@@ -121,7 +121,7 @@ describe('Buckets...', () => {
 
     // Root dir
     const rep = await client.listPath(rootKey, '')
-    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.isDir).to.be.true
     expect(rep.item?.itemsList).to.have.length(3)
   })
 
@@ -130,17 +130,17 @@ describe('Buckets...', () => {
 
     // Nested dir
     let rep = await client.listPath(rootKey, 'dir1')
-    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.isDir).to.be.true
     expect(rep.item?.itemsList).to.have.length(1)
 
     // File
     rep = await client.listPath(rootKey, 'dir1/file1.jpg')
     expect(rep.item?.path.endsWith('file1.jpg')).to.be.true
-    expect(rep.item?.isdir).to.be.false
+    expect(rep.item?.isDir).to.be.false
 
     // Recursive dir
     rep = await client.listPath(rootKey, '', 3)
-    expect(rep.item?.isdir).to.be.true
+    expect(rep.item?.isDir).to.be.true
     expect(rep.item?.itemsList).to.have.length(3)
 
     // Recursive dir

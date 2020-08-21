@@ -400,7 +400,7 @@ export type ListPathItemObject = {
     name: string;
     path: string;
     size: number;
-    isdir: boolean;
+    isDir: boolean;
     itemsList: Array<ListPathItemObject>;
 };
 
