@@ -26,12 +26,27 @@ import {
   InstanceList,
   Query,
   QueryJSON,
+  ValueJSON,
+  CriterionJSON,
+  SortJSON,
   ReadTransaction,
   Where,
   WriteTransaction,
 } from "./models"
 
-export { Query, Where, WriteTransaction, ReadTransaction, Instance, QueryJSON }
+export {
+  Filter,
+  Query,
+  Where,
+  WriteTransaction,
+  ReadTransaction,
+  Instance,
+  InstanceList,
+  QueryJSON,
+  ValueJSON,
+  CriterionJSON,
+  SortJSON,
+}
 
 export interface CollectionConfig {
   name: string
@@ -1050,10 +1065,35 @@ export class Client {
    * }
    * function setupListener (client: Client, threadID: ThreadID) {
    *   const callback = (update?: Update<Astronaut>) => {
+   *     // Not safe if more than the Astronauts collection existed in the same DB
    *     if (!update || !update.instance) return
    *     console.log('New update:', update.instance.name, update.instance.missions)
    *   }
    *   const closer = client.listen(threadID, [], callback)
+   *   return closer
+   * }
+   * ```
+   *
+   * @example
+   * Listen to only CREATE events on a specific Collection.
+   * ```typescript
+   * import {Client, ThreadID, Update} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   * function setupListener (client: Client, threadID: ThreadID) {
+   *   const callback = (update?: Update<Astronaut>) => {
+   *     if (!update || !update.instance) return
+   *     console.log('New update:', update.instance.name, update.instance.missions)
+   *   }
+   *   const filters = [
+   *     {collectionName: 'Astronauts'},
+   *     {actionTypes: ['CREATE']}
+   *   ]
+   *   const closer = client.listen(threadID, filters, callback)
    *   return closer
    * }
    * ```
