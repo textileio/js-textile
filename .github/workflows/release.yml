@@ -1,12 +1,9 @@
-name: Docs
+name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      notes:
-        description: 'Update notes'
-        required: false
-
+  push:
+    tags:
+      - '@textile/hub@*.*.*'
 jobs:
   deploy:
     name: Docs
@@ -57,3 +54,13 @@ jobs:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: gh-pages
         PUBLISH_DIR: pages
+
+    - name: Zip files
+      run: zip ${{ github.workflow }}.zip docs/*.md
+    
+    - name: Upload docs archive
+      uses: softprops/action-gh-release@v1
+      with:
+        files: '${{ github.workflow }}.zip'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

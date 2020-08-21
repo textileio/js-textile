@@ -6,6 +6,7 @@
 export {
   Action,
   DBInfo,
+  Filter,
   Query,
   Where,
   WriteTransaction,

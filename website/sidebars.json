@@ -115,9 +115,9 @@
       "hub.buckets.remove",
       "hub.buckets.removepath",
       "hub.buckets.archive",
-      "hub.buckets.archiveInfo",
-      "hub.buckets.archiveStatus",
-      "hub.buckets.archiveWatch"
+      "hub.buckets.archiveinfo",
+      "hub.buckets.archivestatus",
+      "hub.buckets.archivewatch"
     ]
   },
   "client-docs": {
@@ -148,6 +148,14 @@
       "hub.client.has",
       "hub.client.readtransaction",
       "hub.client.writetransaction"
+    ],
+    "Types": [
+      "hub.action",
+      "hub.dbinfo",
+      "hub.filter",
+      "hub.query",
+      "hub.update",
+      "hub.where"
     ]
   },
   "Types": {
