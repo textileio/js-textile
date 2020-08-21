@@ -1,6 +1,6 @@
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
@@ -21,7 +21,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 describe('Users...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -127,7 +127,7 @@ describe('Users...', () => {
 
   describe('listThreads', () => {
     const ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -217,7 +217,7 @@ describe('Users...', () => {
     const user2Id = PrivateKey.fromRandom()
     const user1Ctx = new Context(addrApiurl)
     const user2Ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(user1Ctx, addrGatewayUrl, sessionSecret)

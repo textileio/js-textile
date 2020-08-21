@@ -34,14 +34,14 @@
     "@textile/security": "^0.2.6",
     "@textile/threads-client": "^0.10.0",
     "@textile/threads-id": "^0.1.13",
-    "@textile/users-grpc": "^1.0.14",
+    "@textile/users-grpc": "2.0.0-pre.0",
     "cids": "^0.8.0",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
   },
   "devDependencies": {
     "@textile/crypto": "^0.1.0",
-    "@textile/hub-grpc": "^1.0.14",
+    "@textile/hub-grpc": "2.0.0-pre.0",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
     "fast-sha256": "^1.3.0",

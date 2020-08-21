@@ -1,6 +1,6 @@
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
@@ -18,7 +18,7 @@ describe('Threads Client...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -117,7 +117,7 @@ describe('Threads Client...', () => {
   describe('listThreads', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)

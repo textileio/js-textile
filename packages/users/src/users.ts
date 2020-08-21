@@ -16,7 +16,7 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadReplyObj,
+  GetThreadResponseObj,
   UserMessage,
   getMailboxID,
   watchMailbox,
@@ -217,7 +217,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listThreads(): Promise<Array<GetThreadReplyObj>> {
+  async listThreads(): Promise<Array<GetThreadResponseObj>> {
     return listThreads(this)
   }
 
@@ -234,7 +234,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getThread(name: string): Promise<GetThreadReplyObj> {
+  async getThread(name: string): Promise<GetThreadResponseObj> {
     return getThread(this, name)
   }
 

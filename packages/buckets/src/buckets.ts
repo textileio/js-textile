@@ -4,7 +4,7 @@ import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/crypto'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
-import { ArchiveStatusReply, ArchiveInfoReply } from '@textile/buckets-grpc/buckets_pb'
+import { ArchiveStatusResponse, ArchiveInfoResponse } from '@textile/buckets-grpc/buckets_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import {
   bucketsArchiveWatch,
@@ -532,7 +532,7 @@ export class Buckets extends GrpcAuthentication {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archiveStatus(key: string): Promise<ArchiveStatusReply.AsObject> {
+  async archiveStatus(key: string): Promise<ArchiveStatusResponse.AsObject> {
     logger.debug('archive status request')
     return bucketsArchiveStatus(this, key)
   }
@@ -542,7 +542,7 @@ export class Buckets extends GrpcAuthentication {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async archiveInfo(key: string): Promise<ArchiveInfoReply.AsObject> {
+  async archiveInfo(key: string): Promise<ArchiveInfoResponse.AsObject> {
     logger.debug('archive info request')
     return bucketsArchiveInfo(this, key)
   }

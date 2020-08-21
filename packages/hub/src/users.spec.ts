@@ -3,7 +3,7 @@ import fs from 'fs'
 import { expect } from 'chai'
 import { isBrowser } from 'browser-or-node'
 import { ThreadID } from '@textile/threads-id'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { Buckets } from '@textile/buckets'
@@ -19,7 +19,7 @@ describe('All apis...', () => {
   describe('Buckets and accounts', () => {
     context('a developer', () => {
       const ctx = new Context(addrApiurl)
-      let dev: SignupReply.AsObject
+      let dev: SignupResponse.AsObject
       it('should sign-up, create an API key, and sign it for the requests', async () => {
         // @note This should be done using the cli
         const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -59,7 +59,7 @@ describe('All apis...', () => {
     context('a developer with a user', function () {
       this.timeout(5000)
       const ctx = new Context(addrApiurl)
-      let dev: SignupReply.AsObject
+      let dev: SignupResponse.AsObject
       let users: Client
       it('should sign-up, create an API key, and a new user', async function () {
         // @note This should be done using the cli

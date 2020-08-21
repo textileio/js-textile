@@ -225,16 +225,16 @@
         "title": "extractPublicKeyBytes() function"
       },
       "hub.getthreadreplyobj.id": {
-        "title": "GetThreadReplyObj.id property"
+        "title": "GetThreadResponseObj.id property"
       },
       "hub.getthreadreplyobj.isdb": {
-        "title": "GetThreadReplyObj.isDB property"
+        "title": "GetThreadResponseObj.isDB property"
       },
       "hub.getthreadreplyobj": {
-        "title": "GetThreadReplyObj interface"
+        "title": "GetThreadResponseObj interface"
       },
       "hub.getthreadreplyobj.name": {
-        "title": "GetThreadReplyObj.name property"
+        "title": "GetThreadResponseObj.name property"
       },
       "hub.identity": {
         "title": "Identity interface"
