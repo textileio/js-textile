@@ -224,6 +224,18 @@
       "hub.extractpublickeybytes": {
         "title": "extractPublicKeyBytes() function"
       },
+      "hub.filter.actiontypes": {
+        "title": "Filter.actionTypes property"
+      },
+      "hub.filter.collectionname": {
+        "title": "Filter.collectionName property"
+      },
+      "hub.filter.instanceid": {
+        "title": "Filter.instanceID property"
+      },
+      "hub.filter": {
+        "title": "Filter interface"
+      },
       "hub.getthreadreplyobj.id": {
         "title": "GetThreadReplyObj.id property"
       },
