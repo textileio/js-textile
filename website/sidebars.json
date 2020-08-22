@@ -54,6 +54,16 @@
       "hub.users.gettokenchallenge",
       "hub.users.withthread"
     ],
+    "Types": [
+      "hub.getthreadresponseobj",
+      "hub.getthreadreplyobj",
+      "hub.inboxlistoptions",
+      "hub.mailboxevent",
+      "hub.mailboxeventtype",
+      "hub.pushpathresult",
+      "hub.sentboxlistoptions",
+      "hub.usermessage"
+    ],
     "Identity interfaces": [
       "hub.identity",
       "hub.identity.public",
@@ -90,11 +100,11 @@
       "hub.publickey.bytes",
       "hub.publickey.type",
       "hub.publickey.pubkey"
-      
     ]
   },
   "bucket-docs": {
     "Buckets": [
+      "hub.buckets.copyauth",
       "hub.buckets.withuserauth",
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
@@ -106,18 +116,27 @@
       "hub.buckets.links",
       "hub.buckets.list",
       "hub.buckets.listpath",
-      "hub.buckets.listPathFlat",
+      "hub.buckets.listpathflat",
       "hub.buckets.listipfspath",
       "hub.buckets.open",
       "hub.buckets.pushpath",
       "hub.buckets.pullpath",
       "hub.buckets.pullipfspath",
       "hub.buckets.remove",
-      "hub.buckets.removepath",
+      "hub.buckets.removepath"
+    ],
+    "Experimental": [
       "hub.buckets.archive",
       "hub.buckets.archiveinfo",
       "hub.buckets.archivestatus",
       "hub.buckets.archivewatch"
+    ],
+    "Types": [
+      "hub.linksobject",
+      "hub.listpathobject",
+      "hub.listpathitemobject",
+      "hub.listpathitemobject",
+      "hub.rootobject"
     ]
   },
   "client-docs": {
@@ -163,13 +182,6 @@
       "hub.userauth",
       "hub.apisig",
       "hub.keyinfo",
-      "hub.getthreadreplyobj",
-      "hub.inboxlistoptions",
-      "hub.sentboxlistoptions",
-      "hub.usermessage",
-      "hub.pushpathresult",
-      "hub.mailboxevent",
-      "hub.mailboxeventtype",
       "hub.status",
       "hub.variant"
     ]

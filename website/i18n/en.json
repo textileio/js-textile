@@ -86,20 +86,8 @@
       "hub.buckets.withuserauth": {
         "title": "Buckets.withUserAuth() method"
       },
-      "hub.bucketsarchive": {
-        "title": "bucketsArchive() function"
-      },
-      "hub.bucketsarchiveinfo": {
-        "title": "bucketsArchiveInfo() function"
-      },
-      "hub.bucketsarchivestatus": {
-        "title": "bucketsArchiveStatus() function"
-      },
-      "hub.bucketsarchivewatch": {
-        "title": "bucketsArchiveWatch() function"
-      },
-      "hub.bucketscreate": {
-        "title": "bucketsCreate() function"
+      "hub.bucketsinit": {
+        "title": "bucketsInit() function"
       },
       "hub.bytestoarray": {
         "title": "bytesToArray() function"
@@ -715,11 +703,12 @@
       "Threads": "Threads",
       "Common Methods & Classes": "Common Methods & Classes",
       "ThreadID Methods": "ThreadID Methods",
+      "Types": "Types",
       "Identity interfaces": "Identity interfaces",
       "Private Key Class": "Private Key Class",
       "Public Key Class": "Public Key Class",
+      "Experimental": "Experimental",
       "Client": "Client",
-      "Types": "Types",
       "Common Types": "Common Types"
     }
   },
