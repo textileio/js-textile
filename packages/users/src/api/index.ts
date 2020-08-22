@@ -228,7 +228,14 @@ export async function listInboxMessages(
   if (opts && opts.seek) req.setSeek(opts.seek)
   if (opts && opts.limit) req.setLimit(opts.limit)
   if (opts && opts.ascending) req.setAscending(opts.ascending)
-  if (opts && opts.status) req.setStatus(opts.status)
+  if (opts && opts.status) {
+    switch (opts.status) {
+      case Status.READ:
+        req.setStatus(ListInboxMessagesRequest.Status.STATUS_READ)
+      case Status.UNREAD:
+        req.setStatus(ListInboxMessagesRequest.Status.STATUS_UNREAD)
+    }
+  }
   const res: ListInboxMessagesResponse = await api.unary(APIService.ListInboxMessages, req, ctx)
   return res.getMessagesList().map(convertMessageObj)
 }
