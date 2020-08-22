@@ -1,6 +1,6 @@
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
@@ -18,7 +18,7 @@ describe('Threads Client...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -42,16 +42,18 @@ describe('Threads Client...', () => {
        * security status before it knows if it's authorized or not.
        */
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      expect(keyInfo).not.undefined
       try {
-        await client.getThread('foo', ctx.withAPIKey(key.key))
+        await client.getThread('foo', ctx.withAPIKey(keyInfo?.key))
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
-      const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
       try {
         await client.getThread('foo', ctx.withAPISig(sig))
         throw wrongError
@@ -62,8 +64,8 @@ describe('Threads Client...', () => {
     })
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Not found
       try {
         await client.getThread('foo')
@@ -85,8 +87,8 @@ describe('Threads Client...', () => {
       const ctx = new Context(addrApiurl)
       client.context = ctx
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // No token
       try {
         await client.getThread('foo')
@@ -117,7 +119,7 @@ describe('Threads Client...', () => {
   describe('listThreads', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -136,15 +138,17 @@ describe('Threads Client...', () => {
        * No key signature will pass because default security is null
        */
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      expect(keyInfo).not.undefined
       try {
-        await client.listThreads(ctx.withAPIKey(key.key))
+        await client.listThreads(ctx.withAPIKey(keyInfo?.key))
         throw wrongError
       } catch (err) {
         expect(err).to.equal(wrongError)
       }
       // Old key signature will fail
-      const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
       try {
         await client.listThreads(ctx.withAPISig(sig))
         throw wrongError
@@ -155,8 +159,8 @@ describe('Threads Client...', () => {
     })
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl)
-      const key = await createKey(tmp.withSession(dev.session), 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       let res = await client.listThreads()
       expect(res.listList).to.have.length(0)
@@ -173,8 +177,8 @@ describe('Threads Client...', () => {
       const ctx = new Context(addrApiurl)
       client.context = ctx
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // No token
       try {
         await client.listThreads()

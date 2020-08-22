@@ -31,7 +31,7 @@ export async function listPathRecursive(
   if (tree.item && (currentDepth + 1 <= depth || depth === -1)) {
     for (let i = 0; i < tree.item.itemsList.length; i++) {
       const obj = tree.item.itemsList[i]
-      if (!obj.isdir) continue
+      if (!obj.isDir) continue
       const dirPath = `${rootPath}${obj.name}`
       const { item } = await listPathRecursive(grpc, bucketKey, dirPath, depth, currentDepth + 1)
       if (item) {
@@ -52,8 +52,8 @@ async function treeToPaths(
   const result = []
   for (const item of tree) {
     const newPath = path === '' ? `${item.name}` : `${path}/${item.name}`
-    if (dirs || !item.isdir) result.push(newPath)
-    if (item.isdir && (currentDepth < depth || depth === -1)) {
+    if (dirs || !item.isDir) result.push(newPath)
+    if (item.isDir && (currentDepth < depth || depth === -1)) {
       const downtree = await treeToPaths(item.itemsList, newPath, dirs, depth, currentDepth + 1)
       result.push(...downtree)
     }

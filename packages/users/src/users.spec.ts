@@ -1,6 +1,6 @@
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
@@ -21,7 +21,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 describe('Users...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -48,9 +48,10 @@ describe('Users...', () => {
        * security status before it knows if it's authorized or not.
        */
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      expect(keyInfo).not.undefined
       try {
-        const user = new Users(ctx.withAPIKey(key.key))
+        const user = new Users(ctx.withAPIKey(keyInfo?.key))
         await user.getThread('foo')
         throw wrongError
       } catch (err) {
@@ -58,7 +59,8 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
-      const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
       try {
         const user = new Users(ctx.withAPISig(sig))
         await user.getThread('foo')
@@ -71,8 +73,8 @@ describe('Users...', () => {
 
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Not found
       try {
         const user = new Users(ctx)
@@ -96,8 +98,8 @@ describe('Users...', () => {
       const ctx = new Context(addrApiurl)
       const user = new Users(ctx)
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // No token
       try {
         await user.getThread('foo')
@@ -127,7 +129,7 @@ describe('Users...', () => {
 
   describe('listThreads', () => {
     const ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
@@ -147,16 +149,18 @@ describe('Users...', () => {
        * No key signature will pass because default security is null
        */
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'ACCOUNT')
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      expect(keyInfo).not.undefined
       try {
-        const user = new Users(ctx.withAPIKey(key.key))
+        const user = new Users(ctx.withAPIKey(keyInfo?.key))
         await user.listThreads()
         throw wrongError
       } catch (err) {
         expect(err).to.equal(wrongError)
       }
       // Old key signature will fail
-      const sig = await createAPISig(key.secret, new Date(Date.now() - 1000 * 60))
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
       try {
         const user = new Users(ctx.withAPISig(sig))
         await user.listThreads()
@@ -168,8 +172,8 @@ describe('Users...', () => {
     })
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl)
-      const key = await createKey(tmp.withSession(dev.session), 'ACCOUNT')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       const user = new Users(ctx)
       let res = await user.listThreads()
@@ -187,8 +191,8 @@ describe('Users...', () => {
       const ctx = new Context(addrApiurl)
       const user = new Users(ctx)
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'USER')
-      await ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // No token
       try {
         await user.listThreads()
@@ -217,15 +221,15 @@ describe('Users...', () => {
     const user2Id = PrivateKey.fromRandom()
     const user1Ctx = new Context(addrApiurl)
     const user2Ctx = new Context(addrApiurl)
-    let dev: SignupReply.AsObject
+    let dev: SignupResponse.AsObject
     before(async function () {
       this.timeout(10000)
       const { user } = await signUp(user1Ctx, addrGatewayUrl, sessionSecret)
       if (user) dev = user
       const tmp = new Context(addrApiurl).withSession(dev.session)
-      const key = await createKey(tmp, 'USER')
-      await user1Ctx.withAPIKey(key.key).withKeyInfo(key)
-      await user2Ctx.withAPIKey(key.key).withKeyInfo(key)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await user1Ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
+      await user2Ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
     })
     it('should setup mailbox', async () => {
       const user = new Users(user1Ctx)

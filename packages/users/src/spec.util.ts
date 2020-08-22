@@ -3,7 +3,7 @@ import delay from 'delay'
 import { HMAC } from 'fast-sha256'
 import multibase from 'multibase'
 import * as pb from '@textile/hub-grpc/hub_pb'
-import { APIClient, ServiceError } from '@textile/hub-grpc/hub_pb_service'
+import { APIServiceClient, ServiceError } from '@textile/hub-grpc/hub_pb_service'
 import { ContextInterface } from '@textile/context'
 import { WebsocketTransport } from '@textile/grpc-transport'
 
@@ -28,12 +28,12 @@ export const confirmEmail = async (gurl: string, secret: string) => {
 }
 
 export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
-  return new Promise<pb.GetKeyReply.AsObject>((resolve, reject) => {
+  return new Promise<pb.CreateKeyResponse.AsObject>((resolve, reject) => {
     const req = new pb.CreateKeyRequest()
     req.setType(pb.KeyType[kind])
-    const client = new APIClient(ctx.host, { transport: WebsocketTransport() })
+    const client = new APIServiceClient(ctx.host, { transport: WebsocketTransport() })
     ctx.toMetadata().then((meta) => {
-      return client.createKey(req, meta, (err: ServiceError | null, message: pb.GetKeyReply | null) => {
+      return client.createKey(req, meta, (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
         if (err) reject(err)
         resolve(message?.toObject())
       })
@@ -44,14 +44,14 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
 export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSecret: string) => {
   const username = createUsername()
   const email = createEmail()
-  return new Promise<{ user: pb.SignupReply.AsObject | undefined; username: string; email: string }>(
+  return new Promise<{ user: pb.SignupResponse.AsObject | undefined; username: string; email: string }>(
     (resolve, reject) => {
       const req = new pb.SignupRequest()
       req.setEmail(email)
       req.setUsername(username)
-      const client = new APIClient(ctx.host, { transport: WebsocketTransport() })
+      const client = new APIServiceClient(ctx.host, { transport: WebsocketTransport() })
       ctx.toMetadata().then((meta) => {
-        client.signup(req, meta, (err: ServiceError | null, message: pb.SignupReply | null) => {
+        client.signup(req, meta, (err: ServiceError | null, message: pb.SignupResponse | null) => {
           if (err) reject(err)
           resolve({ user: message?.toObject(), username, email })
         })

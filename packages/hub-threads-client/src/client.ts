@@ -1,6 +1,11 @@
 import log from 'loglevel'
-import { GetThreadReply, ListThreadsReply, GetThreadRequest, ListThreadsRequest } from '@textile/users-grpc/users_pb'
-import { APIClient } from '@textile/users-grpc/users_pb_service'
+import {
+  GetThreadResponse,
+  ListThreadsResponse,
+  GetThreadRequest,
+  ListThreadsRequest,
+} from '@textile/users-grpc/users_pb'
+import { APIServiceClient } from '@textile/users-grpc/users_pb_service'
 import { ServiceError } from '@textile/hub-grpc/hub_pb_service'
 import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
@@ -11,24 +16,24 @@ const logger = log.getLogger('users')
 
 declare module '@textile/threads-client' {
   interface Client {
-    getThread(name: string, ctx?: Context): Promise<GetThreadReply.AsObject>
-    listThreads(ctx?: Context): Promise<ListThreadsReply.AsObject>
+    getThread(name: string, ctx?: Context): Promise<GetThreadResponse.AsObject>
+    listThreads(ctx?: Context): Promise<ListThreadsResponse.AsObject>
   }
 }
 
-Client.prototype.getThread = async function (name: string, ctx?: Context): Promise<GetThreadReply.AsObject> {
+Client.prototype.getThread = async function (name: string, ctx?: Context): Promise<GetThreadResponse.AsObject> {
   logger.debug('get thread request')
-  const client = new APIClient(this.serviceHost, {
+  const client = new APIServiceClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
   })
-  return new Promise<GetThreadReply.AsObject>((resolve, reject) => {
+  return new Promise<GetThreadResponse.AsObject>((resolve, reject) => {
     const req = new GetThreadRequest()
     req.setName(name)
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.getThread(req, meta, (err: ServiceError | null, message: GetThreadReply | null) => {
+        client.getThread(req, meta, (err: ServiceError | null, message: GetThreadResponse | null) => {
           if (err) reject(err)
           const msg = message?.toObject()
           if (msg) {
@@ -49,18 +54,18 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
  * These will be merged with any internal credentials.
  * @note Threads can be created using the threads or threads network clients.
  */
-Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThreadsReply.AsObject> {
+Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThreadsResponse.AsObject> {
   logger.debug('list threads request')
-  const client = new APIClient(this.serviceHost, {
+  const client = new APIServiceClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
   })
-  return new Promise<ListThreadsReply.AsObject>((resolve, reject) => {
+  return new Promise<ListThreadsResponse.AsObject>((resolve, reject) => {
     const req = new ListThreadsRequest()
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.listThreads(req, meta, (err: ServiceError | null, message: ListThreadsReply | null) => {
+        client.listThreads(req, meta, (err: ServiceError | null, message: ListThreadsResponse | null) => {
           if (err) reject(err)
           const msg = message?.toObject()
           if (msg) {

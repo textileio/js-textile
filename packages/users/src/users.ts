@@ -1,5 +1,5 @@
 import log from 'loglevel'
-import { grpc } from "@improbable-eng/grpc-web"
+import { grpc } from '@improbable-eng/grpc-web'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
@@ -16,7 +16,7 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadReplyObj,
+  GetThreadResponseObj,
   UserMessage,
   getMailboxID,
   watchMailbox,
@@ -124,7 +124,7 @@ export class Users extends GrpcAuthentication {
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withKeyInfo}
-   * 
+   *
    * @example
    * ```@typescript
    * import { Users, KeyInfo } from '@textile/hub'
@@ -217,7 +217,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listThreads(): Promise<Array<GetThreadReplyObj>> {
+  async listThreads(): Promise<Array<GetThreadResponseObj>> {
     return listThreads(this)
   }
 
@@ -234,7 +234,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getThread(name: string): Promise<GetThreadReplyObj> {
+  async getThread(name: string): Promise<GetThreadResponseObj> {
     return getThread(this, name)
   }
 

@@ -3,7 +3,7 @@ import fs from 'fs'
 import { expect } from 'chai'
 import { isBrowser } from 'browser-or-node'
 import { ThreadID } from '@textile/threads-id'
-import { SignupReply } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
 import { Buckets } from '@textile/buckets'
@@ -19,15 +19,15 @@ describe('All apis...', () => {
   describe('Buckets and accounts', () => {
     context('a developer', () => {
       const ctx = new Context(addrApiurl)
-      let dev: SignupReply.AsObject
+      let dev: SignupResponse.AsObject
       it('should sign-up, create an API key, and sign it for the requests', async () => {
         // @note This should be done using the cli
         const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
         if (user) dev = user
         // @note This should be done using the cli
         ctx.withSession(dev.session)
-        const key = await createKey(ctx, 'ACCOUNT')
-        await ctx.withAPIKey(key.key).withKeyInfo(key)
+        const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
+        await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-api-sig')
       }).timeout(3000)
       it('should then create a db for the bucket', async () => {
@@ -36,11 +36,11 @@ describe('All apis...', () => {
         await db.newDB(id, 'my-buckets')
         expect(ctx.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
-      it('should then initialize a new bucket in the db and push to it', async function () {
+      it('should create a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
-        // Initialize a new bucket in the db
+        // Create a new bucket in the db
         const buckets = new Buckets(ctx)
-        const buck = await buckets.init('mybuck')
+        const buck = await buckets.create('mybuck')
         expect(buck.root?.name).to.equal('mybuck')
 
         // Finally, push a file to the bucket.
@@ -59,7 +59,7 @@ describe('All apis...', () => {
     context('a developer with a user', function () {
       this.timeout(5000)
       const ctx = new Context(addrApiurl)
-      let dev: SignupReply.AsObject
+      let dev: SignupResponse.AsObject
       let users: Client
       it('should sign-up, create an API key, and a new user', async function () {
         // @note This should be done using the cli
@@ -67,13 +67,13 @@ describe('All apis...', () => {
         if (user) dev = user
         // @note This should be done using the cli
         // This time they create a user key
-        const key = await createKey(ctx.withSession(dev.session), 'USER')
+        const { keyInfo } = await createKey(ctx.withSession(dev.session), 'KEY_TYPE_USER')
 
         // This should automatically generate a user identity and validate keys, though we use a random ident
         // for demo purposes here to show that it can also use custom identities
         const identity = await PrivateKey.fromRandom()
         // We also explicitly specify a custom context here, which could be omitted as it uses reasonable defaults
-        const userContext = await new Context(addrApiurl).withKeyInfo(key)
+        const userContext = await new Context(addrApiurl).withKeyInfo(keyInfo)
         // In the app, we simply create a new user from the provided user key, signing is done automatically
         users = new Client(userContext)
         await users.getToken(identity)
@@ -86,11 +86,11 @@ describe('All apis...', () => {
         expect(users.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
 
-      it('should then initialize a new bucket in the db and push to it', async function () {
+      it('should create a new bucket in the db and push to it', async function () {
         if (isBrowser) return this.skip()
-        // Initialize a new bucket in the db from the user context
+        // Create a new bucket in the db from the user context
         const buckets = new Buckets(users.context)
-        const buck = await buckets.init('mybuck')
+        const buck = await buckets.create('mybuck')
         expect(buck.root?.name).to.equal('mybuck')
 
         // Finally, push a file to the bucket.

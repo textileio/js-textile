@@ -2,22 +2,24 @@ import log from 'loglevel'
 import { grpc } from '@improbable-eng/grpc-web'
 import {
   SetupMailboxRequest,
-  SetupMailboxReply,
+  SetupMailboxResponse,
   ListThreadsRequest,
-  ListThreadsReply,
-  GetThreadReply,
+  ListThreadsResponse,
+  GetThreadResponse,
   GetThreadRequest,
   SendMessageRequest,
-  SendMessageReply,
+  SendMessageResponse,
   ListInboxMessagesRequest,
-  ListMessagesReply,
+  ListInboxMessagesResponse,
   ListSentboxMessagesRequest,
+  ListSentboxMessagesResponse,
   ReadInboxMessageRequest,
-  ReadInboxMessageReply,
-  DeleteMessageRequest,
+  ReadInboxMessageResponse,
+  DeleteInboxMessageRequest,
+  DeleteSentboxMessageRequest,
   Message,
 } from '@textile/users-grpc/users_pb'
-import { API } from '@textile/users-grpc/users_pb_service'
+import { APIService } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
 import { Client, Action, Update } from '@textile/hub-threads-client'
@@ -65,7 +67,7 @@ export interface InboxListOptions {
 /**
  * The response type from getThread and listThreads
  */
-export interface GetThreadReplyObj {
+export interface GetThreadResponseObj {
   isDB: boolean
   name: string
   id: string
@@ -119,22 +121,22 @@ function convertMessageObj(input: Message): UserMessage {
     from: input.getFrom(),
     id: input.getId(),
     to: input.getTo(),
-    createdAt: input.getCreatedat(),
-    readAt: input.getReadat(),
+    createdAt: input.getCreatedAt(),
+    readAt: input.getReadAt(),
   }
 }
 
 /**
  * @internal
  */
-export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadReplyObj>> {
+export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponseObj>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
-  const res: ListThreadsReply = await api.unary(API.ListThreads, req, ctx)
-  return res.getListList().map((value: GetThreadReply) => {
+  const res: ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
+  return res.getListList().map((value: GetThreadResponse) => {
     const thread = value.toObject()
     const res = {
-      isDB: thread.isdb,
+      isDB: thread.isDb,
       name: thread.name,
       id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString(),
     }
@@ -145,14 +147,18 @@ export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): 
 /**
  * @internal
  */
-export async function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadReplyObj> {
+export async function getThread(
+  api: GrpcConnection,
+  name: string,
+  ctx?: ContextInterface,
+): Promise<GetThreadResponseObj> {
   logger.debug('get thread request')
   const req = new GetThreadRequest()
   req.setName(name)
-  const res: GetThreadReply = await api.unary(API.GetThread, req, ctx)
+  const res: GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
   const thread = res.toObject()
   return {
-    isDB: thread.isdb,
+    isDB: thread.isDb,
     name: thread.name,
     id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString(),
   }
@@ -164,8 +170,8 @@ export async function getThread(api: GrpcConnection, name: string, ctx?: Context
 export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
-  const res: SetupMailboxReply = await api.unary(API.SetupMailbox, req, ctx)
-  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxid_asB64() as string, 'base64')).toString()
+  const res: SetupMailboxResponse = await api.unary(APIService.SetupMailbox, req, ctx)
+  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxId_asB64() as string, 'base64')).toString()
   return mailboxID
 }
 
@@ -194,14 +200,14 @@ export async function sendMessage(
   logger.debug('send message request')
   const req = new SendMessageRequest()
   req.setTo(to)
-  req.setTobody(toBody)
-  req.setTosignature(toSignature)
-  req.setFrombody(fromBody)
-  req.setFromsignature(fromSignature)
-  const res: SendMessageReply = await api.unary(API.SendMessage, req, ctx)
+  req.setToBody(toBody)
+  req.setToSignature(toSignature)
+  req.setFromBody(fromBody)
+  req.setFromSignature(fromSignature)
+  const res: SendMessageResponse = await api.unary(APIService.SendMessage, req, ctx)
   return {
     id: res.getId(),
-    createdAt: res.getCreatedat(),
+    createdAt: res.getCreatedAt(),
     body: fromBody,
     signature: fromSignature,
     to,
@@ -222,8 +228,15 @@ export async function listInboxMessages(
   if (opts && opts.seek) req.setSeek(opts.seek)
   if (opts && opts.limit) req.setLimit(opts.limit)
   if (opts && opts.ascending) req.setAscending(opts.ascending)
-  if (opts && opts.status) req.setStatus(opts.status)
-  const res: ListMessagesReply = await api.unary(API.ListInboxMessages, req, ctx)
+  if (opts && opts.status) {
+    switch (opts.status) {
+      case Status.READ:
+        req.setStatus(ListInboxMessagesRequest.Status.STATUS_READ)
+      case Status.UNREAD:
+        req.setStatus(ListInboxMessagesRequest.Status.STATUS_UNREAD)
+    }
+  }
+  const res: ListInboxMessagesResponse = await api.unary(APIService.ListInboxMessages, req, ctx)
   return res.getMessagesList().map(convertMessageObj)
 }
 
@@ -240,7 +253,7 @@ export async function listSentboxMessages(
   if (opts && opts.seek) req.setSeek(opts.seek)
   if (opts && opts.limit) req.setLimit(opts.limit)
   if (opts && opts.ascending) req.setAscending(opts.ascending)
-  const res: ListMessagesReply = await api.unary(API.ListSentboxMessages, req, ctx)
+  const res: ListSentboxMessagesResponse = await api.unary(APIService.ListSentboxMessages, req, ctx)
   return res.getMessagesList().map(convertMessageObj)
 }
 
@@ -255,8 +268,8 @@ export async function readInboxMessage(
   logger.debug('read inbox message request')
   const req = new ReadInboxMessageRequest()
   req.setId(id)
-  const res: ReadInboxMessageReply = await api.unary(API.ReadInboxMessage, req, ctx)
-  return { readAt: res.toObject().readat }
+  const res: ReadInboxMessageResponse = await api.unary(APIService.ReadInboxMessage, req, ctx)
+  return { readAt: res.toObject().readAt }
 }
 
 /**
@@ -264,9 +277,9 @@ export async function readInboxMessage(
  */
 export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
   logger.debug('delete inbox message request')
-  const req = new DeleteMessageRequest()
+  const req = new DeleteInboxMessageRequest()
   req.setId(id)
-  await api.unary(API.DeleteInboxMessage, req, ctx)
+  await api.unary(APIService.DeleteInboxMessage, req, ctx)
   return
 }
 
@@ -275,9 +288,9 @@ export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: 
  */
 export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
   logger.debug('delete sentbox message request')
-  const req = new DeleteMessageRequest()
+  const req = new DeleteSentboxMessageRequest()
   req.setId(id)
-  await api.unary(API.DeleteSentboxMessage, req, ctx)
+  await api.unary(APIService.DeleteSentboxMessage, req, ctx)
   return
 }
 

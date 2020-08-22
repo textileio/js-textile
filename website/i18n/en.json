@@ -26,8 +26,8 @@
       "hub.buckets.copyauth": {
         "title": "Buckets.copyAuth() method"
       },
-      "hub.buckets.getorinit": {
-        "title": "Buckets.getOrInit() method"
+      "hub.buckets.getorcreate": {
+        "title": "Buckets.getOrCreate() method"
       },
       "hub.buckets.gettoken": {
         "title": "Buckets.getToken() method"
@@ -35,8 +35,8 @@
       "hub.buckets.gettokenchallenge": {
         "title": "Buckets.getTokenChallenge() method"
       },
-      "hub.buckets.init": {
-        "title": "Buckets.init() method"
+      "hub.buckets.create": {
+        "title": "Buckets.create() method"
       },
       "hub.buckets.links": {
         "title": "Buckets.links() method"
@@ -98,8 +98,8 @@
       "hub.bucketsarchivewatch": {
         "title": "bucketsArchiveWatch() function"
       },
-      "hub.bucketsinit": {
-        "title": "bucketsInit() function"
+      "hub.bucketscreate": {
+        "title": "bucketsCreate() function"
       },
       "hub.bytestoarray": {
         "title": "bytesToArray() function"
@@ -237,16 +237,16 @@
         "title": "Filter interface"
       },
       "hub.getthreadreplyobj.id": {
-        "title": "GetThreadReplyObj.id property"
+        "title": "GetThreadResponseObj.id property"
       },
       "hub.getthreadreplyobj.isdb": {
-        "title": "GetThreadReplyObj.isDB property"
+        "title": "GetThreadResponseObj.isDB property"
       },
       "hub.getthreadreplyobj": {
-        "title": "GetThreadReplyObj interface"
+        "title": "GetThreadResponseObj interface"
       },
       "hub.getthreadreplyobj.name": {
-        "title": "GetThreadReplyObj.name property"
+        "title": "GetThreadResponseObj.name property"
       },
       "hub.identity": {
         "title": "Identity interface"
@@ -272,8 +272,8 @@
       "hub.inboxlistoptions.status": {
         "title": "InboxListOptions.status property"
       },
-      "hub.initobject": {
-        "title": "InitObject type"
+      "hub.createobject": {
+        "title": "CreateObject type"
       },
       "hub.instance.instance": {
         "title": "Instance.instance property"

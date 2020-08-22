@@ -1,19 +1,19 @@
 import log from 'loglevel'
 import {
   Root,
-  LinksReply,
-  ListIpfsPathReply,
-  RootReply,
+  LinksResponse,
+  ListIpfsPathResponse,
+  RootResponse,
   RootRequest,
-  ArchiveWatchReply,
-  InitReply,
+  ArchiveWatchResponse,
+  CreateResponse,
   ListPathItem,
-  ListPathReply,
-  ListReply,
-  PullIpfsPathReply,
-  PullPathReply,
-  PushPathReply,
-  InitRequest,
+  ListPathResponse,
+  ListResponse,
+  PullIpfsPathResponse,
+  PullPathResponse,
+  PushPathResponse,
+  CreateRequest,
   LinksRequest,
   ListRequest,
   ListPathRequest,
@@ -27,11 +27,11 @@ import {
   ArchiveStatusRequest,
   ArchiveWatchRequest,
   ArchiveInfoRequest,
-  ArchiveReply,
-  ArchiveStatusReply,
-  ArchiveInfoReply,
+  ArchiveResponse,
+  ArchiveStatusResponse,
+  ArchiveInfoResponse,
 } from '@textile/buckets-grpc/buckets_pb'
-import { API, APIPushPath } from '@textile/buckets-grpc/buckets_pb_service'
+import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb_service'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
@@ -84,7 +84,7 @@ export type ListPathItemObject = {
   name: string
   path: string
   size: number
-  isdir: boolean
+  isDir: boolean
   itemsList: Array<ListPathItemObject>
 }
 /**
@@ -96,17 +96,17 @@ export type ListPathObject = {
 }
 
 /**
- * Bucket init response
+ * Bucket create response
  */
-export type InitObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
+export type CreateObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
 
 const convertRootObject = (root: Root): RootObject => {
   return {
     key: root.getKey(),
     name: root.getName(),
     path: root.getPath(),
-    createdAt: root.getCreatedat(),
-    updatedAt: root.getUpdatedat(),
+    createdAt: root.getCreatedAt(),
+    updatedAt: root.getUpdatedAt(),
     thread: root.getThread(),
   }
 }
@@ -123,7 +123,7 @@ const convertPathItem = (item: ListPathItem): ListPathItemObject => {
     name: item.getName(),
     path: item.getPath(),
     size: item.getSize(),
-    isdir: item.getIsdir(),
+    isDir: item.getIsDir(),
     itemsList: list ? list.map(convertPathItem) : [],
   }
 }
@@ -134,37 +134,37 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
 }
 
 /**
- * Initializes a new bucket.
+ * Creates a new bucket.
  * @public
  * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
  * @param isPrivate encrypt the bucket contents (default `false`)
  * @example
- * Initialize a Bucket called "app-name-files"
+ * Creates a Bucket called "app-name-files"
  * ```tyepscript
  * import { Buckets } from '@textile/hub'
  *
- * const init = async (buckets: Buckets) => {
- *     return buckets.init("app-name-files")
+ * const create = async (buckets: Buckets) => {
+ *     return buckets.create("app-name-files")
  * }
  * ```
  *
  * @internal
  */
-export async function bucketsInit(
+export async function bucketsCreate(
   api: GrpcConnection,
   name: string,
   isPrivate = false,
   ctx?: ContextInterface,
-): Promise<InitObject> {
-  logger.debug('init request')
-  const req = new InitRequest()
+): Promise<CreateObject> {
+  logger.debug('create request')
+  const req = new CreateRequest()
   req.setName(name)
   req.setPrivate(isPrivate)
-  const res: InitReply = await api.unary(API.Init, req, ctx)
+  const res: CreateResponse = await api.unary(APIService.Create, req, ctx)
   const links = res.getLinks()
   return {
     seed: res.getSeed_asU8(),
-    seedCid: res.getSeedcid(),
+    seedCid: res.getSeedCid(),
     root: convertRootObjectNullable(res.getRoot()),
     links: links ? links.toObject() : undefined,
   }
@@ -184,7 +184,7 @@ export async function bucketsRoot(
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
-  const res: RootReply = await api.unary(API.Root, req, ctx)
+  const res: RootResponse = await api.unary(APIService.Root, req, ctx)
   return convertRootObjectNullable(res.getRoot())
 }
 
@@ -213,7 +213,7 @@ export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: Conte
   logger.debug('link request')
   const req = new LinksRequest()
   req.setKey(key)
-  const res: LinksReply = await api.unary(API.Links, req, ctx)
+  const res: LinksResponse = await api.unary(APIService.Links, req, ctx)
   return res.toObject()
 }
 
@@ -235,7 +235,7 @@ export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: Conte
 export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>> {
   logger.debug('list request')
   const req = new ListRequest()
-  const res: ListReply = await api.unary(API.List, req, ctx)
+  const res: ListResponse = await api.unary(APIService.List, req, ctx)
   const roots = res.getRootsList()
   const map = roots ? roots.map((m) => m).map((m) => convertRootObject(m)) : []
   return map
@@ -258,7 +258,7 @@ export async function bucketsListPath(
   const req = new ListPathRequest()
   req.setKey(key)
   req.setPath(path)
-  const res: ListPathReply = await api.unary(API.ListPath, req, ctx)
+  const res: ListPathResponse = await api.unary(APIService.ListPath, req, ctx)
   return {
     item: convertPathItemNullable(res.getItem()),
     root: convertRootObjectNullable(res.getRoot()),
@@ -279,7 +279,7 @@ export async function bucketsListIpfsPath(
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)
-  const res: ListIpfsPathReply = await api.unary(API.ListIpfsPath, req, ctx)
+  const res: ListIpfsPathResponse = await api.unary(APIService.ListIpfsPath, req, ctx)
   return convertPathItemNullable(res.getItem())
 }
 
@@ -316,7 +316,7 @@ export async function bucketsPushPath(
   return new Promise<PushPathResult>(async (resolve, reject) => {
     // Only process the first  input if there are more than one
     const source: File | undefined = (await normaliseInput(input).next()).value
-    const client = grpc.client<PushPathRequest, PushPathReply, APIPushPath>(API.PushPath, {
+    const client = grpc.client<PushPathRequest, PushPathResponse, APIServicePushPath>(APIService.PushPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
       debug: api.rpcOptions.debug,
@@ -398,13 +398,13 @@ export function bucketsPullPath(
   request.setPath(path)
   let written = 0
   const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
-    const resp = grpc.invoke(API.PullPath, {
+    const resp = grpc.invoke(APIService.PullPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
       debug: api.rpcOptions.debug,
       request,
       metadata,
-      onMessage: async (res: PullPathReply) => {
+      onMessage: async (res: PullPathResponse) => {
         const chunk = res.getChunk_asU8()
         push(chunk)
         written += chunk.byteLength
@@ -448,13 +448,13 @@ export function bucketsPullIpfsPath(
   request.setPath(path)
   let written = 0
   const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
-    const resp = grpc.invoke(API.PullIpfsPath, {
+    const resp = grpc.invoke(APIService.PullIpfsPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
       debug: api.rpcOptions.debug,
       request,
       metadata,
-      onMessage: async (res: PullIpfsPathReply) => {
+      onMessage: async (res: PullIpfsPathResponse) => {
         const chunk = res.getChunk_asU8()
         push(chunk)
         written += chunk.byteLength
@@ -490,7 +490,7 @@ export async function bucketsRemove(api: GrpcConnection, key: string, ctx?: Cont
   logger.debug('remove request')
   const req = new RemoveRequest()
   req.setKey(key)
-  await api.unary(API.Remove, req, ctx)
+  await api.unary(APIService.Remove, req, ctx)
   return
 }
 
@@ -514,7 +514,7 @@ export async function bucketsRemovePath(
   req.setKey(key)
   req.setPath(path)
   if (root) req.setRoot(root)
-  await api.unary(API.RemovePath, req, ctx)
+  await api.unary(APIService.RemovePath, req, ctx)
   return
 }
 
@@ -527,7 +527,7 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
-  await api.unary(API.Archive, req, ctx)
+  await api.unary(APIService.Archive, req, ctx)
   return
 }
 
@@ -540,7 +540,7 @@ export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx
   logger.debug('archive status request')
   const req = new ArchiveStatusRequest()
   req.setKey(key)
-  const res: ArchiveStatusReply = await api.unary(API.ArchiveStatus, req, ctx)
+  const res: ArchiveStatusResponse = await api.unary(APIService.ArchiveStatus, req, ctx)
   return res.toObject()
 }
 
@@ -553,7 +553,7 @@ export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?:
   logger.debug('archive info request')
   const req = new ArchiveInfoRequest()
   req.setKey(key)
-  const res: ArchiveInfoReply = await api.unary(API.ArchiveInfo, req, ctx)
+  const res: ArchiveInfoResponse = await api.unary(APIService.ArchiveInfo, req, ctx)
   return res.toObject()
 }
 
@@ -573,11 +573,11 @@ export async function bucketsArchiveWatch(
   req.setKey(key)
 
   const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
-  const res = grpc.invoke(API.ArchiveWatch, {
+  const res = grpc.invoke(APIService.ArchiveWatch, {
     host: api.context.host,
     request: req,
     metadata,
-    onMessage: (rec: ArchiveWatchReply) => {
+    onMessage: (rec: ArchiveWatchResponse) => {
       const response = {
         id: rec.getJsPbMessageId(),
         msg: rec.getMsg(),
