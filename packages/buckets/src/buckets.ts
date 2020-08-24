@@ -228,7 +228,7 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * Open a new / existing bucket by bucket name and ThreadID (create not required)
+   * (Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
@@ -236,6 +236,23 @@ export class Buckets extends GrpcAuthentication {
    * @deprecated Open has been replaced with getOrCreate
    */
   async open(
+    name: string,
+    threadName = 'buckets',
+    isPrivate = false,
+    threadID?: string,
+  ): Promise<{ root?: RootObject; threadID?: string }> {
+    return this.getOrCreate(name, threadName, isPrivate, threadID)
+  }
+
+  /**
+   * (Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)
+   * @param name name of bucket
+   * @param threadName the name of the thread where the bucket is stored (default `buckets`)
+   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param threadID id of thread where bucket is stored
+   * @deprecated getOrInit has been replaced with getOrCreate
+   */
+  async getOrInit(
     name: string,
     threadName = 'buckets',
     isPrivate = false,
@@ -302,6 +319,16 @@ export class Buckets extends GrpcAuthentication {
     }
     const created = await this.create(name, isPrivate)
     return { root: created.root, threadID }
+  }
+
+  /**
+   * (Deprecated) Creates a new bucket.
+   * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
+   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @deprecated Init has been replaced by create
+   */
+  async init(name: string, isPrivate = false): Promise<CreateObject> {
+    return this.create(name, isPrivate)
   }
 
   /**

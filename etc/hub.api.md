@@ -98,8 +98,15 @@ export class Buckets extends GrpcAuthentication {
         root?: RootObject;
         threadID?: string;
     }>;
+    // @deprecated
+    getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+        root?: RootObject;
+        threadID?: string;
+    }>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    // @deprecated
+    init(name: string, isPrivate?: boolean): Promise<CreateObject>;
     links(key: string): Promise<LinksObject>;
     list(): Promise<RootObject[]>;
     listIpfsPath(path: string): Promise<ListPathItemObject | undefined>;
