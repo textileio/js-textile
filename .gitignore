@@ -155,5 +155,9 @@ sourcemap.js
 coverage/
 junit/
 
+# Related to generated docs
+website/package-lock.json
+website/i18n/en.json
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
