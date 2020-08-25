@@ -39,6 +39,9 @@ import { ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { normaliseInput, File } from './normalize'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const block = require('it-block')
+
 const logger = log.getLogger('buckets-api')
 
 /**
@@ -177,7 +180,7 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
  * @param isPrivate encrypt the bucket contents (default `false`)
  * @example
  * Creates a Bucket called "app-name-files"
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const create = async (buckets: Buckets) => {
@@ -230,7 +233,7 @@ export async function bucketsRoot(
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @example
  * Generate the HTTP, IPNS, and IPFS links for a Bucket
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const getLinks = async (buckets: Buckets) => {
@@ -328,10 +331,9 @@ export async function bucketsListIpfsPath(
  * @param opts Options to control response stream. Currently only supports a progress function.
  * @remarks
  * This will return the resolved path and the bucket's new root path.
- * Data must be broken into <4mb chunks. See bufToArray() for help.
  * @example
  * Push a file to the root of a bucket
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const pushFile = async (content: string, bucketKey: string) => {
@@ -403,9 +405,11 @@ export async function bucketsPushPath(
       client.send(req)
 
       if (source.content) {
-        for await (const chunk of source.content) {
+        const process = await block({ size: 4096, noPad: true })
+        for await (const chunk of process(source.content)) {
+          const buf = chunk.slice()
           const part = new PushPathRequest()
-          part.setChunk(chunk as Buffer)
+          part.setChunk(buf as Buffer)
           client.send(part)
         }
         client.finishSend()
