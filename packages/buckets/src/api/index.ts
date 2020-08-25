@@ -27,7 +27,6 @@ import {
   ArchiveStatusRequest,
   ArchiveWatchRequest,
   ArchiveInfoRequest,
-  ArchiveResponse,
   ArchiveStatusResponse,
   ArchiveInfoResponse,
 } from '@textile/buckets-grpc/buckets_pb'
@@ -87,6 +86,7 @@ export type ListPathItemObject = {
   isDir: boolean
   itemsList: Array<ListPathItemObject>
 }
+
 /**
  * A bucket list path response
  */
@@ -95,17 +95,37 @@ export type ListPathObject = {
   root?: RootObject
 }
 
+/**
+ * Archive status codes
+ */
+export enum StatusCode {
+  STATUS_UNSPECIFIED,
+  STATUS_EXECUTING,
+  STATUS_FAILED,
+  STATUS_DONE,
+  STATUS_CANCELED,
+}
+
+/**
+ * Response of of bucket archive status request.
+ */
 export type ArchiveStatus = {
   key: string
-  status: number
+  status: StatusCode
   failedMsg: string
 }
 
+/**
+ * Metadata for each deal associated with an archive.
+ */
 export type ArchiveDealInfo = {
   proposalCid: string
   miner: string
 }
 
+/**
+ * Response of of bucket info status request.
+ */
 export type ArchiveInfo = {
   key: string
   cid?: string
@@ -553,7 +573,11 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatus> {
+export async function bucketsArchiveStatus(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<ArchiveStatus> {
   logger.debug('archive status request')
   const req = new ArchiveStatusRequest()
   req.setKey(key)
@@ -589,7 +613,7 @@ export async function bucketsArchiveInfo(
         proposalCid: d.getProposalCid(),
         miner: d.getMiner(),
       }
-    })
+    }),
   }
 }
 
