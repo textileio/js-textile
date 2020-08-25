@@ -4,7 +4,6 @@ import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/crypto'
 import { GrpcAuthentication } from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
-import { ArchiveStatusResponse, ArchiveInfoResponse } from '@textile/buckets-grpc/buckets_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import {
   bucketsArchiveWatch,
@@ -27,6 +26,8 @@ import {
   ListPathObject,
   ListPathItemObject,
   CreateObject,
+  ArchiveStatus,
+  ArchiveInfo,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -268,6 +269,13 @@ export class Buckets extends GrpcAuthentication {
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
+   *
+   * @remarks
+   * The IPFS protocol and its implementations are still in heavy
+   * development. By using Textile, you are acknowledging that you
+   * understand there may be risks to storing your content on or
+   * using decentralized storage services.
+   *
    * @example
    * Create a Bucket called "app-name-files"
    * ```typescript
@@ -510,6 +518,19 @@ export class Buckets extends GrpcAuthentication {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
    * @param opts Options to control response stream. Currently only supports a progress function.
+   *
+   * @example
+   * Pull a file by its relative path and console.log the progress.
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const pullFile = async (buckets: Buckets, key: string, path: string) => {
+   *    const display = (num: number) => {
+   *      console.log('Progress:', num)
+   *    }
+   *    buckets.pullPath(key, path, display)
+   * }
+   * ```
    */
   pullPath(key: string, path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
     return bucketsPullPath(this, key, path, opts)
@@ -519,14 +540,37 @@ export class Buckets extends GrpcAuthentication {
    * pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.
    * @param path A file/object (sub)-path within a bucket.
    * @param opts Options to control response stream. Currently only supports a progress function.
+   *
+   * @example
+   * Pull a file by its IPFS path and console.log the progress.
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const pullFile = async (buckets: Buckets, path: string) => {
+   *    const display = (num: number) => {
+   *      console.log('Progress:', num)
+   *    }
+   *    buckets.pullIpfsPath(path, {progress: display})
+   * }
+   * ```
    */
   pullIpfsPath(path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
     return bucketsPullIpfsPath(this, path, opts)
   }
 
   /**
-   * Removes an entire bucket. Files and directories will be unpinned.
+   * Removes an entire bucket. Files and directories will be unpinned (cannot be undone).
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   *
+   * @example
+   * Remove a Bucket
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const remove = async (buckets: Buckets, key: string) => {
+   *    buckets.remove(key)
+   * }
+   * ```
    */
   async remove(key: string) {
     logger.debug('remove request')
@@ -534,10 +578,21 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * Returns information about a bucket path.
+   * Returns information about a bucket path (cannot be undone).
+   *
    * @param key Unique (IPNS compatible) identifier key for a bucket.
-   * @param path A file/object (sub)-path within a bucket.
-   * @param root optional to specify a root
+   * @param path A relative path within a bucket.
+   * @param root optional to specify a root.
+   *
+   * @example
+   * Remove a file by its relative path
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const remove = async (buckets: Buckets, key: string) => {
+   *    buckets.remove(key)
+   * }
+   * ```
    */
   async removePath(key: string, path: string, root?: string) {
     logger.debug('remove path request')
@@ -545,9 +600,25 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * archive creates a Filecoin bucket archive via Powergate.
+   * (Experimental) Store a snapshot of the bucket on Filecoin.
+   * @remarks
+   * Filecoin support is experimental. By using Textile, you
+   * are acknowledging that you understand there may be risks to
+   * storing your content on or using decentralized storage
+   * services.
+   *
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   *
+   * @example
+   * Remove a file by its relative path
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function archive (buckets: Buckets, key: string) {
+   *    buckets.archive(key)
+   * }
+   * ```
    */
   async archive(key: string) {
     logger.debug('archive request')
@@ -558,8 +629,18 @@ export class Buckets extends GrpcAuthentication {
    * archiveStatus returns the status of a Filecoin bucket archive.
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   *
+   * @example
+   * Remove a file by its relative path
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function status (buckets: Buckets, key: string) {
+   *    buckets.archive(key)
+   * }
+   * ```
    */
-  async archiveStatus(key: string): Promise<ArchiveStatusResponse.AsObject> {
+  async archiveStatus(key: string): Promise<ArchiveStatus> {
     logger.debug('archive status request')
     return bucketsArchiveStatus(this, key)
   }
@@ -568,8 +649,19 @@ export class Buckets extends GrpcAuthentication {
    * archiveInfo returns info about a Filecoin bucket archive.
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   *
+   * @example
+   * Display the info for an existing archives of the bucket
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function log (buckets: Buckets, key: string) {
+   *    const info = await buckets.archiveInfo(key)
+   *    console.log(info.cid, info.deals.length)
+   * }
+   * ```
    */
-  async archiveInfo(key: string): Promise<ArchiveInfoResponse.AsObject> {
+  async archiveInfo(key: string): Promise<ArchiveInfo> {
     logger.debug('archive info request')
     return bucketsArchiveInfo(this, key)
   }
@@ -578,6 +670,19 @@ export class Buckets extends GrpcAuthentication {
    * archiveWatch watches status events from a Filecoin bucket archive.
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   *
+   * @example
+   * Watch deal state changes for a active bucket archive request.
+   * ```tyepscript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function logChanges (buckets: Buckets, key: string) {
+   *    const log = (id: string, msg: string) => {
+   *        console.log(id, msg)
+   *    }
+   *    buckets.archiveWatch(key, log)
+   * }
+   * ```
    */
   async archiveWatch(key: string, callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void) {
     logger.debug('archive watch request')

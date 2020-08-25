@@ -27,7 +27,6 @@ import {
   ArchiveStatusRequest,
   ArchiveWatchRequest,
   ArchiveInfoRequest,
-  ArchiveResponse,
   ArchiveStatusResponse,
   ArchiveInfoResponse,
 } from '@textile/buckets-grpc/buckets_pb'
@@ -87,12 +86,50 @@ export type ListPathItemObject = {
   isDir: boolean
   itemsList: Array<ListPathItemObject>
 }
+
 /**
  * A bucket list path response
  */
 export type ListPathObject = {
   item?: ListPathItemObject
   root?: RootObject
+}
+
+/**
+ * Archive status codes
+ */
+export enum StatusCode {
+  STATUS_UNSPECIFIED,
+  STATUS_EXECUTING,
+  STATUS_FAILED,
+  STATUS_DONE,
+  STATUS_CANCELED,
+}
+
+/**
+ * Response of of bucket archive status request.
+ */
+export type ArchiveStatus = {
+  key: string
+  status: StatusCode
+  failedMsg: string
+}
+
+/**
+ * Metadata for each deal associated with an archive.
+ */
+export type ArchiveDealInfo = {
+  proposalCid: string
+  miner: string
+}
+
+/**
+ * Response of of bucket info status request.
+ */
+export type ArchiveInfo = {
+  key: string
+  cid?: string
+  deals: Array<ArchiveDealInfo>
 }
 
 /**
@@ -536,12 +573,20 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveStatus(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<ArchiveStatus> {
   logger.debug('archive status request')
   const req = new ArchiveStatusRequest()
   req.setKey(key)
   const res: ArchiveStatusResponse = await api.unary(APIService.ArchiveStatus, req, ctx)
-  return res.toObject()
+  return {
+    key: res.getKey(),
+    status: res.getStatus(),
+    failedMsg: res.getFailedMsg(),
+  }
 }
 
 /**
@@ -549,12 +594,27 @@ export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveInfo(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<ArchiveInfo> {
   logger.debug('archive info request')
   const req = new ArchiveInfoRequest()
   req.setKey(key)
   const res: ArchiveInfoResponse = await api.unary(APIService.ArchiveInfo, req, ctx)
-  return res.toObject()
+  const archive = res.getArchive()
+  const deals = archive ? archive.getDealsList() : []
+  return {
+    key: res.getKey(),
+    cid: archive ? archive.getCid() : undefined,
+    deals: deals.map((d) => {
+      return {
+        proposalCid: d.getProposalCid(),
+        miner: d.getMiner(),
+      }
+    }),
+  }
 }
 
 /**

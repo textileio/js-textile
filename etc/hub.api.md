@@ -69,9 +69,29 @@ export type APISig = {
     msg: string;
 };
 
+// @public (undocumented)
+export type ArchiveDealInfo = {
+    proposalCid: string;
+    miner: string;
+};
+
+// @public (undocumented)
+export type ArchiveInfo = {
+    key: string;
+    cid?: string;
+    deals: Array<ArchiveDealInfo>;
+};
+
 export { ArchiveInfoResponse }
 
 export { ArchiveResponse }
+
+// @public (undocumented)
+export type ArchiveStatus = {
+    key: string;
+    status: number;
+    failedMsg: string;
+};
 
 export { ArchiveStatusResponse }
 
@@ -84,9 +104,9 @@ export class Buckets extends GrpcAuthentication {
     // @beta
     archive(key: string): Promise<void>;
     // @beta
-    archiveInfo(key: string): Promise<ArchiveInfoResponse.AsObject>;
+    archiveInfo(key: string): Promise<ArchiveInfo>;
     // @beta
-    archiveStatus(key: string): Promise<ArchiveStatusResponse.AsObject>;
+    archiveStatus(key: string): Promise<ArchiveStatus>;
     // @beta
     archiveWatch(key: string, callback: (reply?: {
         id: string | undefined;
@@ -142,12 +162,12 @@ export function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextIn
 // Warning: (ae-internal-missing-underscore) The name "bucketsArchiveInfo" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfoResponse.AsObject>;
+export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfo>;
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsArchiveStatus" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatusResponse.AsObject>;
+export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatus>;
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsArchiveWatch" should be prefixed with an underscore because the declaration is marked as @internal
 //
