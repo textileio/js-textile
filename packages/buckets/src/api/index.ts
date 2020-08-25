@@ -39,6 +39,9 @@ import { ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { normaliseInput, File } from './normalize'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const block = require('it-block')
+
 const logger = log.getLogger('buckets-api')
 
 /**
@@ -328,7 +331,6 @@ export async function bucketsListIpfsPath(
  * @param opts Options to control response stream. Currently only supports a progress function.
  * @remarks
  * This will return the resolved path and the bucket's new root path.
- * Data must be broken into <4mb chunks. See bufToArray() for help.
  * @example
  * Push a file to the root of a bucket
  * ```tyepscript
@@ -403,10 +405,13 @@ export async function bucketsPushPath(
       client.send(req)
 
       if (source.content) {
-        for await (const chunk of source.content) {
-          const part = new PushPathRequest()
-          part.setChunk(chunk as Buffer)
-          client.send(part)
+        const process = await block({ size: 4096, noPad: true })
+        for await (const chunk of process(source.content)) {
+          for (const buf of chunk._bufs) {
+            const part = new PushPathRequest()
+            part.setChunk(buf as Buffer)
+            client.send(part)
+          }
         }
         client.finishSend()
       }
