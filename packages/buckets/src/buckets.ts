@@ -106,7 +106,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Copy an authenticated Users api instance to Buckets.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, Users } from '@textile/hub'
    *
    * const usersToBuckets = async (user: Users) => {
@@ -117,7 +117,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Copy an authenticated Buckets api instance to Users.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, Users } from '@textile/hub'
    *
    * const bucketsToUsers = async (buckets: Buckets) => {
@@ -346,7 +346,7 @@ export class Buckets extends GrpcAuthentication {
    * @param isPrivate encrypt the bucket contents (default `false`)
    * @example
    * Create a Bucket called "app-name-files"
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const create = async (buckets: Buckets) => {
@@ -373,17 +373,17 @@ export class Buckets extends GrpcAuthentication {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @example
    * Generate the HTTP, IPNS, and IPFS links for a Bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
-   * const getLinks = async (buckets: Buckets) => {
-   *    const links = buckets.links(bucketKey)
-   *    return links.ipfs
+   * const getIpnsLink = async (buckets: Buckets, bucketKey: string) => {
+   *    const links = await buckets.links(bucketKey)
+   *    return links.ipns
    * }
    *
-   * const getIpfs = async (buckets: Buckets) => {
-   *    const links = buckets.links(bucketKey)
-   *    return links.ipfs
+   * const getWwwLink = async (buckets: Buckets, bucketKey: string) => {
+   *    const links = await buckets.links(bucketKey)
+   *    return links.www
    * }
    * ```
    */
@@ -470,10 +470,10 @@ export class Buckets extends GrpcAuthentication {
    * This will return the resolved path and the bucket's new root path.
    * @example
    * Push a file to the root of a bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
-   * const pushFile = async (content: string, bucketKey: string) => {
+   * const pushFile = async (buckets: Buckets, content: string, bucketKey: string) => {
    *    const file = { path: '/index.html', content: Buffer.from(content) }
    *    return await buckets.pushPath(bucketKey!, 'index.html', file)
    * }
@@ -521,14 +521,14 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Pull a file by its relative path and console.log the progress.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const pullFile = async (buckets: Buckets, key: string, path: string) => {
-   *    const display = (num: number) => {
+   *    const display = (num?: number) => {
    *      console.log('Progress:', num)
    *    }
-   *    buckets.pullPath(key, path, display)
+   *    buckets.pullPath(key, path, {progress: display})
    * }
    * ```
    */
@@ -543,11 +543,11 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Pull a file by its IPFS path and console.log the progress.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const pullFile = async (buckets: Buckets, path: string) => {
-   *    const display = (num: number) => {
+   *    const display = (num?: number) => {
    *      console.log('Progress:', num)
    *    }
    *    buckets.pullIpfsPath(path, {progress: display})
@@ -564,7 +564,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Remove a Bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const remove = async (buckets: Buckets, key: string) => {
@@ -586,7 +586,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Remove a file by its relative path
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * const remove = async (buckets: Buckets, key: string) => {
@@ -612,7 +612,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Remove a file by its relative path
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * async function archive (buckets: Buckets, key: string) {
@@ -632,7 +632,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Remove a file by its relative path
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * async function status (buckets: Buckets, key: string) {
@@ -652,7 +652,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Display the info for an existing archives of the bucket
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * async function log (buckets: Buckets, key: string) {
@@ -673,12 +673,13 @@ export class Buckets extends GrpcAuthentication {
    *
    * @example
    * Watch deal state changes for a active bucket archive request.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * async function logChanges (buckets: Buckets, key: string) {
-   *    const log = (id: string, msg: string) => {
-   *        console.log(id, msg)
+   *    const log = (reply?: {id?: string, msg: string}, err?: Error | undefined) => {
+   *        if (err || !reply) return console.log(err)
+   *        console.log(reply.id, reply.msg)
    *    }
    *    buckets.archiveWatch(key, log)
    * }

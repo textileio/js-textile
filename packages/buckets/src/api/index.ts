@@ -180,7 +180,7 @@ const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | unde
  * @param isPrivate encrypt the bucket contents (default `false`)
  * @example
  * Creates a Bucket called "app-name-files"
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const create = async (buckets: Buckets) => {
@@ -233,7 +233,7 @@ export async function bucketsRoot(
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @example
  * Generate the HTTP, IPNS, and IPFS links for a Bucket
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const getLinks = async (buckets: Buckets) => {
@@ -333,7 +333,7 @@ export async function bucketsListIpfsPath(
  * This will return the resolved path and the bucket's new root path.
  * @example
  * Push a file to the root of a bucket
- * ```tyepscript
+ * ```typescript
  * import { Buckets } from '@textile/hub'
  *
  * const pushFile = async (content: string, bucketKey: string) => {

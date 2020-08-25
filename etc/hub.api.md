@@ -69,13 +69,13 @@ export type APISig = {
     msg: string;
 };
 
-// @public (undocumented)
+// @public
 export type ArchiveDealInfo = {
     proposalCid: string;
     miner: string;
 };
 
-// @public (undocumented)
+// @public
 export type ArchiveInfo = {
     key: string;
     cid?: string;
@@ -86,10 +86,10 @@ export { ArchiveInfoResponse }
 
 export { ArchiveResponse }
 
-// @public (undocumented)
+// @public
 export type ArchiveStatus = {
     key: string;
-    status: number;
+    status: StatusCode;
     failedMsg: string;
 };
 
@@ -692,6 +692,20 @@ export enum Status {
     READ = 1,
     // (undocumented)
     UNREAD = 2
+}
+
+// @public
+export enum StatusCode {
+    // (undocumented)
+    STATUS_CANCELED = 4,
+    // (undocumented)
+    STATUS_DONE = 3,
+    // (undocumented)
+    STATUS_EXECUTING = 1,
+    // (undocumented)
+    STATUS_FAILED = 2,
+    // (undocumented)
+    STATUS_UNSPECIFIED = 0
 }
 
 // @public

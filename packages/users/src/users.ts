@@ -82,7 +82,7 @@ export class Users extends GrpcAuthentication {
    *
    * @example
    * Copy an authenticated Users api instance to Buckets.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, Users } from '@textile/hub'
    *
    * const usersToBuckets = async (user: Users) => {
@@ -93,7 +93,7 @@ export class Users extends GrpcAuthentication {
    *
    * @example
    * Copy an authenticated Buckets api instance to Users.
-   * ```tyepscript
+   * ```typescript
    * import { Buckets, Users } from '@textile/hub'
    *
    * const bucketsToUsers = async (buckets: Buckets) => {
