@@ -407,11 +407,10 @@ export async function bucketsPushPath(
       if (source.content) {
         const process = await block({ size: 4096, noPad: true })
         for await (const chunk of process(source.content)) {
-          for (const buf of chunk._bufs) {
-            const part = new PushPathRequest()
-            part.setChunk(buf as Buffer)
-            client.send(part)
-          }
+          const buf = chunk.slice()
+          const part = new PushPathRequest()
+          part.setChunk(buf as Buffer)
+          client.send(part)
         }
         client.finishSend()
       }
