@@ -95,6 +95,23 @@ export type ListPathObject = {
   root?: RootObject
 }
 
+export type ArchiveStatus = {
+  key: string
+  status: number
+  failedMsg: string
+}
+
+export type ArchiveDealInfo = {
+  proposalCid: string
+  miner: string
+}
+
+export type ArchiveInfo = {
+  key: string
+  cid?: string
+  deals: Array<ArchiveDealInfo>
+}
+
 /**
  * Bucket create response
  */
@@ -536,12 +553,16 @@ export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: Con
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatus> {
   logger.debug('archive status request')
   const req = new ArchiveStatusRequest()
   req.setKey(key)
   const res: ArchiveStatusResponse = await api.unary(APIService.ArchiveStatus, req, ctx)
-  return res.toObject()
+  return {
+    key: res.getKey(),
+    status: res.getStatus(),
+    failedMsg: res.getFailedMsg(),
+  }
 }
 
 /**
@@ -549,12 +570,27 @@ export async function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsArchiveInfo(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<ArchiveInfo> {
   logger.debug('archive info request')
   const req = new ArchiveInfoRequest()
   req.setKey(key)
   const res: ArchiveInfoResponse = await api.unary(APIService.ArchiveInfo, req, ctx)
-  return res.toObject()
+  const archive = res.getArchive()
+  const deals = archive ? archive.getDealsList() : []
+  return {
+    key: res.getKey(),
+    cid: archive ? archive.getCid() : undefined,
+    deals: deals.map((d) => {
+      return {
+        proposalCid: d.getProposalCid(),
+        miner: d.getMiner(),
+      }
+    })
+  }
 }
 
 /**
