@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.10.1...@textile/threads-client@0.11.0) (2020-08-28)
+
+
+### Features
+
+* expose getCollectionInfo API ([93c333b](https://github.com/textileio/js-threads/commit/93c333b704af93ad084fdaf26592a7dabdd6072f))
+* return thread id on remote join ([690732a](https://github.com/textileio/js-threads/commit/690732a989f72bb1d8ed9ff6758a53d3cc7d7b57))
+
+
+
+
+
 ## [0.10.1](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.10.0...@textile/threads-client@0.10.1) (2020-08-21)
 
 **Note:** Version bump only for package @textile/threads-client
