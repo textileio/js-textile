@@ -182,7 +182,7 @@ describe("Client", function () {
         addr.replace("/ip4/127.0.0.1", "/dns4/threads1/")
       })
       // We can 'exclude' the local addrs because we swapped them for "dns" entries
-      await client2.joinFromInfo(info, false, [
+      const id1 = await client2.joinFromInfo(info, false, [
         // Include the known collections to bootstrap with...
         {
           name: "Person",
@@ -193,12 +193,14 @@ describe("Client", function () {
           schema: schema2,
         },
       ])
+      expect(id1.equals(dbID)).to.equal(true)
       const info2 = await client2.getDBInfo(dbID)
       expect(info2.addrs.length).to.be.greaterThan(1)
       expect(info2.key).to.equal(info.key)
       // Now we should have it locally, so no need to add again
       try {
-        await client2.newDBFromAddr(info.addrs[0], dbKey, [])
+        const id2 = await client2.newDBFromAddr(info.addrs[0], dbKey, [])
+        expect(id2.equals(id1)).to.equal(true)
       } catch (err) {
         // Expect this db to already exist on this peer
         expect(err.toString()).to.include("already exists")

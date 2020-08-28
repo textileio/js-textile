@@ -21,15 +21,15 @@ import {
 import { ThreadID } from "@textile/threads-id"
 import toJsonSchema from "to-json-schema"
 import {
+  CriterionJSON,
   Filter,
   Instance,
   InstanceList,
   Query,
   QueryJSON,
-  ValueJSON,
-  CriterionJSON,
-  SortJSON,
   ReadTransaction,
+  SortJSON,
+  ValueJSON,
   Where,
   WriteTransaction,
 } from "./models"
@@ -630,7 +630,7 @@ export class Client {
     address: string,
     key: string | Uint8Array,
     collections?: Array<{ name: string; schema: any }>
-  ): Promise<void> {
+  ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
     const addr = new Multiaddr(address).buffer
     req.setAddr(addr)
@@ -649,7 +649,12 @@ export class Client {
       )
     }
     await this.unary(API.NewDBFromAddr, req)
-    return
+    // Hacky way to extract threadid from addr that succeeded
+    // @todo: Return this directly from the gRPC API?
+    const result = new Multiaddr(Buffer.from(req.getAddr_asU8()))
+      .stringTuples()
+      .filter(([key]) => key === 406)
+    return ThreadID.fromString(result[0][1])
   }
 
   /**
@@ -681,7 +686,7 @@ export class Client {
     info: DBInfo,
     includeLocal = false,
     collections?: Array<{ name: string; schema: any }>
-  ): Promise<void> {
+  ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
     const filtered = info.addrs
       .map((addr) => new Multiaddr(addr))
@@ -706,7 +711,12 @@ export class Client {
       }
       // Try to add addrs one at a time, if one succeeds, we are done.
       await this.unary(API.NewDBFromAddr, req)
-      return
+      // Hacky way to extract threadid from addr that succeeded
+      // @todo: Return this directly from the gRPC API?
+      const result = new Multiaddr(Buffer.from(req.getAddr_asU8()))
+        .stringTuples()
+        .filter(([key]) => key === 406)
+      return ThreadID.fromString(result[0][1])
     }
     throw new Error("No viable addresses for dialing")
   }
