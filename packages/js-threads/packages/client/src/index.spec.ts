@@ -106,6 +106,26 @@ describe("Client", function () {
       ])
     })
 
+    it("getCollectionInfo should return information about a collection", async () => {
+      const info = await client.getCollectionInfo(dbID, "FromObject")
+      expect(info.name).to.equal("FromObject")
+      expect(info.schema).to.deep.equal({
+        properties: {
+          _id: {
+            type: "string",
+          },
+          age: {
+            type: "integer",
+          },
+          fullName: {
+            type: "string",
+          },
+        },
+      })
+      // Just one index on age
+      expect(info.indexesList).to.have.lengthOf(1)
+    })
+
     it("getCollectionIndexes should list valid collection indexes", async () => {
       // @todo Update to latest APIs and mark this as deprecated
       const list = await client.getCollectionIndexes(dbID, "FromObject")

@@ -48,6 +48,12 @@ export {
   SortJSON,
 }
 
+export interface CollectionInfo {
+  name: string
+  schema: any
+  indexesList: Array<pb.Index.AsObject>
+}
+
 export interface CollectionConfig {
   name: string
   schema: any
@@ -611,6 +617,23 @@ export class Client {
       req
     )) as pb.GetCollectionIndexesReply.AsObject
     return res.indexesList
+  }
+
+  public async getCollectionInfo(
+    threadID: ThreadID,
+    name: string
+  ): Promise<CollectionInfo> {
+    const req = new pb.GetCollectionInfoRequest()
+    req.setDbid(threadID.toBytes())
+    req.setName(name)
+    const res = (await this.unary(
+      API.GetCollectionInfo,
+      req
+    )) as pb.GetCollectionInfoReply.AsObject
+    res.schema = JSON.parse(
+      (Buffer.from(res.schema as string, "base64") as unknown) as string
+    )
+    return res
   }
 
   /**
