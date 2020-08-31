@@ -261,10 +261,11 @@ export class Client {
     delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
     deleteCollection(threadID: ThreadID, name: string): Promise<void>;
     deleteDB(threadID: ThreadID): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "InstanceList" needs to be exported by the entry point index.d.ts
     find<T = any>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<InstanceList<T>>;
     findByID<T = any>(threadID: ThreadID, collectionName: string, ID: string): Promise<Instance<T>>;
     getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
+    // (undocumented)
+    getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionInfo>;
     getDBInfo(threadID: ThreadID): Promise<DBInfo>;
     getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
@@ -272,7 +273,7 @@ export class Client {
     joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<{
         name: string;
         schema: any;
-    }>): Promise<void>;
+    }>): Promise<ThreadID>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
@@ -281,7 +282,7 @@ export class Client {
     newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<{
         name: string;
         schema: any;
-    }>): Promise<void>;
+    }>): Promise<ThreadID>;
     open(threadID: ThreadID, name?: string): Promise<void>;
     // @deprecated
     static randomIdentity(): Promise<Libp2pCryptoIdentity>;
@@ -295,6 +296,26 @@ export class Client {
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
     writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
+}
+
+// @public (undocumented)
+export interface CollectionConfig {
+    // (undocumented)
+    indexes: pb.Index.AsObject;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    schema: any;
+}
+
+// @public (undocumented)
+export interface CollectionInfo {
+    // (undocumented)
+    indexesList: Array<pb.Index.AsObject>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    schema: any;
 }
 
 // @public
@@ -312,6 +333,20 @@ export { CreateResponse }
 
 // @public
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
+
+// @public
+export interface CriterionJSON {
+    // (undocumented)
+    fieldPath?: string;
+    // Warning: (ae-forgotten-export) The symbol "ComparisonJSON" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    operation?: ComparisonJSON;
+    // (undocumented)
+    query?: QueryJSON;
+    // (undocumented)
+    value?: ValueJSON;
+}
 
 // @public
 export interface DBInfo {
@@ -414,6 +449,12 @@ export interface InboxListOptions {
 export interface Instance<T> {
     // (undocumented)
     instance: T | undefined;
+}
+
+// @public
+export interface InstanceList<T> {
+    // (undocumented)
+    instancesList: T[];
 }
 
 // @public
@@ -629,8 +670,6 @@ export interface PushPathResult {
 export class Query implements QueryJSON {
     constructor(ands?: CriterionJSON[], ors?: QueryJSON[], sort?: SortJSON | undefined);
     and(fieldPath: string): Criterion;
-    // Warning: (ae-forgotten-export) The symbol "CriterionJSON" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     ands: CriterionJSON[];
     or(query: Query): Query;
@@ -638,8 +677,6 @@ export class Query implements QueryJSON {
     orderByDesc(fieldPath: string): Query;
     // (undocumented)
     ors: QueryJSON[];
-    // Warning: (ae-forgotten-export) The symbol "SortJSON" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     sort?: SortJSON | undefined;
     // Warning: (ae-forgotten-export) The symbol "Criterion" needs to be exported by the entry point index.d.ts
@@ -733,6 +770,14 @@ export function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promi
 export { SetupMailboxRequest }
 
 export { SetupMailboxResponse }
+
+// @public
+export interface SortJSON {
+    // (undocumented)
+    desc: boolean;
+    // (undocumented)
+    fieldPath: string;
+}
 
 // @public
 export enum Status {
@@ -838,6 +883,16 @@ export class Users extends GrpcAuthentication {
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Users>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Users;
+}
+
+// @public
+export interface ValueJSON {
+    // (undocumented)
+    bool?: boolean;
+    // (undocumented)
+    float?: number;
+    // (undocumented)
+    string?: string;
 }
 
 // @public
