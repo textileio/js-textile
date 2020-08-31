@@ -6,14 +6,20 @@
 export {
   Action,
   DBInfo,
+  CollectionConfig,
+  CollectionInfo,
+  Update,
   Filter,
   Query,
   Where,
   WriteTransaction,
   ReadTransaction,
   Instance,
+  InstanceList,
   QueryJSON,
-  Update,
+  ValueJSON,
+  CriterionJSON,
+  SortJSON,
 } from '@textile/threads-client'
 
 export { Client } from './client'
