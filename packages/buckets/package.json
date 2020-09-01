@@ -48,7 +48,7 @@
     "next-tick": "^1.1.0"
   },
   "devDependencies": {
-    "@textile/hub-grpc": "2.0.0-rc2",
+    "@textile/hub-grpc": "2.0.0-rc4",
     "@textile/threads-client": "^0.10.1",
     "axios": "^0.19.2",
     "delay": "^4.3.0",
