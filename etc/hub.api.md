@@ -4,36 +4,47 @@
 
 ```ts
 
+import { AddrsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ArchiveInfoResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveStatusResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveWatchResponse } from '@textile/buckets-grpc/buckets_pb';
+import { BalanceResponse } from '@textile/grpc-powergate-client/dist/wallet/rpc/rpc_pb';
+import { CheckResponse } from '@textile/grpc-powergate-client/dist/health/rpc/rpc_pb';
 import CID from 'cids';
+import { ConnectednessResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
 import { ContextInterface } from '@textile/context';
 import { CreateResponse } from '@textile/buckets-grpc/buckets_pb';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/users_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/users_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/users_pb';
 import { DeleteSentboxMessageResponse } from '@textile/users-grpc/users_pb';
+import { FindPeerResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
 import { GetThreadRequest } from '@textile/users-grpc/users_pb';
 import { GetThreadResponse } from '@textile/users-grpc/users_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
 import { Identity as Identity_2 } from '@textile/threads-core';
+import { InfoResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { LinksResponse } from '@textile/buckets-grpc/buckets_pb';
+import { ListDealRecordsConfig } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ListInboxMessagesRequest } from '@textile/users-grpc/users_pb';
 import { ListInboxMessagesResponse } from '@textile/users-grpc/users_pb';
 import { ListIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathItem } from '@textile/buckets-grpc/buckets_pb';
 import { ListPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ListResponse } from '@textile/buckets-grpc/buckets_pb';
+import { ListRetrievalDealRecordsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ListSentboxMessagesRequest } from '@textile/users-grpc/users_pb';
 import { ListSentboxMessagesResponse } from '@textile/users-grpc/users_pb';
+import { ListStorageDealRecordsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ListThreadsRequest } from '@textile/users-grpc/users_pb';
 import { ListThreadsResponse } from '@textile/users-grpc/users_pb';
 import { name as name_2 } from 'multibase';
+import { NewAddrResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
+import { PeersResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
 import { PullIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { PullPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { PushPathResponse } from '@textile/buckets-grpc/buckets_pb';
@@ -45,11 +56,13 @@ import { RemovePathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { RemoveResponse } from '@textile/buckets-grpc/buckets_pb';
 import { Root } from '@textile/buckets-grpc/buckets_pb';
 import { RootResponse } from '@textile/buckets-grpc/buckets_pb';
+import { SendFilResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { SendMessageRequest } from '@textile/users-grpc/users_pb';
 import { SendMessageResponse } from '@textile/users-grpc/users_pb';
 import { SetPathResponse } from '@textile/buckets-grpc/buckets_pb';
 import { SetupMailboxRequest } from '@textile/users-grpc/users_pb';
 import { SetupMailboxResponse } from '@textile/users-grpc/users_pb';
+import { ShowAllResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -501,6 +514,43 @@ export const MailConfig: {
     InboxCollectionName: string;
     SentboxCollectionName: string;
 };
+
+// Warning: (ae-incompatible-release-tags) The symbol "Pow" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
+//
+// @public (undocumented)
+export class Pow extends GrpcAuthentication {
+    // (undocumented)
+    addrs(): Promise<AddrsResponse.AsObject>;
+    // (undocumented)
+    balance(address: string): Promise<BalanceResponse.AsObject>;
+    // (undocumented)
+    connectedness(peerId: string): Promise<ConnectednessResponse.AsObject>;
+    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Pow;
+    // (undocumented)
+    findPeer(peerId: string): Promise<FindPeerResponse.AsObject>;
+    getToken(identity: Identity): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    // (undocumented)
+    health(): Promise<CheckResponse.AsObject>;
+    // (undocumented)
+    info(): Promise<InfoResponse.AsObject>;
+    // (undocumented)
+    listRetrievalDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListRetrievalDealRecordsResponse.AsObject>;
+    // (undocumented)
+    listStorageDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListStorageDealRecordsResponse.AsObject>;
+    // (undocumented)
+    newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject>;
+    peers(): Promise<PeersResponse.AsObject>;
+    // (undocumented)
+    sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject>;
+    // (undocumented)
+    show(cid: string): Promise<SendFilResponse.AsObject>;
+    // (undocumented)
+    showAll(): Promise<ShowAllResponse.AsObject>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Pow>;
+    withThread(threadID?: string): this | undefined;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Pow;
+}
 
 // @public
 export type Private = Identity;
