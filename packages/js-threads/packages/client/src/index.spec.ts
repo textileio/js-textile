@@ -147,6 +147,11 @@ describe("Client", function () {
         expect(err.toString()).to.include("collection not found")
       }
     })
+
+    it("ListCollections should return a list of collections", async () => {
+        const list = await client.listCollections(dbID)
+        expect(list).to.have.length(1);
+    })
   })
 
   describe(".listDBs", () => {
