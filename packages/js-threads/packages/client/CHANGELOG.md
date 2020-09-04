@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.1](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.11.0...@textile/threads-client@0.11.1) (2020-09-04)
+
+
+### Bug Fixes
+
+* [#522](https://github.com/textileio/js-threads/issues/522) ListCollections API not exposed on Client ([ff7eba4](https://github.com/textileio/js-threads/commit/ff7eba45338f8395eb61c7a558abdb7e7f433a86))
+
+
+
+
+
 # [0.11.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.10.1...@textile/threads-client@0.11.0) (2020-08-28)
 
 
