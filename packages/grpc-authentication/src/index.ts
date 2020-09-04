@@ -91,9 +91,9 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
+  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false, date?: Date) {
     const context = new Context(host)
-    await context.withKeyInfo(key)
+    await context.withKeyInfo(key, date)
     return new GrpcAuthentication(context, debug)
   }
 
