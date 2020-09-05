@@ -89,10 +89,10 @@ export type APISig = {
  */
 export async function createAPISig(
   secret: string,
-  date: Date = new Date(Date.now() + 1000 * 60)
+  date: Date = new Date(Date.now() + 1000 * 60 * 30) // Default to 30 minutes
 ): Promise<APISig> {
   const sec = multibase.decode(secret)
-  const msg = (date ?? new Date()).toISOString()
+  const msg = date.toISOString()
   const hash = new HMAC(sec)
   const mac = hash.update(Buffer.from(msg)).digest()
   const sig = multibase.encode("base32", Buffer.from(mac)).toString()
@@ -128,7 +128,7 @@ export async function createAPISig(
 export async function createUserAuth(
   key: string,
   secret: string,
-  date: Date = new Date(Date.now() + 1000 * 60),
+  date?: Date,
   token?: string
 ): Promise<UserAuth> {
   const partial = await createAPISig(secret, date)
