@@ -262,6 +262,7 @@ export class Client {
         schema: any;
     }>): Promise<ThreadID>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
+    listCollections(threadID: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, name: string, schema: any, indexes?: pb.Index.AsObject[]): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, name: string, obj: any, indexes?: pb.Index.AsObject[]): Promise<void>;
