@@ -125,7 +125,7 @@ export class Buckets extends GrpcAuthentication {
         id: string | undefined;
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Buckets;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Buckets;
     create(name: string, isPrivate?: boolean): Promise<CreateObject>;
     getOrCreate(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: RootObject;
@@ -162,7 +162,7 @@ export class Buckets extends GrpcAuthentication {
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
     root(key: string): Promise<RootObject | undefined>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyOptions): Promise<Buckets>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
 }
@@ -320,6 +320,12 @@ export interface CollectionInfo {
 }
 
 // @public
+export interface CopyAuthOptions {
+    // (undocumented)
+    debug?: boolean;
+}
+
+// @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
@@ -409,7 +415,7 @@ export { GetThreadResponse }
 // @public
 export interface GetThreadResponseObj {
     // (undocumented)
-    id: string;
+    id: ThreadID;
     // (undocumented)
     isDB: boolean;
     // (undocumented)
@@ -420,10 +426,10 @@ export interface GetThreadResponseObj {
 //
 // @internal
 export class GrpcAuthentication extends GrpcConnection {
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): GrpcAuthentication;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): GrpcAuthentication;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<GrpcAuthentication>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyOptions): Promise<GrpcAuthentication>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): GrpcAuthentication;
 }
@@ -864,7 +870,7 @@ export interface UserMessage {
 //
 // @public
 export class Users extends GrpcAuthentication {
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Users;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Users;
     deleteInboxMessage(id: string): Promise<void>;
     deleteSentboxMessage(id: string): Promise<void>;
     getMailboxID(): Promise<string>;
@@ -881,7 +887,7 @@ export class Users extends GrpcAuthentication {
     setupMailbox(): Promise<string>;
     watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
     watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Users>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyOptions): Promise<Users>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Users;
 }
@@ -911,6 +917,16 @@ export function watchMailbox(api: GrpcConnection, id: string, box: 'inbox' | 'se
 
 // @public
 export const Where: typeof Criterion;
+
+// @public
+export interface WithKeyOptions {
+    // (undocumented)
+    date?: Date;
+    // (undocumented)
+    debug?: boolean;
+    // (undocumented)
+    host?: string;
+}
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
