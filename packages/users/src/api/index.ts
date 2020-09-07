@@ -22,7 +22,7 @@ import {
 import { APIService } from '@textile/users-grpc/users_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
-import { Client, Action, Update } from '@textile/hub-threads-client'
+import { Client, Update } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
@@ -70,7 +70,7 @@ export interface InboxListOptions {
 export interface GetThreadResponseObj {
   isDB: boolean
   name: string
-  id: string
+  id: ThreadID
 }
 
 /**
@@ -138,7 +138,7 @@ export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): 
     const res = {
       isDB: thread.isDb,
       name: thread.name,
-      id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString(),
+      id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')),
     }
     return res
   })
@@ -160,7 +160,7 @@ export async function getThread(
   return {
     isDB: thread.isDb,
     name: thread.name,
-    id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString(),
+    id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')),
   }
 }
 
@@ -171,8 +171,8 @@ export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface):
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
   const res: SetupMailboxResponse = await api.unary(APIService.SetupMailbox, req, ctx)
-  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxId_asB64() as string, 'base64')).toString()
-  return mailboxID
+  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxId_asB64() as string, 'base64'))
+  return mailboxID.toString()
 }
 
 /**
@@ -181,7 +181,7 @@ export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface):
 export async function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
   logger.debug('setup mailbox request')
   const thread = await getThread(api, MailConfig.ThreadName, ctx)
-  return thread.id
+  return thread.id.toString()
 }
 
 /**

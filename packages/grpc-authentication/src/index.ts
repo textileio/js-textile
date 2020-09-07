@@ -5,6 +5,22 @@ import { UserAuth, KeyInfo } from '@textile/security'
 import { Client } from '@textile/hub-threads-client'
 
 /**
+ * Set the options for authenticating with an API key
+ */
+export interface WithKeyOptions {
+  host?: string
+  debug?: boolean
+  date?: Date
+}
+
+/**
+ * Set additional options when copying authentication
+ */
+export interface CopyAuthOptions {
+  debug?: boolean
+}
+
+/**
  * Not for external use. Defines the authorization, authentication, and
  * API scoping methods used by gRPC API client classes such as Users and Buckets.
  *
@@ -46,8 +62,8 @@ export class GrpcAuthentication extends GrpcConnection {
    * ```
    */
 
-  static copyAuth(auth: GrpcAuthentication, debug = false) {
-    return new GrpcAuthentication(auth.context, debug)
+  static copyAuth(auth: GrpcAuthentication, options: CopyAuthOptions = {}) {
+    return new GrpcAuthentication(auth.context, options.debug)
   }
 
   /**
@@ -91,10 +107,10 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false, date?: Date) {
-    const context = new Context(host)
-    await context.withKeyInfo(key, date)
-    return new GrpcAuthentication(context, debug)
+  static async withKeyInfo(key: KeyInfo, options: WithKeyOptions = {}) {
+    const context = new Context(options.host)
+    await context.withKeyInfo(key, options.date)
+    return new GrpcAuthentication(context, options.debug)
   }
 
   /**
