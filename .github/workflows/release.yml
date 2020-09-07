@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - '@textile/hub@*.*.*'
+      - 'docs@*.*.*'
 jobs:
   deploy:
     name: Docs
