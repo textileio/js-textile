@@ -125,7 +125,7 @@ export class Buckets extends GrpcAuthentication {
         id: string | undefined;
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Buckets;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Buckets;
     create(name: string, isPrivate?: boolean): Promise<CreateObject>;
     getOrCreate(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
         root?: RootObject;
@@ -162,9 +162,9 @@ export class Buckets extends GrpcAuthentication {
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
     root(key: string): Promise<RootObject | undefined>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Buckets>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Buckets>;
     withThread(threadID?: string): this | undefined;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Buckets;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Buckets;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsArchive" should be prefixed with an underscore because the declaration is marked as @internal
@@ -320,6 +320,12 @@ export interface CollectionInfo {
 }
 
 // @public
+export interface CopyAuthOptions {
+    // (undocumented)
+    debug?: boolean;
+}
+
+// @public
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public
@@ -409,7 +415,7 @@ export { GetThreadResponse }
 // @public
 export interface GetThreadResponseObj {
     // (undocumented)
-    id: string;
+    id: ThreadID;
     // (undocumented)
     isDB: boolean;
     // (undocumented)
@@ -420,12 +426,12 @@ export interface GetThreadResponseObj {
 //
 // @internal
 export class GrpcAuthentication extends GrpcConnection {
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): GrpcAuthentication;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): GrpcAuthentication;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<GrpcAuthentication>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<GrpcAuthentication>;
     withThread(threadID?: string): this | undefined;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): GrpcAuthentication;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): GrpcAuthentication;
 }
 
 // @public
@@ -561,37 +567,26 @@ export const MailConfig: {
 //
 // @public (undocumented)
 export class Pow extends GrpcAuthentication {
-    // (undocumented)
     addrs(): Promise<AddrsResponse.AsObject>;
-    // (undocumented)
     balance(address: string): Promise<BalanceResponse.AsObject>;
-    // (undocumented)
     connectedness(peerId: string): Promise<ConnectednessResponse.AsObject>;
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Pow;
-    // (undocumented)
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Pow;
     findPeer(peerId: string): Promise<FindPeerResponse.AsObject>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     // (undocumented)
     health(): Promise<CheckResponse.AsObject>;
-    // (undocumented)
     info(): Promise<InfoResponse.AsObject>;
-    // (undocumented)
     listRetrievalDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListRetrievalDealRecordsResponse.AsObject>;
-    // (undocumented)
     listStorageDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListStorageDealRecordsResponse.AsObject>;
-    // (undocumented)
     newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject>;
     peers(): Promise<PeersResponse.AsObject>;
-    // (undocumented)
     sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject>;
-    // (undocumented)
     show(cid: string): Promise<SendFilResponse.AsObject>;
-    // (undocumented)
     showAll(): Promise<ShowAllResponse.AsObject>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Pow>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
     withThread(threadID?: string): this | undefined;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Pow;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Pow;
 }
 
 // @public
@@ -864,7 +859,7 @@ export interface UserMessage {
 //
 // @public
 export class Users extends GrpcAuthentication {
-    static copyAuth(auth: GrpcAuthentication, debug?: boolean): Users;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Users;
     deleteInboxMessage(id: string): Promise<void>;
     deleteSentboxMessage(id: string): Promise<void>;
     getMailboxID(): Promise<string>;
@@ -881,9 +876,9 @@ export class Users extends GrpcAuthentication {
     setupMailbox(): Promise<string>;
     watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
     watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Users>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Users>;
     withThread(threadID?: string): this | undefined;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Users;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Users;
 }
 
 // @public
@@ -911,6 +906,18 @@ export function watchMailbox(api: GrpcConnection, id: string, box: 'inbox' | 'se
 
 // @public
 export const Where: typeof Criterion;
+
+// @public
+export interface WithKeyInfoOptions extends WithUserAuthOptions {
+    // (undocumented)
+    date?: Date;
+}
+
+// @public
+export interface WithUserAuthOptions extends CopyAuthOptions {
+    // (undocumented)
+    host?: string;
+}
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {

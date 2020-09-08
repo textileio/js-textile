@@ -1,8 +1,12 @@
 import log from 'loglevel'
-import { defaultHost } from '@textile/context'
 import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/crypto'
-import { GrpcAuthentication } from '@textile/grpc-authentication'
+import {
+  CopyAuthOptions,
+  GrpcAuthentication,
+  WithKeyInfoOptions,
+  WithUserAuthOptions,
+} from '@textile/grpc-authentication'
 import { ThreadID } from '@textile/threads-id'
 import { KeyInfo, UserAuth } from '@textile/security'
 import {
@@ -126,8 +130,8 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static copyAuth(auth: GrpcAuthentication, debug = false) {
-    return new Buckets(auth.context, debug)
+  static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
+    return new Buckets(auth.context, options?.debug)
   }
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
@@ -141,9 +145,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
-    const res = super.withUserAuth(auth, host, debug)
-    return this.copyAuth(res, debug)
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions) {
+    const res = super.withUserAuth(auth, options)
+    return this.copyAuth(res, options)
   }
 
   /**
@@ -162,9 +166,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, host = defaultHost, debug = false) {
-    const auth = await super.withKeyInfo(key, host, debug)
-    return this.copyAuth(auth, debug)
+  static async withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions) {
+    const auth = await super.withKeyInfo(key, options)
+    return this.copyAuth(auth, options)
   }
 
   /**
