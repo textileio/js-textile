@@ -34,7 +34,7 @@
     "@textile/security": "^0.2.6",
     "@textile/threads-client": "^0.11.1",
     "@textile/threads-id": "^0.1.13",
-    "@textile/users-grpc": "2.0.0-rc2",
+    "@textile/users-grpc": "2.0.0-rc5",
     "cids": "^0.8.0",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
