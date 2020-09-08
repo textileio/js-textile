@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-threads-client",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
   "main": "dist/index",
   "types": "dist/index",
@@ -34,14 +34,14 @@
     "@textile/security": "^0.2.6",
     "@textile/threads-client": "^0.11.1",
     "@textile/threads-id": "^0.1.13",
-    "@textile/users-grpc": "2.0.0-rc2",
+    "@textile/users-grpc": "2.0.0-rc5",
     "cids": "^0.8.0",
     "loglevel": "^1.7.0",
     "multihashes": "0.4.19"
   },
   "devDependencies": {
     "@textile/crypto": "^0.1.0",
-    "@textile/hub-grpc": "2.0.0-rc2",
+    "@textile/hub-grpc": "2.0.0-rc5",
     "axios": "^0.20.0",
     "delay": "^4.4.0",
     "fast-sha256": "^1.3.0",
