@@ -7,10 +7,15 @@ import { Client } from '@textile/hub-threads-client'
 /**
  * Set the options for authenticating with an API key
  */
-export interface WithKeyOptions {
-  host?: string
-  debug?: boolean
+export interface WithKeyInfoOptions extends WithUserAuthOptions {
   date?: Date
+}
+
+/**
+ * Set the options for authenticating with a user auth
+ */
+export interface WithUserAuthOptions extends CopyAuthOptions {
+  host?: string
 }
 
 /**
@@ -81,10 +86,12 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options: WithUserAuthOptions = {}) {
     const context =
-      typeof auth === 'object' ? Context.fromUserAuth(auth, host) : Context.fromUserAuthCallback(auth, host)
-    return new GrpcAuthentication(context, debug)
+      typeof auth === 'object'
+        ? Context.fromUserAuth(auth, options.host)
+        : Context.fromUserAuthCallback(auth, options.host)
+    return new GrpcAuthentication(context, options.debug)
   }
 
   /**
@@ -107,7 +114,7 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, options: WithKeyOptions = {}) {
+  static async withKeyInfo(key: KeyInfo, options: WithKeyInfoOptions = {}) {
     const context = new Context(options.host)
     await context.withKeyInfo(key, options.date)
     return new GrpcAuthentication(context, options.debug)

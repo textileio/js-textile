@@ -1,9 +1,13 @@
 import log from 'loglevel'
 import { grpc } from '@improbable-eng/grpc-web'
-import { CopyAuthOptions, GrpcAuthentication, WithKeyOptions } from '@textile/grpc-authentication'
+import {
+  CopyAuthOptions,
+  GrpcAuthentication,
+  WithKeyInfoOptions,
+  WithUserAuthOptions,
+} from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
-import { defaultHost } from '@textile/context'
 import {
   getThread,
   listInboxMessages,
@@ -102,8 +106,8 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static copyAuth(auth: GrpcAuthentication, options: CopyAuthOptions = {}) {
-    return new Users(auth.context, options.debug)
+  static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
+    return new Users(auth.context, options?.debug)
   }
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
@@ -117,9 +121,9 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host = defaultHost, debug = false) {
-    const res = super.withUserAuth(auth, host, debug)
-    return this.copyAuth(res, {debug})
+  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions) {
+    const res = super.withUserAuth(auth, options)
+    return this.copyAuth(res, options)
   }
 
   /**
@@ -138,9 +142,9 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, options: WithKeyOptions = {}) {
+  static async withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions) {
     const auth = await super.withKeyInfo(key, options)
-    return this.copyAuth(auth, {debug: options.debug})
+    return this.copyAuth(auth, options)
   }
 
   /**
