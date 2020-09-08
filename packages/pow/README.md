@@ -13,7 +13,7 @@ npm install --save git@github.com:textileio/js-hub.git
 **Usage**
 
 ```js
-import { Buckets } from '@textile/hub'
+import { Pow } from '@textile/hub'
 ```
 
 [Read the docs](https://textileio.github.io/js-hub/).

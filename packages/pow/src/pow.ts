@@ -187,50 +187,95 @@ export class Pow extends GrpcAuthentication {
     return peers(this)
   }
 
+  /**
+   * Find a peer by peer id.
+   * @param peerId The peer id of the peer you want to find.
+   */
   async findPeer(peerId: string): Promise<FindPeerResponse.AsObject> {
     return findPeer(this, peerId)
   }
 
+  /**
+   * Query for network connectedness to the specified peer.
+   * @param peerId The peer id to test connectedness for.
+   */
   async connectedness(peerId: string): Promise<ConnectednessResponse.AsObject> {
     return connectedness(this, peerId)
   }
 
+  /**
+   * List all Filecoin wallet addresses associated with the current account or user.
+   */
   async addrs(): Promise<AddrsResponse.AsObject> {
     return addrs(this)
   }
 
+  /**
+   * Create a new Filecoin wallet address.
+   * @param name A human readable name for the wallet address.
+   * @param type The type of address to create, wither bls or secp256k1.
+   * @param makeDefault Whether or not to make the new address the default address to use in Filecoin transactions.
+   */
   async newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject> {
     return newAddr(this, name, type, makeDefault)
   }
 
+  /**
+   * Send FIL from an address associated with the current account/user to any other address.
+   * @param from The address to send FIL from.
+   * @param to The address to send FIL to.
+   * @param amount The amount of FIL to send.
+   */
   async sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject> {
     return sendFil(this, from, to, amount)
   }
 
+  /**
+   * Query for general information about Powergate associated with the current account/user.
+   */
   async info(): Promise<InfoResponse.AsObject> {
     return info(this)
   }
 
+  /**
+   * Show information about data stored in Powergate.
+   * @param cid The cid of the data to show information about.
+   */
   async show(cid: string): Promise<SendFilResponse.AsObject> {
     return show(this, cid)
   }
 
+  /**
+   * Show information for all data stored in Powergate for the current account/user.
+   */
   async showAll(): Promise<ShowAllResponse.AsObject> {
     return showAll(this)
   }
 
+  /**
+   * Query for Filecoin storage deal records for the current account/user.
+   * @param config A config object to control the behavior of the query.
+   */
   async listStorageDealRecords(
     config: ListDealRecordsConfig.AsObject,
   ): Promise<ListStorageDealRecordsResponse.AsObject> {
     return listStorageDealRecords(this, config)
   }
 
+  /**
+   * Query for Filecoin retrieval deal records for the current account/user.
+   * @param config A config object to control the behavior of the query.
+   */
   async listRetrievalDealRecords(
     config: ListDealRecordsConfig.AsObject,
   ): Promise<ListRetrievalDealRecordsResponse.AsObject> {
     return listRetrievalDealRecords(this, config)
   }
 
+  /**
+   * Get the balance for any wallet address.
+   * @param address The wallet address to check the balance of.
+   */
   async balance(address: string): Promise<BalanceResponse.AsObject> {
     return balance(this, address)
   }
