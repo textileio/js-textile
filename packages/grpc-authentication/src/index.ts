@@ -6,31 +6,43 @@ import { Client } from '@textile/hub-threads-client'
 
 /**
  * Set the options for authenticating with an API key
- * @param date (optional) Future date for the session to expire. Short time periods are strongly recommended. (Default 30 minutes).
- * @param debug (optional) Get detailed log information.
- * @param host (optional) Set the host Hub URL. Development purposes only.
  */
 export interface WithKeyInfoOptions extends WithUserAuthOptions {
-  date?: Date
-  host?: string
+  /**
+   * Optional. Get more detailed log information.
+   */
   debug?: boolean
+  /**
+   * Optional. Future date for the session to expire. Short time periods are strongly recommended. (Default 30 minutes).
+   */
+  date?: Date
+  /**
+   * Development purposes only.
+   */
+  host?: string
 }
 
 /**
  * Set the options for authenticating with a user auth
- * @param debug (optional) Get detailed log information.
- * @param host (optional) Set the host Hub URL. Development purposes only.
  */
 export interface WithUserAuthOptions extends CopyAuthOptions {
-  host?: string
+  /**
+   * Optional. Get more detailed log information.
+   */
   debug?: boolean
+  /**
+   * Development purposes only.
+   */
+  host?: string
 }
 
 /**
  * Set additional options when copying authentication.
- * @param debug (optional) Get detailed log information.
  */
 export interface CopyAuthOptions {
+  /**
+   * Optional. Get more detailed log information.
+   */
   debug?: boolean
 }
 

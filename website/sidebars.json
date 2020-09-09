@@ -159,6 +159,8 @@
       "hub.client.deletecollection",
       "hub.client.updatecollection",
       "hub.client.getcollectionindexes",
+      "hub.client.getcollectioninfo",
+      "hub.client.listcollections",
       "hub.client.create",
       "hub.client.save",
       "hub.client.delete",
