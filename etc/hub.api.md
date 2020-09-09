@@ -911,10 +911,16 @@ export const Where: typeof Criterion;
 export interface WithKeyInfoOptions extends WithUserAuthOptions {
     // (undocumented)
     date?: Date;
+    // (undocumented)
+    debug?: boolean;
+    // (undocumented)
+    host?: string;
 }
 
 // @public
 export interface WithUserAuthOptions extends CopyAuthOptions {
+    // (undocumented)
+    debug?: boolean;
     // (undocumented)
     host?: string;
 }

@@ -126,12 +126,12 @@
       "hub.buckets.removepath"
     ],
     "Experimental": [
-      "hub.buckets.archive",
-      "hub.buckets.archiveinfo",
-      "hub.buckets.archivestatus",
-      "hub.buckets.archivewatch"
+      "hub.archive",
+      "hub.archiveinfo",
+      "hub.archivestatus"
     ],
     "Types": [
+      "hub.createobject",
       "hub.linksobject",
       "hub.listpathobject",
       "hub.listpathitemobject",
@@ -174,16 +174,29 @@
       "hub.filter",
       "hub.query",
       "hub.update",
-      "hub.where"
+      "hub.where",
+      "hub.instancelist",
+      "hub.instancelist.instanceslist"
     ]
   },
   "Types": {
     "Common Types": [
       "hub.userauth",
+      "hub.copyauthoptions",
+      "hub.withkeyinfooptions",
+      "hub.withuserauthoptions",
       "hub.apisig",
       "hub.keyinfo",
       "hub.status",
       "hub.variant"
+    ],
+    "Type Properties": [
+      "hub.copyauthoptions.debug",
+      "hub.withkeyinfooptions.debug",
+      "hub.withkeyinfooptions.date",
+      "hub.withkeyinfooptions.host",
+      "hub.withuserauthoptions.debug",
+      "hub.withuserauthoptions.host"
     ]
   }
 }
