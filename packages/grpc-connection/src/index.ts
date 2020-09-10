@@ -16,11 +16,14 @@ export class GrpcConnection {
    * @param context The context to use for interacting with the APIs. Can be modified later.
    */
   constructor(public context: ContextInterface = new Context(), debug = false) {
+    const transport = WebsocketTransport() // Default to websocket always
     this.serviceHost = context.host
     this.rpcOptions = {
-      transport: WebsocketTransport(),
+      transport,
       debug,
     }
+    // Set default transport to websocket "globally"
+    grpc.setDefaultTransport(transport)
   }
 
   public unary<
