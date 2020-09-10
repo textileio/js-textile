@@ -178,7 +178,8 @@
       "hub.writetransaction.findbyid",
       "hub.writetransaction.has",
       "hub.writetransaction.save",
-      "hub.writetransaction.start"
+      "hub.writetransaction.start",
+      "hub.writetransaction.abort"
     ],
     "ReadTransaction": [
       "hub.readtransaction",

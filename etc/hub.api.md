@@ -922,6 +922,7 @@ export interface WithUserAuthOptions extends CopyAuthOptions {
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
     constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    abort(): Promise<void>;
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
