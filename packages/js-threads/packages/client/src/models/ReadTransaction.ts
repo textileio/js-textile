@@ -37,7 +37,7 @@ import { Transaction } from "./Transaction"
  *     _id: '',
  *   }
  *
- *   const ids = await client.create(dbID, 'astronauts', [buzz])
+ *   const ids = await client.create(threadID, 'astronauts', [buzz])
  *   // Create and start transaction
  *   const t = client.readTransaction(threadID, 'astronauts')
  *   await t.start()
