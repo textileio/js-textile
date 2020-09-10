@@ -20,7 +20,7 @@ import { Transaction } from "./Transaction"
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
  * {@inheritDoc @textile/threads-client#Transaction}
  * @example
- * Create a new entry in our collection
+ * Create a new entry and check for it within a transaction
  * ```typescript
  * import {Client, ThreadID} from '@textile/threads'
  *
@@ -30,42 +30,20 @@ import { Transaction } from "./Transaction"
  *   _id: string
  * }
  *
- * async function createBuzz (client: Client, threadID: ThreadID) {
+ * async function createAndCheck (client: Client, threadID: ThreadID) {
  *   const buzz: Astronaut = {
  *     name: 'Buzz',
  *     missions: 2,
  *     _id: '',
  *   }
  *
- *   const t = client.writeTransaction(threadID, 'astronauts')
+ *   const ids = await client.create(dbID, 'astronauts', [buzz])
+ *   // Create and start transaction
+ *   const t = client.readTransaction(threadID, 'astronauts')
  *   await t.start()
- *   await t.create([buzz])
- *   await t.end() // Commit
- * }
- * ```
- *
- * @example
- * Abort an in-flight transaction
- * ```typescript
- * import {Client, ThreadID} from '@textile/threads'
- *
- * interface Astronaut {
- *   name: string
- *   missions: number
- *   _id: string
- * }
- *
- * async function createBuzz (client: Client, threadID: ThreadID) {
- *   const buzz: Astronaut = {
- *     name: 'Buzz',
- *     missions: 2,
- *     _id: '',
- *   }
- *
- *   const t = client.writeTransaction(threadID, 'astronauts')
- *   await t.start()
- *   await t.create([buzz])
- *   await t.abort() // Abort
+ *   const has = await t.has([buzz])
+ *   console.log(has) // true
+ *   await t.end() // Finish
  * }
  * ```
  */
