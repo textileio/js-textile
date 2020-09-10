@@ -41,7 +41,7 @@ import { Transaction } from "./Transaction"
  *   // Create and start transaction
  *   const t = client.readTransaction(threadID, 'astronauts')
  *   await t.start()
- *   const has = await t.has([buzz])
+ *   const has = await t.has(ids)
  *   console.log(has) // true
  *   await t.end() // Finish
  * }
