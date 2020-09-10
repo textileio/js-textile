@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.3](https://github.com/textileio/js-threads/compare/@textile/threads-database@0.7.2...@textile/threads-database@0.7.3) (2020-09-10)
+
+
+### Bug Fixes
+
+* revert erroneous version bump ([4a56823](https://github.com/textileio/js-threads/commit/4a568230ba53a5f7de925a7ef5f861cfc2c7388c))
+
+
+
+
+
 ## [0.7.2](https://github.com/textileio/js-threads/compare/@textile/threads-database@0.7.1...@textile/threads-database@0.7.2) (2020-08-19)
 
 **Note:** Version bump only for package @textile/threads-database

@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-network-client",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -20,7 +20,7 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.6.7",
+    "@textile/context": "^0.6.8",
     "@textile/grpc-transport": "^0.0.3",
     "@textile/multiaddr": "^0.0.24",
     "@textile/threads-core": "^0.3.0",

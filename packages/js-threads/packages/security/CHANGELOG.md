@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.7](https://github.com/textileio/js-threads/compare/@textile/security@0.2.6...@textile/security@0.2.7) (2020-09-10)
+
+
+### Bug Fixes
+
+* longer timeout on auth msgs ([048c9f3](https://github.com/textileio/js-threads/commit/048c9f38d02f718c12cfa3d1bd297fa32e5e1906))
+
+
+
+
+
 ## [0.2.6](https://github.com/textileio/js-threads/compare/@textile/security@0.2.5...@textile/security@0.2.6) (2020-08-06)
 
 

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.11.1...@textile/threads-client@0.12.0) (2020-09-10)
+
+
+### Bug Fixes
+
+* quick fix for inter test failures ([a3e1158](https://github.com/textileio/js-threads/commit/a3e1158497063d4175ca9185f98928130d253e13))
+
+
+### Features
+
+* **client:** adds support for write transaction abort ([2ed3c5a](https://github.com/textileio/js-threads/commit/2ed3c5a1d91026a11f977597d846101a473ba157))
+
+
+
+
+
 ## [0.11.1](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.11.0...@textile/threads-client@0.11.1) (2020-09-04)
 
 

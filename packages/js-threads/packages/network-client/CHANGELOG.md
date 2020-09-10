@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.3](https://github.com/textileio/js-threads/compare/@textile/threads-network-client@0.7.2...@textile/threads-network-client@0.7.3) (2020-09-10)
+
+**Note:** Version bump only for package @textile/threads-network-client
+
+
+
+
+
 ## [0.7.2](https://github.com/textileio/js-threads/compare/@textile/threads-network-client@0.7.1...@textile/threads-network-client@0.7.2) (2020-08-19)
 
 
