@@ -126,12 +126,12 @@
       "hub.buckets.removepath"
     ],
     "Experimental": [
-      "hub.buckets.archive",
-      "hub.buckets.archiveinfo",
-      "hub.buckets.archivestatus",
-      "hub.buckets.archivewatch"
+      "hub.archive",
+      "hub.archiveinfo",
+      "hub.archivestatus"
     ],
     "Types": [
+      "hub.createobject",
       "hub.linksobject",
       "hub.listpathobject",
       "hub.listpathitemobject",
@@ -159,6 +159,8 @@
       "hub.client.deletecollection",
       "hub.client.updatecollection",
       "hub.client.getcollectionindexes",
+      "hub.client.getcollectioninfo",
+      "hub.client.listcollections",
       "hub.client.create",
       "hub.client.save",
       "hub.client.delete",
@@ -168,22 +170,53 @@
       "hub.client.readtransaction",
       "hub.client.writetransaction"
     ],
+    "WriteTransaction": [
+      "hub.writetransaction",
+      "hub.writetransaction.create",
+      "hub.writetransaction.delete",
+      "hub.writetransaction.find",
+      "hub.writetransaction.findbyid",
+      "hub.writetransaction.has",
+      "hub.writetransaction.save",
+      "hub.writetransaction.start",
+      "hub.writetransaction.abort"
+    ],
+    "ReadTransaction": [
+      "hub.readtransaction",
+      "hub.readtransaction.find",
+      "hub.readtransaction.findbyid",
+      "hub.readtransaction.has",
+      "hub.readtransaction.start"
+    ],
     "Types": [
       "hub.action",
       "hub.dbinfo",
       "hub.filter",
       "hub.query",
       "hub.update",
-      "hub.where"
+      "hub.where",
+      "hub.instancelist",
+      "hub.instancelist.instanceslist"
     ]
   },
   "Types": {
     "Common Types": [
       "hub.userauth",
+      "hub.copyauthoptions",
+      "hub.withkeyinfooptions",
+      "hub.withuserauthoptions",
       "hub.apisig",
       "hub.keyinfo",
       "hub.status",
       "hub.variant"
+    ],
+    "Type Properties": [
+      "hub.copyauthoptions.debug",
+      "hub.withkeyinfooptions.debug",
+      "hub.withkeyinfooptions.date",
+      "hub.withkeyinfooptions.host",
+      "hub.withuserauthoptions.debug",
+      "hub.withuserauthoptions.host"
     ]
   }
 }

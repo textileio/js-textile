@@ -321,7 +321,6 @@ export interface CollectionInfo {
 
 // @public
 export interface CopyAuthOptions {
-    // (undocumented)
     debug?: boolean;
 }
 
@@ -909,19 +908,21 @@ export const Where: typeof Criterion;
 
 // @public
 export interface WithKeyInfoOptions extends WithUserAuthOptions {
-    // (undocumented)
     date?: Date;
+    debug?: boolean;
+    host?: string;
 }
 
 // @public
 export interface WithUserAuthOptions extends CopyAuthOptions {
-    // (undocumented)
+    debug?: boolean;
     host?: string;
 }
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
     constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    abort(): Promise<void>;
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)

@@ -30,7 +30,7 @@
     "@textile/grpc-authentication": "^0.2.0-alpha.0",
     "@textile/hub-threads-client": "^0.5.0-alpha.0",
     "@textile/pow": "^0.2.0-alpha.0",
-    "@textile/security": "^0.2.6",
+    "@textile/security": "^0.2.7",
     "@textile/threads-id": "^0.1.13",
     "@textile/users": "^0.2.0-alpha.0",
     "cids": "^0.8.0",
@@ -38,7 +38,7 @@
     "multihashes": "0.4.19"
   },
   "devDependencies": {
-    "@textile/context": "^0.6.7",
+    "@textile/context": "^0.6.8",
     "@textile/grpc-transport": "^0.0.3",
     "@textile/hub-grpc": "2.0.0-rc5",
     "axios": "^0.20.0",
