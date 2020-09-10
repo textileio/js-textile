@@ -170,6 +170,23 @@
       "hub.client.readtransaction",
       "hub.client.writetransaction"
     ],
+    "WriteTransaction": [
+      "hub.writetransaction",
+      "hub.writetransaction.create",
+      "hub.writetransaction.delete",
+      "hub.writetransaction.find",
+      "hub.writetransaction.findbyid",
+      "hub.writetransaction.has",
+      "hub.writetransaction.save",
+      "hub.writetransaction.start"
+    ],
+    "ReadTransaction": [
+      "hub.readtransaction",
+      "hub.readtransaction.find",
+      "hub.readtransaction.findbyid",
+      "hub.readtransaction.has",
+      "hub.readtransaction.start"
+    ],
     "Types": [
       "hub.action",
       "hub.dbinfo",
