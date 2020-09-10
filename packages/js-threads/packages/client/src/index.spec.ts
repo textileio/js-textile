@@ -354,11 +354,11 @@ describe("Client", function () {
     })
   })
   describe(".writeTransaction", () => {
-    const person = createPerson()
     let existingPersonID: string
     let transaction: WriteTransaction | undefined
 
     context("complete transaction", function () {
+      const person = createPerson()
       before(async () => {
         const instances = await client.create(dbID, "Person", [person])
         existingPersonID = instances.length ? instances[0] : ""
@@ -404,6 +404,7 @@ describe("Client", function () {
     })
 
     context("rejected transaction", function () {
+      const person = createPerson()
       before(async () => {
         const instances = await client.create(dbID, "Person", [person])
         existingPersonID = instances.length ? instances[0] : ""
