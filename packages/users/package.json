@@ -1,6 +1,6 @@
 {
   "name": "@textile/users",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.1-alpha.0",
   "description": "web-gRPC wrapper client for managing Textile Users.",
   "main": "dist/index",
   "types": "dist/index",
@@ -33,8 +33,8 @@
     "@textile/buckets-grpc": "2.0.0-rc5",
     "@textile/context": "^0.6.8",
     "@textile/crypto": "^0.1.0",
-    "@textile/grpc-authentication": "^0.2.0-alpha.1",
-    "@textile/grpc-connection": "^0.1.3-alpha.0",
+    "@textile/grpc-authentication": "^0.2.1-alpha.0",
+    "@textile/grpc-connection": "^0.1.4-alpha.0",
     "@textile/grpc-transport": "^0.0.3",
     "@textile/hub-threads-client": "^0.5.0-alpha.1",
     "@textile/security": "^0.2.7",
