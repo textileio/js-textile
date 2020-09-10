@@ -149,8 +149,8 @@ describe("Client", function () {
     })
 
     it("ListCollections should return a list of collections", async () => {
-        const list = await client.listCollections(dbID)
-        expect(list).to.have.length(1);
+      const list = await client.listCollections(dbID)
+      expect(list).to.have.length(1)
     })
   })
 
@@ -308,19 +308,23 @@ describe("Client", function () {
   describe(".readTransaction", () => {
     let existingPersonID: string
     let transaction: ReadTransaction | undefined
+
     before(async () => {
       const instances = await client.create(dbID, "Person", [createPerson()])
       existingPersonID = instances.pop()!
       transaction = client.readTransaction(dbID, "Person")
     })
+
     it("should start a transaction", async () => {
       expect(transaction).to.not.be.undefined
       await transaction!.start()
     })
+
     it("should able to check for an existing instance", async () => {
       const has = await transaction!.has([existingPersonID])
       expect(has).to.be.true
     })
+
     it("should be able to find an existing instance", async () => {
       const find = await transaction!.findByID<Person>(existingPersonID)
       expect(find).to.not.be.undefined
@@ -333,57 +337,95 @@ describe("Client", function () {
       expect(instance).to.have.property("_id")
       expect(instance?._id).to.deep.equal(existingPersonID)
     })
+
     it("should be able to close/end an transaction", async () => {
       await transaction!.end()
+    })
+
+    it("should throw on invalid transaction information", async function () {
+      const t = client.readTransaction(dbID, "fake")
+      await t.start()
+      try {
+        await t.has(["anything"])
+        throw new Error("should have thrown")
+      } catch (err) {
+        expect(err.toString()).to.include("collection not found")
+      }
     })
   })
   describe(".writeTransaction", () => {
     const person = createPerson()
     let existingPersonID: string
     let transaction: WriteTransaction | undefined
-    before(async () => {
-      const instances = await client.create(dbID, "Person", [person])
-      existingPersonID = instances.length ? instances[0] : ""
-      person["_id"] = existingPersonID
-      transaction = client.writeTransaction(dbID, "Person")
+
+    context("complete transaction", function () {
+      before(async () => {
+        const instances = await client.create(dbID, "Person", [person])
+        existingPersonID = instances.length ? instances[0] : ""
+        person["_id"] = existingPersonID
+        transaction = client.writeTransaction(dbID, "Person")
+      })
+      it("should start a transaction", async () => {
+        expect(transaction).to.not.be.undefined
+        await transaction!.start()
+      })
+      it("should be able to create an instance", async () => {
+        const newPerson = createPerson()
+        const entities = await transaction!.create<Person>([newPerson])
+        expect(entities).to.not.be.undefined
+        expect(entities!.length).to.equal(1)
+      })
+      it("should able to check for an existing instance", async () => {
+        const has = await transaction!.has([existingPersonID])
+        expect(has).to.be.true
+      })
+      it("should be able to find an existing instance", async () => {
+        const find = await transaction!.findByID<Person>(existingPersonID)
+        expect(find).to.not.be.undefined
+        expect(find).to.haveOwnProperty("instance")
+        const instance = find!.instance
+        expect(instance).to.not.be.undefined
+        expect(instance).to.have.property("firstName", "Adam")
+        expect(instance).to.have.property("lastName", "Doe")
+        expect(instance).to.have.property("age", 21)
+        expect(instance).to.have.property("_id")
+        expect(instance?._id).to.deep.equal(existingPersonID)
+      })
+      it("should be able to save an existing instance", async () => {
+        person.age = 99
+        const saved = await transaction!.save([person])
+        expect(saved).to.be.undefined
+        const deleted = await transaction!.delete([person._id])
+        expect(deleted).to.be.undefined
+      })
+      it("should be able to close/end an transaction", async () => {
+        await transaction!.end()
+      })
     })
-    it("should start a transaction", async () => {
-      expect(transaction).to.not.be.undefined
-      await transaction!.start()
-    })
-    it("should be able to create an instance", async () => {
-      const newPerson = createPerson()
-      const entities = await transaction!.create<Person>([newPerson])
-      expect(entities).to.not.be.undefined
-      expect(entities!.length).to.equal(1)
-    })
-    it("should able to check for an existing instance", async () => {
-      const has = await transaction!.has([existingPersonID])
-      expect(has).to.be.true
-    })
-    it("should be able to find an existing instance", async () => {
-      const find = await transaction!.findByID<Person>(existingPersonID)
-      expect(find).to.not.be.undefined
-      expect(find).to.haveOwnProperty("instance")
-      const instance = find!.instance
-      expect(instance).to.not.be.undefined
-      expect(instance).to.have.property("firstName", "Adam")
-      expect(instance).to.have.property("lastName", "Doe")
-      expect(instance).to.have.property("age", 21)
-      expect(instance).to.have.property("_id")
-      expect(instance?._id).to.deep.equal(existingPersonID)
-    })
-    it("should be able to save an existing instance", async () => {
-      person.age = 99
-      const saved = await transaction!.save([person])
-      expect(saved).to.be.undefined
-      const deleted = await transaction!.delete([person._id])
-      expect(deleted).to.be.undefined
-    })
-    it("should be able to close/end an transaction", async () => {
-      await transaction!.end()
+
+    context("rejected transaction", function () {
+      before(async () => {
+        const instances = await client.create(dbID, "Person", [person])
+        existingPersonID = instances.length ? instances[0] : ""
+        person["_id"] = existingPersonID
+        transaction = client.writeTransaction(dbID, "Person")
+      })
+
+      it("should not commit an aborted write transaction", async function () {
+        await transaction?.start()
+        const newPerson = createPerson()
+        const ids = (await transaction?.create<Person>([newPerson])) ?? []
+        expect(ids).to.not.be.undefined
+        // Abort transaction
+        const rejected = await transaction?.abort()
+        expect(rejected).to.be.undefined
+        // After aborted transaction, it should still be false
+        const exHas = await client.has(dbID, "Person", ids)
+        expect(exHas).to.equal(false)
+      })
     })
   })
+
   describe(".listen", () => {
     const listener: { events: number; close?: () => void } = { events: 0 }
     const person = createPerson()

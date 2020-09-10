@@ -34,7 +34,7 @@ export class Transaction<
 
   /**
    * setReject rejects the current transaction, rather than flushing the results to the remote store via end.
-   * @param reject The optional reason for rejecting the transaction.
+   * @param reject A function which accepts a reason for rejecting the transaction.
    */
   protected setReject(reject: (reason?: any) => void): void {
     this.client.onEnd((status: grpc.Code, message: string) => {

@@ -18,6 +18,56 @@ import { Transaction } from "./Transaction"
 
 /**
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
+ * {@inheritDoc @textile/threads-client#Transaction}
+ * @example
+ * Create a new entry in our collection
+ * ```typescript
+ * import {Client, ThreadID} from '@textile/threads'
+ *
+ * interface Astronaut {
+ *   name: string
+ *   missions: number
+ *   _id: string
+ * }
+ *
+ * async function createBuzz (client: Client, threadID: ThreadID) {
+ *   const buzz: Astronaut = {
+ *     name: 'Buzz',
+ *     missions: 2,
+ *     _id: '',
+ *   }
+ *
+ *   const t = client.writeTransaction(threadID, 'astronauts')
+ *   await t.start()
+ *   await t.create([buzz])
+ *   await t.end() // Commit
+ * }
+ * ```
+ *
+ * @example
+ * Abort an in-flight transaction
+ * ```typescript
+ * import {Client, ThreadID} from '@textile/threads'
+ *
+ * interface Astronaut {
+ *   name: string
+ *   missions: number
+ *   _id: string
+ * }
+ *
+ * async function createBuzz (client: Client, threadID: ThreadID) {
+ *   const buzz: Astronaut = {
+ *     name: 'Buzz',
+ *     missions: 2,
+ *     _id: '',
+ *   }
+ *
+ *   const t = client.writeTransaction(threadID, 'astronauts')
+ *   await t.start()
+ *   await t.create([buzz])
+ *   await t.abort() // Abort
+ * }
+ * ```
  */
 export class ReadTransaction extends Transaction<
   ReadTransactionRequest,

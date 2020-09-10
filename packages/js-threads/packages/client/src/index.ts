@@ -406,10 +406,15 @@ export class Client {
    * Lists the collections in a thread
    * @param thread the ID of the database
    */
-  public async listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>> {
+  public async listCollections(
+    thread: ThreadID
+  ): Promise<Array<pb.GetCollectionInfoReply.AsObject>> {
     const req = new pb.ListCollectionsRequest()
     req.setDbid(thread.toBytes())
-    const resp = (await this.unary(API.ListCollections, req)) as pb.ListCollectionsReply.AsObject
+    const resp = (await this.unary(
+      API.ListCollections,
+      req
+    )) as pb.ListCollectionsReply.AsObject
     return resp.collectionsList
   }
 
