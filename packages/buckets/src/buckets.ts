@@ -39,7 +39,7 @@ import { listPathRecursive, listPathFlat } from './utils'
 const logger = log.getLogger('buckets')
 
 /**
- * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
+ * Buckets a client wrapper for interacting with the Textile Buckets API.
  * @example
  * Initialize the Bucket API and open an existing bucket (or create if new).
  * ```typescript

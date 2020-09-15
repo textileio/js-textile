@@ -40,7 +40,22 @@ import {
 } from './api'
 
 const logger = log.getLogger('pow')
-
+/**
+ * Pow a client wrapper for interacting with the Textile Powergate API.
+ * @example
+ * Initialize the Bucket API and open an existing bucket (or create if new).
+ * ```typescript
+ * import { Pow, PrivateKey, UserAuth } from '@textile/hub'
+ *
+ * const checkHealth = async (auth: UserAuth, user: PrivateKey) => {
+ *   const pow = Pow.withUserAuth(auth)
+ *   // Scope the API to the current user
+ *   pow.getToken(user)
+ *   // List adrs
+ *   const health = pow.health()
+ * }
+ * ```
+ */
 export class Pow extends GrpcAuthentication {
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
@@ -109,22 +124,6 @@ export class Pow extends GrpcAuthentication {
   }
 
   /**
-   * {@inheritDoc @textile/hub#GrpcAuthentication.withThread}
-   *
-   * @example
-   * ```@typescript
-   * import { Pow, ThreadID } from '@textile/hub'
-   *
-   * async function example (threadID: ThreadID) {
-   *   const pow = await Pow.withThread(threadID)
-   * }
-   * ```
-   */
-  withThread(threadID?: string) {
-    return super.withThread(threadID)
-  }
-
-  /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
    *
    * @example
@@ -169,6 +168,9 @@ export class Pow extends GrpcAuthentication {
     return super.getTokenChallenge(publicKey, callback)
   }
 
+  /**
+   * @beta
+   */
   async health(): Promise<CheckResponse.AsObject> {
     return health(this)
   }
@@ -176,6 +178,7 @@ export class Pow extends GrpcAuthentication {
   /**
    * Gets the Powergate node Filecoin peers. This method
    * requires a valid user, token, and session.
+   * @beta
    *
    * @example
    * ```typescript
@@ -192,6 +195,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Find a peer by peer id.
+   * @beta
    * @param peerId The peer id of the peer you want to find.
    */
   async findPeer(peerId: string): Promise<FindPeerResponse.AsObject> {
@@ -200,6 +204,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Query for network connectedness to the specified peer.
+   * @beta
    * @param peerId The peer id to test connectedness for.
    */
   async connectedness(peerId: string): Promise<ConnectednessResponse.AsObject> {
@@ -208,6 +213,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * List all Filecoin wallet addresses associated with the current account or user.
+   * @beta
    */
   async addrs(): Promise<AddrsResponse.AsObject> {
     return addrs(this)
@@ -215,6 +221,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Create a new Filecoin wallet address.
+   * @beta
    * @param name A human readable name for the wallet address.
    * @param type The type of address to create, wither bls or secp256k1.
    * @param makeDefault Whether or not to make the new address the default address to use in Filecoin transactions.
@@ -225,6 +232,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Query for general information about Powergate associated with the current account/user.
+   * @beta
    */
   async info(): Promise<InfoResponse.AsObject> {
     return info(this)
@@ -232,6 +240,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Show information about data stored in Powergate.
+   * @beta
    * @param cid The cid of the data to show information about.
    */
   async show(cid: string): Promise<SendFilResponse.AsObject> {
@@ -240,6 +249,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Show information for all data stored in Powergate for the current account/user.
+   * @beta
    */
   async showAll(): Promise<ShowAllResponse.AsObject> {
     return showAll(this)
@@ -247,6 +257,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Query for Filecoin storage deal records for the current account/user.
+   * @beta
    * @param config A config object to control the behavior of the query.
    */
   async listStorageDealRecords(
@@ -257,6 +268,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Query for Filecoin retrieval deal records for the current account/user.
+   * @beta
    * @param config A config object to control the behavior of the query.
    */
   async listRetrievalDealRecords(
@@ -267,6 +279,7 @@ export class Pow extends GrpcAuthentication {
 
   /**
    * Get the balance for any wallet address.
+   * @beta
    * @param address The wallet address to check the balance of.
    */
   async balance(address: string): Promise<BalanceResponse.AsObject> {

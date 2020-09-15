@@ -158,7 +158,7 @@ export class GrpcAuthentication extends GrpcConnection {
    * ```
    */
   withThread(threadID?: string) {
-    if (threadID === undefined) return this
+    if (threadID === undefined) return
     this.context.withThread(threadID)
   }
 
