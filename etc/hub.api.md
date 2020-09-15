@@ -162,8 +162,9 @@ export class Buckets extends GrpcAuthentication {
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
     root(key: string): Promise<RootObject | undefined>;
+    setPath(key: string, path: string, cid: string): Promise<void>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Buckets>;
-    withThread(threadID?: string): this | undefined;
+    withThread(threadID?: string): void;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Buckets;
 }
 
@@ -248,6 +249,11 @@ export function bucketsRemovePath(api: GrpcConnection, key: string, path: string
 //
 // @internal
 export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<RootObject | undefined>;
+
+// Warning: (ae-internal-missing-underscore) The name "bucketsSetPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function bucketsSetPath(api: GrpcConnection, key: string, path: string, cid: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
@@ -429,7 +435,7 @@ export class GrpcAuthentication extends GrpcConnection {
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<GrpcAuthentication>;
-    withThread(threadID?: string): this | undefined;
+    withThread(threadID?: string): void;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): GrpcAuthentication;
 }
 
@@ -564,27 +570,36 @@ export const MailConfig: {
 
 // Warning: (ae-incompatible-release-tags) The symbol "Pow" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
 //
-// @public (undocumented)
+// @public
 export class Pow extends GrpcAuthentication {
+    // @beta
     addrs(): Promise<AddrsResponse.AsObject>;
+    // @beta
     balance(address: string): Promise<BalanceResponse.AsObject>;
+    // @beta
     connectedness(peerId: string): Promise<ConnectednessResponse.AsObject>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Pow;
+    // @beta
     findPeer(peerId: string): Promise<FindPeerResponse.AsObject>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // (undocumented)
+    // @beta (undocumented)
     health(): Promise<CheckResponse.AsObject>;
+    // @beta
     info(): Promise<InfoResponse.AsObject>;
+    // @beta
     listRetrievalDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListRetrievalDealRecordsResponse.AsObject>;
+    // @beta
     listStorageDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListStorageDealRecordsResponse.AsObject>;
+    // @beta
     newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject>;
+    // @beta
     peers(): Promise<PeersResponse.AsObject>;
-    sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject>;
+    // @beta
     show(cid: string): Promise<SendFilResponse.AsObject>;
+    // @beta
     showAll(): Promise<ShowAllResponse.AsObject>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
-    withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Pow;
 }
 
@@ -876,7 +891,7 @@ export class Users extends GrpcAuthentication {
     watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
     watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Users>;
-    withThread(threadID?: string): this | undefined;
+    withThread(threadID?: string): void;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Users;
 }
 

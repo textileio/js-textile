@@ -24,6 +24,7 @@ import {
   bucketsLinks,
   bucketsRoot,
   bucketsCreate,
+  bucketsSetPath,
   PushPathResult,
   RootObject,
   LinksObject,
@@ -38,7 +39,7 @@ import { listPathRecursive, listPathFlat } from './utils'
 const logger = log.getLogger('buckets')
 
 /**
- * Buckets is a web-gRPC wrapper client for communicating with the web-gRPC enabled Textile Buckets API.
+ * Buckets a client wrapper for interacting with the Textile Buckets API.
  * @example
  * Initialize the Bucket API and open an existing bucket (or create if new).
  * ```typescript
@@ -538,6 +539,26 @@ export class Buckets extends GrpcAuthentication {
    */
   pullPath(key: string, path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
     return bucketsPullPath(this, key, path, opts)
+  }
+
+  /**
+   * Pushes a file to a bucket path.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A file/object (sub)-path within a bucket.
+   * @param cid The IPFS cid of the dag to set at the path.
+   * 
+   * @example
+   * Push a file to the root of a bucket
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const pushRoot = async (buckets: Buckets, key: string, cid: string) => {
+   *    return await buckets.setPath(key, '/', cid)
+   * }
+   * ```
+   */
+  async setPath(key: string, path: string, cid: string): Promise<void> {
+    return bucketsSetPath(this, key, path, cid)
   }
 
   /**

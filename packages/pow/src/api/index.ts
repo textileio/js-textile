@@ -116,24 +116,6 @@ export async function newAddr(
 /**
  * @internal
  */
-export async function sendFil(
-  api: GrpcConnection,
-  from: string,
-  to: string,
-  amount: number,
-  ctx?: ContextInterface,
-): Promise<SendFilResponse.AsObject> {
-  const req = new SendFilRequest()
-  req.setFrom(from)
-  req.setTo(to)
-  req.setAmount(amount)
-  const res: SendFilResponse = await api.unary(FFSRPCService.SendFil, req, ctx)
-  return res.toObject()
-}
-
-/**
- * @internal
- */
 export async function info(api: GrpcConnection, ctx?: ContextInterface): Promise<InfoResponse.AsObject> {
   const res: InfoResponse = await api.unary(FFSRPCService.Info, new InfoRequest(), ctx)
   return res.toObject()

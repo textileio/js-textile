@@ -30,8 +30,7 @@ import {
 const logger = log.getLogger('users')
 
 /**
- * Users provides a web-gRPC wrapper client for communicating with the Textile
- * Hub's web-gRPC enabled Users API.
+ * Users a client wrapper for interacting with the Textile Users API.
  *
  * This API has the ability to:
  *
