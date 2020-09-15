@@ -11,6 +11,8 @@ import {
   ListPathResponse,
   ListResponse,
   PullIpfsPathResponse,
+  SetPathRequest,
+  SetPathResponse,
   PullPathResponse,
   PushPathResponse,
   CreateRequest,
@@ -416,6 +418,24 @@ export async function bucketsPushPath(
       }
     }
   })
+}
+
+/**
+ * Pushes a file to a bucket path.
+ * @internal
+ */
+export async function bucketsSetPath(
+  api: GrpcConnection,
+  key: string,
+  path: string,
+  cid: string,
+  ctx?: ContextInterface,
+) {
+  const request = new SetPathRequest()
+  request.setKey(key)
+  request.setPath(path)
+  request.setCid(cid)
+  await api.unary(APIService.SetPath, request, ctx)
 }
 
 /**
