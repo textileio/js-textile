@@ -162,6 +162,7 @@ export class Buckets extends GrpcAuthentication {
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
     root(key: string): Promise<RootObject | undefined>;
+    setPath(key: string, path: string, cid: string): Promise<void>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Buckets>;
     withThread(threadID?: string): this | undefined;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Buckets;
@@ -248,6 +249,11 @@ export function bucketsRemovePath(api: GrpcConnection, key: string, path: string
 //
 // @internal
 export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<RootObject | undefined>;
+
+// Warning: (ae-internal-missing-underscore) The name "bucketsSetPath" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function bucketsSetPath(api: GrpcConnection, key: string, path: string, cid: string, ctx?: ContextInterface): Promise<void>;
 
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];

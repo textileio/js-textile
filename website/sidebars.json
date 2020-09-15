@@ -123,7 +123,8 @@
       "hub.buckets.pullpath",
       "hub.buckets.pullipfspath",
       "hub.buckets.remove",
-      "hub.buckets.removepath"
+      "hub.buckets.removepath",
+      "hub.buckets.setpath"
     ],
     "Experimental": [
       "hub.archive",

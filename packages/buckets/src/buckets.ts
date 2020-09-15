@@ -24,6 +24,7 @@ import {
   bucketsLinks,
   bucketsRoot,
   bucketsCreate,
+  bucketsSetPath,
   PushPathResult,
   RootObject,
   LinksObject,
@@ -31,7 +32,7 @@ import {
   ListPathItemObject,
   CreateObject,
   ArchiveStatus,
-  ArchiveInfo,, bucketsSetPath
+  ArchiveInfo,
 } from './api'
 import { listPathRecursive, listPathFlat } from './utils'
 
@@ -551,16 +552,12 @@ export class Buckets extends GrpcAuthentication {
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
-   * const pushRoot = async (cid: string, bucketKey: string) => {
-   *    return await buckets.setPath(bucketKey, '/', cid)
+   * const pushRoot = async (buckets: Buckets, key: string, cid: string) => {
+   *    return await buckets.setPath(key, '/', cid)
    * }
    * ```
    */
-  async setPath(
-    key: string,
-    path: string,
-    cid: string,
-  ): Promise<void> {
+  async setPath(key: string, path: string, cid: string): Promise<void> {
     return bucketsSetPath(this, key, path, cid)
   }
 
