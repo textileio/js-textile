@@ -35,7 +35,6 @@ import {
   listStorageDealRecords,
   newAddr,
   peers,
-  sendFil,
   show,
   showAll,
 } from './api'
@@ -222,16 +221,6 @@ export class Pow extends GrpcAuthentication {
    */
   async newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject> {
     return newAddr(this, name, type, makeDefault)
-  }
-
-  /**
-   * Send FIL from an address associated with the current account/user to any other address.
-   * @param from The address to send FIL from.
-   * @param to The address to send FIL to.
-   * @param amount The amount of FIL to send.
-   */
-  async sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject> {
-    return sendFil(this, from, to, amount)
   }
 
   /**

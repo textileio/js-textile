@@ -13,6 +13,9 @@
     "Threads": [
       "hub.client"
     ],
+    "Filecoin": [
+      "hub.pow"
+    ],
     "Common Methods & Classes": [
       "hub.threadid",
       "hub.createuserauth",
@@ -198,6 +201,36 @@
       "hub.where",
       "hub.instancelist",
       "hub.instancelist.instanceslist"
+    ]
+  },
+  "filcoin-docs": {
+    "Powergate (beta)": [
+      "hub.pow.addrs",
+      "hub.pow.balance",
+      "hub.pow.connectedness",
+      "hub.pow.copyauth",
+      "hub.pow.findpeer",
+      "hub.pow.gettoken",
+      "hub.pow.gettokenchallenge",
+      "hub.pow.health",
+      "hub.pow.info",
+      "hub.pow.listretrievaldealrecords",
+      "hub.pow.liststoragedealrecords",
+      "hub.pow.newaddr",
+      "hub.pow.peers",
+      "hub.pow.show",
+      "hub.pow.showall",
+      "hub.pow.withkeyinfo",
+      "hub.pow.withthread",
+      "hub.pow.withuserauth"
+    ],
+    "Types": [
+      "hub.createobject",
+      "hub.linksobject",
+      "hub.listpathobject",
+      "hub.listpathitemobject",
+      "hub.listpathitemobject",
+      "hub.rootobject"
     ]
   },
   "Types": {

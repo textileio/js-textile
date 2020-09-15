@@ -586,7 +586,6 @@ export class Pow extends GrpcAuthentication {
     listStorageDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListStorageDealRecordsResponse.AsObject>;
     newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject>;
     peers(): Promise<PeersResponse.AsObject>;
-    sendFil(from: string, to: string, amount: number): Promise<SendFilResponse.AsObject>;
     show(cid: string): Promise<SendFilResponse.AsObject>;
     showAll(): Promise<ShowAllResponse.AsObject>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
