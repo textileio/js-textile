@@ -69,7 +69,7 @@
 <span class="hljs-keyword">const</span> checkHealth = <span class="hljs-keyword">async</span> (auth: UserAuth, user: PrivateKey) =&gt; {
   <span class="hljs-keyword">const</span> pow = Pow.withUserAuth(auth)
   <span class="hljs-comment">// Scope the API to the current user</span>
-  pow.getToken(user)
+  <span class="hljs-keyword">await</span> pow.getToken(user)
   <span class="hljs-comment">// List adrs</span>
   <span class="hljs-keyword">const</span> health = pow.health()
 }
