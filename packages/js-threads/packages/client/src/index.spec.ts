@@ -126,6 +126,15 @@ describe("Client", function () {
       expect(info.indexesList).to.have.lengthOf(1)
     })
 
+    it("getCollectionInfo should throw for a missing collection", async () => {
+      try {
+        await client.getCollectionInfo(dbID, "Fake")
+        throw new Error("should have thrown")
+      } catch (err) {
+        expect(err.toString()).to.include("collection not found")
+      }
+    })
+
     it("getCollectionIndexes should list valid collection indexes", async () => {
       // @todo Update to latest APIs and mark this as deprecated
       const list = await client.getCollectionIndexes(dbID, "FromObject")

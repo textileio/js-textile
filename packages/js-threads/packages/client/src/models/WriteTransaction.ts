@@ -136,8 +136,8 @@ export class WriteTransaction extends Transaction<
       const saveReq = new SaveRequest()
       const list: any[] = []
       values.forEach((v) => {
-        if (!v.hasOwnProperty("ID")) {
-          v["ID"] = "" // The server will add an ID if empty.
+        if (!v.hasOwnProperty("_id")) {
+          v["_id"] = "" // The server will add an ID if empty.
         }
         list.push(Buffer.from(JSON.stringify(v)))
       })
