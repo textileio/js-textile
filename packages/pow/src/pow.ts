@@ -50,7 +50,7 @@ const logger = log.getLogger('pow')
  * const checkHealth = async (auth: UserAuth, user: PrivateKey) => {
  *   const pow = Pow.withUserAuth(auth)
  *   // Scope the API to the current user
- *   pow.getToken(user)
+ *   await pow.getToken(user)
  *   // List adrs
  *   const health = pow.health()
  * }
