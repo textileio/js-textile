@@ -34,7 +34,7 @@
     "@textile/crypto": "^0.1.0",
     "@textile/grpc-authentication": "^0.2.1-alpha.1",
     "@textile/grpc-connection": "^0.1.4-alpha.0",
-    "@textile/grpc-powergate-client": "0.6.0-rc2",
+    "@textile/grpc-powergate-client": "0.5.0-rc1",
     "@types/next-tick": "^1.0.0",
     "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
