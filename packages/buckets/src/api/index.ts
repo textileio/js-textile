@@ -1,45 +1,44 @@
-import log from 'loglevel'
+import { grpc } from '@improbable-eng/grpc-web'
 import {
-  Root,
-  LinksResponse,
-  ListIpfsPathResponse,
-  RootResponse,
-  RootRequest,
-  ArchiveWatchResponse,
-  CreateResponse,
-  ListPathItem,
-  ListPathResponse,
-  ListResponse,
-  PullIpfsPathResponse,
-  SetPathRequest,
-  SetPathResponse,
-  PullPathResponse,
-  PushPathResponse,
-  CreateRequest,
-  LinksRequest,
-  ListRequest,
-  ListPathRequest,
-  ListIpfsPathRequest,
-  PushPathRequest,
-  PullPathRequest,
-  PullIpfsPathRequest,
-  RemoveRequest,
-  RemovePathRequest,
+  ArchiveInfoRequest,
+  ArchiveInfoResponse,
   ArchiveRequest,
   ArchiveStatusRequest,
-  ArchiveWatchRequest,
-  ArchiveInfoRequest,
   ArchiveStatusResponse,
-  ArchiveInfoResponse,
+  ArchiveWatchRequest,
+  ArchiveWatchResponse,
+  CreateRequest,
+  CreateResponse,
+  LinksRequest,
+  LinksResponse,
+  ListIpfsPathRequest,
+  ListIpfsPathResponse,
+  ListPathRequest,
+  ListPathResponse,
+  ListRequest,
+  ListResponse,
+  PathItem,
+  PullIpfsPathRequest,
+  PullIpfsPathResponse,
+  PullPathRequest,
+  PullPathResponse,
+  PushPathRequest,
+  PushPathResponse,
+  RemovePathRequest,
+  RemoveRequest,
+  Root,
+  RootRequest,
+  RootResponse,
+  SetPathRequest,
 } from '@textile/buckets-grpc/buckets_pb'
 import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb_service'
-import CID from 'cids'
-import { EventIterator } from 'event-iterator'
-import nextTick from 'next-tick'
-import { grpc } from '@improbable-eng/grpc-web'
 import { ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { normaliseInput, File } from './normalize'
+import CID from 'cids'
+import { EventIterator } from 'event-iterator'
+import log from 'loglevel'
+import nextTick from 'next-tick'
+import { File, normaliseInput } from './normalize'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const block = require('it-block')
@@ -80,23 +79,37 @@ export type RootObject = {
   thread: string
 }
 
+export enum PathAccessRoleMap {
+  PATH_ACCESS_ROLE_UNSPECIFIED = 0,
+  PATH_ACCESS_ROLE_READER = 1,
+  PATH_ACCESS_ROLE_WRITER = 2,
+  PATH_ACCESS_ROLE_ADMIN = 3,
+}
+
+export type Metadata = {
+  rolesMap: Array<[string, PathAccessRoleMap]>
+  updatedAt: number
+}
+
 /**
  * A bucket path item response
  */
-export type ListPathItemObject = {
+export type PathItemObject = {
   cid: string
   name: string
   path: string
   size: number
   isDir: boolean
-  itemsList: Array<ListPathItemObject>
+  itemsList: Array<PathItemObject>
+  itemsCount: number
+  metadata?: Metadata
 }
 
 /**
  * A bucket list path response
  */
-export type ListPathObject = {
-  item?: ListPathItemObject
+export type PathObject = {
+  item?: PathItemObject
   root?: RootObject
 }
 
@@ -158,7 +171,7 @@ const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
   return convertRootObject(root)
 }
 
-const convertPathItem = (item: ListPathItem): ListPathItemObject => {
+const convertPathItem = (item: PathItem): PathItemObject => {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -167,10 +180,12 @@ const convertPathItem = (item: ListPathItem): ListPathItemObject => {
     size: item.getSize(),
     isDir: item.getIsDir(),
     itemsList: list ? list.map(convertPathItem) : [],
+    itemsCount: item.getItemsCount(),
+    metadata: item.getMetadata()?.toObject(),
   }
 }
 
-const convertPathItemNullable = (item?: ListPathItem): ListPathItemObject | undefined => {
+const convertPathItemNullable = (item?: PathItem): PathItemObject | undefined => {
   if (!item) return
   return convertPathItem(item)
 }
@@ -295,7 +310,7 @@ export async function bucketsListPath(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<ListPathObject> {
+): Promise<PathObject> {
   logger.debug('list path request')
   const req = new ListPathRequest()
   req.setKey(key)
@@ -317,7 +332,7 @@ export async function bucketsListIpfsPath(
   api: GrpcConnection,
   path: string,
   ctx?: ContextInterface,
-): Promise<ListPathItemObject | undefined> {
+): Promise<PathItemObject | undefined> {
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)

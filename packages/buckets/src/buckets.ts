@@ -1,5 +1,3 @@
-import log from 'loglevel'
-import { Client } from '@textile/hub-threads-client'
 import { Identity } from '@textile/crypto'
 import {
   CopyAuthOptions,
@@ -7,34 +5,36 @@ import {
   WithKeyInfoOptions,
   WithUserAuthOptions,
 } from '@textile/grpc-authentication'
-import { ThreadID } from '@textile/threads-id'
+import { Client } from '@textile/hub-threads-client'
 import { KeyInfo, UserAuth } from '@textile/security'
+import { ThreadID } from '@textile/threads-id'
+import log from 'loglevel'
 import {
-  bucketsArchiveWatch,
+  ArchiveInfo,
+  ArchiveStatus,
+  bucketsArchive,
   bucketsArchiveInfo,
   bucketsArchiveStatus,
-  bucketsArchive,
-  bucketsRemovePath,
-  bucketsRemove,
+  bucketsArchiveWatch,
+  bucketsCreate,
+  bucketsLinks,
+  bucketsList,
+  bucketsListIpfsPath,
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPushPath,
-  bucketsListIpfsPath,
-  bucketsList,
-  bucketsLinks,
+  bucketsRemove,
+  bucketsRemovePath,
   bucketsRoot,
-  bucketsCreate,
   bucketsSetPath,
+  CreateObject,
+  LinksObject,
+  PathItemObject,
+  PathObject,
   PushPathResult,
   RootObject,
-  LinksObject,
-  ListPathObject,
-  ListPathItemObject,
-  CreateObject,
-  ArchiveStatus,
-  ArchiveInfo,
 } from './api'
-import { listPathRecursive, listPathFlat } from './utils'
+import { listPathFlat, listPathRecursive } from './utils'
 
 const logger = log.getLogger('buckets')
 
@@ -421,7 +421,7 @@ export class Buckets extends GrpcAuthentication {
    * @param path A file/object (sub)-path within a bucket.
    * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, depth = 1): Promise<ListPathObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<PathObject> {
     logger.debug('list path request')
     return await listPathRecursive(this, key, path, depth)
   }
@@ -460,7 +460,7 @@ export class Buckets extends GrpcAuthentication {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<ListPathItemObject | undefined> {
+  async listIpfsPath(path: string): Promise<PathItemObject | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }
@@ -546,7 +546,7 @@ export class Buckets extends GrpcAuthentication {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
    * @param cid The IPFS cid of the dag to set at the path.
-   * 
+   *
    * @example
    * Push a file to the root of a bucket
    * ```typescript

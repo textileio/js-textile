@@ -118,9 +118,9 @@
     "Types": [
       "hub.createobject",
       "hub.linksobject",
-      "hub.listpathobject",
-      "hub.listpathitemobject",
-      "hub.listpathitemobject",
+      "hub.pathobject",
+      "hub.pathitemobject",
+      "hub.pathitemobject",
       "hub.rootobject"
     ]
   },
@@ -208,9 +208,9 @@
     "Types": [
       "hub.createobject",
       "hub.linksobject",
-      "hub.listpathobject",
-      "hub.listpathitemobject",
-      "hub.listpathitemobject",
+      "hub.pathobject",
+      "hub.pathitemobject",
+      "hub.pathitemobject",
       "hub.rootobject"
     ]
   },
