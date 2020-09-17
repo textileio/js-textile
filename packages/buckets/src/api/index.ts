@@ -21,8 +21,11 @@ import {
   PathItem,
   PullIpfsPathRequest,
   PullIpfsPathResponse,
+  PullPathAccessRolesRequest,
+  PullPathAccessRolesResponse,
   PullPathRequest,
   PullPathResponse,
+  PushPathAccessRolesRequest,
   PushPathRequest,
   PushPathResponse,
   RemovePathRequest,
@@ -607,6 +610,39 @@ export async function bucketsRemovePath(
   if (root) req.setRoot(root)
   await api.unary(APIService.RemovePath, req, ctx)
   return
+}
+
+export async function bucketsPushPathAccessRoles(
+  api: GrpcConnection,
+  key: string,
+  path: string,
+  roles: Map<string, PathAccessRole>,
+  ctx?: ContextInterface,
+) {
+  logger.debug('remove path request')
+  const req = new PushPathAccessRolesRequest()
+  req.setKey(key)
+  req.setPath(path)
+  roles.forEach((value, key) => req.getRolesMap().set(key, value))
+  await api.unary(APIService.PushPathAccessRoles, req, ctx)
+  return
+}
+
+export async function bucketsPullPathAccessRoles(
+  api: GrpcConnection,
+  key: string,
+  path = '/',
+  ctx?: ContextInterface,
+): Promise<Map<string, 0 | 1 | 2 | 3>> {
+  logger.debug('remove path request')
+  const req = new PullPathAccessRolesRequest()
+  req.setKey(key)
+  req.setPath(path)
+  const response: PullPathAccessRolesResponse = await api.unary(APIService.PullPathAccessRoles, req, ctx)
+  const roles = response.getRolesMap()
+  const typedRoles = new Map()
+  roles.forEach((entry, key) => typedRoles.set(key, entry))
+  return typedRoles
 }
 
 /**

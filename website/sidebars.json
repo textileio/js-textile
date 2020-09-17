@@ -108,7 +108,9 @@
       "hub.buckets.listipfspath",
       "hub.buckets.open",
       "hub.buckets.pushpath",
+      "hub.buckets.pushpathaccessroles",
       "hub.buckets.pullpath",
+      "hub.buckets.pullpathaccessroles",
       "hub.buckets.pullipfspath",
       "hub.buckets.remove",
       "hub.buckets.removepath",
@@ -119,9 +121,11 @@
       "hub.createobject",
       "hub.linksobject",
       "hub.pathobject",
+      "hub.pathaccessrole",
       "hub.pathitemobject",
       "hub.pathitemobject",
-      "hub.rootobject"
+      "hub.rootobject",
+      "hub.metadataobject"
     ]
   },
   "client-docs": {
