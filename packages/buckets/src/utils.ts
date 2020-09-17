@@ -1,6 +1,5 @@
-import { PathItem } from '@textile/buckets-grpc/buckets_pb'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { bucketsListPath, PathObject } from './api'
+import { bucketsListPath, PathItemObject, PathObject } from './api'
 
 /**
  * bytesToArray converts a buffer into <4mb chunks for use with grpc API
@@ -29,13 +28,13 @@ export async function listPathRecursive(
   const rootPath = path === '' || path === '.' || path === '/' ? '' : `${path}/`
   const tree = await bucketsListPath(grpc, bucketKey, path)
   if (tree.item && (currentDepth + 1 <= depth || depth === -1)) {
-    for (let i = 0; i < tree.item.itemsList.length; i++) {
-      const obj = tree.item.itemsList[i]
+    for (let i = 0; i < tree.item.items.length; i++) {
+      const obj = tree.item.items[i]
       if (!obj.isDir) continue
       const dirPath = `${rootPath}${obj.name}`
       const { item } = await listPathRecursive(grpc, bucketKey, dirPath, depth, currentDepth + 1)
       if (item) {
-        tree.item.itemsList[i] = item
+        tree.item.items[i] = item
       }
     }
   }
@@ -43,7 +42,7 @@ export async function listPathRecursive(
 }
 
 async function treeToPaths(
-  tree: PathItem.AsObject[],
+  tree: PathItemObject[],
   path?: string,
   dirs = true,
   depth = 5,
@@ -54,7 +53,7 @@ async function treeToPaths(
     const newPath = path === '' ? `${item.name}` : `${path}/${item.name}`
     if (dirs || !item.isDir) result.push(newPath)
     if (item.isDir && (currentDepth < depth || depth === -1)) {
-      const downtree = await treeToPaths(item.itemsList, newPath, dirs, depth, currentDepth + 1)
+      const downtree = await treeToPaths(item.items, newPath, dirs, depth, currentDepth + 1)
       result.push(...downtree)
     }
   }
@@ -73,5 +72,5 @@ export async function listPathFlat(
 ): Promise<Array<string>> {
   const tree = await listPathRecursive(grpc, bucketKey, path, depth)
   if (!tree.item) return []
-  return treeToPaths(tree.item.itemsList, path, dirs)
+  return treeToPaths(tree.item.items, path, dirs)
 }

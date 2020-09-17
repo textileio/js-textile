@@ -9,6 +9,7 @@ export {
   ListIpfsPathResponse,
   ListPathResponse,
   ListResponse,
+  Metadata,
   PathItem,
   PullIpfsPathResponse,
   PullPathResponse,

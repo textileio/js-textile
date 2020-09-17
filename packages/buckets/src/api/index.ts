@@ -33,8 +33,9 @@ import {
   SetPathRequest,
 } from '@textile/buckets-grpc/buckets_pb'
 import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb_service'
-import { ContextInterface } from '@textile/context'
+import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
+import { WebsocketTransport } from '@textile/grpc-transport'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
