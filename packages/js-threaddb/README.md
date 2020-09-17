@@ -1,3 +1,3 @@
-ThreadDB Javascript implementation
+Javascript implementation of Textile's ThreadDB
 
-> Temporary home for JS ThreadDB development and planning
+> An offline-first local db that syncs to the distributed web.
