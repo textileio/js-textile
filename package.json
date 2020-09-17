@@ -60,7 +60,7 @@
   "devDependencies": {
     "@microsoft/api-documenter": "^7.8.42",
     "@microsoft/api-extractor": "^7.9.13",
-    "@textile/threads": "^0.3.13",
+    "@textile/threads": "^1.0.0-alpha.0",
     "@types/browser-or-node": "^1.2.0",
     "@types/chai": "^4.2.5",
     "@types/mocha": "^7.0.1",
