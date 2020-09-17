@@ -248,6 +248,24 @@ describe("Client", function () {
       expect(instances.length).to.equal(1)
     })
   })
+
+  describe(".verify", () => {
+    // TODO: Once we support specfying write validators, flush out this test more fully
+    it("should be able to verfiy incoming instances before writing/saving", async () => {
+      const person = createPerson()
+      const [id] = await client.create(dbID, "Person", [person])
+      expect(id).to.not.be.undefined
+      person._id = id
+      person.age = 51
+      const err1 = await client.verify(dbID, "Person", [person])
+      expect(err1).to.be.undefined
+      // expect(err1).to.not.be.undefined
+      // expect(err1?.message).to.include("verify")
+      person.age = 50
+      const err2 = await client.verify(dbID, "Person", [person])
+      expect(err2).to.be.undefined
+    })
+  })
   describe(".save", () => {
     it("response should be defined and be an empty object", async () => {
       const person = createPerson()
@@ -413,25 +431,30 @@ describe("Client", function () {
     })
 
     context("rejected transaction", function () {
-      const person = createPerson()
-      before(async () => {
-        const instances = await client.create(dbID, "Person", [person])
-        existingPersonID = instances.length ? instances[0] : ""
-        person["_id"] = existingPersonID
-        transaction = client.writeTransaction(dbID, "Person")
-      })
-
-      it("should not commit an aborted write transaction", async function () {
-        await transaction?.start()
+      it("should not commit a discarded write transaction", async function () {
         const newPerson = createPerson()
-        const ids = (await transaction?.create<Person>([newPerson])) ?? []
-        expect(ids).to.not.be.undefined
-        // Abort transaction
-        const rejected = await transaction?.abort()
+        const [id] = await client.create(dbID, "Person", [newPerson])
+
+        // Update _id to be on the safe side
+        newPerson._id = id
+
+        // Create a new write transaction, which we'll discard later
+        const transaction = client.writeTransaction(dbID, "Person")
+        await transaction.start()
+
+        newPerson.age = 38 // Update age, but discard in a moment
+
+        // Abort/discard transaction
+        const rejected = await transaction.discard()
         expect(rejected).to.be.undefined
-        // After aborted transaction, it should still be false
-        const exHas = await client.has(dbID, "Person", ids)
-        expect(exHas).to.equal(false)
+
+        // Try to do something that should fail later (but not now)
+        await transaction.save([newPerson])
+        // After discarding transaction, we end it... but results updates should be ignored
+        await transaction.end()
+
+        const { instance } = await client.findByID(dbID, "Person", id)
+        expect(instance.age).to.not.equal(38)
       })
     })
   })

@@ -849,7 +849,8 @@ export class Client {
    * Saves changes to an existing model instance in the given store.
    * @param threadID the ID of the database
    * @param collectionName The human-readable name of the model to use.
-   * @param values An array of model instances as JSON/JS objects. Each model instance must have a valid existing `ID` property.
+   * @param values An array of model instances as JSON/JS objects.
+   * Each model instance must have a valid existing `_id` property.
    *
    * @example
    * Update an existing instance
@@ -885,8 +886,8 @@ export class Client {
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
-      if (!v.hasOwnProperty("ID")) {
-        v["ID"] = "" // The server will add an ID if empty.
+      if (!v.hasOwnProperty("_id")) {
+        v["_id"] = "" // The server will add an ID if empty.
       }
       list.push(encoder.encode(JSON.stringify(v)))
     })
@@ -1060,6 +1061,55 @@ export class Client {
       ),
     }
     return ret
+  }
+
+  /**
+   * Verify checks existing instance changes.
+   * Each model instance must have a valid existing `_id` property.
+   * @param threadID the ID of the database
+   * @param collectionName The human-readable name of the model to use.
+   * @param values An array of model instances as JSON/JS objects.
+   *
+   * @example
+   * Update an existing instance
+   * ```typescript
+   * import {Client, ThreadID, Where} from '@textile/threads'
+   *
+   * interface Astronaut {
+   *   name: string
+   *   missions: number
+   *   _id: string
+   * }
+   *
+   * async function verifyBuzz (client: Client, threadID: ThreadID) {
+   *   const query = new Where('name').eq('Buzz')
+   *   const result = await client.find<Astronaut>(threadID, 'astronauts', query)
+   *
+   *   if (result.instancesList.length < 1) return
+   *
+   *   const buzz = result.instancesList[0]
+   *   buzz.missions += 1
+   *
+   *   // Is this going to be a valid update?
+   *   return await client.verify(threadID, 'astronauts', [buzz])
+   * }
+   * ```
+   */
+  public async verify(
+    threadID: ThreadID,
+    collectionName: string,
+    values: any[]
+  ): Promise<Error | undefined> {
+    const req = new pb.VerifyRequest()
+    req.setDbid(threadID.toBytes())
+    req.setCollectionname(collectionName)
+    const list: any[] = values.map((v) => encoder.encode(JSON.stringify(v)))
+    req.setInstancesList(list)
+    const { transactionerror } = (await this.unary(
+      API.Verify,
+      req
+    )) as pb.VerifyReply.AsObject
+    return transactionerror ? new Error(transactionerror) : undefined
   }
 
   /**

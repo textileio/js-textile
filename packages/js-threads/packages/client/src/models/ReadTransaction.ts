@@ -16,6 +16,8 @@ import { ThreadID } from "@textile/threads-id"
 import { Instance, InstanceList, QueryJSON } from "./query"
 import { Transaction } from "./Transaction"
 
+const decoder = new TextDecoder()
+
 /**
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
  * {@inheritDoc @textile/threads-client#Transaction}
@@ -88,7 +90,11 @@ export class ReadTransaction extends Transaction<
       req.setHasrequest(hasReq)
       this.client.onMessage((message: ReadTransactionReply) => {
         const reply = message.getHasreply()
-        resolve(reply ? reply.toObject().exists : false)
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
+        resolve(reply && reply.getExists())
       })
       this.setReject(reject)
       this.client.send(req)
@@ -107,9 +113,14 @@ export class ReadTransaction extends Transaction<
       req.setFindrequest(findReq)
       this.client.onMessage((message: ReadTransactionReply) => {
         const reply = message.getFindreply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         if (reply === undefined) {
           resolve()
         } else {
+          // TODO: Clean this up to avoid using Buffer
           const ret: InstanceList<T> = {
             instancesList: reply
               .toObject()
@@ -137,16 +148,15 @@ export class ReadTransaction extends Transaction<
       req.setFindbyidrequest(findReq)
       this.client.onMessage((message: ReadTransactionReply) => {
         const reply = message.getFindbyidreply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         if (reply === undefined) {
           resolve()
         } else {
           const ret: Instance<T> = {
-            instance: JSON.parse(
-              Buffer.from(
-                reply.toObject().instance as string,
-                "base64"
-              ).toString()
-            ),
+            instance: JSON.parse(decoder.decode(reply.getInstance_asU8())),
           }
           resolve(ret)
         }

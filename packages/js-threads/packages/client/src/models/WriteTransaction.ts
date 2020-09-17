@@ -7,6 +7,7 @@ import { ContextInterface } from "@textile/context"
 import {
   CreateRequest,
   DeleteRequest,
+  DiscardRequest,
   FindByIDRequest,
   FindRequest,
   HasRequest,
@@ -18,6 +19,8 @@ import {
 import { ThreadID } from "@textile/threads-id"
 import { Instance, InstanceList, QueryJSON } from "./query"
 import { Transaction } from "./Transaction"
+
+const decoder = new TextDecoder()
 
 /**
  * WriteTransaction performs a mutating bulk transaction on the underlying store.
@@ -68,7 +71,8 @@ import { Transaction } from "./Transaction"
  *   const t = client.writeTransaction(threadID, 'astronauts')
  *   await t.start()
  *   await t.create([buzz])
- *   await t.abort() // Abort
+ *   await t.discard() // Abort
+ *   await t.end()
  * }
  * ```
  */
@@ -116,6 +120,10 @@ export class WriteTransaction extends Transaction<
       req.setCreaterequest(createReq)
       this.client.onMessage((message: WriteTransactionReply) => {
         const reply = message.getCreatereply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         if (reply === undefined) {
           resolve()
         } else {
@@ -137,14 +145,19 @@ export class WriteTransaction extends Transaction<
       const list: any[] = []
       values.forEach((v) => {
         if (!v.hasOwnProperty("_id")) {
-          v["_id"] = "" // The server will add an ID if empty.
+          v["_id"] = "" // The server will add an _id if empty.
         }
         list.push(Buffer.from(JSON.stringify(v)))
       })
       saveReq.setInstancesList(list)
       const req = new WriteTransactionRequest()
       req.setSaverequest(saveReq)
-      this.client.onMessage((/** message: WriteTransactionReply */) => {
+      this.client.onMessage((message: WriteTransactionReply) => {
+        const reply = message.getSavereply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         resolve()
       })
       super.setReject(reject)
@@ -162,7 +175,12 @@ export class WriteTransaction extends Transaction<
       deleteReq.setInstanceidsList(IDs)
       const req = new WriteTransactionRequest()
       req.setDeleterequest(deleteReq)
-      this.client.onMessage((/** message: WriteTransactionReply */) => {
+      this.client.onMessage((message: WriteTransactionReply) => {
+        const reply = message.getSavereply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         resolve()
       })
       super.setReject(reject)
@@ -181,7 +199,11 @@ export class WriteTransaction extends Transaction<
       req.setHasrequest(hasReq)
       this.client.onMessage((message: WriteTransactionReply) => {
         const reply = message.getHasreply()
-        resolve(reply ? reply.toObject().exists == true : false)
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
+        resolve(reply && reply.getExists())
       })
       super.setReject(reject)
       this.client.send(req)
@@ -199,9 +221,14 @@ export class WriteTransaction extends Transaction<
       req.setFindrequest(findReq)
       this.client.onMessage((message: WriteTransactionReply) => {
         const reply = message.getFindreply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         if (reply === undefined) {
           resolve()
         } else {
+          // TODO: Clean this up to avoid using Buffer
           const ret: InstanceList<T> = {
             instancesList: reply
               .toObject()
@@ -229,16 +256,15 @@ export class WriteTransaction extends Transaction<
       req.setFindbyidrequest(findReq)
       this.client.onMessage((message: WriteTransactionReply) => {
         const reply = message.getFindbyidreply()
+        const err = reply?.getTransactionerror()
+        if (err) {
+          reject(new Error(err))
+        }
         if (reply === undefined) {
           resolve()
         } else {
           const ret: Instance<T> = {
-            instance: JSON.parse(
-              Buffer.from(
-                reply.toObject().instance as string,
-                "base64"
-              ).toString()
-            ),
+            instance: JSON.parse(decoder.decode(reply.getInstance_asU8())),
           }
           resolve(ret)
         }
@@ -249,7 +275,8 @@ export class WriteTransaction extends Transaction<
   }
 
   /**
-   * abort quits the current transaction and drops all associated updates.
+   * Discard drops all active transaction changes.
+   * It also invalidates the transaction, so it will fail upon calling end.
    * @example
    * Abort an in-flight transaction
    * ```typescript
@@ -271,19 +298,25 @@ export class WriteTransaction extends Transaction<
    *   const t = client.writeTransaction(threadID, 'astronauts')
    *   await t.start()
    *   await t.create([buzz])
-   *   await t.abort() // Abort
+   *   await t.discard() // Abort
+   *   await t.end()
    * }
    * ```
    */
-  public async abort(): Promise<void> {
+  public async discard(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      // Invalid request with no type set
       const req = new WriteTransactionRequest()
-      this.client.send(req)
-      super.setReject(({ message }) => {
-        if (message === "no WriteTransactionRequest type set") resolve()
-        else reject(message)
+      req.setDiscardrequest(new DiscardRequest())
+      this.client.onMessage((message: WriteTransactionReply) => {
+        const reply = message.getDiscardreply()
+        if (reply) {
+          resolve()
+        } else {
+          reject(new Error("unexpected response type"))
+        }
       })
+      super.setReject(reject)
+      this.client.send(req)
     })
   }
 }

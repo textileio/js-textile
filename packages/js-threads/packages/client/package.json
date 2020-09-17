@@ -46,7 +46,7 @@
     "@textile/grpc-transport": "^0.0.3",
     "@textile/multiaddr": "^0.0.24",
     "@textile/security": "^0.2.7",
-    "@textile/threads-client-grpc": "^0.1.23",
+    "@textile/threads-client-grpc": "^1.0.0-rc1",
     "@textile/threads-core": "^0.3.1",
     "@textile/threads-id": "^0.1.13",
     "@types/google-protobuf": "^3.7.2",
