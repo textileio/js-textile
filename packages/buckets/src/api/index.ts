@@ -17,6 +17,7 @@ import {
   ListPathResponse,
   ListRequest,
   ListResponse,
+  Metadata,
   PathItem,
   PullIpfsPathRequest,
   PullIpfsPathResponse,
@@ -79,15 +80,15 @@ export type RootObject = {
   thread: string
 }
 
-export enum PathAccessRoleMap {
+export enum PathAccessRole {
   PATH_ACCESS_ROLE_UNSPECIFIED = 0,
   PATH_ACCESS_ROLE_READER = 1,
   PATH_ACCESS_ROLE_WRITER = 2,
   PATH_ACCESS_ROLE_ADMIN = 3,
 }
 
-export type Metadata = {
-  rolesMap: Array<[string, PathAccessRoleMap]>
+export type MetadataObject = {
+  roles: Map<string, PathAccessRole>
   updatedAt: number
 }
 
@@ -100,9 +101,9 @@ export type PathItemObject = {
   path: string
   size: number
   isDir: boolean
-  itemsList: Array<PathItemObject>
-  itemsCount: number
-  metadata?: Metadata
+  items: Array<PathItemObject>
+  count: number
+  metadata?: MetadataObject
 }
 
 /**
@@ -171,6 +172,19 @@ const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
   return convertRootObject(root)
 }
 
+const convertMetadata = (metadata?: Metadata): MetadataObject | undefined => {
+  if (!metadata) return
+  const roles = metadata.getRolesMap()
+  const typedRoles = new Map()
+  roles.forEach((entry, key) => typedRoles.set(key, entry))
+  const response: MetadataObject = {
+    updatedAt: metadata.getUpdatedAt(),
+    roles: typedRoles,
+  }
+
+  return response
+}
+
 const convertPathItem = (item: PathItem): PathItemObject => {
   const list = item.getItemsList()
   return {
@@ -179,9 +193,9 @@ const convertPathItem = (item: PathItem): PathItemObject => {
     path: item.getPath(),
     size: item.getSize(),
     isDir: item.getIsDir(),
-    itemsList: list ? list.map(convertPathItem) : [],
-    itemsCount: item.getItemsCount(),
-    metadata: item.getMetadata()?.toObject(),
+    items: list ? list.map(convertPathItem) : [],
+    count: item.getItemsCount(),
+    metadata: convertMetadata(item.getMetadata()),
   }
 }
 
