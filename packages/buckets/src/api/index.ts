@@ -37,8 +37,9 @@ import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import nextTick from 'next-tick'
 import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface } from '@textile/context'
+import { ContextInterface, Context } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
+import { WebsocketTransport } from '@textile/grpc-transport'
 import { normaliseInput, File } from './normalize'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
