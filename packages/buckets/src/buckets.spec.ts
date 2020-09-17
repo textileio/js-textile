@@ -1,11 +1,11 @@
-import fs from 'fs'
-import path from 'path'
+import { Context } from '@textile/context'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
-import { Context } from '@textile/context'
+import fs from 'fs'
+import path from 'path'
+import { CreateObject } from './api'
 import { Buckets } from './buckets'
 import { signUp } from './spec.util'
-import { CreateObject } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -63,8 +63,7 @@ describe('Buckets...', () => {
     expect(res).to.have.ownProperty('root')
     expect(res.root).to.not.be.undefined
     expect(res.item?.isDir).to.be.true
-    // @todo: Should we rename itemsList to just be items?
-    expect(res.item?.itemsList).to.have.length(1) // Includes .textileseed
+    expect(res.item?.items).to.have.length(1) // Includes .textileseed
   })
 
   it('should push data from filesystem on node', async function () {
@@ -91,7 +90,7 @@ describe('Buckets...', () => {
     // Root dir
     const rep = await client.listPath(rootKey, '')
     expect(rep.item?.isDir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(3) // Includes .textileseed
+    expect(rep.item?.items).to.have.length(3) // Includes .textileseed
   })
 
   it('should push data from file API in browser', async function () {
@@ -122,7 +121,7 @@ describe('Buckets...', () => {
     // Root dir
     const rep = await client.listPath(rootKey, '')
     expect(rep.item?.isDir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(3)
+    expect(rep.item?.items).to.have.length(3)
   })
 
   it('should list (nested) files within a bucket', async () => {
@@ -131,7 +130,7 @@ describe('Buckets...', () => {
     // Nested dir
     let rep = await client.listPath(rootKey, 'dir1')
     expect(rep.item?.isDir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(1)
+    expect(rep.item?.items).to.have.length(1)
 
     // File
     rep = await client.listPath(rootKey, 'dir1/file1.jpg')
@@ -141,7 +140,7 @@ describe('Buckets...', () => {
     // Recursive dir
     rep = await client.listPath(rootKey, '', 3)
     expect(rep.item?.isDir).to.be.true
-    expect(rep.item?.itemsList).to.have.length(3)
+    expect(rep.item?.items).to.have.length(3)
 
     // Recursive dir
     // [
@@ -211,7 +210,7 @@ describe('Buckets...', () => {
       expect(err).to.not.equal(wrongError)
     }
     let list = await client.listPath(rootKey, '')
-    expect(list.item?.itemsList).to.have.length(3) // Includes .textileseed
+    expect(list.item?.items).to.have.length(3) // Includes .textileseed
     await client.removePath(rootKey, 'path')
     try {
       await client.listPath(rootKey, 'path')
@@ -220,7 +219,7 @@ describe('Buckets...', () => {
       expect(err).to.not.equal(wrongError)
     }
     list = await client.listPath(rootKey, '')
-    expect(list.item?.itemsList).to.have.length(2) // Includes .textileseed
+    expect(list.item?.items).to.have.length(2) // Includes .textileseed
   })
 
   it('should list bucket links', async () => {
