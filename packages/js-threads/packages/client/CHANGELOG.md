@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.12.0...@textile/threads-client@1.0.0-alpha.0) (2020-09-17)
+
+
+### Bug Fixes
+
+* another hot fix, arg example docs ([c9cf06e](https://github.com/textileio/js-threads/commit/c9cf06e94d5382a6f5dd4641f42bc4f23f9e116b))
+* don't add ID key anymore ([bb6d174](https://github.com/textileio/js-threads/commit/bb6d1747be067ae7ee8ed12105117c2d9c6e95d3))
+* hot fix for doc example ([5eae1d9](https://github.com/textileio/js-threads/commit/5eae1d9d2e54f5126ea2ff2b2eecfa9a4fd0c9be))
+* missed docs updates ([2b50caf](https://github.com/textileio/js-threads/commit/2b50caf0f9a6005c169ea864af76703369289b12))
+
+
+### Features
+
+* updates to latest go threads protos + apis ([82dd1b8](https://github.com/textileio/js-threads/commit/82dd1b8450b5cc2cab6eb10fe64cf1e53ff5e2e6))
+
+
+
+
+
 # [0.12.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@0.11.1...@textile/threads-client@0.12.0) (2020-09-10)
 
 

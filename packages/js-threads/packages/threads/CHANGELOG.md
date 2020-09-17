@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.0](https://github.com/textileio/js-threads/compare/@textile/threads@0.3.14...@textile/threads@1.0.0-alpha.0) (2020-09-17)
+
+**Note:** Version bump only for package @textile/threads
+
+
+
+
+
 ## [0.3.14](https://github.com/textileio/js-threads/compare/@textile/threads@0.3.13...@textile/threads@0.3.14) (2020-09-10)
 
 **Note:** Version bump only for package @textile/threads
