@@ -1,0 +1,69 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+
+    services:
+      threads1:
+        image: textile/go-threads:latest
+        env:
+          THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
+          THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
+          THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
+          THRDS_DEBUG: true
+        ports:
+          - "4006:4006"
+          - "127.0.0.1:6006:6006"
+          - "127.0.0.1:6007:6007"
+      threads2:
+        image: textile/go-threads:latest
+        env:
+          THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
+          THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
+          THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
+          THRDS_DEBUG: true
+        ports:
+          - "4206:4006"
+          - "127.0.0.1:6206:6006"
+          - "127.0.0.1:6207:6007"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install
+        run: npm install
+
+      - name: Test Node
+        run: npm run test:node
+
+      - name: Test Browser
+        run: npm run test:browser
+
+      - name: Compile Test
+        run: npm run build

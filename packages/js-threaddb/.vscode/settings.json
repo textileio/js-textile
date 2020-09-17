@@ -1,0 +1,13 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "deno.enable": false,
+  "mochaExplorer.files": "**/*.spec.ts",
+  "mochaExplorer.esmLoader": true,
+  "mochaExplorer.exit": true,
+  "mochaExplorer.require": ["ts-node/register", "source-map-support/register"],
+  "mochaExplorer.launcherScript": "node_modules/mocha-explorer-launcher-scripts/nyc",
+  "mochaExplorer.env": {
+    "TS_NODE_FILES": "true",
+    "TS_NODE_COMPILER_OPTIONS": "{\"module\": \"commonjs\" }"
+  }
+}
