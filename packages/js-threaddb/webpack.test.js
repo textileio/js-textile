@@ -10,14 +10,8 @@ module.exports = {
       },
     ],
   },
-  node: {
-    crypto: "empty",
-  },
   performance: {
     hints: false,
-  },
-  resolveLoader: {
-    modules: ["./node_modules"],
   },
   resolve: {
     modules: ["./node_modules"],

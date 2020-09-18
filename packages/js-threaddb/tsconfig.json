@@ -6,20 +6,9 @@
     "declaration": false,
     "rootDir": "./src",
     "strict": true,
-    "allowJs": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "downlevelIteration": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "downlevelIteration": true
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "rollup.config.js",
-    "webpack.test.js",
-    "coverage",
-    "build",
-    "karma.conf.js"
-  ]
+  "include": ["src"]
 }

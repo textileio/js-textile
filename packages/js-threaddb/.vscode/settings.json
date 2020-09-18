@@ -1,6 +1,5 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "deno.enable": false,
   "mochaExplorer.files": "**/*.spec.ts",
   "mochaExplorer.esmLoader": true,
   "mochaExplorer.exit": true,

@@ -20,7 +20,7 @@
     "build": "npm run build:rollup",
     "build:tsc": "tsc",
     "build:rollup": "rollup -c",
-    "clean": "rimraf ./dist ./coverage ./tsconfig.tsbuildinfo",
+    "clean": "rimraf ./dist ./coverage ./build ./.nyc_output ./tsconfig.tsbuildinfo",
     "test": "npm run test:node && npm run test:browser",
     "test:browser": "polendina src/**/*.spec.ts --webpack-config=./webpack.test.js",
     "test:node": "env TS_NODE_FILES=true TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc --reporter=lcov mocha",
