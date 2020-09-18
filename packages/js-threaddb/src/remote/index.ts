@@ -469,7 +469,7 @@ export class Remote {
     // Create a new remote client instance
     // TODO: This is not be the best way to do this...
     const client = new Client(
-      // Maybe pass along context another way?
+      // TODO: Pass along context in a better way
       new Context(this.config.serviceHost).withToken(auth.slice(7))
     );
     // Blast thru provided collection names...
@@ -477,7 +477,7 @@ export class Remote {
     for (const collectionName of collections) {
       const { instancesList } = await client.find(threadID, collectionName, {});
       const table = this.storage.table(collectionName);
-      // Remote is our source of thruth, we complete overwrite anything local that is different
+      // Remote is our source of thruth, we completely overwrite anything local that is different
       const keys = await table.bulkPut(instancesList, { allKeys: true });
       // Now we also need to drop anything locally that wasn't in our remote
       await table.filter((obj) => !keys.includes(obj._id)).delete();
@@ -487,6 +487,7 @@ export class Remote {
     const values = await changes
       .filter((change) => change.ops.length > 0)
       .toArray();
+    console.log(values);
     // Drop these "fake" changes
     await changes.clear();
     // Return the mutated keys

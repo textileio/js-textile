@@ -124,6 +124,8 @@ describe("remote", function () {
       remote.set({ debug: true });
       expect(remote.config.debug).to.equal(true);
       expect(remote.get().debug).to.equal(true);
+      // Ok, let's set it back because otherwise it floods our test outputs
+      remote.set({ debug: false });
       const metadata = remote.config.metadata;
       if (metadata === undefined)
         throw Error("metadata should not be undefined");
