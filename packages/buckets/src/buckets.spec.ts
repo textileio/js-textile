@@ -311,7 +311,6 @@ describe('Buckets...', () => {
 
       // Test that bob sees the same permissions, including himself
       const perms = await bobBuckets.pullPathAccessRoles(rootKey, sharedPath)
-      perms.forEach((pubkey, setting) => console.log(pubkey, setting))
       expect(perms.get(bobPubKey)).to.equal(2)
 
       // Over-write the file in the shared path
@@ -320,12 +319,31 @@ describe('Buckets...', () => {
       await bobBuckets.pushPath(rootKey, sharedFile, stream)
     })
 
-    it('add a new file into a shared path', async function () {
+    it('remove a file in shared path', async function () {
       if (isBrowser) return this.skip()
       if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
 
-      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-      await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+      try {
+        await bobBuckets.removePath(rootKey, sharedFile)
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.message).to.equal('app denied net record body: permission denied')
+      }
+    })
+
+    it('add a new file into a shared path should fail', async function () {
+      if (isBrowser) return this.skip()
+      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+
+      try {
+        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.message).to.equal('2')
+      }
     })
   })
 })
