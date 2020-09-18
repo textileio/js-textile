@@ -3,6 +3,8 @@ import type { ThreadID } from "@textile/threads-id";
 import { WebsocketTransport } from "@textile/grpc-transport";
 import * as pb from "@textile/threads-client-grpc/threads_pb";
 import * as api from "@textile/threads-client-grpc/threads_pb_service";
+import { Client } from "@textile/threads-client";
+import { Context } from "@textile/context";
 import { Identity } from "@textile/crypto";
 
 export interface GrpcConfig {
@@ -11,6 +13,9 @@ export interface GrpcConfig {
   debug: boolean;
   metadata: grpc.Metadata;
 }
+// Create local alias
+type CollectionConfig = pb.CollectionConfig.AsObject;
+export { CollectionConfig };
 
 export const defaults: GrpcConfig = {
   // TODO: Should localhost be the default? Probably not.
@@ -26,6 +31,18 @@ export function createClient(opts: Partial<GrpcConfig> = {}): api.APIClient {
     transport: config.transport,
     debug: config.debug,
   });
+}
+
+export function createDbClient(config: Partial<GrpcConfig> = {}): Client {
+  // Get token auth information
+  const [auth] = config.metadata?.get("authorization") ?? [];
+  // Create a new remote client instance
+  // TODO: This is not be the best way to do this...
+  let context = new Context(config.serviceHost);
+  // TODO: This is messy!
+  if (auth) context = context.withToken(auth.slice(7));
+  const client = new Client(context);
+  return client;
 }
 
 /**
@@ -126,7 +143,7 @@ export async function newDB(
   threadID: ThreadID,
   collections: pb.CollectionConfig.AsObject[],
   config?: Partial<GrpcConfig>
-): Promise<boolean> {
+): Promise<string> {
   const opts = { ...defaults, ...config };
   const client = createClient(opts);
   const requestMessage = new pb.NewDBRequest();
@@ -148,7 +165,7 @@ export async function newDB(
     collectionsList.push(config);
   }
   requestMessage.setCollectionsList(collectionsList);
-  return new Promise<boolean>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     client.newDB(
       requestMessage,
       opts.metadata ?? new grpc.Metadata(),
@@ -158,7 +175,10 @@ export async function newDB(
       ) => {
         if (error) reject(new Error(error.message));
         // Should just be an empty object, which we return as a boolean
-        resolve(Boolean(responseMessage?.toObject()));
+        const success = Boolean(responseMessage?.toObject());
+        const id = threadID.toString();
+        if (success) resolve(id);
+        else reject(new Error(`Unable to create thread with id = ${id}`));
       }
     );
   });

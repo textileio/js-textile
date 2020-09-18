@@ -5,12 +5,13 @@ import {
   getToken,
   newDB,
   defaults,
+  createDbClient,
   getTokenChallenge,
+  CollectionConfig,
 } from "./grpc";
 import type { Identity } from "@textile/crypto";
 import ThreadID from "@textile/threads-id";
-import { Client, DBInfo } from "@textile/threads-client";
-import { Context } from "@textile/context"; // Dep of threads-client
+import { DBInfo } from "@textile/threads-client";
 import { grpc } from "@improbable-eng/grpc-web";
 import {
   Change,
@@ -129,14 +130,7 @@ export class Remote {
     // Check that we have a valid thread id
     if (this.id === undefined) throw Errors.ThreadIDError;
     const threadID = ThreadID.fromString(this.id);
-    // Get token auth information
-    const [auth] = this.config.metadata?.get("authorization") ?? [];
-    // Create a new remote client instance
-    // TODO: This is not be the best way to do this...
-    const client = new Client(
-      // Maybe pass along context another way?
-      new Context(this.config.serviceHost).withToken(auth.slice(7))
-    );
+    const client = createDbClient(this.config);
     return client.getDBInfo(threadID);
   }
 
@@ -245,29 +239,31 @@ export class Remote {
       // Otherwise, stick to the random one we created
     }
     // Extract schema information from existing local dbs, and push to remote
-    const schemas = await Promise.all(
+    const schemas: CollectionConfig[] = await Promise.all(
       this.storage.tables
         .filter((table) => !table.name.startsWith("_"))
         .map(async (table) => ({
           name: table.name,
           schema: encoder.encode(JSON.stringify(await table.getSchema())),
           indexesList: [],
+          writevalidator: "", // TODO: Update this once we support validators/filters
+          readfilter: "",
         }))
     );
-    // This will throw if we get some error, but the backup is success
-    let success = false;
+    // This will throw if we get some error, but the "backup" is success
+    let idString = "";
     try {
-      success = await newDB(this.storage.name, threadID, schemas, this.config);
+      idString = await newDB(this.storage.name, threadID, schemas, this.config);
     } catch (err) {
       if (err.toString().includes("db already exists")) {
         throw Errors.ThreadExists;
       }
+      // Otherwise, just throw it
+      throw err;
     }
 
     // Otherwise throw a generic remote error :(
-    if (!success) throw Errors.RemoteError;
-    // Pull out id string because we want callers to deal only with strings
-    const idString = threadID.toString();
+    if (!idString) throw Errors.RemoteError;
     // Reset id in case we've updated or created a new random one
     this.set({ id: idString });
     // Update metadata table with ThreadIDName
@@ -284,14 +280,7 @@ export class Remote {
     if (this.id === undefined) throw Errors.ThreadIDError;
     const threadID = ThreadID.fromString(this.id);
     const localChanges = this.storage.table<Change>(ChangeTableName);
-    // Get token auth information
-    const [auth] = this.config.metadata?.get("authorization") ?? [];
-    // Create a new remote client instance
-    // TODO: This is not be the best way to do this...
-    const client = new Client(
-      // Maybe pass along context another way?
-      new Context(this.config.serviceHost).withToken(auth.slice(7))
-    );
+    const client = createDbClient(this.config);
 
     // Blast thru provided collection names...
     for (const collectionName of collections) {
@@ -464,14 +453,7 @@ export class Remote {
     const threadID = ThreadID.fromString(this.id);
     const localChanges = this.storage.table<Change>(ChangeTableName);
     if (await localChanges.count()) throw Errors.LocalChangesError;
-    // Get token auth information
-    const [auth] = this.config.metadata?.get("authorization") ?? [];
-    // Create a new remote client instance
-    // TODO: This is not be the best way to do this...
-    const client = new Client(
-      // TODO: Pass along context in a better way
-      new Context(this.config.serviceHost).withToken(auth.slice(7))
-    );
+    const client = createDbClient(this.config);
     // Blast thru provided collection names...
     // TODO: Yes, I know this is all extremely sub-optimal!
     for (const collectionName of collections) {
@@ -487,7 +469,6 @@ export class Remote {
     const values = await changes
       .filter((change) => change.ops.length > 0)
       .toArray();
-    console.log(values);
     // Drop these "fake" changes
     await changes.clear();
     // Return the mutated keys

@@ -4,10 +4,10 @@ import { shouldHaveThrown } from "../utils/spec.utils";
 import { expect } from "chai";
 import { ChangeTableName, StashTableName } from "../middleware/changes";
 import { Remote, Errors } from ".";
+import { createDbClient } from "./grpc";
 import { NewDexie } from "../utils";
 import { grpc } from "@improbable-eng/grpc-web";
-import { Client, Where } from "@textile/threads-client";
-import { Context } from "@textile/context"; // Dep of threads-client
+import { Where } from "@textile/threads-client";
 
 const databaseName = "remote";
 
@@ -270,12 +270,7 @@ describe("remote", function () {
       // Trying again should not lead to any issues
       await remote.push(); // Push everything this time... except we have none!
       // Low level checks
-      // Get token auth information
-      const [auth] = remote.config.metadata?.get("authorization") ?? [];
-      // Create a new remote client instance
-      const client = new Client(
-        new Context(remote.config.serviceHost).withToken(auth.slice(7))
-      );
+      const client = createDbClient(remote.config);
       const dogs = dexie.table("dogs");
       const total = await dogs.count();
       expect(total).to.equal(2);
@@ -302,12 +297,7 @@ describe("remote", function () {
       // Ok, now we'll make a low-level update on the remote and see what happens
       const threadID = ThreadID.fromString(remote.id ?? "");
       // Low level checks
-      // Get token auth information
-      const [auth] = remote.config.metadata?.get("authorization") ?? [];
-      // Create a new remote client instance
-      const client = new Client(
-        new Context(remote.config.serviceHost).withToken(auth.slice(7))
-      );
+      const client = createDbClient(remote.config);
       const dogs = dexie.table<Dog>("dogs");
       const array = await dogs.toArray(); // Should be two in there
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

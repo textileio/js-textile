@@ -2,8 +2,7 @@ import { expect } from "chai";
 import { PrivateKey } from "@textile/crypto";
 import { Database } from "../local/db";
 import { Errors } from "./index";
-import { Client } from "@textile/threads-client";
-import { Context } from "@textile/context"; // Dep of threads-client
+import { createDbClient } from "./grpc";
 import { personSchema, shouldHaveThrown } from "../utils/spec.utils";
 import ThreadID from "@textile/threads-id";
 
@@ -46,12 +45,7 @@ describe("remote + db", function () {
 
       // Before we push anything, let's just check that we don't already have remote collections
       // Low level checks
-      // Get token auth information
-      const [auth] = db.remote.config.metadata?.get("authorization") ?? [];
-      // Create a new remote client instance
-      const client = new Client(
-        new Context(db.remote.config.serviceHost).withToken(auth.slice(7))
-      );
+      const client = createDbClient(db.remote.config);
       try {
         await client.getCollectionInfo(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -137,12 +131,7 @@ describe("remote + db", function () {
       await db.remote.push("Person");
 
       // Low level checks
-      // Get token auth information
-      const [auth] = db.remote.config.metadata?.get("authorization") ?? [];
-      // Create a new remote client instance
-      const client = new Client(
-        new Context(db.remote.config.serviceHost).withToken(auth.slice(7))
-      );
+      const client = createDbClient(db.remote.config);
       const info = await client.getCollectionInfo(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ThreadID.fromString(db.id!),

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from "chai";
-import { getToken, getTokenChallenge } from "./grpc";
+import { getToken, getTokenChallenge, newDB } from "./grpc";
 import { PrivateKey } from "@textile/crypto";
+import ThreadID from "@textile/threads-id";
+import { grpc } from "@improbable-eng/grpc-web";
 
 const opts = {
   serviceHost: "http://127.0.0.1:6007",
@@ -25,6 +27,23 @@ describe("grpc", function () {
         opts
       );
       expect(token).to.not.be.undefined;
+    });
+
+    it("should be able to create a remote db", async function () {
+      // First, authenticate
+      const privateKey = PrivateKey.fromRandom();
+      const token = await getToken(privateKey, opts);
+      // Next, create!
+      const metadata = new grpc.Metadata({
+        authentication: `bearer ${token}`,
+      });
+      const threadID = ThreadID.fromRandom();
+      const id = await newDB("test", threadID, [], {
+        ...opts,
+        metadata,
+      });
+      expect(id).to.not.be.undefined;
+      expect(id).to.equal(threadID.toString());
     });
   });
 });
