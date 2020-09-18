@@ -297,13 +297,12 @@ describe('Buckets...', () => {
       // Update access roles to grant bob access
       const roles = new Map()
       roles.set(bobPubKey, 2)
+      // Grants access at 'path/to'
       await aliceBuckets.pushPathAccessRoles(rootKey, sharedPath, roles)
 
       // Check that our pulled permissions are as expected
       const shared = await aliceBuckets.pullPathAccessRoles(rootKey, sharedPath)
       expect(shared.get(bobPubKey)).to.equal(2)
-      const priv = await aliceBuckets.pullPathAccessRoles(rootKey, privatePath)
-      expect(priv.get(bobPubKey)).to.equal(2)
     })
 
     it('overwrite an existing shared file', async function () {
