@@ -32,7 +32,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Lint
-        run: npm run lint:check
+        run: npm run lint
 
   spelling:
     name: Spelling
@@ -43,7 +43,7 @@ jobs:
         with:
           reporter: github-pr-review
           github_token: ${{ secrets.github_token }}
-          locale: 'US'
+          locale: "US"
 
   validate:
     name: Validate
@@ -82,4 +82,4 @@ jobs:
       - name: Display
         run: npm run textile:check
       - name: Check
-        run: if [ $(lerna exec -- npx ncu '/^@textile/.*$/' | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;
+        run: if [ $(npx ncu '/^@textile/.*$/' | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;

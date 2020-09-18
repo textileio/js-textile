@@ -25,7 +25,9 @@
     "test:browser": "polendina src/**/*.spec.ts --webpack-config=./webpack.test.js",
     "test:node": "env TS_NODE_FILES=true TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc --reporter=lcov mocha",
     "lint": "eslint",
-    "version": "standard-version"
+    "version": "standard-version",
+    "textile:check": "npx ncu '/^@textile/.*$/'",
+    "textile:update": "npx ncu -u '/^@textile/.*$/'"
   },
   "keywords": [
     "database",
