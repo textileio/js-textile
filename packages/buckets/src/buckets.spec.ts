@@ -1,11 +1,13 @@
 import { Context } from '@textile/context'
+import { PrivateKey } from '@textile/crypto'
+import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { CreateObject } from './api'
 import { Buckets } from './buckets'
-import { signUp } from './spec.util'
+import { createKey, signUp } from './spec.util'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -19,9 +21,18 @@ describe('Buckets...', () => {
   let buck: CreateObject
   let fileSize: number
 
+  let dev: SignupResponse.AsObject
+  const apiKeyInfo = { key: '' }
+
   before(async () => {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     ctx.withSession(user.user?.session)
+    if (!user.user) throw new Error('user signup error')
+    dev = user.user
+    const tmp = new Context(addrApiurl).withSession(dev.session)
+    const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+    if (!keyInfo) return
+    apiKeyInfo.key = keyInfo.key
   })
 
   it('should open a bucket by name without thread info', async () => {
@@ -241,5 +252,81 @@ describe('Buckets...', () => {
     } catch (err) {
       expect(err).to.not.equal(wrongError)
     }
+  })
+
+  describe('Buckets sharing...', () => {
+    const bob = PrivateKey.fromRandom()
+    const bobPubKey = bob.public.toString()
+    const alice = PrivateKey.fromRandom()
+    let aliceBuckets: Buckets | undefined
+    let bobBuckets: Buckets | undefined
+    let aliceThread: string | undefined
+    let rootKey: string | undefined
+    const sharedPath = 'path/to'
+    const sharedFile = 'path/to/file2.jpg'
+    const privatePath = 'dir1/file1.jpg'
+    const pth = path.join(__dirname, '../../..', 'testdata')
+    before(async function () {
+      if (isBrowser) return this.skip()
+      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await aliceBuckets.getToken(alice)
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      const { root, threadID } = await aliceBuckets.getOrCreate('createbuck')
+      aliceThread = threadID
+
+      // scope bob's client to the same thread
+      bobBuckets.withThread(aliceThread)
+
+      if (!root) throw Error('bucket creation failed')
+      rootKey = root.key
+
+      // Push private file for only alice
+      let stream = fs.createReadStream(path.join(pth, 'file1.jpg'))
+      await aliceBuckets.pushPath(rootKey, privatePath, stream)
+
+      // Push file to be shared with bob
+      stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      await aliceBuckets.pushPath(rootKey, sharedFile, stream)
+    })
+
+    it('grant peer2 write access', async function () {
+      if (isBrowser) return this.skip()
+      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+
+      // Update access roles to grant bob access
+      const roles = new Map()
+      roles.set(bobPubKey, 2)
+      await aliceBuckets.pushPathAccessRoles(rootKey, sharedPath, roles)
+
+      // Check that our pulled permissions are as expected
+      const shared = await aliceBuckets.pullPathAccessRoles(rootKey, sharedPath)
+      expect(shared.get(bobPubKey)).to.equal(2)
+      const priv = await aliceBuckets.pullPathAccessRoles(rootKey, privatePath)
+      expect(priv.get(bobPubKey)).to.equal(2)
+    })
+
+    it('overwrite an existing shared file', async function () {
+      if (isBrowser) return this.skip()
+      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+
+      // Test that bob sees the same permissions, including himself
+      const perms = await bobBuckets.pullPathAccessRoles(rootKey, sharedPath)
+      perms.forEach((pubkey, setting) => console.log(pubkey, setting))
+      expect(perms.get(bobPubKey)).to.equal(2)
+
+      // Over-write the file in the shared path
+      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
+      await bobBuckets.pushPath(rootKey, sharedFile, stream)
+    })
+
+    it('add a new file into a shared path', async function () {
+      if (isBrowser) return this.skip()
+      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+
+      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+    })
   })
 })

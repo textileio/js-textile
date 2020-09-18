@@ -624,6 +624,8 @@ export async function bucketsPushPathAccessRoles(
   req.setKey(key)
   req.setPath(path)
   roles.forEach((value, key) => req.getRolesMap().set(key, value))
+  console.log('api')
+  console.log(req.getRolesMap())
   await api.unary(APIService.PushPathAccessRoles, req, ctx)
   return
 }
