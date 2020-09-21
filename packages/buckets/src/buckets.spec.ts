@@ -254,7 +254,7 @@ describe('Buckets...', () => {
     }
   })
 
-  describe('Buckets sharing...', () => {
+  describe('Sharing...', () => {
     const bob = PrivateKey.fromRandom()
     const bobPubKey = bob.public.toString()
     const alice = PrivateKey.fromRandom()
@@ -267,6 +267,7 @@ describe('Buckets...', () => {
     const privatePath = 'dir1/file1.jpg'
     const pth = path.join(__dirname, '../../..', 'testdata')
     before(async function () {
+      this.timeout(10000)
       if (isBrowser) return this.skip()
       aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await aliceBuckets.getToken(alice)
@@ -328,7 +329,7 @@ describe('Buckets...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.message).to.equal('app denied net record body: permission denied')
+        expect(err.message).to.include('permission denied')
       }
     })
 
@@ -342,7 +343,7 @@ describe('Buckets...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.message).to.equal('2')
+        expect(err.message).to.include('permission denied')
       }
     })
   })

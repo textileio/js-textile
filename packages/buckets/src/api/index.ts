@@ -423,11 +423,11 @@ export async function bucketsPushPath(
       }
     })
     client.onEnd((code, msg) => {
-      if (code === grpc.Code.OK) {
-        resolve()
-      } else {
+      if (code !== grpc.Code.OK) {
         const message = msg ? msg : code.toString()
         reject(new Error(message))
+      } else {
+        resolve()
       }
     })
     if (source) {
