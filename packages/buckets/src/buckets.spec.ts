@@ -329,23 +329,6 @@ describe('Buckets...', function () {
       await bobBuckets.pushPath(rootKey, sharedFile, stream)
     })
 
-    it('remove a file in shared path', async function () {
-      if (isBrowser) return this.skip()
-      if (!aliceThread || !rootKey) throw Error('setup failed')
-
-      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
-      await bobBuckets.getToken(bob)
-      bobBuckets.withThread(aliceThread)
-
-      try {
-        await bobBuckets.removePath(rootKey, sharedFile)
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.message).to.include('permission denied')
-      }
-    })
-
     it('add a new file into a shared path should fail', async function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
@@ -357,6 +340,23 @@ describe('Buckets...', function () {
       try {
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.message).to.include('permission denied')
+      }
+    })
+
+    it('remove a file in shared path', async function () {
+      if (isBrowser) return this.skip()
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
+
+      try {
+        await bobBuckets.removePath(rootKey, sharedFile)
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
