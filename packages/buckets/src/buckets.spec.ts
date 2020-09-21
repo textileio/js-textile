@@ -313,6 +313,7 @@ describe('Buckets...', function () {
     })
 
     it('add a new file into a shared path should fail', async function () {
+      this.timeout(10000)
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
