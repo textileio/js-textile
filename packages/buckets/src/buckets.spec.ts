@@ -294,7 +294,14 @@ describe('Buckets...', function () {
 
     it('grant peer2 write access', async function () {
       if (isBrowser) return this.skip()
-      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await aliceBuckets.getToken(alice)
+      aliceBuckets.withThread(aliceThread)
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
 
       // Update access roles to grant bob access
       const roles = new Map()
@@ -309,7 +316,14 @@ describe('Buckets...', function () {
 
     it('overwrite an existing shared file', async function () {
       if (isBrowser) return this.skip()
-      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await aliceBuckets.getToken(alice)
+      aliceBuckets.withThread(aliceThread)
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
 
       // Test that bob sees the same permissions, including himself
       const perms = await bobBuckets.pullPathAccessRoles(rootKey, sharedPath)
@@ -323,7 +337,14 @@ describe('Buckets...', function () {
 
     it('remove a file in shared path', async function () {
       if (isBrowser) return this.skip()
-      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await aliceBuckets.getToken(alice)
+      aliceBuckets.withThread(aliceThread)
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
 
       try {
         await bobBuckets.removePath(rootKey, sharedFile)
