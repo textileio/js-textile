@@ -25,6 +25,7 @@
     "test:browser": "polendina src/**/*.spec.ts --webpack-config=./webpack.test.js",
     "test:node": "env TS_NODE_FILES=true TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc --reporter=lcov mocha",
     "lint": "eslint",
+    "docs": "typedoc",
     "version": "standard-version",
     "textile:check": "npx ncu '/^@textile/.*$/'",
     "textile:update": "npx ncu -u '/^@textile/.*$/'"
@@ -69,6 +70,7 @@
     "ts-loader": "^8.0.3",
     "ts-node": "^8.10.2",
     "tslib": "^2.0.0",
+    "typedoc": "^0.19.2",
     "typescript": "^3.9.7"
   },
   "dependencies": {

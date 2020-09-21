@@ -49,7 +49,7 @@ describe("remote + db", function () {
       try {
         await client.getCollectionInfo(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          ThreadID.fromString(db.id!),
+          ThreadID.fromString(id!),
           "Person"
         );
         throw shouldHaveThrown;
