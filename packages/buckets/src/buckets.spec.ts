@@ -13,6 +13,7 @@ import { createKey, signUp } from './spec.util'
 const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
+const rightError = new Error('right error!')
 const sessionSecret = 'hubsession'
 
 describe('Buckets...', function () {
@@ -361,7 +362,12 @@ describe('Buckets...', function () {
       // Over-write the file in the shared path
       const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
-      await bobBuckets.pushPath(rootKey, sharedFile, stream)
+      try {
+        await bobBuckets.pushPath(rootKey, sharedFile, stream)
+        throw rightError
+      } catch (err) {
+        expect(err).to.equal(rightError)
+      }
     })
   })
 })
