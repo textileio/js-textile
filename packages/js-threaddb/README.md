@@ -3,8 +3,6 @@ Javascript implementation of Textile's ThreadDB
 > An offline-first local db that syncs to the distributed web.
 
 **This project is pre-release, do not use it in production, breaking changes will still occur without notice.**
-
-This is alpha-level software.
  
 ## Getting Started
 
