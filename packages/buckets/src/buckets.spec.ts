@@ -15,7 +15,7 @@ const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const sessionSecret = 'hubsession'
 
-describe('Buckets...', () => {
+describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
   let buck: CreateObject
@@ -24,7 +24,7 @@ describe('Buckets...', () => {
   let dev: SignupResponse.AsObject
   const apiKeyInfo = { key: '' }
 
-  before(async () => {
+  before(async function () {
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     ctx.withSession(user.user?.session)
     if (!user.user) throw new Error('user signup error')
@@ -35,7 +35,7 @@ describe('Buckets...', () => {
     apiKeyInfo.key = keyInfo.key
   })
 
-  it('should open a bucket by name without thread info', async () => {
+  it('should open a bucket by name without thread info', async function () {
     const { root, threadID } = await client.getOrCreate('createbuck')
     expect(threadID).to.not.be.undefined
     expect(root).to.have.ownProperty('key')
@@ -44,7 +44,7 @@ describe('Buckets...', () => {
     expect(root).to.have.ownProperty('updatedAt')
   })
 
-  it('should create a new bucket on open thread', async () => {
+  it('should create a new bucket on open thread', async function () {
     // Check that we're empty
     const list = await client.list()
     expect(list).to.have.length(1)
@@ -57,7 +57,7 @@ describe('Buckets...', () => {
     expect(buck.root).to.have.ownProperty('updatedAt')
   })
 
-  it('should list buckets', async () => {
+  it('should list buckets', async function () {
     const roots = await client.list()
     expect(roots).to.have.length(2)
     const index = roots[0].key === buck.root?.key ? 0 : 1
@@ -68,7 +68,7 @@ describe('Buckets...', () => {
     expect(root).to.have.ownProperty('updatedAt', buck.root?.updatedAt)
   })
 
-  it('should list empty bucket content at path', async () => {
+  it('should list empty bucket content at path', async function () {
     // Mostly empty
     const res = await client.listPath(buck.root?.key || '', '')
     expect(res).to.have.ownProperty('root')
@@ -135,7 +135,7 @@ describe('Buckets...', () => {
     expect(rep.item?.items).to.have.length(3)
   })
 
-  it('should list (nested) files within a bucket', async () => {
+  it('should list (nested) files within a bucket', async function () {
     const rootKey = buck.root?.key || ''
 
     // Nested dir
@@ -211,7 +211,7 @@ describe('Buckets...', () => {
     expect(value).to.not.be.undefined
   })
 
-  it('should remove files by path', async () => {
+  it('should remove files by path', async function () {
     const rootKey = buck.root?.key || ''
     await client.removePath(rootKey, 'path/to/file2.jpg')
     try {
@@ -233,7 +233,7 @@ describe('Buckets...', () => {
     expect(list.item?.items).to.have.length(2) // Includes .textileseed
   })
 
-  it('should list bucket links', async () => {
+  it('should list bucket links', async function () {
     const rootKey = buck.root?.key || ''
 
     const rep = await client.links(rootKey)
@@ -241,7 +241,7 @@ describe('Buckets...', () => {
     expect(rep.ipns).to.not.equal('')
   })
 
-  it('should remove an entire bucket', async () => {
+  it('should remove an entire bucket', async function () {
     const rootKey = buck.root?.key || ''
     const rep = await client.listPath(rootKey, 'dir1/file1.jpg')
     expect(rep).to.not.be.undefined
@@ -254,7 +254,7 @@ describe('Buckets...', () => {
     }
   })
 
-  describe('Sharing...', () => {
+  describe('Sharing...', function () {
     const bob = PrivateKey.fromRandom()
     const bobPubKey = bob.public.toString()
     const alice = PrivateKey.fromRandom()
