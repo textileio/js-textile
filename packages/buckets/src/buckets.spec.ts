@@ -311,24 +311,6 @@ describe('Buckets...', function () {
       expect(shared.get(bobPubKey)).to.equal(2)
     })
 
-    it('overwrite an existing shared file', async function () {
-      if (isBrowser) return this.skip()
-      if (!aliceThread || !rootKey) throw Error('setup failed')
-
-      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
-      await bobBuckets.getToken(bob)
-      bobBuckets.withThread(aliceThread)
-
-      // Test that bob sees the same permissions, including himself
-      const perms = await bobBuckets.pullPathAccessRoles(rootKey, sharedPath)
-      expect(perms.get(bobPubKey)).to.equal(2)
-
-      // Over-write the file in the shared path
-      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-      // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
-      await bobBuckets.pushPath(rootKey, sharedFile, stream)
-    })
-
     it('add a new file into a shared path should fail', async function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
@@ -362,6 +344,24 @@ describe('Buckets...', function () {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('permission denied')
       }
+    })
+
+    it('overwrite an existing shared file', async function () {
+      if (isBrowser) return this.skip()
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
+
+      // Test that bob sees the same permissions, including himself
+      const perms = await bobBuckets.pullPathAccessRoles(rootKey, sharedPath)
+      expect(perms.get(bobPubKey)).to.equal(2)
+
+      // Over-write the file in the shared path
+      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
+      await bobBuckets.pushPath(rootKey, sharedFile, stream)
     })
   })
 })
