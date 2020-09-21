@@ -299,9 +299,6 @@ describe('Buckets...', function () {
       aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await aliceBuckets.getToken(alice)
       aliceBuckets.withThread(aliceThread)
-      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
-      await bobBuckets.getToken(bob)
-      bobBuckets.withThread(aliceThread)
 
       // Update access roles to grant bob access
       const roles = new Map()
@@ -318,9 +315,6 @@ describe('Buckets...', function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
-      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
-      await aliceBuckets.getToken(alice)
-      aliceBuckets.withThread(aliceThread)
       bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
@@ -339,9 +333,6 @@ describe('Buckets...', function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
-      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
-      await aliceBuckets.getToken(alice)
-      aliceBuckets.withThread(aliceThread)
       bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
@@ -357,7 +348,11 @@ describe('Buckets...', function () {
 
     it('add a new file into a shared path should fail', async function () {
       if (isBrowser) return this.skip()
-      if (!bobBuckets || !aliceBuckets || !aliceThread || !rootKey) throw Error('setup failed')
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+      bobBuckets.withThread(aliceThread)
 
       try {
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
