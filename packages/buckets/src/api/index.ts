@@ -424,6 +424,7 @@ export async function bucketsPushPath(
     })
     client.onEnd((code, msg) => {
       if (code !== grpc.Code.OK) {
+        console.log(code, msg)
         const message = msg ? msg : code.toString()
         reject(new Error(message))
       } else {
