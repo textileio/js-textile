@@ -422,11 +422,12 @@ export async function bucketsPushPath(
         reject(new Error('Invalid reply'))
       }
     })
-    client.onEnd((code) => {
+    client.onEnd((code, msg) => {
       if (code === grpc.Code.OK) {
         resolve()
       } else {
-        reject(new Error(code.toString()))
+        const message = msg ? msg : code.toString()
+        reject(new Error(message))
       }
     })
     if (source) {
@@ -624,8 +625,6 @@ export async function bucketsPushPathAccessRoles(
   req.setKey(key)
   req.setPath(path)
   roles.forEach((value, key) => req.getRolesMap().set(key, value))
-  console.log('api')
-  console.log(req.getRolesMap())
   await api.unary(APIService.PushPathAccessRoles, req, ctx)
   return
 }

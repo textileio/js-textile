@@ -188,8 +188,8 @@ describe('Buckets...', () => {
     }
     stream.close()
     expect(length).to.equal(fileSize)
-    const stored = fs.statSync(path.join(pth, 'file1.jpg'))
-    const written = fs.statSync(path.join(pth, 'output.jpg'))
+    // const stored = fs.statSync(path.join(pth, 'file1.jpg'))
+    // const written = fs.statSync(path.join(pth, 'output.jpg'))
     // expect(stored.size).to.equal(written.size)
     fs.unlinkSync(path.join(pth, 'output.jpg'))
 
