@@ -22,13 +22,16 @@ import {
   bucketsListIpfsPath,
   bucketsPullIpfsPath,
   bucketsPullPath,
+  bucketsPullPathAccessRoles,
   bucketsPushPath,
+  bucketsPushPathAccessRoles,
   bucketsRemove,
   bucketsRemovePath,
   bucketsRoot,
   bucketsSetPath,
   CreateObject,
   LinksObject,
+  PathAccessRole,
   PathItemObject,
   PathObject,
   PushPathResult,
@@ -622,6 +625,51 @@ export class Buckets extends GrpcAuthentication {
   async removePath(key: string, path: string, root?: string) {
     logger.debug('remove path request')
     return bucketsRemovePath(this, key, path, root)
+  }
+
+  /**
+   * Push new access roles per path in a Bucket
+   *
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A relative path within a bucket.
+   * @param roles Each user public key and the roles they will receive.
+   *
+   * @example
+   * ```typescript
+   * import { Buckets, PublicKey } from '@textile/hub'
+   *
+   * const grant = async (buckets: Buckets, key: string, peer: PublicKey) => {
+   *    const roles = new Map()
+   *    // NA = 0, Reader = 1, Writer = 2, Admin = 3
+   *    roles.set(peer.toString(), 2)
+   *    buckets.pushPathAccessRoles(key, '/', roles)
+   * }
+   * ```
+   */
+  async pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>) {
+    logger.debug('push path access roles request')
+    return bucketsPushPathAccessRoles(this, key, path, roles)
+  }
+
+  /**
+   * List the access roles per path in a Bucket
+   *
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path A relative path within a bucket.
+   *
+   * @example
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const viewRoot = async (buckets: Buckets, key: string) => {
+   *    const list = buckets.pullPathAccessRoles(key, '/')
+   *    console.log(list)
+   * }
+   * ```
+   */
+  async pullPathAccessRoles(key: string, path?: string) {
+    logger.debug('pull path access roles request')
+    return bucketsPullPathAccessRoles(this, key, path)
   }
 
   /**

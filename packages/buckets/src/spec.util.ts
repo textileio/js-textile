@@ -31,6 +31,7 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
   return new Promise<pb.CreateKeyResponse.AsObject>((resolve, reject) => {
     const req = new pb.CreateKeyRequest()
     req.setType(pb.KeyType[kind])
+    req.setSecure(false)
     const client = new APIServiceClient(ctx.host, { transport: WebsocketTransport() })
     ctx.toMetadata().then((meta) => {
       return client.createKey(req, meta, (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
