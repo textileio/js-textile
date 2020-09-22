@@ -1,10 +1,12 @@
+import fs from 'fs'
+import path from 'path'
+import { grpc } from '@improbable-eng/grpc-web'
+import { NodeHttpTransport } from '@improbable-eng/grpc-web-node-http-transport'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
-import fs from 'fs'
-import path from 'path'
 import { CreateObject } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
@@ -15,6 +17,8 @@ const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const rightError = new Error('right error!')
 const sessionSecret = 'hubsession'
+
+grpc.setDefaultTransport(NodeHttpTransport())
 
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
@@ -37,7 +41,7 @@ describe('Buckets...', function () {
   })
 
   describe('editing', function () {
-    it.skip('should open a bucket by name without thread info', async function () {
+    it('should open a bucket by name without thread info', async function () {
       const { root, threadID } = await client.getOrCreate('createbuck')
       expect(threadID).to.not.be.undefined
       expect(root).to.have.ownProperty('key')
@@ -46,7 +50,7 @@ describe('Buckets...', function () {
       expect(root).to.have.ownProperty('updatedAt')
     })
 
-    it.skip('should create a new bucket on open thread', async function () {
+    it('should create a new bucket on open thread', async function () {
       // Check that we're empty
       const list = await client.list()
       expect(list).to.have.length(1)
@@ -59,7 +63,7 @@ describe('Buckets...', function () {
       expect(buck.root).to.have.ownProperty('updatedAt')
     })
 
-    it.skip('should list buckets', async function () {
+    it('should list buckets', async function () {
       const roots = await client.list()
       expect(roots).to.have.length(2)
       const index = roots[0].key === buck.root?.key ? 0 : 1
@@ -70,7 +74,7 @@ describe('Buckets...', function () {
       expect(root).to.have.ownProperty('updatedAt', buck.root?.updatedAt)
     })
 
-    it.skip('should list empty bucket content at path', async function () {
+    it('should list empty bucket content at path', async function () {
       // Mostly empty
       const res = await client.listPath(buck.root?.key || '', '')
       expect(res).to.have.ownProperty('root')
@@ -79,7 +83,7 @@ describe('Buckets...', function () {
       expect(res.item?.items).to.have.length(1) // Includes .textileseed
     })
 
-    it.skip('should push data from filesystem on node', async function () {
+    it('should push data from filesystem on node', async function () {
       if (isBrowser) return this.skip()
       const pth = path.join(__dirname, '../../..', 'testdata')
       fileSize = fs.statSync(path.join(pth, 'file1.jpg')).size
@@ -106,7 +110,7 @@ describe('Buckets...', function () {
       expect(rep.item?.items).to.have.length(3) // Includes .textileseed
     })
 
-    it.skip('should push data from file API in browser', async function () {
+    it('should push data from file API in browser', async function () {
       if (isNode) return this.skip()
       const parts = [
         new Blob(['you construct a file...'], { type: 'text/plain' }),
@@ -137,7 +141,7 @@ describe('Buckets...', function () {
       expect(rep.item?.items).to.have.length(3)
     })
 
-    it.skip('should list (nested) files within a bucket', async function () {
+    it('should list (nested) files within a bucket', async function () {
       const rootKey = buck.root?.key || ''
 
       // Nested dir
@@ -172,7 +176,7 @@ describe('Buckets...', function () {
       expect(list).to.have.length(3)
     })
 
-    it.skip('should pull files by path and write to file on node', async function () {
+    it('should pull files by path and write to file on node', async function () {
       if (isBrowser) return this.skip()
       // Bucket path
       const rootKey = buck.root?.key || ''
@@ -213,7 +217,7 @@ describe('Buckets...', function () {
       expect(value).to.not.be.undefined
     })
 
-    it.skip('should remove files by path', async function () {
+    it('should remove files by path', async function () {
       const rootKey = buck.root?.key || ''
       await client.removePath(rootKey, 'path/to/file2.jpg')
       try {
@@ -235,7 +239,7 @@ describe('Buckets...', function () {
       expect(list.item?.items).to.have.length(2) // Includes .textileseed
     })
 
-    it.skip('should list bucket links', async function () {
+    it('should list bucket links', async function () {
       const rootKey = buck.root?.key || ''
 
       const rep = await client.links(rootKey)
@@ -243,7 +247,7 @@ describe('Buckets...', function () {
       expect(rep.ipns).to.not.equal('')
     })
 
-    it.skip('should remove an entire bucket', async function () {
+    it('should remove an entire bucket', async function () {
       const rootKey = buck.root?.key || ''
       const rep = await client.listPath(rootKey, 'dir1/file1.jpg')
       expect(rep).to.not.be.undefined
@@ -269,7 +273,7 @@ describe('Buckets...', function () {
     const privatePath = 'dir1/file1.jpg'
     const pth = path.join(__dirname, '../../..', 'testdata')
     before(async function () {
-      this.timeout(10000)
+      this.timeout(100000)
       if (isBrowser) return this.skip()
       aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await aliceBuckets.getToken(alice)
@@ -330,7 +334,7 @@ describe('Buckets...', function () {
       }
     })
 
-    it.skip('remove a file in shared path', async function () {
+    it('remove a file in shared path', async function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
@@ -347,7 +351,7 @@ describe('Buckets...', function () {
       }
     })
 
-    it.skip('overwrite an existing shared file', async function () {
+    it('overwrite an existing shared file', async function () {
       this.timeout(5000)
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')

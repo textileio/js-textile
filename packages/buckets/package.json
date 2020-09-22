@@ -29,7 +29,9 @@
   "author": "Textile",
   "license": "MIT",
   "dependencies": {
+    "@grpc/grpc-js": "^1.1.7",
     "@improbable-eng/grpc-web": "^0.13.0",
+    "@improbable-eng/grpc-web-node-http-transport": "^0.13.0",
     "@textile/buckets-grpc": "2.0.0",
     "@textile/context": "^0.6.8",
     "@textile/crypto": "^0.1.0",
