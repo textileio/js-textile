@@ -30,12 +30,12 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.6.8",
     "@textile/hub-grpc": "2.0.1",
-    "@textile/security": "^0.2.7",
-    "@textile/threads-client": "1.0.0-alpha.0",
-    "@textile/threads-id": "^0.1.13",
     "@textile/users-grpc": "2.0.1",
+    "@textile/context": "^0.6.9",
+    "@textile/security": "^0.2.8",
+    "@textile/threads-client": "^1.0.0-alpha.1",
+    "@textile/threads-id": "^0.1.14",
     "cids": "^0.8.0",
     "loglevel": "^1.7.0",
     "multihashes": "0.4.19"

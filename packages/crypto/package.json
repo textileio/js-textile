@@ -38,6 +38,7 @@
 	"references": [],
 	"dependencies": {
 		"@types/ed2curve": "^0.2.2",
+		"@types/multibase": "^0.6.0",
 		"ed2curve": "^0.3.0",
 		"multibase": "^3.0.0",
 		"tweetnacl": "^1.0.3"
