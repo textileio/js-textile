@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/context": "^0.6.9",
+    "@textile/context": "^0.6.10",
     "@textile/grpc-transport": "^0.0.3"
   },
   "devDependencies": {

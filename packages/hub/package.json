@@ -39,7 +39,7 @@
     "multihashes": "0.4.19"
   },
   "devDependencies": {
-    "@textile/context": "^0.6.9",
+    "@textile/context": "^0.6.10",
     "@textile/grpc-transport": "^0.0.4",
     "@textile/hub-grpc": "2.0.0-rc7",
     "axios": "^0.20.0",
