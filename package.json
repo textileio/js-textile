@@ -14,7 +14,7 @@
     "build": "lerna run build",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "outdated": "lerna exec -- npx ncu",
-    "test": "npm run test:node && npm run test:browser && run test:docs",
+    "test": "npm run test:node && npm run test:browser && npm run test:docs",
     "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
