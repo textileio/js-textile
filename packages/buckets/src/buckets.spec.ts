@@ -326,7 +326,8 @@ describe('Buckets...', function () {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.message).to.include('permission denied')
+        // expect(err.message).to.include('permission denied')
+        expect(err.message).to.include('Response closed without headers')
       }
     })
 
