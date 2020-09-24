@@ -379,6 +379,7 @@ export class Buckets extends GrpcAuthentication {
   /**
    * Returns a list of bucket links.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param path path within the bucket for links (default '/').
    * @example
    * Generate the HTTP, IPNS, and IPFS links for a Bucket
    * ```typescript
@@ -395,9 +396,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async links(key: string): Promise<LinksObject> {
+  async links(key: string, path = '/'): Promise<LinksObject> {
     logger.debug('link request')
-    return bucketsLinks(this, key)
+    return bucketsLinks(this, key, path)
   }
 
   /**
@@ -643,6 +644,19 @@ export class Buckets extends GrpcAuthentication {
    *    // NA = 0, Reader = 1, Writer = 2, Admin = 3
    *    roles.set(peer.toString(), 2)
    *    buckets.pushPathAccessRoles(key, '/', roles)
+   * }
+   * ```
+   * 
+   * @example
+   * Grant read access to everyone at a path (in an encrypted bucket)
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const grant = async (buckets: Buckets, key: string) => {
+   *    const roles = new Map()
+   *    // NA = 0, Reader = 1, Writer = 2, Admin = 3
+   *    roles.set('*', 1)
+   *    buckets.pushPathAccessRoles(key, '/folder/containing/shared/things', roles)
    * }
    * ```
    */
