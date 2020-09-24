@@ -284,10 +284,17 @@ export async function bucketsRoot(
  *
  * @internal
  */
-export async function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject> {
+export async function bucketsLinks(
+  api: GrpcConnection,
+  key: string,
+  path: string,
+  ctx?: ContextInterface,
+): Promise<LinksObject> {
   logger.debug('link request')
   const req = new LinksRequest()
   req.setKey(key)
+  req.setPath(path)
+  console.log(path)
   const res: LinksResponse = await api.unary(APIService.Links, req, ctx)
   return res.toObject()
 }

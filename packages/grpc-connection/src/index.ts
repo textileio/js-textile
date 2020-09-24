@@ -32,7 +32,7 @@ export class GrpcConnection {
     M extends grpc.UnaryMethodDefinition<R, T>
   >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
+      const metadata = ctx ? { ...ctx.toJSON() } : { ...this.context.toJSON() }
       grpc.unary(methodDescriptor, {
         request: req,
         host: this.serviceHost,
