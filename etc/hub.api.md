@@ -141,7 +141,7 @@ export class Buckets extends GrpcAuthentication {
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     // @deprecated
     init(name: string, isPrivate?: boolean): Promise<CreateObject>;
-    links(key: string): Promise<LinksObject>;
+    links(key: string, path?: string): Promise<LinksObject>;
     list(): Promise<RootObject[]>;
     listIpfsPath(path: string): Promise<PathItemObject | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<PathObject>;
@@ -157,7 +157,7 @@ export class Buckets extends GrpcAuthentication {
     pullPath(key: string, path: string, opts?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
-    pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
+    pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 2 | 1 | 3>>;
     pushPath(key: string, path: string, input: any, opts?: {
         progress?: (num?: number) => void;
     }): Promise<PushPathResult>;
@@ -213,7 +213,7 @@ export class BucketsGrpcClient {
 // Warning: (ae-internal-missing-underscore) The name "bucketsLinks" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function bucketsLinks(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<LinksObject>;
+export function bucketsLinks(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<LinksObject>;
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsList" should be prefixed with an underscore because the declaration is marked as @internal
 //
