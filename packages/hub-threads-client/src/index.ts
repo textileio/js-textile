@@ -5,21 +5,17 @@
 
 export {
   Action,
-  DBInfo,
   CollectionConfig,
-  CollectionInfo,
-  Update,
+  CriterionJSON,
+  DBInfo,
   Filter,
   Query,
+  QueryJSON,
+  ReadTransaction,
+  SortJSON,
+  Update,
+  ValueJSON,
   Where,
   WriteTransaction,
-  ReadTransaction,
-  Instance,
-  InstanceList,
-  QueryJSON,
-  ValueJSON,
-  CriterionJSON,
-  SortJSON,
 } from '@textile/threads-client'
-
 export { Client } from './client'
