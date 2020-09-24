@@ -148,7 +148,9 @@
 <tr><td><a href="/js-hub/docs/hub.buckets.open">open(name, threadName, isPrivate, threadID)</a></td><td></td><td>(Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.pullipfspath">pullIpfsPath(path, opts)</a></td><td></td><td>pullIpfsPath pulls the path from a remote UnixFS dag, writing it to writer if it's a file.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.pullpath">pullPath(key, path, opts)</a></td><td></td><td>Pulls the bucket path, returning the bytes of the given file.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pullpathaccessroles">pullPathAccessRoles(key, path)</a></td><td></td><td>List the access roles per path in a Bucket</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.pushpath">pushPath(key, path, input, opts)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.pushpathaccessroles">pushPathAccessRoles(key, path, roles)</a></td><td></td><td>Push new access roles per path in a Bucket</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.remove">remove(key)</a></td><td></td><td>Removes an entire bucket. Files and directories will be unpinned (cannot be undone).</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.removepath">removePath(key, path, root)</a></td><td></td><td>Returns information about a bucket path (cannot be undone).</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.root">root(key)</a></td><td></td><td>Returns the bucket root CID</td></tr>
