@@ -116,7 +116,15 @@
       "hub.buckets.removepath",
       "hub.buckets.setpath"
     ],
-    "Experimental": ["hub.archive", "hub.archiveinfo", "hub.archivestatus"],
+    "Experimental": [
+      "hub.archive", 
+      "hub.archiveinfo", 
+      "hub.buckets.archiveinfo",
+      "hub.archivedealinfo",
+      "hub.buckets.archivestatus",
+      "hub.archivestatus",
+      "hub.statuscode"
+    ],
     "Types": [
       "hub.createobject",
       "hub.linksobject",
