@@ -31,7 +31,7 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/context": "^0.6.8",
-    "@textile/hub-grpc": "2.0.0",
+    "@textile/hub-grpc": "2.0.1",
     "@textile/security": "^0.2.7",
     "@textile/threads-client": "1.0.0-alpha.0",
     "@textile/threads-id": "^0.1.13",
