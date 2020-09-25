@@ -250,7 +250,7 @@ export class Buckets extends GrpcAuthentication {
     isPrivate = false,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
-    return this.getOrCreate(name, threadName, isPrivate, threadID)
+    return this.getOrCreate(name, threadName, isPrivate, undefined, threadID)
   }
 
   /**
@@ -267,16 +267,17 @@ export class Buckets extends GrpcAuthentication {
     isPrivate = false,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
-    return this.getOrCreate(name, threadName, isPrivate, threadID)
+    return this.getOrCreate(name, threadName, isPrivate, undefined, threadID)
   }
 
   /**
    * Open a new / existing bucket by bucket name and ThreadID (create not required)
    * Replaces `open` command in older versions.
    * @param name name of bucket
-   * @param threadName the name of the thread where the bucket is stored (default `buckets`)
-   * @param isPrivate encrypt the bucket contents (default `false`)
-   * @param threadID id of thread where bucket is stored
+   * @param threadName (optional) the name of the thread where the bucket is stored (default `buckets`)
+   * @param isPrivate (optional) encrypt the bucket contents (default `false`)
+   * @param cid (optional) Bootstrap the bucket with a UnixFS Cid from the IPFS network
+   * @param threadID (optional) id of thread where bucket is stored
    *
    * @remarks
    * The IPFS protocol and its implementations are still in heavy
@@ -300,6 +301,7 @@ export class Buckets extends GrpcAuthentication {
     name: string,
     threadName = 'buckets',
     isPrivate = false,
+    cid?: string,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
     const client = new Client(this.context)
@@ -333,7 +335,7 @@ export class Buckets extends GrpcAuthentication {
     if (existing) {
       return { root: existing, threadID }
     }
-    const created = await this.create(name, isPrivate)
+    const created = await this.create(name, isPrivate, cid)
     return { root: created.root, threadID }
   }
 
@@ -352,6 +354,7 @@ export class Buckets extends GrpcAuthentication {
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
    * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param cid (optional) Bootstrap the bucket with a UnixFS Cid from the IPFS network
    * @example
    * Create a Bucket called "app-name-files"
    * ```typescript
@@ -362,9 +365,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async create(name: string, isPrivate = false): Promise<CreateObject> {
+  async create(name: string, isPrivate = false, cid?: string): Promise<CreateObject> {
     logger.debug('create request')
-    return bucketsCreate(this, name, isPrivate)
+    return bucketsCreate(this, name, isPrivate, cid)
   }
 
   /**

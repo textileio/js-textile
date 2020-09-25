@@ -127,8 +127,8 @@ export class Buckets extends GrpcAuthentication {
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Buckets;
-    create(name: string, isPrivate?: boolean): Promise<CreateObject>;
-    getOrCreate(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+    create(name: string, isPrivate?: boolean, cid?: string): Promise<CreateObject>;
+    getOrCreate(name: string, threadName?: string, isPrivate?: boolean, cid?: string, threadID?: string): Promise<{
         root?: RootObject;
         threadID?: string;
     }>;
@@ -195,7 +195,7 @@ export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: 
 }, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
 
 // @public
-export function bucketsCreate(api: GrpcConnection, name: string, isPrivate?: boolean, ctx?: ContextInterface): Promise<CreateObject>;
+export function bucketsCreate(api: GrpcConnection, name: string, isPrivate?: boolean, cid?: string, ctx?: ContextInterface): Promise<CreateObject>;
 
 // @public
 export class BucketsGrpcClient {
