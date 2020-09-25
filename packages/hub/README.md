@@ -1,5 +1,4 @@
-Textile Hub
-============
+# Textile Hub
 
 > JS lib for interacting with Hub APIs
 
@@ -17,7 +16,7 @@ npm install @textile/hub
 
 ## Usage
 
-The Hub library contains three API clients: Users, Buckets, and Threads Client. You can use each of these to access the full set of APIs available on the Hub. To use any of them, you must first start by authenticating your app with the API. 
+The Hub library contains three API clients: Users, Buckets, and Threads Client. You can use each of these to access the full set of APIs available on the Hub. To use any of them, you must first start by authenticating your app with the API.
 
 ### Authentication & authorization
 
@@ -178,7 +177,7 @@ async function start (client: Client, schema: any) {
   /**
    * We add our first Collection to the DB for any schema.
    */
-  await client.newCollection(threadId, 'Astronaut', schema);
+  await client.newCollection(threadId, { name: 'Astronaut', schema });
 }
 ```
 
@@ -190,10 +189,10 @@ import { Client, ThreadID } from '@textile/hub'
 async function createEntity (client: Client, threadId: ThreadID, jsonData: any) {
   /**
    * Add a new Astronaut
-   * 
+   *
    * Our Thread contains the Astronaut Collection, so you just need
    * to add a new astronaut that matches the expected schema.
-   * 
+   *
    * If you run this app many times, you'll notice many Buzz Aldrin
    * entries in your ThreadDB, each with a unique ID.
    */
@@ -259,9 +258,9 @@ import { Buckets, UserAuth } from '@textile/hub'
 async function add (buckets: Buckets, webpage: string, bucketKey: string) {
   /**
    * Add a simple file Buffer
-   * 
+   *
    * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
-   * 
+   *
    * We add the file as index.html so that we can render it right in the browser afterwards.
    */
   const file = { path: '/index.html', content: Buffer.from(webpage) }
