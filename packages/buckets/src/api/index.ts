@@ -213,6 +213,7 @@ const convertPathItemNullable = (item?: PathItem): PathItemObject | undefined =>
  * @public
  * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
  * @param isPrivate encrypt the bucket contents (default `false`)
+ * @param cid (optional) Bootstrap the bucket with a UnixFS Cid from the IPFS network
  * @example
  * Creates a Bucket called "app-name-files"
  * ```typescript
@@ -229,11 +230,15 @@ export async function bucketsCreate(
   api: GrpcConnection,
   name: string,
   isPrivate = false,
+  cid?: string,
   ctx?: ContextInterface,
 ): Promise<CreateObject> {
   logger.debug('create request')
   const req = new CreateRequest()
   req.setName(name)
+  if (cid) {
+    req.setBootstrapCid(cid)
+  }
   req.setPrivate(isPrivate)
   const res: CreateResponse = await api.unary(APIService.Create, req, ctx)
   const links = res.getLinks()
