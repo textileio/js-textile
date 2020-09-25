@@ -73,6 +73,7 @@
 <tr><td><a href="/js-hub/docs/hub.query">Query</a></td><td>Query allows to build queries to be used to fetch data from a model.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.readtransaction">ReadTransaction</a></td><td>ReadTransaction performs a read-only bulk transaction on the underlying store.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.threadid">ThreadID</a></td><td>ThreadID represents a self-describing Thread identifier.<!-- -->It is formed by a Version, a Variant, and a random number of a given length.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.threadkey">ThreadKey</a></td><td>Key is a thread encryption key with two components.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.users">Users</a></td><td>Users a client wrapper for interacting with the Textile Users API.<!-- -->This API has the ability to:<!-- -->- Register new users with a User Group key and obtain a new API Token<!-- -->- Get and List all Threads created for/by the user in your app.<!-- -->- Create an inbox for the user or send message to another user's inbox.<!-- -->- Check, read, and delete messages in a user's inbox.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.writetransaction">WriteTransaction</a></td><td>WriteTransaction performs a mutating bulk transaction on the underlying store.</td></tr>
 </tbody>
@@ -97,7 +98,7 @@
 <tr><th>Function</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.bucketscreate">bucketsCreate(api, name, isPrivate, ctx)</a></td><td>Creates a new bucket.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.bucketscreate">bucketsCreate(api, name, isPrivate, cid, ctx)</a></td><td>Creates a new bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.bucketspullpathaccessroles">bucketsPullPathAccessRoles(api, key, path, ctx)</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.bucketspushpathaccessroles">bucketsPushPathAccessRoles(api, key, path, roles, ctx)</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.bytestoarray">bytesToArray(chunk, size)</a></td><td>bytesToArray converts a buffer into &lt;<!-- -->4mb chunks for use with grpc API</td></tr>
@@ -120,8 +121,7 @@
 <tr><th>Interface</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.collectionconfig">CollectionConfig</a></td><td></td></tr>
-<tr><td><a href="/js-hub/docs/hub.collectioninfo">CollectionInfo</a></td><td></td></tr>
+<tr><td><a href="/js-hub/docs/hub.collectionconfig">CollectionConfig</a></td><td>CollectionConfig is the configuration options for creating and updating a Collection. It supports the following configuration options: - Name: The name of the collection, e.g, &quot;Animals&quot; (must be unique per DB). - Schema: A JSON Schema), which is used for instance validation. - Indexes: An optional list of index configurations, which define how instances are indexed. - WriteValidator: An optional JavaScript (ECMAScript 5.1) function that is used to validate instances on write. - ReadFilter: An optional JavaScript (ECMAScript 5.1) function that is used to filter instances on read.<!-- -->The <code>writeValidator</code> function receives three arguments: - writer: The multibase-encoded public key identity of the writer. - event: An object describing the update event (see core.Event). - instance: The current instance as a JavaScript object before the update event is applied.<!-- -->A falsy return value indicates a failed validation.<!-- -->Having access to writer, event, and instance opens the door to a variety of app-specific logic. Textile Buckets file-level access roles are implemented in part with a write validator.<!-- -->The <code>readFilter</code> function receives three arguments: - reader: The multibase-encoded public key identity of the reader. - instance: The current instance as a JavaScript object.<!-- -->The function must return a JavaScript object. Most implementation will modify and return the current instance. Like write validation, read filtering opens the door to a variety of app-specific logic. Textile Buckets file-level access roles are implemented in part with a read filter.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.copyauthoptions">CopyAuthOptions</a></td><td>Set additional options when copying authentication.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.criterionjson">CriterionJSON</a></td><td>CriterionJSON represents a single Query criteria.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.dbinfo">DBInfo</a></td><td>DBInfo contains joining/sharing information for a Thread/DB.</td></tr>
@@ -129,8 +129,6 @@
 <tr><td><a href="/js-hub/docs/hub.getthreadresponseobj">GetThreadResponseObj</a></td><td>The response type from getThread and listThreads</td></tr>
 <tr><td><a href="/js-hub/docs/hub.identity">Identity</a></td><td>Identity represents an entity capable of signing a message. This is a simple &quot;private key&quot; interface that must be capable of returning the associated &quot;public key&quot; for verification. In many cases, the Identity will just be a private key, but callers can use any setup that suits their needs. The interface is currently modeled after <code>libp2p-crypto</code> keys. It is meant to be implemented by external libraries, though in practice, implementations are provided by the <code>@textile/crypto</code> library.<!-- -->If using in your own application, see the <a href="/js-hub/docs/hub.privatekey">PrivateKey</a> class.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.inboxlistoptions">InboxListOptions</a></td><td>Inbox query options</td></tr>
-<tr><td><a href="/js-hub/docs/hub.instance">Instance</a></td><td>Instance is a singular Model instance.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.instancelist">InstanceList</a></td><td>InstanceList is an array of Entities.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.mailboxevent">MailboxEvent</a></td><td>The event type returned from inbox and sentbox subscriptions</td></tr>
 <tr><td><a href="/js-hub/docs/hub.public">Public</a></td><td>Public is any entity associated with a given <a href="/js-hub/docs/hub.identity">Identity</a> that is capable of verifying a signature produced by said identity. In most cases, a public key will be obtained as a property of an object implementing the <a href="/js-hub/docs/hub.identity">Identity</a> and/or <a href="/js-hub/docs/hub.private">Private</a> key interface.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.pushpathresult">PushPathResult</a></td><td>The expected result format from pushing a path to a bucket</td></tr>
@@ -151,7 +149,11 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-hub/docs/hub.expirationerror">expirationError</a></td><td>expirationError is an error your app will receive anytime your credentials have expired.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.invalidkeyerror">invalidKeyError</a></td><td></td></tr>
+<tr><td><a href="/js-hub/docs/hub.keyfromstring">keyFromString</a></td><td>keyFromString returns a key by decoding a base32-encoded string.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.keytostring">keyToString</a></td><td>String returns the base32-encoded string representation of raw key bytes.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.mailconfig">MailConfig</a></td><td>Global settings for mailboxes</td></tr>
+<tr><td><a href="/js-hub/docs/hub.randombytes">randomBytes</a></td><td></td></tr>
 <tr><td><a href="/js-hub/docs/hub.where">Where</a></td><td>Alias Criterion to Where for a slightly nicer API (see example below)</td></tr>
 </tbody>
 </table>

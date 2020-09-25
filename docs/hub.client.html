@@ -80,7 +80,7 @@
     missions: <span class="hljs-number">2</span>,
     _id: <span class="hljs-string">''</span>,
   }
-  <span class="hljs-keyword">await</span> client.newCollectionFromObject(threadID, <span class="hljs-string">'astronauts'</span>, buzz)
+  <span class="hljs-keyword">await</span> client.newCollectionFromObject(threadID, buzz, { name: <span class="hljs-string">'astronauts'</span> })
 
   <span class="hljs-comment">// Store the buzz object in the new collection</span>
   <span class="hljs-keyword">await</span> client.create(threadID, <span class="hljs-string">'astronauts'</span>, [buzz])
@@ -131,15 +131,14 @@
 <tr><td><a href="/js-hub/docs/hub.client.listcollections">listCollections(thread)</a></td><td></td><td>Lists the collections in a thread</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.listdbs">listDBs()</a></td><td></td><td>Lists all known DBs.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.listen">listen(threadID, filters, callback)</a></td><td></td><td>listen opens a long-lived connection with a remote node, running the given callback on each new update to the given instance. The return value is a <code>close</code> function, which cleanly closes the connection with the remote node.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.client.newcollection">newCollection(threadID, name, schema, indexes)</a></td><td></td><td>newCollection registers a new collection schema under the given name. The schema must be a valid json-schema.org schema, and can be a JSON string or object.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.client.newcollectionfromobject">newCollectionFromObject(threadID, name, obj, indexes)</a></td><td></td><td>newCollectionFromObject creates and registers a new collection under the given name. The input object must be serializable to JSON, and contain only json-schema.org types.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.client.newcollection">newCollection(threadID, config)</a></td><td></td><td>newCollection registers a new collection schema under the given name. The schema must be a valid json-schema.org schema, and can be a JSON string or object.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.client.newcollectionfromobject">newCollectionFromObject(threadID, obj, config)</a></td><td></td><td>newCollectionFromObject creates and registers a new collection under the given name. The input object must be serializable to JSON, and contain only json-schema.org types.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.newdb">newDB(threadID, name)</a></td><td></td><td>newDB creates a new store on the remote node.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.newdbfromaddr">newDBFromAddr(address, key, collections)</a></td><td></td><td>newDBFromAddr initializes the client with the given store, connecting to the given thread address (database). It should be called before any operation on the store, and is an alternative to start, which creates a local store. newDBFromAddr should also include the read/follow key, which should be a Buffer, Uint8Array or base32-encoded string.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.open">open(threadID, name)</a></td><td></td><td>open creates and enters a new store on the remote node.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.client.randomidentity">randomIdentity()</a></td><td><code>static</code></td><td>Create a random user identity.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.readtransaction">readTransaction(threadID, collectionName)</a></td><td></td><td>readTransaction creates a new read-only transaction object. See ReadTransaction for details.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.save">save(threadID, collectionName, values)</a></td><td></td><td>Saves changes to an existing model instance in the given store.</td></tr>
-<tr><td><a href="/js-hub/docs/hub.client.updatecollection">updateCollection(threadID, name, schema, indexes)</a></td><td></td><td>updateCollection updates an existing collection. Currently, updates can include name and schema.  Allow update of indexing information.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.client.updatecollection">updateCollection(threadID, config)</a></td><td></td><td>updateCollection updates an existing collection. Currently, updates can include name and schema.  Allow update of indexing information.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.verify">verify(threadID, collectionName, values)</a></td><td></td><td>Verify checks existing instance changes. Each model instance must have a valid existing <code>_id</code> property.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.withkeyinfo">withKeyInfo(key, host, debug)</a></td><td><code>static</code></td><td>Create a new gRPC client instance from a supplied key and secret</td></tr>
 <tr><td><a href="/js-hub/docs/hub.client.withuserauth">withUserAuth(auth, host, debug)</a></td><td><code>static</code></td><td>Create a new gRPC client instance from a supplied user auth object. Assumes all default gRPC settlings. For customization options, use a context object directly. The callback method will automatically refresh expiring credentials.</td></tr>
