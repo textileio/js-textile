@@ -17,7 +17,7 @@ import {
   WriteTransactionRequest,
 } from "@textile/threads-client-grpc/threads_pb"
 import { ThreadID } from "@textile/threads-id"
-import { Instance, InstanceList, QueryJSON } from "./query"
+import { QueryJSON } from "./query"
 import { Transaction } from "./Transaction"
 
 const decoder = new TextDecoder()
@@ -213,8 +213,8 @@ export class WriteTransaction extends Transaction<
    * find queries the store for entities matching the given query parameters. See Query for options.
    * @param query The object that describes the query. See Query for options. Alternatively, see QueryJSON for the basic interface.
    */
-  public async find<T = any>(query: QueryJSON): Promise<InstanceList<T>> {
-    return new Promise<InstanceList<T>>((resolve, reject) => {
+  public async find<T = any>(query: QueryJSON): Promise<Array<T>> {
+    return new Promise<Array<T>>((resolve, reject) => {
       const findReq = new FindRequest()
       findReq.setQueryjson(Buffer.from(JSON.stringify(query)))
       const req = new WriteTransactionRequest()
@@ -228,18 +228,13 @@ export class WriteTransaction extends Transaction<
         if (reply === undefined) {
           resolve()
         } else {
-          // TODO: Clean this up to avoid using Buffer
-          const ret: InstanceList<T> = {
-            instancesList: reply
-              .toObject()
-              .instancesList.map((instance) =>
-                JSON.parse(Buffer.from(instance as string, "base64").toString())
-              ),
-          }
+          const ret: Array<T> = reply
+            .getInstancesList_asU8()
+            .map((instance) => JSON.parse(decoder.decode(instance)))
           resolve(ret)
         }
       })
-      super.setReject(reject)
+      this.setReject(reject)
       this.client.send(req)
     })
   }
@@ -248,8 +243,8 @@ export class WriteTransaction extends Transaction<
    * findByID queries the store for the id of an instance.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(ID: string): Promise<Instance<T> | undefined> {
-    return new Promise<Instance<T> | undefined>((resolve, reject) => {
+  public async findByID<T = any>(ID: string): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
       const req = new WriteTransactionRequest()
@@ -263,13 +258,10 @@ export class WriteTransaction extends Transaction<
         if (reply === undefined) {
           resolve()
         } else {
-          const ret: Instance<T> = {
-            instance: JSON.parse(decoder.decode(reply.getInstance_asU8())),
-          }
-          resolve(ret)
+          resolve(JSON.parse(decoder.decode(reply.getInstance_asU8())))
         }
       })
-      super.setReject(reject)
+      this.setReject(reject)
       this.client.send(req)
     })
   }

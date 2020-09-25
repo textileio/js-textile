@@ -146,3 +146,5 @@ export async function createUserAuth(
 export const expirationError = new Error(
   "Auth expired. Consider calling withKeyInfo or withAPISig to refresh."
 )
+
+export * from "./key"

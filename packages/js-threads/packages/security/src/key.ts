@@ -1,7 +1,11 @@
-import { randomBytes } from "@textile/threads-crypto"
+import randombytes from "@consento/sync-randombytes"
 import multibase from "multibase"
 
 export const invalidKeyError = new Error("Invalid key")
+
+export const randomBytes = (byteLength: number): Uint8Array => {
+  return randombytes(new Uint8Array(byteLength))
+}
 
 // KeyBytes is the length of GCM key.
 const keyBytes = 32

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/textileio/js-threads/compare/@textile/security@0.2.7...@textile/security@0.3.0) (2020-09-24)
+
+
+### Features
+
+* deprecate threads-core, move threadkey to security ([63152f2](https://github.com/textileio/js-threads/commit/63152f2514ae01a6ca539948104c8c32dd0c1503))
+
+
+
+
+
+## [0.2.8](https://github.com/textileio/js-threads/compare/@textile/security@0.2.7...@textile/security@0.2.8) (2020-09-23)
+
+**Note:** Version bump only for package @textile/security
+
+
+
+
+
 ## [0.2.7](https://github.com/textileio/js-threads/compare/@textile/security@0.2.6...@textile/security@0.2.7) (2020-09-10)
 
 

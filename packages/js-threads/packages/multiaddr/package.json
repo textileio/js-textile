@@ -1,6 +1,6 @@
 {
   "name": "@textile/multiaddr",
-  "version": "0.0.24",
+  "version": "0.0.26",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -15,8 +15,8 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
+    "build": "npx tsc -b tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "repository": "github:textileio/js-threads",
   "references": [
@@ -24,12 +24,8 @@
       "path": "../id"
     }
   ],
-  "devDependencies": {
-    "rimraf": "^3.0.0",
-    "typescript": "^3.7.2"
-  },
   "dependencies": {
-    "@textile/threads-id": "^0.1.13",
+    "@textile/threads-id": "^0.1.15",
     "@types/bs58": "^4.0.1",
     "@types/multiaddr": "^7.2.0",
     "@types/multibase": "^0.6.0",

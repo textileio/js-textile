@@ -17,20 +17,6 @@ export interface Filter {
 }
 
 /**
- * Instance is a singular Model instance.
- */
-export interface Instance<T> {
-  instance: T | undefined
-}
-
-/**
- * InstanceList is an array of Entities.
- */
-export interface InstanceList<T> {
-  instancesList: T[]
-}
-
-/**
  * Value represents a valid JSON data type.
  */
 export type Value = string | boolean | number

@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-client",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -15,8 +15,8 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "build": "npx tsc -b tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-threads",
@@ -42,23 +42,15 @@
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.6.8",
-    "@textile/grpc-transport": "^0.0.3",
-    "@textile/multiaddr": "^0.0.24",
-    "@textile/security": "^0.2.7",
-    "@textile/threads-client-grpc": "^1.0.0-rc1",
-    "@textile/threads-core": "^0.3.1",
-    "@textile/threads-id": "^0.1.13",
-    "@types/google-protobuf": "^3.7.2",
-    "@types/multibase": "^0.6.0",
+    "@textile/context": "^0.7.0",
+    "@textile/crypto": "^0.1.0",
+    "@textile/grpc-transport": "^0.0.5",
+    "@textile/multiaddr": "^0.0.26",
+    "@textile/security": "^0.3.0",
+    "@textile/threads-client-grpc": "^1.0.0",
+    "@textile/threads-id": "^0.1.15",
     "@types/to-json-schema": "^0.2.0",
-    "cids": "^0.8.3",
-    "google-protobuf": "^3.10.0",
     "to-json-schema": "^0.2.5"
-  },
-  "devDependencies": {
-    "rimraf": "^3.0.0",
-    "typescript": "^3.7.2"
   },
   "gitHead": "331b99b7d5dbae032e5c071a0b9f6141d757b6f1"
 }

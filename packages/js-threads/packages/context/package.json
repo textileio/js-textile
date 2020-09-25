@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.6.8",
+  "version": "0.7.0",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -15,26 +15,22 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "build": "npx tsc -b tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-threads",
   "devDependencies": {
-    "@improbable-eng/grpc-web": "^0.13.0",
-    "rimraf": "^3.0.0",
-    "typescript": "^3.7.2"
+    "@improbable-eng/grpc-web": "^0.13.0"
   },
   "references": [
-    {
-      "path": "../id"
-    },
     {
       "path": "../security"
     }
   ],
   "dependencies": {
-    "@textile/security": "^0.2.7"
+    "@improbable-eng/grpc-web": "^0.13.0",
+    "@textile/security": "^0.3.0"
   },
   "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"
 }

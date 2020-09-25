@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-id",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -15,15 +15,11 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "build": "npx tsc -b tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup  src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-threads",
-  "devDependencies": {
-    "rimraf": "^3.0.0",
-    "typescript": "^3.7.2"
-  },
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
     "@types/multibase": "^0.6.0",

@@ -4,15 +4,7 @@
   "mode": "modules",
   "out": "docs",
   "exclude": ["**/*.spec.ts", "**/node_modules/**"],
-  "lernaExclude": [
-    "@textile/context",
-    "@textile/multiaddr",
-    "@textile/threads-core",
-    "@textile/threads-encoding",
-    "@textile/threads-network",
-    "@textile/threads-network-client",
-    "@textile/threads-store"
-  ],
+  "lernaExclude": ["@textile/context", "@textile/multiaddr"],
   "gitRevision": "master",
   "excludePrivate": true,
   "excludeNotExported": true,

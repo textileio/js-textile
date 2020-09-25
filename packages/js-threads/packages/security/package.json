@@ -1,6 +1,6 @@
 {
   "name": "@textile/security",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "description": "Common types/interfaces for Textile security including authentication and authorization.",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,16 +16,15 @@
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
+    "build": "npx tsc -b tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo"
   },
   "repository": "github:textileio/js-threads",
   "devDependencies": {
-    "@improbable-eng/grpc-web": "^0.13.0",
-    "rimraf": "^3.0.0",
-    "typescript": "^3.7.2"
+    "@improbable-eng/grpc-web": "^0.13.0"
   },
   "dependencies": {
+    "@consento/sync-randombytes": "^1.0.5",
     "@types/multibase": "^0.6.0",
     "fast-sha256": "^1.3.0",
     "multibase": "^1.0.0"

@@ -1,4 +1,6 @@
-export * from '@textile/security'
-export * from '@textile/threads-id'
-export * from '@textile/threads-client'
-export { Identity, Libp2pCryptoIdentity } from '@textile/threads-core'
+export * from "@textile/security"
+// eslint-disable-next-line prettier/prettier
+export * from "@textile/threads-id"
+// eslint-disable-next-line prettier/prettier
+export * from "@textile/threads-client"
+export { Identity, PrivateKey } from "@textile/crypto"
