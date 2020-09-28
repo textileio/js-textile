@@ -128,7 +128,7 @@ export type PathObject = {
  */
 export interface ArchiveConfig {
   /**
-   * RepFactor indicates the desired amount of active deals
+   * RepFactor (ignored in Filecoin testnet) indicates the desired amount of active deals
    * with different miners to store the data. While making deals
    * the other attributes of FilConfig are considered for miner selection.
    */
@@ -138,17 +138,17 @@ export interface ArchiveConfig {
    */
   dealMinDuration: number
   /**
-   * ExcludedMiners is a set of miner addresses won't be ever be selected
+   * ExcludedMiners (ignored in Filecoin testnet) is a set of miner addresses won't be ever be selected
    *when making new deals, even if they comply to other filters.
    */
   excludedMiners: Array<string>
   /**
-   * TrustedMiners is a set of miner addresses which will be forcibly used
+   * TrustedMiners (ignored in Filecoin testnet) is a set of miner addresses which will be forcibly used
    * when making new deals. An empty/nil list disables this feature.
    */
   trustedMiners: Array<string>
   /**
-   * CountryCodes indicates that new deals should select miners on specific countries.
+   * CountryCodes (ignored in Filecoin testnet) indicates that new deals should select miners on specific countries.
    */
   countryCodes: Array<string>
   /**
