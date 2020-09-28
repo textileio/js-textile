@@ -724,10 +724,10 @@ export class Buckets extends GrpcAuthentication {
    * @example
    * Set the default ArchiveConfig
    * ```typescript
-   * import { Buckets } from '@textile/hub'
+   * import { Buckets, ArchiveConfig } from '@textile/hub'
    *
-   * async function getDefaultConfig (buckets: Buckets, key: string, config: ArchiveConfig) {
-   *    await buckets.defaultArchiveConfig(key, config)
+   * async function setDefaultConfig (buckets: Buckets, key: string, config: ArchiveConfig) {
+   *    await buckets.setDefaultArchiveConfig(key, config)
    * }
    * ```
    */
