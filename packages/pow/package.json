@@ -1,6 +1,6 @@
 {
   "name": "@textile/pow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "web-gRPC wrapper client for interacting with Textile Powergate services.",
   "main": "dist/index",
   "types": "dist/index",
