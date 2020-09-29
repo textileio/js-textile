@@ -42,7 +42,7 @@
     "@textile/threads-id": "^0.1.15",
     "@textile/users-grpc": "2.0.1",
     "@types/next-tick": "^1.0.0",
-    "cids": "^0.8.0",
+    "cids": "^1.0.1",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.7.0",
     "next-tick": "^1.1.0"
