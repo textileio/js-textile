@@ -10,13 +10,16 @@ import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import log from 'loglevel'
 import {
+  ArchiveConfig,
   ArchiveInfo,
+  ArchiveOptions,
   ArchiveStatus,
   bucketsArchive,
   bucketsArchiveInfo,
   bucketsArchiveStatus,
   bucketsArchiveWatch,
   bucketsCreate,
+  bucketsDefaultArchiveConfig,
   bucketsLinks,
   bucketsList,
   bucketsListIpfsPath,
@@ -28,6 +31,7 @@ import {
   bucketsRemove,
   bucketsRemovePath,
   bucketsRoot,
+  bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
   CreateObject,
   LinksObject,
@@ -649,7 +653,6 @@ export class Buckets extends GrpcAuthentication {
    *    buckets.pushPathAccessRoles(key, '/', roles)
    * }
    * ```
-   * 
    * @example
    * Grant read access to everyone at a path (in an encrypted bucket)
    * ```typescript
@@ -690,6 +693,50 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
+   * (Experimental) Get the current default ArchiveConfig for the specified Bucket.
+   *
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @returns The default ArchiveConfig for the specified Bucket.
+   *
+   * @example
+   * Get the default ArchiveConfig
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * async function getDefaultConfig (buckets: Buckets, key: string) {
+   *    const defaultConfig = await buckets.defaultArchiveConfig(key)
+   * }
+   * ```
+   */
+  async defaultArchiveConfig(key: string) {
+    logger.debug('default archive config request')
+    return bucketsDefaultArchiveConfig(this, key)
+  }
+
+  /**
+   * (Experimental) Set the default ArchiveConfig for the specified Bucket.
+   *
+   * @beta
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param config The ArchiveConfig to set as the new default.
+   *
+   * @example
+   * Set the default ArchiveConfig
+   * ```typescript
+   * import { Buckets, ArchiveConfig } from '@textile/hub'
+   *
+   * async function setDefaultConfig (buckets: Buckets, key: string, config: ArchiveConfig) {
+   *    await buckets.setDefaultArchiveConfig(key, config)
+   * }
+   * ```
+   */
+  async setDefaultArchiveConfig(key: string, config: ArchiveConfig) {
+    logger.debug('set default archive config request')
+    return bucketsSetDefaultArchiveConfig(this, key, config)
+  }
+
+  /**
    * (Experimental) Store a snapshot of the bucket on Filecoin.
    * @remarks
    * Filecoin support is experimental. By using Textile, you
@@ -699,6 +746,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param options An object to set options that control the behavor of archive.
    *
    * @example
    * Remove a file by its relative path
@@ -706,13 +754,13 @@ export class Buckets extends GrpcAuthentication {
    * import { Buckets } from '@textile/hub'
    *
    * async function archive (buckets: Buckets, key: string) {
-   *    buckets.archive(key)
+   *    await buckets.archive(key)
    * }
    * ```
    */
-  async archive(key: string) {
+  async archive(key: string, options?: ArchiveOptions) {
     logger.debug('archive request')
-    return bucketsArchive(this, key)
+    return bucketsArchive(this, key, options)
   }
 
   /**

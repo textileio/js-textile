@@ -1,7 +1,9 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import {
+  ArchiveConfig as ProtoArchiveConfig,
   ArchiveInfoRequest,
   ArchiveInfoResponse,
+  ArchiveRenew as ProtoArchiveRenew,
   ArchiveRequest,
   ArchiveStatusRequest,
   ArchiveStatusResponse,
@@ -9,6 +11,8 @@ import {
   ArchiveWatchResponse,
   CreateRequest,
   CreateResponse,
+  DefaultArchiveConfigRequest,
+  DefaultArchiveConfigResponse,
   LinksRequest,
   LinksResponse,
   ListIpfsPathRequest,
@@ -33,6 +37,7 @@ import {
   Root,
   RootRequest,
   RootResponse,
+  SetDefaultArchiveConfigRequest,
   SetPathRequest,
 } from '@textile/buckets-grpc/buckets_pb'
 import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb_service'
@@ -116,6 +121,118 @@ export type PathItemObject = {
 export type PathObject = {
   item?: PathItemObject
   root?: RootObject
+}
+
+/**
+ * ArchiveConfig is the desired state of a Cid in the Filecoin network.
+ */
+export interface ArchiveConfig {
+  /**
+   * RepFactor (ignored in Filecoin testnet) indicates the desired amount of active deals
+   * with different miners to store the data. While making deals
+   * the other attributes of FilConfig are considered for miner selection.
+   */
+  repFactor: number
+  /**
+   * DealMinDuration indicates the duration to be used when making new deals.
+   */
+  dealMinDuration: number
+  /**
+   * ExcludedMiners (ignored in Filecoin testnet) is a set of miner addresses won't be ever be selected
+   *when making new deals, even if they comply to other filters.
+   */
+  excludedMiners: Array<string>
+  /**
+   * TrustedMiners (ignored in Filecoin testnet) is a set of miner addresses which will be forcibly used
+   * when making new deals. An empty/nil list disables this feature.
+   */
+  trustedMiners: Array<string>
+  /**
+   * CountryCodes (ignored in Filecoin testnet) indicates that new deals should select miners on specific countries.
+   */
+  countryCodes: Array<string>
+  /**
+   * Renew indicates deal-renewal configuration.
+   */
+  renew?: ArchiveRenew
+  /**
+   * Addr is the wallet address used to store the data in filecoin
+   */
+  addr: string
+  /**
+   * MaxPrice is the maximum price that will be spent to store the data, 0 is no max
+   */
+  maxPrice: number
+  /**
+   *
+   * FastRetrieval indicates that created deals should enable the
+   * fast retrieval feature.
+   */
+  fastRetrieval: boolean
+  /**
+   * DealStartOffset indicates how many epochs in the future impose a
+   * deadline to new deals being active on-chain. This value might influence
+   * if miners accept deals, since they should seal fast enough to satisfy
+   * this constraint.
+   */
+  dealStartOffset: number
+}
+
+/**
+ * ArchiveRenew contains renew configuration for a ArchiveConfig.
+ */
+export interface ArchiveRenew {
+  /**
+   * Enabled indicates that deal-renewal is enabled for this Cid.
+   */
+  enabled: boolean
+  /**
+   * Threshold indicates how many epochs before expiring should trigger
+   * deal renewal. e.g: 100 epoch before expiring.
+   */
+  threshold: number
+}
+
+const fromProtoArchiveConfig = (protoConfig: ProtoArchiveConfig): ArchiveConfig => {
+  const config: ArchiveConfig = {
+    addr: protoConfig.getAddr(),
+    countryCodes: protoConfig.getCountryCodesList(),
+    dealMinDuration: protoConfig.getDealMinDuration(),
+    dealStartOffset: protoConfig.getDealStartOffset(),
+    excludedMiners: protoConfig.getExcludedMinersList(),
+    fastRetrieval: protoConfig.getFastRetrieval(),
+    maxPrice: protoConfig.getMaxPrice(),
+    repFactor: protoConfig.getRepFactor(),
+    trustedMiners: protoConfig.getTrustedMinersList(),
+  }
+  const renew = protoConfig.getRenew()
+  if (renew) {
+    config.renew = {
+      enabled: renew.getEnabled(),
+      threshold: renew.getThreshold(),
+    }
+  }
+  return config
+}
+
+const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
+  const protoConfig = new ProtoArchiveConfig()
+  protoConfig.setAddr(config.addr)
+  protoConfig.setCountryCodesList(config.countryCodes)
+  protoConfig.setDealMinDuration(config.dealMinDuration)
+  protoConfig.setDealStartOffset(config.dealStartOffset)
+  protoConfig.setExcludedMinersList(config.excludedMiners)
+  protoConfig.setFastRetrieval(config.fastRetrieval)
+  protoConfig.setMaxPrice(config.maxPrice)
+  protoConfig.setRepFactor(config.repFactor)
+  protoConfig.setTrustedMinersList(config.trustedMiners)
+  if (config.renew) {
+    const renew = new ProtoArchiveRenew()
+    renew.setEnabled(config.renew.enabled)
+    renew.setThreshold(config.renew.threshold)
+    protoConfig.setRenew(renew)
+  }
+  return protoConfig
 }
 
 /**
@@ -659,14 +776,64 @@ export async function bucketsPullPathAccessRoles(
 }
 
 /**
+ * @internal
+ */
+export async function bucketsDefaultArchiveConfig(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+  logger.debug('default archive config request')
+  const req = new DefaultArchiveConfigRequest()
+  req.setKey(key)
+  const res: DefaultArchiveConfigResponse = await api.unary(APIService.DefaultArchiveConfig, req, ctx)
+  const config = res.getArchiveConfig()
+  if (!config) {
+    throw new Error('no archive config returned')
+  }
+  return fromProtoArchiveConfig(config)
+}
+
+/**
+ * @internal
+ */
+export async function bucketsSetDefaultArchiveConfig(
+  api: GrpcConnection,
+  key: string,
+  config: ArchiveConfig,
+  ctx?: ContextInterface,
+) {
+  logger.debug('set default archive config request')
+  const req = new SetDefaultArchiveConfigRequest()
+  req.setKey(key)
+  req.setArchiveConfig(toProtoArchiveConfig(config))
+  await api.unary(APIService.SetDefaultArchiveConfig, req, ctx)
+  return
+}
+/**
+ * An object to configure options for Archive.
+ */
+export interface ArchiveOptions {
+  /**
+   * Provide a custom ArchiveConfig to override use of the default.
+   */
+  archiveConfig?: ArchiveConfig
+}
+
+/**
  * archive creates a Filecoin bucket archive via Powergate.
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
+ * @param options Options that control the behavior of the bucket archive
  */
-export async function bucketsArchive(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsArchive(
+  api: GrpcConnection,
+  key: string,
+  options?: ArchiveOptions,
+  ctx?: ContextInterface,
+) {
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
+  if (options?.archiveConfig) {
+    req.setArchiveConfig(toProtoArchiveConfig(options.archiveConfig))
+  }
   await api.unary(APIService.Archive, req, ctx)
   return
 }
