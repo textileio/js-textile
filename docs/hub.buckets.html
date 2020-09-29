@@ -129,12 +129,13 @@
 <tr><th>Method</th><th>Modifiers</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-hub/docs/hub.buckets.archive">archive(key)</a></td><td></td><td><b><i>(BETA)</i></b> (Experimental) Store a snapshot of the bucket on Filecoin.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.archive">archive(key, options)</a></td><td></td><td><b><i>(BETA)</i></b> (Experimental) Store a snapshot of the bucket on Filecoin.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.archiveinfo">archiveInfo(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveInfo returns info about a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.archivestatus">archiveStatus(key)</a></td><td></td><td><b><i>(BETA)</i></b> archiveStatus returns the status of a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.archivewatch">archiveWatch(key, callback)</a></td><td></td><td><b><i>(BETA)</i></b> archiveWatch watches status events from a Filecoin bucket archive.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.copyauth">copyAuth(auth, options)</a></td><td><code>static</code></td><td>Copies the full scope and authentication from one API instance to this one. This will copy any existing authentication and authorization info, including:<!-- -->- Information created withKeyInfo and withUserAuth.<!-- -->- Any token generated from getToken or getTokenChallenge.<!-- -->- If you scoped the instance to a specific thread using withThread</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.create">create(name, isPrivate, cid)</a></td><td></td><td>Creates a new bucket.</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.defaultarchiveconfig">defaultArchiveConfig(key)</a></td><td></td><td><b><i>(BETA)</i></b> (Experimental) Get the current default ArchiveConfig for the specified Bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.getorcreate">getOrCreate(name, threadName, isPrivate, cid, threadID)</a></td><td></td><td>Open a new / existing bucket by bucket name and ThreadID (create not required) Replaces <code>open</code> command in older versions.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.getorinit">getOrInit(name, threadName, isPrivate, threadID)</a></td><td></td><td>(Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.gettoken">getToken(identity)</a></td><td></td><td>Obtain a token for interacting with the remote API. When your app is creating new private-key based users to interact with the API using User Group keys, you must first create a new token for each new user. Tokens do not change after you create them.</td></tr>
@@ -154,6 +155,7 @@
 <tr><td><a href="/js-hub/docs/hub.buckets.remove">remove(key)</a></td><td></td><td>Removes an entire bucket. Files and directories will be unpinned (cannot be undone).</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.removepath">removePath(key, path, root)</a></td><td></td><td>Returns information about a bucket path (cannot be undone).</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.root">root(key)</a></td><td></td><td>Returns the bucket root CID</td></tr>
+<tr><td><a href="/js-hub/docs/hub.buckets.setdefaultarchiveconfig">setDefaultArchiveConfig(key, config)</a></td><td></td><td><b><i>(BETA)</i></b> (Experimental) Set the default ArchiveConfig for the specified Bucket.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.setpath">setPath(key, path, cid)</a></td><td></td><td>Pushes a file to a bucket path.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withkeyinfo">withKeyInfo(key, options)</a></td><td><code>static</code></td><td>Creates a new API client instance for accessing the gRPC API using key &amp; secret based authentication. This method is recommended for admin or insecure implementations where the non-signing keys or key with secret can be embedded directly in an app.</td></tr>
 <tr><td><a href="/js-hub/docs/hub.buckets.withthread">withThread(threadID)</a></td><td></td><td>Scope future API calls to a specific thread. For both Buckets and Threads, many API calls require knowledge about which thread you are making requests against. Use <code>withThread</code> to declare your target thread before making those API calls.</td></tr>
