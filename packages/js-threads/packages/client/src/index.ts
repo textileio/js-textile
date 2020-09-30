@@ -19,7 +19,10 @@ import { ThreadID } from "@textile/threads-id"
 import toJsonSchema, { JSONSchema3or4 } from "to-json-schema"
 import {
   CriterionJSON,
+  Event,
   Filter,
+  Patch,
+  PatchType,
   Query,
   QueryJSON,
   ReadTransaction,
@@ -40,6 +43,9 @@ export {
   CriterionJSON,
   SortJSON,
   JSONSchema3or4,
+  Event,
+  Patch,
+  PatchType,
 }
 
 function isEmpty(obj: any) {
@@ -74,7 +80,9 @@ function getFunctionBody(fn: ((...args: any[]) => any) | string): string {
  *   - event: An object describing the update event (see core.Event).
  *   - instance: The current instance as a JavaScript object before the update event is applied.
  *
- * A falsy return value indicates a failed validation.
+ * A falsy return value indicates a failed validation. Note that the function arguments must
+ * be named as documented here (writer, event, instance). These functions run in a secure sandbox
+ * where these argument names are specified.
  *
  * Having access to writer, event, and instance opens the door to a variety of app-specific logic.
  * Textile Buckets file-level access roles are implemented in part with a write validator.
@@ -83,8 +91,9 @@ function getFunctionBody(fn: ((...args: any[]) => any) | string): string {
  *   - reader: The multibase-encoded public key identity of the reader.
  *   - instance: The current instance as a JavaScript object.
  *
- * The function must return a JavaScript object. Most implementation will modify and return the
- * current instance.
+ * The function must return a JavaScript object. Most implementations will modify and return the
+ * current instance. Note that the function arguments must be named as documented here (reader,
+ * instance). These functions run in a secure sandbox where these argument names are specified.
  * Like write validation, read filtering opens the door to a variety of app-specific logic.
  * Textile Buckets file-level access roles are implemented in part with a read filter.
  */
@@ -93,7 +102,7 @@ export interface CollectionConfig<W = any, R = W> {
   schema?: JSONSchema3or4 | any // Union type to indicate that JSONSchema is preferred but any works
   indexes?: pb.Index.AsObject[]
   writeValidator?:
-    | ((writer: string, event: any, instance: W) => boolean)
+    | ((writer: string, event: Event, instance: W) => boolean)
     | string
   readFilter?: ((reader: string, instance: R) => R) | string
 }

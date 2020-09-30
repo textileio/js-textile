@@ -5,7 +5,7 @@ import { Identity, PrivateKey } from "@textile/crypto"
 import { ThreadID } from "@textile/threads-id"
 import { expect } from "chai"
 import { Client, JSONSchema3or4, Update } from "./index"
-import { ReadTransaction, Where, WriteTransaction } from "./models"
+import { Event, ReadTransaction, Where, WriteTransaction } from "./models"
 
 const personSchema: JSONSchema3or4 = {
   $id: "https://example.com/person.schema.json",
@@ -291,7 +291,8 @@ describe("Client", function () {
       name: string
       comments: any[]
     }
-    const writeValidator = (_writer: string, event: any, _instance: Dog) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const writeValidator = (_writer: string, event: Event, _instance: Dog) => {
       var type = event.patch.type
       var patch = event.patch.json_patch
       switch (type) {
@@ -337,8 +338,12 @@ describe("Client", function () {
   })
 
   describe(".verify", function () {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const writeValidator = (_writer: string, event: any, _instance: any) => {
+    const writeValidator = (
+      _writer: string,
+      event: Event,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _instance: Person
+    ) => {
       var type = event.patch.type
       var patch = event.patch.json_patch
       switch (type) {
@@ -575,8 +580,13 @@ describe("Client", function () {
 
         // Try to do something that should fail later (but not now)
         await transaction.save([newPerson])
-        // After discarding transaction, we end it... but results updates should be ignored
-        await transaction.end()
+        // After discarding transaction, we end it... but it should throw here!
+        try {
+          await transaction.end()
+          throw new Error("wrong error")
+        } catch (err) {
+          expect(err.message).to.include("discarded/committed txn")
+        }
 
         const instance: Person = await client.findByID(dbID, "Person", id)
         expect(instance.age).to.not.equal(38)
@@ -702,9 +712,16 @@ describe("Client", function () {
       await transaction.start()
       const result = await transaction.create([newPerson])
       expect(result).to.not.be.undefined
-      // TODO: This check won't error, but it should when we try to flush the transaction
+      // This check won't error here...
       await transaction.create([newPerson])
-      await transaction.end()
+      // But it should error here
+      try {
+        await transaction.end()
+        throw new Error("wrong error")
+      } catch (err) {
+        expect(err.message).to.include("already existent instance")
+      }
+
       const list = await client.find(dbID, "Person", {})
       expect(list.length).to.be.greaterThan(0)
       const collections = await client.listCollections(dbID)

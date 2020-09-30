@@ -29,7 +29,16 @@ export class Transaction<
    * end completes (flushes) the transaction. All operations between start and end will be applied as a single transaction upon a call to end.
    */
   public async end(): Promise<void> {
-    this.client.close()
+    return new Promise<void>((resolve, reject) => {
+      this.client.onEnd((status: grpc.Code, message: string) => {
+        if (status !== grpc.Code.OK) {
+          reject(new Error(message))
+        } else {
+          resolve()
+        }
+      })
+      this.client.finishSend()
+    })
   }
 
   /**
