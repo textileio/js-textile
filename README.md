@@ -1,4 +1,4 @@
-# js-hub
+# JS-Textile
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
 [![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
@@ -14,7 +14,7 @@ Join us on our [public Slack channel](https://slack.textile.io/) for news, discu
 
 ## Table of Contents
 
-- [js-hub](#js-hub)
+- [js-textile](#js-textile)
   - [Install](#install)
   - [Usage](#usage)
   - [Contributing](#contributing)
