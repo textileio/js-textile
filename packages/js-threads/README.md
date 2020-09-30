@@ -27,8 +27,9 @@ If you think you've found a bug in Threads, please file a Github issue. Take a l
 - [Textile's Threads protocol & database _(js-threads)_](#textiles-threads-protocol--database-js-threads)
   - [Using Threads](#using-threads)
   - [Getting help](#getting-help)
+  - [Table of Contents](#table-of-contents)
+  - [Security](#security)
   - [Background](#background)
-    - [Overview](#overview)
   - [Install](#install)
   - [Usage](#usage)
   - [Authentication](#authentication)
@@ -39,13 +40,17 @@ If you think you've found a bug in Threads, please file a Github issue. Take a l
   - [Contributing](#contributing)
   - [License](#license)
 
+## Security
+
+ThreadDB is still under heavy development and no part of it should be used before a thorough review of the underlying code and an understanding APIs and protocols may change rapidly. There may be coding mistakes, and the underlying protocols may contain design flaws. Please [let us know](mailto:contact@textile.io) immediately if you have discovered a security vulnerability.
+
+Please also read the [security note](https://github.com/ipfs/go-ipfs#security-issues) for [go-ipfs](https://github.com/ipfs/go-ipfs).
+
 ## Background
 
-Textile's Threads Protocol and Database provides an alternative architecture for data on the web. Threads aims to help power a new generation of web technologies by combining a novel use of event sourcing, Interplanetary Linked Data (IPLD), and access control to provide a distributed, scalable, and flexible database solution for decentralized applications. Threads is backed by a great deal of research and experience, and provides protocols for securely storing and sharing content-addressable data (on IPFS), with tooling to help standardize data creation and dissemination.
+ThreadDB is an implementation of the database described in the paper entitled [_A protocol & event-sourced database for decentralized user-siloed data_](https://docsend.com/view/gu3ywqi). The code and libraries in this repo are the Javascript implementation and wrappers around our Go reference implementation (https://github.com/textileio/go-threads).
 
-Want something specific? Take a look at our [contributor guide](#contributing) for details on how to ask for features, or better yet, submit a PR yourself :wink:!
-
-### Overview
+Go to [the docs](https://docs.textile.io/) for more about the motivations behind ThreadDB and Textile.
 
 ## Install
 
@@ -176,9 +181,16 @@ See [https://textileio.github.io/js-threads](https://textileio.github.io/js-thre
 
 ## Contributing
 
-PRs gratefully accepted! Please see [the contributing guide](./CONTRIBUTING.md) for details on getting started.
+This project is a work in progress. As such, there's a few things you can do right now to help out:
 
-Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
+- **Ask questions**! We'll try to help. Be sure to drop a note (on the above issue) if there is anything you'd like to work on and we'll update the issue to let others know. Also [get in touch](https://slack.textile.io) on Slack.
+- **Open issues**, [file issues](https://github.com/textileio/js-threads/issues), submit pull requests!
+- **Perform code reviews**. More eyes will help a) speed the project along b) ensure quality and c) reduce possible future bugs.
+- **Take a look at the code**. Contributions here that would be most helpful are **top-level comments** about how it should look based on your understanding. Again, the more eyes the better.
+- **Add tests**. There can never be enough tests.
+- **PRs gratefully accepted!**
+
+Please also see [the contributing guide](./CONTRIBUTING.md) for details on getting started.
 
 ## License
 
