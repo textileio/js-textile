@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.0.0-alpha.0...@textile/threads-client@1.1.0) (2020-09-30)
+
+
+### Bug Fixes
+
+* spelling ([23407d6](https://github.com/textileio/js-threads/commit/23407d63c862571570abc6f8dbecc704102a5f7e))
+* tiny => nit ;) ([c851eb0](https://github.com/textileio/js-threads/commit/c851eb01152e31da043c391693e87dbe5a73523b))
+
+
+### Features
+
+* adds verify to write txn + buffer nits ([159acc1](https://github.com/textileio/js-threads/commit/159acc1381407177dbaa471a510f63a30cdffa1e))
+* chore update comment bullet format ([3e99fba](https://github.com/textileio/js-threads/commit/3e99fbae1ba0c18925b2292065df3b4abf149a0c))
+* deprecate threads-core, move threadkey to security ([63152f2](https://github.com/textileio/js-threads/commit/63152f2514ae01a6ca539948104c8c32dd0c1503))
+* moves to collection config api + cleaner proto types ([792f032](https://github.com/textileio/js-threads/commit/792f03224833260dd1ad9cb9a862b062140e7cbc))
+* remove deprecated random identity static method ([d12bb0e](https://github.com/textileio/js-threads/commit/d12bb0ec8f402641106e071bc0f0b43b42c95cf5))
+* support write validator and read filters ([627a7d8](https://github.com/textileio/js-threads/commit/627a7d8340ce4637bd4e40ffa69cd299559ab287))
+* wait for onEnd when ending txn (might throw) ([83ebe9d](https://github.com/textileio/js-threads/commit/83ebe9dd58aaae027898c1ba32e3186a09e9649b))
+
+
+
+
+
 # [1.0.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.0.0-alpha.0...@textile/threads-client@1.0.0) (2020-09-24)
 
 
