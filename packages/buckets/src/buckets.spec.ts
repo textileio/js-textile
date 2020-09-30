@@ -1,9 +1,9 @@
+import fs from 'fs'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/hub_pb'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
-import fs from 'fs'
 import path from 'path'
 import { CreateObject } from './api'
 import { Buckets } from './buckets'
@@ -326,8 +326,7 @@ describe('Buckets...', function () {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        // expect(err.message).to.include('permission denied')
-        expect(err.message).to.include('Response closed without headers')
+        expect(err.message).to.include('permission denied')
       }
     })
 
