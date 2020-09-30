@@ -34,7 +34,7 @@
     "buffer": "^5.6.0",
     "cids": "^1.0.1",
     "multiaddr": "^7.4.2",
-    "varint": "^5.0.0"
+    "varint": "^6.0.0"
   },
   "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"
 }
