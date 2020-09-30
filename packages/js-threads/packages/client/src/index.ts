@@ -752,7 +752,7 @@ export class Client {
    * newDBFromAddr initializes the client with the given store, connecting to the given
    * thread address (database). It should be called before any operation on the store, and is an
    * alternative to start, which creates a local store. newDBFromAddr should also include the
-   * read/follow key, which should be a Buffer, Uint8Array or base32-encoded string.
+   * read/follow key, which should be a Uint8Array or base32-encoded string.
    * @remarks
    * See getDBInfo for a possible source of the address and keys. See {@link ThreadKey} for
    * information about thread keys.
@@ -796,7 +796,7 @@ export class Client {
     return this.unary(API.NewDBFromAddr, req, (/** res: pb.NewDBReply */) => {
       // Hacky way to extract threadid from addr that succeeded
       // TODO: Return this directly from the gRPC API on the go side?
-      const result = new Multiaddr(Buffer.from(req.getAddr_asU8()))
+      const result = new Multiaddr(req.getAddr_asU8())
         .stringTuples()
         .filter(([key]) => key === 406)
       return ThreadID.fromString(result[0][1])
@@ -869,7 +869,7 @@ export class Client {
       return this.unary(API.NewDBFromAddr, req, () => {
         // Hacky way to extract threadid from addr that succeeded
         // @todo: Return this directly from the gRPC API?
-        const result = new Multiaddr(Buffer.from(req.getAddr_asU8()))
+        const result = new Multiaddr(req.getAddr_asU8())
           .stringTuples()
           .filter(([key]) => key === 406)
         return ThreadID.fromString(result[0][1])
@@ -904,12 +904,11 @@ export class Client {
       const key = ThreadKey.fromBytes(res.getKey_asU8())
       const addrs: string[] = []
       for (const addr of res.getAddrsList()) {
-        // TODO: Remove the buffer requirement here
-        const a =
-          typeof addr === "string"
-            ? Buffer.from(addr, "base64")
-            : Buffer.from(addr)
-        const address = new Multiaddr(a).toString()
+        // const a =
+        //   typeof addr === "string"
+        //     ? Buffer.from(addr, "base64")
+        //     : Buffer.from(addr)
+        const address = new Multiaddr(addr).toString()
         addrs.push(address)
       }
       return { key: key.toString(), addrs }

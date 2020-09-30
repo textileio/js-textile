@@ -17,6 +17,7 @@ import { QueryJSON } from "./query"
 import { Transaction } from "./Transaction"
 
 const decoder = new TextDecoder()
+const encoder = new TextEncoder()
 
 /**
  * ReadTransaction performs a read-only bulk transaction on the underlying store.
@@ -105,10 +106,10 @@ export class ReadTransaction extends Transaction<
    * find queries the store for entities matching the given query parameters. See Query for options.
    * @param query The object that describes the query. See Query for options. Alternatively, see QueryJSON for the basic interface.
    */
-  public async find<T = any>(query: QueryJSON): Promise<Array<T>> {
+  public async find<T = unknown>(query: QueryJSON): Promise<Array<T>> {
     return new Promise<Array<T>>((resolve, reject) => {
       const findReq = new FindRequest()
-      findReq.setQueryjson(Buffer.from(JSON.stringify(query)))
+      findReq.setQueryjson(encoder.encode(JSON.stringify(query)))
       const req = new ReadTransactionRequest()
       req.setFindrequest(findReq)
       this.client.onMessage((message: ReadTransactionReply) => {
@@ -118,7 +119,7 @@ export class ReadTransaction extends Transaction<
           reject(new Error(err))
         }
         if (reply === undefined) {
-          resolve()
+          resolve([])
         } else {
           const ret: Array<T> = reply
             .getInstancesList_asU8()
@@ -135,7 +136,7 @@ export class ReadTransaction extends Transaction<
    * findByID queries the store for the id of an instance.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = any>(ID: string): Promise<T> {
+  public async findByID<T = unknown>(ID: string): Promise<T | undefined> {
     return new Promise<T>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
@@ -148,7 +149,7 @@ export class ReadTransaction extends Transaction<
           reject(new Error(err))
         }
         if (reply === undefined) {
-          resolve()
+          resolve(undefined)
         } else {
           resolve(JSON.parse(decoder.decode(reply.getInstance_asU8())))
         }

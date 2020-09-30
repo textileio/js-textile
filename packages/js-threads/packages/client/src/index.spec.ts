@@ -444,6 +444,17 @@ describe("Client", function () {
       expect(instance).to.have.property("_id")
     })
   })
+
+  describe("cross-collection ids", function () {
+    it("should not require instance ids to be unique across collections", async function () {
+      const person = createPerson()
+      person._id = "something-unique"
+      const [first] = await client.create(dbID, "Person", [person])
+      const [second] = await client.create(dbID, "Verified", [person])
+      expect(first).to.equal(second)
+    })
+  })
+
   describe(".readTransaction", function () {
     let existingPersonID: string
     let transaction: ReadTransaction | undefined
@@ -523,6 +534,14 @@ describe("Client", function () {
         expect(instance).to.have.property("age", 21)
         expect(instance).to.have.property("_id")
         expect(instance?._id).to.deep.equal(existingPersonID)
+      })
+      it("should be able to validate an instance that is invalid", async function () {
+        try {
+          await transaction?.verify([createPerson()])
+          throw new Error("wrong error")
+        } catch (err) {
+          expect(err.message).to.include("unkown instance") // sic
+        }
       })
       it("should be able to save an existing instance", async function () {
         person.age = 99
@@ -657,6 +676,39 @@ describe("Client", function () {
         .or(new Where("age").eq(67))
       const instances = await client.find<Person>(dbID, "Person", q)
       expect(instances).to.have.length(7)
+    })
+  })
+
+  describe("Invalid states", function () {
+    it("should not compromise the thread to try to create the same object twice", async function () {
+      const newPerson = createPerson()
+      newPerson._id = "new-person-id_one"
+      const [id] = await client.create(dbID, "Person", [newPerson])
+      expect(id).to.not.be.undefined
+      try {
+        await client.create(dbID, "Person", [newPerson])
+        throw new Error("wrong error")
+      } catch (err) {
+        expect(err.message).to.include("existing instance")
+      }
+      const list = await client.find(dbID, "Person", {})
+      expect(list.length).to.be.greaterThan(0)
+    })
+
+    it("should also be safe inside a write transaction", async function () {
+      const newPerson = createPerson()
+      newPerson._id = "new-person-id-two"
+      const transaction = client.writeTransaction(dbID, "Person")
+      await transaction.start()
+      const result = await transaction.create([newPerson])
+      expect(result).to.not.be.undefined
+      // TODO: This check won't error, but it should when we try to flush the transaction
+      await transaction.create([newPerson])
+      await transaction.end()
+      const list = await client.find(dbID, "Person", {})
+      expect(list.length).to.be.greaterThan(0)
+      const collections = await client.listCollections(dbID)
+      expect(collections).to.have.lengthOf(3)
     })
   })
 

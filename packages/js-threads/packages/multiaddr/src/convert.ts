@@ -1,4 +1,5 @@
 import { ThreadID } from "@textile/threads-id"
+import { Buffer } from "buffer"
 import varint from "varint"
 import { protocols } from "./protocols"
 // eslint-disable-next-line @typescript-eslint/no-var-requires

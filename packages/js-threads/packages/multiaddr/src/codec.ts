@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { Buffer } from "buffer"
 import varint from "varint"
 import * as convert from "./convert"
 import { Protocol, protocols } from "./protocols"

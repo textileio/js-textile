@@ -1,4 +1,5 @@
 import bs58 from "bs58"
+import { Buffer } from "buffer"
 import CID from "cids"
 import varint from "varint"
 import * as codec from "./codec"
@@ -9,7 +10,7 @@ import { Protocol, protocols } from "./protocols"
  * a Buffer, String or another Multiaddr instance
  * public key.
  * @class Multiaddr
- * @param {(String|Buffer|Multiaddr)} addr - If String or Buffer, needs to adhere
+ * @param {(String|Uint8Array|Multiaddr)} addr - If String or Buffer, needs to adhere
  * to the address format of a [multiaddr](https://github.com/multiformats/multiaddr#string-format)
  * @example
  * Multiaddr('/ip4/127.0.0.1/tcp/4001')
@@ -17,7 +18,7 @@ import { Protocol, protocols } from "./protocols"
  */
 class Multiaddr {
   public buffer: Buffer = Buffer.alloc(0)
-  constructor(addr: string | Multiaddr | Buffer) {
+  constructor(addr: string | Multiaddr | Uint8Array) {
     if (!(this instanceof Multiaddr)) {
       return new Multiaddr(addr)
     }
@@ -25,6 +26,10 @@ class Multiaddr {
     // default
     if (addr == null) {
       addr = ""
+    }
+
+    if (addr instanceof Uint8Array) {
+      addr = Buffer.from(addr)
     }
 
     if (addr instanceof Buffer) {
@@ -37,11 +42,16 @@ class Multiaddr {
         throw new Error(`multiaddr "${addr}" must start with a "/"`)
       }
       this.buffer = codec.fromString(addr as string)
-    } else if (addr.buffer && addr.protos && addr.protoCodes) {
+    } else if (
+      !(addr instanceof Uint8Array) &&
+      addr.buffer &&
+      addr.protos &&
+      addr.protoCodes
+    ) {
       // Multiaddr
       this.buffer = codec.fromBuffer(addr.buffer) // validate + copy buffer
     } else {
-      throw new Error("addr must be a string, Buffer, or another Multiaddr")
+      throw new Error("addr must be a string, Uint8Array, or another Multiaddr")
     }
   }
 
