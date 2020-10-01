@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@textile/context": "^0.7.0",
-    "@textile/grpc-transport": "^0.0.5",
+    "@textile/grpc-transport": "^0.0.6",
     "@textile/hub-grpc": "2.0.0-rc7",
     "axios": "^0.20.0",
     "delay": "^4.4.0",
