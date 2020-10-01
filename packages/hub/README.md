@@ -118,7 +118,7 @@ const bucketsToUsers = async (buckets: Buckets) => {
 
 The Users client allows you to access a local (in your app) user's account information, such as a list of all their threads in your app. It also gives you access to a per-user inboxing API for transferring messages between your users based on simple private key identities.
 
-[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.users).
+[Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.users).
 
 **List a user's threads**
 
@@ -156,7 +156,7 @@ async function example(users: Users, from: Identity, to: PublicKey, message: str
 
 Threads client to access remote threads, create new threads, add and remove data.
 
-[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.client).
+[Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.client).
 
 **Create a thread**
 
@@ -206,7 +206,7 @@ async function createEntity (client: Client, threadId: ThreadID, jsonData: any) 
 
 Create, manage, and publish user and account Buckets.
 
-[Read the full client docs here](https://textileio.github.io/js-hub/docs/hub.buckets).
+[Read the full client docs here](https://textileio.github.io/js-textile/docs/hub.buckets).
 
 **Create a new Bucket client**
 
@@ -259,7 +259,7 @@ async function add (buckets: Buckets, webpage: string, bucketKey: string) {
   /**
    * Add a simple file Buffer
    *
-   * Alternative formats are here: https://github.com/textileio/js-hub/blob/master/src/normalize.ts#L14
+   * Alternative formats are here: https://github.com/textileio/js-textile/blob/master/src/normalize.ts#L14
    *
    * We add the file as index.html so that we can render it right in the browser afterwards.
    */
