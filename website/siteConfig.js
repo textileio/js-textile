@@ -24,7 +24,7 @@ const siteConfig = {
   title: 'Hub JS Package', // Title for your website.
   tagline: 'A client for communicating with Textile Hub.',
   url: 'https://textileio.github.io', // Your website URL
-  baseUrl: '/js-hub/', // Base URL for your project */
+  baseUrl: '/js-textile/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
