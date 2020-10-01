@@ -31,7 +31,7 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/buckets-grpc": "2.0.1",
-    "@textile/context": "^0.7.0",
+    "@textile/context": "^0.8.0",
     "@textile/crypto": "^0.1.1",
     "@textile/grpc-authentication": "^0.2.2",
     "@textile/grpc-connection": "^0.1.4",

@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.7.0",
+    "@textile/context": "^0.8.0",
     "@textile/hub-grpc": "2.0.1",
     "@textile/security": "^0.3.0",
     "@textile/threads-client": "^1.0.0",
