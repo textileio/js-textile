@@ -1,11 +1,13 @@
-import fs from 'fs'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/hub_pb'
+import { AbortController } from 'abort-controller'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
+import fs from 'fs'
 import path from 'path'
-import { CreateObject } from './api'
+import { Duplex } from 'stream'
+import { AbortError, CreateObject } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 
@@ -271,6 +273,107 @@ describe('Buckets...', function () {
       }
     })
   })
+
+  describe('multiple pushes', function () {
+    it('should throw if roots are out of sync/order', async function () {
+      if (isBrowser) return this.skip()
+      const { root } = await client.getOrCreate('pushes')
+
+      // Grab a reference to a relatively large file
+      const pth = path.join(__dirname, '../../..', 'testdata')
+      fileSize = fs.statSync(path.join(pth, 'file1.jpg')).size
+      const stream1 = fs.createReadStream(path.join(pth, 'file1.jpg'))
+      const rootKey = root?.key || ''
+
+      // Now create a relatively small stream that should finish first
+      const stream2 = new Duplex()
+      stream2.push(Buffer.from('some small amount of text'))
+      stream2.push(Buffer.from('that spans two buffers'))
+      stream2.push(null)
+
+      // Run them in series
+      await Promise.resolve()
+        .then(() => client.pushPath(rootKey, 'dir1/file1.jpg', stream1, { root }))
+        .then(() => client.pushPath(rootKey, 'dir1/file2.txt', stream2, { root }))
+        .then(() => {
+          throw new Error('wrong error')
+        }) // This should never fire
+        // Because we should jump down to this first
+        .catch((err) => expect(err.message).to.include('non-fast-forward'))
+
+      // Confirm that our second-level dir only includes one of them
+      const { item } = await client.listPath(rootKey, '')
+      expect(item?.items[1].items).to.have.length(1)
+    })
+
+    it.skip('should not be able to push in parallel', async function () {
+      //TODO: Right now, the Go client doesn't "locK" a bucket for pushes, this is something
+      // we should add/support to ensure buckets pushed in parallel don't corrupt things
+      if (isBrowser) return this.skip()
+      const { root } = await client.getOrCreate('pushes')
+
+      // Grab a reference to a relatively large file
+      const pth = path.join(__dirname, '../../..', 'testdata')
+      fileSize = fs.statSync(path.join(pth, 'file1.jpg')).size
+      const stream1 = fs.createReadStream(path.join(pth, 'file1.jpg'))
+      const rootKey = root?.key || ''
+
+      // Now create a relatively small stream that should finish first
+      const stream2 = new Duplex()
+      stream2.push(Buffer.from('some small amount of text'))
+      stream2.push(Buffer.from('that spans two buffers'))
+      stream2.push(null)
+
+      try {
+        await Promise.all([
+          // Note the names are different from above test
+          client.pushPath(rootKey, 'dir1/file3.jpg', stream1),
+          client.pushPath(rootKey, 'dir1/file4.txt', stream2),
+        ])
+        throw new Error('wrong error')
+      } catch (err) {
+        expect(err.message).to.include('non-fast-forward')
+      }
+      // Confirm that our second-level dir only includes one of them
+      const { item } = await client.listPath(rootKey, '')
+      expect(item?.items[1].items).to.have.length(1)
+    })
+  })
+
+  describe('aborting', function () {
+    it('should allow an abort controler to signal a cancel event on a push', async function () {
+      if (isBrowser) return this.skip() // We're going to use a large file, so skip this in browser
+      const { root } = await client.getOrCreate('aborted')
+
+      // Create an infinate stream of bytes
+      async function* stream() {
+        while (true) {
+          yield Buffer.from('data')
+          await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+      }
+
+      const rootKey = root?.key || ''
+      const controller = new AbortController()
+      const { signal } = controller
+      setTimeout(() => controller.abort(), 100) // Wait long enough to get the thing started
+      try {
+        await client.pushPath(rootKey, 'dir1/file1.jpg', stream(), { root, signal })
+        throw new Error('wrong error')
+      } catch (err) {
+        expect(err).to.equal(AbortError)
+      }
+      try {
+        // If the above pushPath was indeed killed, then the following will error, otherwise,
+        // it should timeout!
+        await client.listPath(rootKey, 'dir1/file1.jpg')
+        throw new Error('wrong error')
+      } catch (err) {
+        expect(err.message).to.include('no link named')
+      }
+    })
+  })
+
   describe('sharing', function () {
     const bob = PrivateKey.fromRandom()
     const bobPubKey = bob.public.toString()
@@ -283,6 +386,7 @@ describe('Buckets...', function () {
     const sharedFile = 'path/to/file2.jpg'
     const privatePath = 'dir1/file1.jpg'
     const pth = path.join(__dirname, '../../..', 'testdata')
+
     before(async function () {
       this.timeout(10000)
       if (isBrowser) return this.skip()

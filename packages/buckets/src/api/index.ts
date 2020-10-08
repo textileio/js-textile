@@ -44,6 +44,7 @@ import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
+import type { AbortSignal } from 'abort-controller'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
@@ -52,8 +53,31 @@ import { File, normaliseInput } from './normalize'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const block = require('it-block')
-
 const logger = log.getLogger('buckets-api')
+
+/**
+ * PushOptions provides additional options for controlling a push to a bucket path.
+ */
+export interface PushOptions {
+  /**
+   * A callback function to use for monitoring push progress.
+   */
+  progress?: (num?: number) => void
+  /**
+   * The bucket root path as a string, or root object. Important to set this property when
+   * there is a possibility of multiple parallel pushes to a bucket. Specifying this property
+   * will enforce fast-forward only updates. It not provided explicitly, the root path will
+   * be fetched via an additional API call before each push.
+   */
+  root?: RootObject | string
+
+  /**
+   * An optional abort signal to allow cancelation or aborting a bucket push.
+   */
+  signal?: AbortSignal
+}
+
+export const AbortError = new Error('aborted')
 
 /**
  * The expected result format from pushing a path to a bucket
@@ -491,7 +515,7 @@ export async function bucketsListIpfsPath(
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param path A file/object (sub)-path within a bucket.
  * @param input The input file/stream/object.
- * @param opts Options to control response stream. Currently only supports a progress function.
+ * @param opts Options to control response stream.
  * @remarks
  * This will return the resolved path and the bucket's new root path.
  * @example
@@ -512,21 +536,33 @@ export async function bucketsPushPath(
   key: string,
   path: string,
   input: any,
-  opts?: { progress?: (num?: number) => void },
+  opts?: PushOptions,
   ctx?: ContextInterface,
 ) {
   return new Promise<PushPathResult>(async (resolve, reject) => {
-    // Only process the first  input if there are more than one
+    // Only process the first input if there are more than one
     const source: File | undefined = (await normaliseInput(input).next()).value
     const client = grpc.client<PushPathRequest, PushPathResponse, APIServicePushPath>(APIService.PushPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
       debug: api.rpcOptions.debug,
     })
+    // Send a close event to the bucket api upon abort
+    if (opts?.signal !== undefined) {
+      opts.signal.addEventListener('abort', () => {
+        client.close()
+        return reject(AbortError)
+      })
+    }
     client.onMessage((message) => {
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        client.close()
+        return reject(AbortError)
+      }
       if (message.hasError()) {
         // Reject on first error
-        reject(new Error(message.getError()))
+        return reject(new Error(message.getError()))
       } else if (message.hasEvent()) {
         const event = message.getEvent()?.toObject()
         if (event?.path) {
@@ -542,42 +578,63 @@ export async function bucketsPushPath(
             },
             root: event.root?.path ?? '',
           }
-          resolve(res)
+          return resolve(res)
         } else if (opts?.progress) {
           opts.progress(event?.bytes)
         }
       } else {
-        reject(new Error('Invalid reply'))
+        return reject(new Error('Invalid reply'))
       }
     })
     client.onEnd((code, msg) => {
       if (code !== grpc.Code.OK) {
         const message = msg ? msg : code.toString()
-        reject(new Error(message))
+        return reject(new Error(message))
       } else {
-        resolve()
+        return resolve()
       }
     })
     if (source) {
       const head = new PushPathRequest.Header()
       head.setPath(source.path || path)
       head.setKey(key)
+      // Setting root here ensures pushes will error if root is out of date
+      let root = ''
+      if (opts?.root) {
+        // If we explicitly received a root argument, use that
+        root = typeof opts.root === 'string' ? opts.root : opts.root.path
+      } else {
+        // Otherwise, make a call to list path to get the latest known root
+        const head = await bucketsListPath(api, key, '', ctx)
+        root = head.root?.path ?? '' // Shouldn't ever be undefined here
+      }
+      head.setRoot(root)
       const req = new PushPathRequest()
       req.setHeader(head)
       const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        return reject(AbortError)
+      }
       client.start(metadata)
       client.send(req)
 
       if (source.content) {
         const process = await block({ size: 256000, noPad: true })
         for await (const chunk of process(source.content)) {
+          // Let's just make sure we haven't aborted this outside this function
+          if (opts?.signal?.aborted) {
+            client.close()
+            return reject(AbortError)
+          }
           const buf = chunk.slice()
           const part = new PushPathRequest()
           part.setChunk(buf as Buffer)
           client.send(part)
         }
-        client.finishSend()
       }
+      // We only need to finish send here if we actually started
+      client.finishSend()
     }
   })
 }
