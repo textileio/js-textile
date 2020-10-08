@@ -620,7 +620,7 @@ export async function bucketsPushPath(
       client.send(req)
 
       if (source.content) {
-        const process = await block({ size: 256000, noPad: true })
+        const process = await block({ size: 32768, noPad: true })
         for await (const chunk of process(source.content)) {
           // Let's just make sure we haven't aborted this outside this function
           if (opts?.signal?.aborted) {
