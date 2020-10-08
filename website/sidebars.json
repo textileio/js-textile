@@ -108,6 +108,7 @@
       "hub.buckets.listipfspath",
       "hub.buckets.open",
       "hub.buckets.pushpath",
+      "hub.buckets.pushoptions",
       "hub.buckets.pushpathaccessroles",
       "hub.buckets.pullpath",
       "hub.buckets.pullpathaccessroles",
@@ -117,8 +118,8 @@
       "hub.buckets.setpath"
     ],
     "Experimental": [
-      "hub.archive", 
-      "hub.archiveinfo", 
+      "hub.archive",
+      "hub.archiveinfo",
       "hub.buckets.archiveinfo",
       "hub.archivedealinfo",
       "hub.buckets.archivestatus",

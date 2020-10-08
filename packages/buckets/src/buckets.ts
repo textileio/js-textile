@@ -38,6 +38,7 @@ import {
   PathAccessRole,
   PathItemObject,
   PathObject,
+  PushOptions,
   PushPathResult,
   RootObject,
 } from './api'
@@ -481,7 +482,7 @@ export class Buckets extends GrpcAuthentication {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param path A file/object (sub)-path within a bucket.
    * @param input The input file/stream/object.
-   * @param opts Options to control response stream. Currently only supports a progress function.
+   * @param opts Options to control response stream.
    * @remarks
    * This will return the resolved path and the bucket's new root path.
    * @example
@@ -520,12 +521,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async pushPath(
-    key: string,
-    path: string,
-    input: any,
-    opts?: { progress?: (num?: number) => void },
-  ): Promise<PushPathResult> {
+  async pushPath(key: string, path: string, input: any, opts?: PushOptions): Promise<PushPathResult> {
     return bucketsPushPath(this, key, path, input, opts)
   }
 
