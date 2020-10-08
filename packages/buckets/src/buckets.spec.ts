@@ -342,7 +342,6 @@ describe('Buckets...', function () {
 
   describe('aborting', function () {
     it('should allow an abort controler to signal a cancel event on a push', async function () {
-      if (isBrowser) return this.skip() // We're going to use a large file, so skip this in browser
       const { root } = await client.getOrCreate('aborted')
 
       // Create an infinate stream of bytes
