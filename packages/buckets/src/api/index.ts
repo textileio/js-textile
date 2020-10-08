@@ -416,7 +416,6 @@ export async function bucketsLinks(
   const req = new LinksRequest()
   req.setKey(key)
   req.setPath(path)
-  console.log(path)
   const res: LinksResponse = await api.unary(APIService.Links, req, ctx)
   return res.toObject()
 }

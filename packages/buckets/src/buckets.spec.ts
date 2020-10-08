@@ -235,6 +235,21 @@ describe('Buckets...', function () {
       expect(list.item?.items).to.have.length(2) // Includes .textileseed
     })
 
+    it('should push data from Buffer', async function () {
+      const content = 'some content'
+      const file = { path: '/index.html', content: Buffer.from(content) }
+
+      const rootKey = buck.root?.key || ''
+
+      const { root } = await client.pushPath(rootKey, 'index.html', file)
+      expect(root).to.not.be.undefined
+
+      // Root dir
+      const rep = await client.listPath(rootKey, '')
+      expect(rep.item?.isDir).to.be.true
+      expect(rep.item?.items).to.have.length(3)
+    })
+
     it('should list bucket links', async function () {
       const rootKey = buck.root?.key || ''
 
