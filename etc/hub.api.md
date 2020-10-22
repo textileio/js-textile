@@ -4,6 +4,7 @@
 
 ```ts
 
+import type { AbortSignal as AbortSignal_2 } from 'abort-controller';
 import { AddrsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ArchiveInfoResponse } from '@textile/buckets-grpc/buckets_pb';
 import { ArchiveResponse } from '@textile/buckets-grpc/buckets_pb';
@@ -65,6 +66,9 @@ import { SetupMailboxResponse } from '@textile/users-grpc/users_pb';
 import { ShowAllResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
+
+// @public (undocumented)
+export const AbortError: Error;
 
 // @public (undocumented)
 export enum Action {
@@ -184,9 +188,7 @@ export class Buckets extends GrpcAuthentication {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
     pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 2 | 1 | 3>>;
-    pushPath(key: string, path: string, input: any, opts?: {
-        progress?: (num?: number) => void;
-    }): Promise<PushPathResult>;
+    pushPath(key: string, path: string, input: any, opts?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
@@ -283,9 +285,7 @@ export function bucketsPullPathAccessRoles(api: GrpcConnection, key: string, pat
 // Warning: (ae-internal-missing-underscore) The name "bucketsPushPath" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
-export function bucketsPushPath(api: GrpcConnection, key: string, path: string, input: any, opts?: {
-    progress?: (num?: number) => void;
-}, ctx?: ContextInterface): Promise<PushPathResult>;
+export function bucketsPushPath(api: GrpcConnection, key: string, path: string, input: any, opts?: PushOptions, ctx?: ContextInterface): Promise<PushPathResult>;
 
 // @public (undocumented)
 export function bucketsPushPathAccessRoles(api: GrpcConnection, key: string, path: string, roles: Map<string, PathAccessRole>, ctx?: ContextInterface): Promise<void>;
@@ -323,39 +323,42 @@ export class Client {
     constructor(context?: ContextInterface, debug?: boolean);
     // (undocumented)
     context: ContextInterface;
-    create(threadID: ThreadID, collectionName: string, values: any[]): Promise<string[]>;
-    delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
-    deleteCollection(threadID: ThreadID, name: string): Promise<void>;
-    deleteDB(threadID: ThreadID): Promise<void>;
-    find<T = unknown>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<T[]>;
-    findByID<T = unknown>(threadID: ThreadID, collectionName: string, ID: string): Promise<T>;
-    getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
+    create(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<string[]>;
+    delete(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<void>;
+    deleteCollection(threadID: ThreadID_2, name: string): Promise<void>;
+    deleteDB(threadID: ThreadID_2): Promise<void>;
+    find<T = unknown>(threadID: ThreadID_2, collectionName: string, query: QueryJSON): Promise<T[]>;
+    findByID<T = unknown>(threadID: ThreadID_2, collectionName: string, ID: string): Promise<T>;
+    getCollectionIndexes(threadID: ThreadID_2, name: string): Promise<pb.Index.AsObject[]>;
     // (undocumented)
-    getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionConfig>;
-    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
+    getCollectionInfo(threadID: ThreadID_2, name: string): Promise<CollectionConfig>;
+    getDBInfo(threadID: ThreadID_2): Promise<DBInfo>;
     getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
-    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
+    has(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<boolean>;
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    listCollections(thread: ThreadID_2): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
-    newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
-    newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    open(threadID: ThreadID, name?: string): Promise<void>;
-    readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
+    listen<T = any>(threadID: ThreadID_2, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
+    newCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    newCollectionFromObject(threadID: ThreadID_2, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "ThreadID" needs to be exported by the entry point index.d.ts
+    newDB(threadID?: ThreadID_2, name?: string): Promise<ThreadID_2>;
+    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    open(threadID: ThreadID_2, name?: string): Promise<void>;
+    readTransaction(threadID: ThreadID_2, collectionName: string): ReadTransaction;
     // (undocumented)
     rpcOptions: grpc.RpcOptions;
-    save(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    save(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
     // (undocumented)
     serviceHost: string;
-    updateCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    verify(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
-    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
-    writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
+    updateCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    verify(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "KeyInfo" needs to be exported by the entry point index.d.ts
+    static withKeyInfo(key: KeyInfo_3, host?: string, debug?: boolean): Promise<Client>;
+    // Warning: (ae-forgotten-export) The symbol "UserAuth" needs to be exported by the entry point index.d.ts
+    static withUserAuth(auth: UserAuth_3 | (() => Promise<UserAuth_3>), host?: string, debug?: boolean): Client;
+    writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
 }
 
 // @public
@@ -368,8 +371,10 @@ export interface CollectionConfig<W = any, R = W> {
     readFilter?: ((reader: string, instance: R) => R) | string;
     // (undocumented)
     schema?: JSONSchema3or4 | any;
+    // Warning: (ae-forgotten-export) The symbol "Event" needs to be exported by the entry point index.d.ts
+    //
     // (undocumented)
-    writeValidator?: ((writer: string, event: any, instance: W) => boolean) | string;
+    writeValidator?: ((writer: string, event: Event_2, instance: W) => boolean) | string;
 }
 
 // @public
@@ -729,6 +734,13 @@ export { PullIpfsPathResponse }
 
 export { PullPathResponse }
 
+// @public
+export interface PushOptions {
+    progress?: (num?: number) => void;
+    root?: RootObject | string;
+    signal?: AbortSignal_2;
+}
+
 export { PushPathResponse }
 
 // @public
@@ -789,19 +801,19 @@ export { ReadInboxMessageResponse }
 //
 // @public
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
     // (undocumented)
     protected readonly context: ContextInterface;
-    find<T = any>(query: QueryJSON): Promise<Array<T>>;
-    findByID<T = any>(ID: string): Promise<T>;
+    find<T = unknown>(query: QueryJSON): Promise<Array<T>>;
+    findByID<T = unknown>(ID: string): Promise<T | undefined>;
     has(IDs: string[]): Promise<boolean>;
     // (undocumented)
     protected readonly modelName: string;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
 }
 
 export { RemovePathResponse }
@@ -1028,23 +1040,24 @@ export interface WithUserAuthOptions extends CopyAuthOptions {
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
     protected readonly context: ContextInterface;
-    create<T = any>(values: any[]): Promise<string[] | undefined>;
+    create<T = unknown>(values: T[]): Promise<string[]>;
     delete(IDs: string[]): Promise<void>;
     discard(): Promise<void>;
-    find<T = any>(query: QueryJSON): Promise<Array<T>>;
-    findByID<T = any>(ID: string): Promise<T>;
+    find<T = unknown>(query: QueryJSON): Promise<Array<T>>;
+    findByID<T = unknown>(ID: string): Promise<T>;
     has(IDs: string[]): Promise<boolean>;
     // (undocumented)
     protected readonly modelName: string;
-    save(values: any[]): Promise<void>;
+    save<T = unknown>(values: T[]): Promise<void>;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
+    verify<T = unknown>(values: T[]): Promise<void>;
 }
 
 
