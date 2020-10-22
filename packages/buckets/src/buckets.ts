@@ -188,7 +188,8 @@ export class Buckets extends GrpcAuthentication {
    * import { Buckets, ThreadID } from '@textile/hub'
    *
    * async function example (threadID: ThreadID) {
-   *   const buckets = await Buckets.withThread(threadID)
+   *   const id = threadID.toString()
+   *   const buckets = await Buckets.withThread(id)
    * }
    * ```
    */

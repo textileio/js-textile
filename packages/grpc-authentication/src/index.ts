@@ -153,7 +153,8 @@ export class GrpcAuthentication extends GrpcConnection {
    * import { Client, ThreadID } from '@textile/hub'
    *
    * async function example (threadID: ThreadID) {
-   *   const client = await Client.withThread(threadID)
+   *   const id = threadID.toString()
+   *   const client = await Client.withThread(id)
    * }
    * ```
    */
