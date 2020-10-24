@@ -28,7 +28,7 @@
     "@textile/buckets": "^1.1.1",
     "@textile/crypto": "^0.1.2",
     "@textile/grpc-authentication": "^0.2.3",
-    "@textile/hub-grpc": "2.0.1",
+    "@textile/hub-grpc": "2.1.3",
     "@textile/hub-threads-client": "^1.0.1",
     "@textile/pow": "^1.0.2",
     "@textile/security": "^0.3.0",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@textile/context": "^0.7.0",
     "@textile/grpc-transport": "^0.0.5",
-    "@textile/hub-grpc": "2.0.0-rc7",
+    "@textile/hub-grpc": "2.1.3",
     "axios": "^0.20.0",
     "delay": "^4.4.0",
     "fast-sha256": "^1.3.0",
