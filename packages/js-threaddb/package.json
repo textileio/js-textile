@@ -2,26 +2,14 @@
   "name": "@textile/threaddb",
   "version": "0.0.0",
   "description": "ThreadDB Javascript implementation",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
-  "browser": "dist/index.browser.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.js"
-    },
-    "./index.js": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.js"
-    }
-  },
   "scripts": {
     "build": "tsc",
     "clean": "rimraf ./dist ./coverage ./build ./.nyc_output ./tsconfig.tsbuildinfo",
     "test": "npm run test:node && npm run test:browser",
     "test:browser": "polendina src/**/*.spec.ts --webpack-config=./webpack.test.js",
-    "test:node": "env TS_NODE_FILES=true TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc --reporter=lcov mocha",
+    "test:node": "env TS_NODE_FILES=true TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --reporter=lcov mocha",
     "lint": "eslint",
     "docs": "typedoc",
     "version": "standard-version",
