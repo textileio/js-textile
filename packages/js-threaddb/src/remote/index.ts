@@ -1,4 +1,6 @@
 import type { Dexie } from "dexie";
+import { Context } from "@textile/context";
+import { KeyInfo, UserAuth } from "@textile/security";
 import jsonpatch from "fast-json-patch";
 import {
   GrpcConfig,
@@ -11,7 +13,7 @@ import {
 } from "./grpc";
 import type { Identity } from "@textile/crypto";
 import ThreadID from "@textile/threads-id";
-import { DBInfo } from "@textile/threads-client";
+import { DBInfo, Where } from "@textile/threads-client";
 import { grpc } from "@improbable-eng/grpc-web";
 import {
   Change,
@@ -33,6 +35,7 @@ export const Errors = {
 export const ThreadIDName = "thread-id";
 
 const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 
 /**
  * Config specifies the configuration options for remote sync.
@@ -79,6 +82,74 @@ export class Remote {
     }
     // Specifies the thread id to use when making updates
     this.id = id;
+  }
+
+  /**
+   * Create a new gRPC client instance from a supplied user auth object.
+   * Assumes all default gRPC settlings. For customization options, use a context object directly.
+   * The callback method will automatically refresh expiring credentials.
+   * @param auth The user auth object or an async callback that returns a user auth object.
+   * @example
+   * ```typescript
+   * import {UserAuth, Client} from '@textile/threads'
+   *
+   * function create (auth: UserAuth) {
+   *   return Client.withUserAuth(auth)
+   * }
+   * ```
+   * @example
+   * ```typescript
+   * import {UserAuth, Client} from '@textile/threads'
+   *
+   * function setCallback (callback: () => Promise<UserAuth>) {
+   *   return Client.withUserAuth(callback)
+   * }
+   * ```
+   */
+  async setUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>)
+  ): Promise<Remote> {
+    const init =
+      typeof auth === "object"
+        ? Context.fromUserAuth(auth, this.config.serviceHost)
+        : Context.fromUserAuthCallback(auth, this.config.serviceHost);
+    // Pull in any existing headers that may have already been set
+    const json: Record<string, string[]> = {};
+    this.config.metadata?.forEach((key, values) => (json[key] = values));
+    const metadata = await Context.fromJSON({
+      ...json,
+      ...init.toJSON(),
+    }).toMetadata();
+    this.config.metadata = metadata;
+    return this;
+  }
+
+  /**
+   * Create a new gRPC client instance from a supplied key and secret
+   * @param key The KeyInfo object containing {key: string, secret: string, type: 0}. 0 === User Group Key, 1 === Account Key
+   * @param host The remote gRPC host to connect with. Should be left as default.
+   * @param debug Whether to run in debug mode. Defaults to false.
+   * @example
+   * ```typescript
+   * import {KeyInfo, Client} from '@textile/threads'
+   *
+   * async function create (keyInfo: KeyInfo) {
+   *   return await Client.withKeyInfo(keyInfo)
+   * }
+   * ```
+   */
+  async setKeyInfo(key: KeyInfo): Promise<Remote> {
+    const init = await new Context(this.config.serviceHost).withKeyInfo(key);
+    // Pull in any existing headers that may have already been set
+    const json: Record<string, string[]> = {};
+    this.config.metadata?.forEach((key, values) => (json[key] = values));
+    const metadata = await Context.fromJSON({
+      ...json,
+      ...init.toJSON(),
+    }).toMetadata();
+    this.config.metadata = metadata;
+    return this;
+    return this;
   }
 
   /**
@@ -186,7 +257,7 @@ export class Remote {
       if (callback === undefined) {
         throw new Error("Callback required for public key challenge");
       }
-      token = await getTokenChallenge(identity, callback);
+      token = await getTokenChallenge(identity, callback, this.config);
     } else {
       token = await getToken(identity, this.config);
     }
@@ -256,10 +327,22 @@ export class Remote {
       idString = await newDB(this.storage.name, threadID, schemas, this.config);
     } catch (err) {
       if (err.toString().includes("db already exists")) {
-        throw Errors.ThreadExists;
+        idString = threadID.toString();
+        // If it already exists, maybe we just need to create/update the schemas?
+        const client = createDbClient(this.config);
+        for (const schema of schemas) {
+          schema.schema = JSON.parse(decoder.decode(schema.schema));
+          try {
+            await client.newCollection(threadID, schema);
+          } catch (err) {
+            if (!err.message.includes("collection already registered"))
+              throw err;
+          }
+        }
+      } else {
+        // Otherwise, just throw it
+        throw err;
       }
-      // Otherwise, just throw it
-      throw err;
     }
 
     // Otherwise throw a generic remote error :(
@@ -285,68 +368,58 @@ export class Remote {
     // Blast thru provided collection names...
     for (const collectionName of collections) {
       // Check that table exists locally...
-      const table = this.storage.table(collectionName);
-      // Check that table exists remotely...
-      try {
-        // Just check, we don't need to keep the schema info around for now
-        await client.getCollectionInfo(threadID, collectionName);
-        // Assume our local schema matches the remote one...
-        // But we might throw on this later!
-      } catch (err) {
-        if (err.toString().includes("collection not found")) {
-          // We need to create it on the remote, maybe we haven't pushed yet?
-          // So we grab our local schema, which defaults to open if not specified
-          const schema = await table.getSchema();
-          // And then we create a new remote collection to match it
-          await client.newCollection(threadID, collectionName, schema);
-        } else throw err;
-      }
-      // FIXME: We aren't getting information about failed transactions from the go service
-      // But some fixes on the go side should make it useful again
-      // * https://github.com/textileio/go-threads/pull/437
-      // * https://github.com/textileio/go-threads/pull/436#discussion_r489016111
+      this.storage.table(collectionName);
       // Filter changes by collection
       const filtered = localChanges.where("name").equals(collectionName);
+      if ((await filtered.count()) < 1) {
+        return; // Early out if no changes
+      }
       // For each change, create transaction item and switch on type
-      // FIXME: There are more idiomatic ways to do this, but dexie seems to
-      // swallow any errors thrown inside an async function within a transaction
-      // so we do most of this outside a transaction and just delete the changes
-      // if the overall remote transaction is successful.
+      // TODO: Currently, go-threads underlying db doesn't support isolation in transactions
+      // so we have to do these as one-off transactions for now so that queries reflect reality
+      // this is **not** ideal, as we lose the atomicity of pushes...
+      // const trans = client.writeTransaction(threadID, collectionName);
       try {
         // See above, we need to actually materialize the array it seems?
         const changes = await filtered.toArray();
+        // await trans.start();
         let count = 0;
         for (const obj of changes) {
           switch (obj.type) {
             case "put": {
-              // FIXME: We can't save known objects, and all objects are unknown the first time
-              // we push to remote?!
+              // FIXME: https://github.com/textileio/go-threads/issues/440
+              // TODO: https://github.com/textileio/go-threads/pull/450
               try {
+                // FIXME: Workaround: we check first, and if error, try to create
+                // await trans.verify([obj.after]);
                 // await trans.save([obj.after]);
                 await client.save(threadID, collectionName, [obj.after]);
                 break;
               } catch (err) {
-                // TODO: Should we enable this on the go end?
-                // can't save unkown instance
-                // sic "unkown"
-                // Pass thru to add
-                console.error(err);
+                throw err;
+                // break;
               }
             }
             case "add": {
-              // await trans.create([obj.after]);
-              await client.create(threadID, collectionName, [obj.after]);
-              break;
+              try {
+                // await trans.verify([obj.after]);
+                // await trans.save([obj.after]);
+                await client.create(threadID, collectionName, [obj.after]);
+                break;
+              } catch (err) {
+                throw err;
+                // break;
+              }
             }
             case "delete": {
               try {
                 // await trans.delete([obj.key]);
                 await client.delete(threadID, collectionName, [obj.key]);
               } catch (err) {
-                // TODO: Should this actually be ok on the go end?
-                // instance not found
-                console.error(err);
-                break;
+                // TODO: https://github.com/textileio/go-threads/pull/450
+                // console.error(err); // We'll ignore this though
+                throw err;
+                // break;
               }
             }
           }
@@ -359,10 +432,16 @@ export class Remote {
         // Won't know why we made it this far, so just use a generic error
         if (count !== deleted) throw Errors.ChangeError;
         // We can safely end the transaction
+        // FIXME: Since we don't have a transaction to rollback, we're in some trouble here!
         // await trans.end();
       } catch (err) {
         // In theory, err will be due to remote transaction calls... abort!
-        // await trans.abort();
+        try {
+          // await trans.discard();
+          // FIXME: We need to be able to discard **something** here
+        } catch (err) {
+          // Nothing more we can do here
+        }
         throw err; // Rethrow for external consumers
       }
       // TODO: Maybe return updated hash of head update.
@@ -382,8 +461,9 @@ export class Remote {
     if (!(await changes.count())) return;
     // Get a reference to stash table for storing changes
     const stash = this.storage.table(StashTableName);
+    const array = await changes.toArray();
     // Move change set to stash table, useful for rebasing later
-    await stash.bulkPut(await changes.toArray());
+    await stash.bulkPut(array);
     // Clear out local changes
     return changes.clear();
   }
@@ -414,6 +494,9 @@ export class Remote {
           const stash = tx.table<Change, string>(StashTableName);
           const table = tx.table(collectionName);
           const filtered = stash.where("name").equals(collectionName);
+          if ((await filtered.count()) < 1) {
+            return; // Early out if no changes
+          }
           // TODO: This can be optimized big time!
           for (const obj of await filtered.toArray()) {
             if (obj.type === "delete") {
@@ -457,17 +540,22 @@ export class Remote {
     // Blast thru provided collection names...
     // TODO: Yes, I know this is all extremely sub-optimal!
     for (const collectionName of collections) {
-      const { instancesList } = await client.find(threadID, collectionName, {});
+      const instances = await client.find(threadID, collectionName, {});
       const table = this.storage.table(collectionName);
       // Remote is our source of thruth, we completely overwrite anything local that is different
-      const keys = await table.bulkPut(instancesList, { allKeys: true });
+      const keys = await table.bulkPut(instances, { allKeys: true });
       // Now we also need to drop anything locally that wasn't in our remote
       await table.filter((obj) => !keys.includes(obj._id)).delete();
     }
+    const isModUpdate = (ops: any[]) => {
+      const [op0] = ops;
+      return op0.op === "add" && op0.path == "/_mod";
+    };
     // TODO: Maybe return the ids of modified/deleted instances?
     const changes = this.storage.table<Change, string>(ChangeTableName);
+    const test = await changes.toArray();
     const values = await changes
-      .filter((change) => change.ops.length > 0)
+      .filter((change) => change.ops.length > 0 && !isModUpdate(change.ops))
       .toArray();
     // Drop these "fake" changes
     await changes.clear();

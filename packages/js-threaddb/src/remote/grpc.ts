@@ -3,8 +3,8 @@ import type { ThreadID } from "@textile/threads-id";
 import { WebsocketTransport } from "@textile/grpc-transport";
 import * as pb from "@textile/threads-client-grpc/threads_pb";
 import * as api from "@textile/threads-client-grpc/threads_pb_service";
-import { Client } from "@textile/threads-client";
-import { Context } from "@textile/context";
+import { Client, CollectionConfig } from "@textile/threads-client";
+import { Context, defaultHost } from "@textile/context";
 import { Identity } from "@textile/crypto";
 
 export interface GrpcConfig {
@@ -13,13 +13,11 @@ export interface GrpcConfig {
   debug: boolean;
   metadata: grpc.Metadata;
 }
-// Create local alias
-type CollectionConfig = pb.CollectionConfig.AsObject;
+
 export { CollectionConfig };
 
 export const defaults: GrpcConfig = {
-  // TODO: Should localhost be the default? Probably not.
-  serviceHost: "http://127.0.0.1:6007",
+  serviceHost: defaultHost,
   transport: WebsocketTransport(),
   debug: false,
   metadata: new grpc.Metadata(),
@@ -34,13 +32,16 @@ export function createClient(opts: Partial<GrpcConfig> = {}): api.APIClient {
 }
 
 export function createDbClient(config: Partial<GrpcConfig> = {}): Client {
-  // Get token auth information
-  const [auth] = config.metadata?.get("authorization") ?? [];
   // Create a new remote client instance
   // TODO: This is not be the best way to do this...
-  let context = new Context(config.serviceHost);
-  // TODO: This is messy!
-  if (auth) context = context.withToken(auth.slice(7));
+  // Pull in any existing headers that may have already been set
+  const json: Record<string, string[]> = {};
+  config.metadata?.forEach((key, values) => (json[key] = values));
+  const context =
+    Object.keys(json).length > 0
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        Context.fromJSON(json, config.serviceHost)
+      : new Context(config.serviceHost);
   const client = new Client(context);
   return client;
 }
@@ -141,7 +142,7 @@ export async function getTokenChallenge(
 export async function newDB(
   name: string,
   threadID: ThreadID,
-  collections: pb.CollectionConfig.AsObject[],
+  collections: CollectionConfig[],
   config?: Partial<GrpcConfig>
 ): Promise<string> {
   const opts = { ...defaults, ...config };
@@ -155,7 +156,7 @@ export async function newDB(
     config.setName(collection.name);
     config.setSchema(collection.schema);
     const indexesList: pb.Index[] = [];
-    for (const index of collection.indexesList) {
+    for (const index of collection.indexes ?? []) {
       const idx = new pb.Index();
       idx.setPath(index.path);
       idx.setUnique(index.unique);

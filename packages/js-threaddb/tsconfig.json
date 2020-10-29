@@ -2,13 +2,28 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
-    "lib": ["DOM", "ES2020"],
-    "declaration": false,
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
+    "declaration": true,
     "rootDir": "./src",
+    "outDir": "./dist",
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "downlevelIteration": true
   },
-  "include": ["src"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "dist",
+    "node_modules",
+    "build",
+    "coverage",
+    "docs",
+    "examples"
+  ]
 }

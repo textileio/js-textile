@@ -1,9 +1,12 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "mochaExplorer.files": "**/*.spec.ts",
+  "mochaExplorer.files": "src/**/*.spec.ts",
   "mochaExplorer.esmLoader": true,
   "mochaExplorer.exit": true,
-  "mochaExplorer.require": ["ts-node/register", "source-map-support/register"],
+  "mochaExplorer.require": [
+    "ts-node/register",
+    "source-map-support/register"
+  ],
   "mochaExplorer.launcherScript": "node_modules/mocha-explorer-launcher-scripts/nyc",
   "mochaExplorer.env": {
     "TS_NODE_FILES": "true",

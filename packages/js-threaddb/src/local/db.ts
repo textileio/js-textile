@@ -1,5 +1,5 @@
 import { Collection, CollectionConfig } from "./collection";
-import { createIndexString, hashString, NewDexie } from "../utils";
+import { createIndexString, NewDexie } from "../utils";
 import { Remote } from "../remote";
 import { Dexie, Table } from "dexie";
 

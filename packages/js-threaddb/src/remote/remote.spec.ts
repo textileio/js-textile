@@ -10,6 +10,7 @@ import { grpc } from "@improbable-eng/grpc-web";
 import { Where } from "@textile/threads-client";
 
 const databaseName = "remote";
+const serviceHost = "http://localhost:6007";
 
 describe("remote", function () {
   // Default Dog interface to work with types
@@ -81,6 +82,7 @@ describe("remote", function () {
     beforeEach(async function () {
       // Need to authorize before running any tests...
       // But we _could_ cache token if we had one from before...
+      remote.set({ serviceHost });
       await remote.authorize(privateKey);
     });
 
@@ -154,15 +156,11 @@ describe("remote", function () {
       expect(id1).to.not.be.undefined;
       expect(ThreadID.fromString(id1).toString()).to.equal(id1);
       // Should throw here because we're trying to use an existing db id
-      try {
-        // Clear cached id just to be sure we're pulling from the db
-        remote.id = undefined;
-        // Leave off id to default to existing id (stored in db)
-        await remote.initialize(); // Leave off id
-        throw shouldHaveThrown;
-      } catch (err) {
-        expect(err).to.equal(Errors.ThreadExists);
-      }
+      // Clear cached id just to be sure we're pulling from the db
+      remote.id = undefined;
+      // Leave off id to default to existing id (stored in db)
+      await remote.initialize(); // Leave off id
+
       // Try with new random one, this isn't a good idea in practice, but is
       // allowed because we want to be able to migrate etc in the future
       // Application logic should be used to prevent this bad behavior for now
@@ -231,6 +229,7 @@ describe("remote", function () {
     before(async function () {
       // Need to authorize before running any tests...
       // But we _could_ cache token if we had one from before...
+      remote.set({ serviceHost });
       await remote.authorize(privateKey);
     });
 
@@ -259,7 +258,6 @@ describe("remote", function () {
     });
 
     it("should push tracked changes to a remote when calling push", async function () {
-      this.timeout(5000);
       const threadID = ThreadID.fromString(remote.id ?? "");
       // Low level check to make sure we have our changes
       const changes = dexie.table(ChangeTableName);
@@ -268,15 +266,15 @@ describe("remote", function () {
       await remote.push("dogs");
       expect(await changes.count()).to.equal(0);
       // Trying again should not lead to any issues
-      await remote.push(); // Push everything this time... except we have none!
+      await remote.push("dogs"); // Push everything this time... except we have none!
       // Low level checks
       const client = createDbClient(remote.config);
       const dogs = dexie.table("dogs");
       const total = await dogs.count();
       expect(total).to.equal(2);
       const q = new Where("age").gt(0);
-      const { instancesList } = await client.find(threadID, "dogs", q);
-      expect(instancesList).to.have.lengthOf(2);
+      const instances = await client.find(threadID, "dogs", q);
+      expect(instances).to.have.lengthOf(total);
     });
 
     it("should pull changes from remote and automatically update local db", async function () {

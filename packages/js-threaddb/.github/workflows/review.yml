@@ -81,5 +81,3 @@ jobs:
         run: npm i -g npm-check-updates
       - name: Display
         run: npm run textile:check
-      - name: Check
-        run: if [ $(npx ncu '/^@textile/.*$/' | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;

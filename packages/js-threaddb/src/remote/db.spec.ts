@@ -7,6 +7,7 @@ import { personSchema, shouldHaveThrown } from "../utils/spec.utils";
 import ThreadID from "@textile/threads-id";
 
 const databaseName = "remote-db";
+const serviceHost = "http://localhost:6007";
 
 describe("remote + db", function () {
   const privateKey = PrivateKey.fromRandom();
@@ -36,6 +37,8 @@ describe("remote + db", function () {
     it("should be able to push local schemas to remote on push", async function () {
       this.timeout(30000);
       db = new Database(databaseName);
+      // db.collectionConfig({ name: "Person", schema: personSchema });
+      db.remote.set({ serviceHost });
       // We always need to authorize first...
       const token = await db.remote.authorize(privateKey);
       // Now open the db with NO collections
@@ -70,11 +73,12 @@ describe("remote + db", function () {
       });
       // Set our thread id and auth token directly
       // This is just syntactic sugar over more direct setting
-      db.remote.set({ id, token });
+      db.remote.set({ serviceHost, id, token });
       // Now let's open the db again
       // This internally updates the db version, because the collection set is different
       // We should already be authorized because we saved our token from before
       await db.open(2); // Version 2
+      id = await db.remote.initialize();
       // Now finally, we push said changes
       await db.remote.push("Person");
 
@@ -111,6 +115,7 @@ describe("remote + db", function () {
       await createChanges();
       // Now for the remote stuff
       // We always need to authorize first...
+      db.remote.set({ serviceHost });
       await db.remote.authorize(privateKey);
       // Do we have a remote table yet? Let's just push and see!
       try {
@@ -118,15 +123,8 @@ describe("remote + db", function () {
       } catch (err) {
         expect(err).to.equal(Errors.ThreadIDError);
         // Opps, I didn't create the remote one yet, let's initialize
-        try {
-          // Use id from before, or if this is a fresh test, create a new one
-          // Here's a demo of what to do if initialize throws with a thread already exists error
-          await db.remote.initialize(id);
-        } catch (err) {
-          if (err === Errors.ThreadExists) {
-            db.remote.set({ id }); // Just set the id direcly and move on!
-          }
-        }
+        // Use id from before, or if this is a fresh test, create a new one
+        await db.remote.initialize(id);
       }
       await db.remote.push("Person");
 

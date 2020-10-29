@@ -71,7 +71,8 @@ export function DocumentInstanceClassFactory(
      * Get a JSON representation of this instance.
      */
     toJSON(): JSONType {
-      return JSON.stringify({ ...this });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return { ...(this as any) };
     }
   };
   return cls as DocumentInstanceConstructor;

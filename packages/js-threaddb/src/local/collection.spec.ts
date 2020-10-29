@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from "chai";
-import mingo from "mingo";
 import { ulid } from "ulid";
 import { Collection } from "./collection";
 import { NewDexie } from "../utils";
@@ -330,7 +329,7 @@ describe("collection", function () {
         // Should be an actual class instance, that we can export to JSON
         if (personInstance) {
           const json = personInstance.toJSON();
-          expect(json).to.equal(JSON.stringify(person));
+          expect(json).to.deep.equal(person);
         } else {
           throw new Error("should not be undefined");
         }
@@ -508,8 +507,6 @@ describe("collection", function () {
         expect(last?.age).to.be.greaterThan(5);
         expect(last?.age).to.be.lessThan(56);
         expect(await Person.find().count()).to.equal(7);
-        // Use mingo directly, should also return 3 (sanity check)
-        expect(mingo.find(people, query).count()).to.equal(3);
       });
     });
 
