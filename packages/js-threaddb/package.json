@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc",
     "clean": "rimraf ./dist ./coverage ./build ./.nyc_output ./tsconfig.tsbuildinfo",
     "test": "npm run test:node && npm run test:browser",
