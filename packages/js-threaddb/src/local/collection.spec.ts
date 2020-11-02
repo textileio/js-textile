@@ -227,7 +227,7 @@ describe("collection", function () {
       it("should create a write transaction", async function () {
         const Person = setupCollection();
         const person = copyPerson();
-        Person.writeTransaction(async function () {
+        await Person.writeTransaction(async function () {
           const [id] = await Person.insert(person);
           expect(await Person.has(id)).to.be.true;
         });
