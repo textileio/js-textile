@@ -13,7 +13,7 @@ import {
 } from "./grpc";
 import type { Identity } from "@textile/crypto";
 import ThreadID from "@textile/threads-id";
-import { DBInfo, Where } from "@textile/threads-client";
+import { DBInfo, WriteTransaction } from "@textile/threads-client";
 import { grpc } from "@improbable-eng/grpc-web";
 import {
   Change,
@@ -378,51 +378,50 @@ export class Remote {
       // TODO: Currently, go-threads underlying db doesn't support isolation in transactions
       // so we have to do these as one-off transactions for now so that queries reflect reality
       // this is **not** ideal, as we lose the atomicity of pushes...
-      // const trans = client.writeTransaction(threadID, collectionName);
+      let trans: WriteTransaction | undefined
       try {
-        // See above, we need to actually materialize the array it seems?
+        // TODO:See above, we need to actually materialize the array it seems?
         const changes = await filtered.toArray();
-        // await trans.start();
         let count = 0;
+        
         for (const obj of changes) {
+          trans = client.writeTransaction(threadID, collectionName);
+          await trans.start();
           switch (obj.type) {
             case "put": {
               // FIXME: https://github.com/textileio/go-threads/issues/440
               // TODO: https://github.com/textileio/go-threads/pull/450
               try {
-                // FIXME: Workaround: we check first, and if error, try to create
-                // await trans.verify([obj.after]);
-                // await trans.save([obj.after]);
-                await client.save(threadID, collectionName, [obj.after]);
+                await trans.save([obj.after]);
+                // await client.save(threadID, collectionName, [obj.after]);
                 break;
               } catch (err) {
                 throw err;
-                // break;
               }
             }
             case "add": {
               try {
-                // await trans.verify([obj.after]);
-                // await trans.save([obj.after]);
-                await client.create(threadID, collectionName, [obj.after]);
+                await trans.create([obj.after]);
+                // await client.create(threadID, collectionName, [obj.after]);
                 break;
               } catch (err) {
                 throw err;
-                // break;
               }
             }
             case "delete": {
               try {
-                // await trans.delete([obj.key]);
-                await client.delete(threadID, collectionName, [obj.key]);
+                await trans.delete([obj.key]);
+                // await client.delete(threadID, collectionName, [obj.key]);
+                break;
               } catch (err) {
                 // TODO: https://github.com/textileio/go-threads/pull/450
                 // console.error(err); // We'll ignore this though
                 throw err;
-                // break;
               }
             }
           }
+          // FIXME: We close out the transaction on each loop :(
+          await trans.end()
           // We track count to make sure we're processed them all later
           count++;
         }
@@ -431,14 +430,10 @@ export class Remote {
         // Make sure we deleted just as much as we were expecting
         // Won't know why we made it this far, so just use a generic error
         if (count !== deleted) throw Errors.ChangeError;
-        // We can safely end the transaction
-        // FIXME: Since we don't have a transaction to rollback, we're in some trouble here!
-        // await trans.end();
       } catch (err) {
         // In theory, err will be due to remote transaction calls... abort!
         try {
-          // await trans.discard();
-          // FIXME: We need to be able to discard **something** here
+          await trans?.discard();
         } catch (err) {
           // Nothing more we can do here
         }
