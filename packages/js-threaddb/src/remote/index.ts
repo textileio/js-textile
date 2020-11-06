@@ -378,12 +378,12 @@ export class Remote {
       // TODO: Currently, go-threads underlying db doesn't support isolation in transactions
       // so we have to do these as one-off transactions for now so that queries reflect reality
       // this is **not** ideal, as we lose the atomicity of pushes...
-      let trans: WriteTransaction | undefined
+      let trans: WriteTransaction | undefined;
       try {
         // TODO:See above, we need to actually materialize the array it seems?
         const changes = await filtered.toArray();
         let count = 0;
-        
+
         for (const obj of changes) {
           trans = client.writeTransaction(threadID, collectionName);
           await trans.start();
@@ -421,7 +421,7 @@ export class Remote {
             }
           }
           // FIXME: We close out the transaction on each loop :(
-          await trans.end()
+          await trans.end();
           // We track count to make sure we're processed them all later
           count++;
         }
