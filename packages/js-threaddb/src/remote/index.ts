@@ -542,13 +542,13 @@ export class Remote {
       // Now we also need to drop anything locally that wasn't in our remote
       await table.filter((obj) => !keys.includes(obj._id)).delete();
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isModUpdate = (ops: any[]) => {
       const [op0] = ops;
       return op0.op === "add" && op0.path == "/_mod";
     };
     // TODO: Maybe return the ids of modified/deleted instances?
     const changes = this.storage.table<Change, string>(ChangeTableName);
-    const test = await changes.toArray();
     const values = await changes
       .filter((change) => change.ops.length > 0 && !isModUpdate(change.ops))
       .toArray();
