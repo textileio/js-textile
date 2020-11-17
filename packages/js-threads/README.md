@@ -8,7 +8,7 @@
 [![Lerna](https://img.shields.io/badge/monorepo-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 ![Tests](https://github.com/textileio/js-threads/workflows/Test/badge.svg)
-[![Docs](https://github.com/textileio/js-threads/workflows/Docs/badge.svg)](https://textileio.github.io/js-threads)
+[![Docs](https://img.shields.io/badge/docs-docs.textile.io-informational.svg)](https://docs.textile.io/)
 
 > A protocol & event-sourced database for decentralized user-siloed data written in Typescript
 
@@ -173,7 +173,7 @@ See the [lerna docs](https://github.com/lerna/lerna#what-can-lerna-do) for other
 
 ## API
 
-See [https://textileio.github.io/js-threads](https://textileio.github.io/js-threads), which includes the technical API docs for all subpackages.
+See [the Textile docs](https://docs.textile.io/), which includes the API docs for public APIs.
 
 ## Maintainers
 

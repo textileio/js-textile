@@ -86,7 +86,7 @@ __pycache__
 **/*.pem
 
 # Local compose file for testing
-docker-compose.yml
+docker-compose*.yml
 
 # Local go-threads repo for testing
 repo
