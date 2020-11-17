@@ -543,9 +543,8 @@ describe("Client", function () {
       it("should be able to validate an instance that is invalid", async function () {
         try {
           await transaction?.verify([createPerson()])
-          throw new Error("wrong error")
         } catch (err) {
-          expect(err.message).to.include("unkown instance") // sic
+          expect(err).to.be.undefined
         }
       })
       it("should be able to save an existing instance", async function () {

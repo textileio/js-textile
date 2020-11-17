@@ -202,7 +202,7 @@ export class WriteTransaction extends Transaction<
       const req = new WriteTransactionRequest()
       req.setDeleterequest(deleteReq)
       this.client.onMessage((message: WriteTransactionReply) => {
-        const reply = message.getSavereply()
+        const reply = message.getDeletereply()
         const err = reply?.getTransactionerror()
         if (err) {
           reject(new Error(err))
