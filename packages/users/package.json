@@ -40,7 +40,7 @@
     "@textile/hub-threads-client": "^1.0.1",
     "@textile/security": "^0.3.0",
     "@textile/threads-id": "^0.1.15",
-    "@textile/users-grpc": "2.1.0",
+    "@textile/users-grpc": "2.1.4",
     "@types/next-tick": "^1.0.0",
     "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
