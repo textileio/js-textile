@@ -43,11 +43,11 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/context": "^0.8.0",
-    "@textile/crypto": "^0.1.0",
+    "@textile/crypto": "^0.1.2",
     "@textile/grpc-transport": "^0.0.6",
     "@textile/multiaddr": "^0.1.0",
     "@textile/security": "^0.4.0",
-    "@textile/threads-client-grpc": "^1.0.0",
+    "@textile/threads-client-grpc": "^1.0.1",
     "@textile/threads-id": "^0.1.16",
     "@types/to-json-schema": "^0.2.0",
     "to-json-schema": "^0.2.5"
