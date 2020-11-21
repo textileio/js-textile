@@ -4,8 +4,8 @@ import {
   ListThreadsResponse,
   GetThreadRequest,
   ListThreadsRequest,
-} from '@textile/users-grpc/users_pb'
-import { APIServiceClient } from '@textile/users-grpc/users_pb_service'
+} from '@textile/users-grpc/api/usersd/pb/usersd_pb'
+import { APIServiceClient } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import { ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'

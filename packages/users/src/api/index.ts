@@ -18,8 +18,8 @@ import {
   DeleteInboxMessageRequest,
   DeleteSentboxMessageRequest,
   Message,
-} from '@textile/users-grpc/users_pb'
-import { APIService } from '@textile/users-grpc/users_pb_service'
+} from '@textile/users-grpc/api/usersd/pb/usersd_pb'
+import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
 import { Client, Update } from '@textile/hub-threads-client'

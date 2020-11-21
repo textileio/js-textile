@@ -28,11 +28,11 @@
   "author": "Textile",
   "license": "MIT",
   "dependencies": {
-    "@textile/context": "^0.7.0",
+    "@textile/context": "^0.8.0",
     "@textile/crypto": "^0.1.2",
     "@textile/grpc-connection": "^0.1.5",
     "@textile/hub-threads-client": "^1.0.1",
-    "@textile/security": "^0.2.7"
+    "@textile/security": "^0.4.0"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

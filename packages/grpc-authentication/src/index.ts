@@ -1,8 +1,8 @@
-import { Context, defaultHost, ContextInterface } from '@textile/context'
-import { GrpcConnection } from '@textile/grpc-connection'
+import { Context } from '@textile/context'
 import { Identity } from '@textile/crypto'
-import { UserAuth, KeyInfo } from '@textile/security'
+import { GrpcConnection } from '@textile/grpc-connection'
 import { Client } from '@textile/hub-threads-client'
+import { KeyInfo, UserAuth } from '@textile/security'
 
 /**
  * Set the options for authenticating with an API key

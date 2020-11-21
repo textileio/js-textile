@@ -21,4 +21,4 @@ export {
   DeleteInboxMessageResponse,
   DeleteSentboxMessageRequest,
   DeleteSentboxMessageResponse,
-} from '@textile/users-grpc/users_pb'
+} from '@textile/users-grpc/api/usersd/pb/usersd_pb'
