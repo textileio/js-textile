@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.1.0...@textile/threads-client@1.1.1) (2020-11-21)
+
+
+### Bug Fixes
+
+* match test with correct behavior ([38dcd21](https://github.com/textileio/js-threads/commit/38dcd2171db355c4a406993b2ce318a50ddf3b85))
+* return correct response type. fixes [#588](https://github.com/textileio/js-threads/issues/588) ([4c7baf8](https://github.com/textileio/js-threads/commit/4c7baf83fe85d76770adf7fc880b04a4829ffa82))
+* update tests + more robust gitignore ([862dfcf](https://github.com/textileio/js-threads/commit/862dfcfb65b6ec22b342c95f92c81ad66930bea5))
+
+
+
+
+
 # [1.1.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.0.0-alpha.0...@textile/threads-client@1.1.0) (2020-09-30)
 
 
