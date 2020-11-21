@@ -52,7 +52,9 @@ function isEmpty(obj: any) {
   return Object.keys(obj).length === 0 && obj.constructor === Object
 }
 
-function getFunctionBody(fn: ((...args: any[]) => any) | string): string {
+export function getFunctionBody(
+  fn: ((...args: any[]) => any) | string
+): string {
   // https://stackoverflow.com/a/25229488/1256988
   function removeCommentsFromSource(str: string) {
     return str.replace(

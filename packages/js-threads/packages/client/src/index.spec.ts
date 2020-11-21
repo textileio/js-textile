@@ -4,7 +4,7 @@ import { Context } from "@textile/context"
 import { Identity, PrivateKey } from "@textile/crypto"
 import { ThreadID } from "@textile/threads-id"
 import { expect } from "chai"
-import { Client, JSONSchema3or4, Update } from "./index"
+import { Client, getFunctionBody, JSONSchema3or4, Update } from "./index"
 import { Event, ReadTransaction, Where, WriteTransaction } from "./models"
 
 const personSchema: JSONSchema3or4 = {
@@ -305,6 +305,24 @@ describe("Client", function () {
           return true
       }
     }
+
+    it("should handle string-based writeValidators", async function () {
+      const replaceThisValidator = (writer: string) => {
+        // eslint-disable-next-line prettier/prettier
+        const ownerPub = 'replaceThis'
+        if (writer === ownerPub) {
+          return true
+        }
+        return false
+      }
+      const writeValidatorString = getFunctionBody(
+        replaceThisValidator
+      ).replace("replaceThis", "publicKeyString")
+      await client.newCollection(dbID, {
+        name: "DontUseThisOne",
+        writeValidator: writeValidatorString,
+      })
+    })
     it("should catch invalid write operations before they are added to the db", async function () {
       // Empty schema
       await client.updateCollection(dbID, {
@@ -544,7 +562,8 @@ describe("Client", function () {
         try {
           await transaction?.verify([createPerson()])
         } catch (err) {
-          expect(err).to.be.undefined
+          // Regression test against old verify/save bahavior
+          expect(err.message).to.not.include("unkown instance") // sic
         }
       })
       it("should be able to save an existing instance", async function () {
@@ -724,7 +743,7 @@ describe("Client", function () {
       const list = await client.find(dbID, "Person", {})
       expect(list.length).to.be.greaterThan(0)
       const collections = await client.listCollections(dbID)
-      expect(collections).to.have.lengthOf(3)
+      expect(collections).to.have.lengthOf(4)
     })
   })
 
