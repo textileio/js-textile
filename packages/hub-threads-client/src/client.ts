@@ -6,7 +6,7 @@ import {
   ListThreadsRequest,
 } from '@textile/users-grpc/users_pb'
 import { APIServiceClient } from '@textile/users-grpc/users_pb_service'
-import { ServiceError } from '@textile/hub-grpc/hub_pb_service'
+import { ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
 import { UserAuth, KeyInfo } from '@textile/security'

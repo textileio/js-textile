@@ -1,6 +1,6 @@
 import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupResponse } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'

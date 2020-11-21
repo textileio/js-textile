@@ -39,8 +39,8 @@ import {
   RootResponse,
   SetDefaultArchiveConfigRequest,
   SetPathRequest,
-} from '@textile/buckets-grpc/buckets_pb'
-import { APIService, APIServicePushPath } from '@textile/buckets-grpc/buckets_pb_service'
+} from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb'
+import { APIService, APIServicePushPath } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
@@ -560,10 +560,7 @@ export async function bucketsPushPath(
         client.close()
         return reject(AbortError)
       }
-      if (message.hasError()) {
-        // Reject on first error
-        return reject(new Error(message.getError()))
-      } else if (message.hasEvent()) {
+      if (message.hasEvent()) {
         const event = message.getEvent()?.toObject()
         if (event?.path) {
           // @todo: Is there an standard library/tool for this step in JS?
