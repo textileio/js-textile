@@ -67,6 +67,9 @@
     },
     {
       "path": "../crypto"
+    },
+    {
+      "path": "../users-grpc"
     }
   ]
 }

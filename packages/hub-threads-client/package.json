@@ -51,7 +51,8 @@
   },
   "references": [
     {
-      "path": "../crypto"
+      "path": "../crypto",
+      "path": "../users-grpc"
     }
   ]
 }

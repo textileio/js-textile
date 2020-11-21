@@ -1,0 +1,60 @@
+{
+  "_args": [
+    [
+      "@textile/users-grpc@2.1.5",
+      "/Users/andrewhill/Textile/textile/js-hub/packages/hub-threads-client"
+    ]
+  ],
+  "_from": "@textile/users-grpc@2.1.5",
+  "_id": "@textile/users-grpc@2.1.5",
+  "_inBundle": false,
+  "_integrity": "sha512-uu204Dbx5cQM66gNrgPaxsdxMi+5eMvzjLrn2wgwoeP7AGVq8swokTFSAZmVty3hYGjodmYO7nVjehlxuPl29Q==",
+  "_location": "/@textile/users-grpc",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "@textile/users-grpc@2.1.5",
+    "name": "@textile/users-grpc",
+    "escapedName": "@textile%2fusers-grpc",
+    "scope": "@textile",
+    "rawSpec": "2.1.5",
+    "saveSpec": null,
+    "fetchSpec": "2.1.5"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@textile/users-grpc/-/users-grpc-2.1.5.tgz",
+  "_spec": "2.1.5",
+  "_where": "/Users/andrewhill/Textile/textile/js-hub/packages/hub-threads-client",
+  "author": {
+    "name": "Textile"
+  },
+  "bugs": {
+    "url": "https://github.com/textileio/textile/issues"
+  },
+  "dependencies": {
+    "@improbable-eng/grpc-web": "^0.13.0",
+    "@types/google-protobuf": "^3.7.4",
+    "google-protobuf": "^3.13.0"
+  },
+  "description": "A client for interacting with the Textile Users gRPC API.",
+  "devDependencies": {
+    "ts-protoc-gen": "^0.13.0"
+  },
+  "files": [
+    "api/usersd/pb/usersd_pb.js",
+    "api/usersd/pb/usersd_pb_service.js",
+    "api/usersd/pb/usersd_pb.d.ts",
+    "api/usersd/pb/usersd_pb_service.d.ts"
+  ],
+  "homepage": "https://github.com/textileio/textile#readme",
+  "license": "MIT",
+  "name": "@textile/users-grpc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/textileio/textile.git"
+  },
+  "version": "2.1.5"
+}
