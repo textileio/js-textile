@@ -1,5 +1,5 @@
 import { grpc } from '@improbable-eng/grpc-web'
-import { ContextInterface, Context } from '@textile/context'
+import { Context, ContextInterface } from '@textile/context'
 import { WebsocketTransport } from '@textile/grpc-transport'
 
 export interface ServiceError {

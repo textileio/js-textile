@@ -7,6 +7,7 @@
       "dom",
       "esnext"
     ],
+    "skipLibCheck": true,
     "composite": true,
     "moduleResolution": "node",
     "allowJs": false,

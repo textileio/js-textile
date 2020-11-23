@@ -19,7 +19,7 @@ export {
   Root,
   RootResponse,
   SetPathResponse,
-} from '@textile/buckets-grpc/buckets_pb'
+} from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb'
 export * from './api'
 export * from './buckets'
 export * from './utils'

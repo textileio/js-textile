@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-threads-client",
-  "version": "1.0.1",
+  "version": "1.1.1-alpha.0",
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
   "main": "dist/index",
   "types": "dist/index",
@@ -30,12 +30,12 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.7.0",
-    "@textile/hub-grpc": "2.0.1",
-    "@textile/security": "^0.3.0",
-    "@textile/threads-client": "^1.0.0",
-    "@textile/threads-id": "^0.1.15",
-    "@textile/users-grpc": "2.1.0",
+    "@textile/context": "^0.8.0",
+    "@textile/hub-grpc": "2.1.6",
+    "@textile/security": "^0.4.0",
+    "@textile/threads-client": "^1.1.1",
+    "@textile/threads-id": "^0.1.16",
+    "@textile/users-grpc": "2.1.6",
     "cids": "^0.8.0",
     "loglevel": "^1.7.0",
     "multihashes": "0.4.19"

@@ -1,6 +1,6 @@
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
-import { SignupResponse } from '@textile/hub-grpc/hub_pb'
+import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import AbortController from 'abort-controller'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
