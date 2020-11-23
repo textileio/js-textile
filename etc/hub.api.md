@@ -5,65 +5,58 @@
 ```ts
 
 import type { AbortSignal as AbortSignal_2 } from 'abort-controller';
-import { AddrsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
-import { ArchiveInfoResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ArchiveResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ArchiveStatusResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ArchiveWatchResponse } from '@textile/buckets-grpc/buckets_pb';
-import { BalanceResponse } from '@textile/grpc-powergate-client/dist/wallet/rpc/rpc_pb';
-import { CheckResponse } from '@textile/grpc-powergate-client/dist/health/rpc/rpc_pb';
+import { AddressesResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
+import { ArchiveInfoResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { ArchiveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { ArchiveStatusResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { ArchiveWatchResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { BalanceResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import CID from 'cids';
-import { ConnectednessResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
+import { CidInfoResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { ContextInterface } from '@textile/context';
-import { CreateResponse } from '@textile/buckets-grpc/buckets_pb';
+import { CreateResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { DealRecordsConfig } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { FindPeerResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
 import { GetThreadRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { GetThreadResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
-import { InfoResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { JSONSchema3or4 } from 'to-json-schema';
-import { LinksResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ListDealRecordsConfig } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
+import { LinksResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ListInboxMessagesRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListInboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { ListIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ListPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ListResponse } from '@textile/buckets-grpc/buckets_pb';
-import { ListRetrievalDealRecordsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
+import { ListIpfsPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { ListPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { ListResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ListSentboxMessagesRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListSentboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { ListStorageDealRecordsResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
 import { ListThreadsRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListThreadsResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { Metadata } from '@textile/buckets-grpc/buckets_pb';
+import { Metadata } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { name as name_2 } from 'multibase';
-import { NewAddrResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
-import { PathItem } from '@textile/buckets-grpc/buckets_pb';
+import { PathItem } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
-import { PeersResponse } from '@textile/grpc-powergate-client/dist/net/rpc/rpc_pb';
-import { PullIpfsPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { PullPathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { PushPathResponse } from '@textile/buckets-grpc/buckets_pb';
+import { PullIpfsPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { PullPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { PushPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ReadInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ReadInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
-import { RemovePathResponse } from '@textile/buckets-grpc/buckets_pb';
-import { RemoveResponse } from '@textile/buckets-grpc/buckets_pb';
-import { Root } from '@textile/buckets-grpc/buckets_pb';
-import { RootResponse } from '@textile/buckets-grpc/buckets_pb';
-import { SendFilResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
+import { RemovePathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { RemoveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { RetrievalDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
+import { Root } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
+import { RootResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SendMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { SendMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { SetPathResponse } from '@textile/buckets-grpc/buckets_pb';
+import { SetPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SetupMailboxRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { SetupMailboxResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { ShowAllResponse } from '@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb';
+import { StorageDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -187,7 +180,7 @@ export class Buckets extends GrpcAuthentication {
     pullPath(key: string, path: string, opts?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
-    pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 2 | 1 | 3>>;
+    pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
     pushPath(key: string, path: string, input: any, opts?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
     remove(key: string): Promise<void>;
@@ -323,42 +316,39 @@ export class Client {
     constructor(context?: ContextInterface, debug?: boolean);
     // (undocumented)
     context: ContextInterface;
-    create(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<string[]>;
-    delete(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<void>;
-    deleteCollection(threadID: ThreadID_2, name: string): Promise<void>;
-    deleteDB(threadID: ThreadID_2): Promise<void>;
-    find<T = unknown>(threadID: ThreadID_2, collectionName: string, query: QueryJSON): Promise<T[]>;
-    findByID<T = unknown>(threadID: ThreadID_2, collectionName: string, ID: string): Promise<T>;
-    getCollectionIndexes(threadID: ThreadID_2, name: string): Promise<pb.Index.AsObject[]>;
+    create(threadID: ThreadID, collectionName: string, values: any[]): Promise<string[]>;
+    delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
+    deleteCollection(threadID: ThreadID, name: string): Promise<void>;
+    deleteDB(threadID: ThreadID): Promise<void>;
+    find<T = unknown>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<T[]>;
+    findByID<T = unknown>(threadID: ThreadID, collectionName: string, ID: string): Promise<T>;
+    getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
     // (undocumented)
-    getCollectionInfo(threadID: ThreadID_2, name: string): Promise<CollectionConfig>;
-    getDBInfo(threadID: ThreadID_2): Promise<DBInfo>;
+    getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionConfig>;
+    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
     getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    has(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<boolean>;
-    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
-    listCollections(thread: ThreadID_2): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
+    has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID>;
+    listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    listen<T = any>(threadID: ThreadID_2, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
-    newCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID_2, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "ThreadID" needs to be exported by the entry point index.d.ts
-    newDB(threadID?: ThreadID_2, name?: string): Promise<ThreadID_2>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
-    open(threadID: ThreadID_2, name?: string): Promise<void>;
-    readTransaction(threadID: ThreadID_2, collectionName: string): ReadTransaction;
+    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
+    newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
+    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
+    newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
+    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID>;
+    open(threadID: ThreadID, name?: string): Promise<void>;
+    readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
     // (undocumented)
     rpcOptions: grpc.RpcOptions;
-    save(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
+    save(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
     // (undocumented)
     serviceHost: string;
-    updateCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
-    verify(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "KeyInfo" needs to be exported by the entry point index.d.ts
-    static withKeyInfo(key: KeyInfo_3, host?: string, debug?: boolean): Promise<Client>;
-    // Warning: (ae-forgotten-export) The symbol "UserAuth" needs to be exported by the entry point index.d.ts
-    static withUserAuth(auth: UserAuth_3 | (() => Promise<UserAuth_3>), host?: string, debug?: boolean): Client;
-    writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
+    updateCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
+    verify(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
+    writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
 }
 
 // @public
@@ -486,11 +476,9 @@ export class GrpcAuthentication extends GrpcConnection {
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): GrpcAuthentication;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // Warning: (ae-forgotten-export) The symbol "KeyInfo" needs to be exported by the entry point index.d.ts
-    static withKeyInfo(key: KeyInfo_2, options?: WithKeyInfoOptions): Promise<GrpcAuthentication>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<GrpcAuthentication>;
     withThread(threadID?: string): void;
-    // Warning: (ae-forgotten-export) The symbol "UserAuth" needs to be exported by the entry point index.d.ts
-    static withUserAuth(auth: UserAuth_2 | (() => Promise<UserAuth_2>), options?: WithUserAuthOptions): GrpcAuthentication;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): GrpcAuthentication;
 }
 
 // @public
@@ -646,32 +634,18 @@ export type PathObject = {
 // @public
 export class Pow extends GrpcAuthentication {
     // @beta
-    addrs(): Promise<AddrsResponse.AsObject>;
+    addresses(): Promise<AddressesResponse.AsObject>;
     // @beta
     balance(address: string): Promise<BalanceResponse.AsObject>;
     // @beta
-    connectedness(peerId: string): Promise<ConnectednessResponse.AsObject>;
+    cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Pow;
-    // @beta
-    findPeer(peerId: string): Promise<FindPeerResponse.AsObject>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // @beta (undocumented)
-    health(): Promise<CheckResponse.AsObject>;
     // @beta
-    info(): Promise<InfoResponse.AsObject>;
+    retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject>;
     // @beta
-    listRetrievalDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListRetrievalDealRecordsResponse.AsObject>;
-    // @beta
-    listStorageDealRecords(config: ListDealRecordsConfig.AsObject): Promise<ListStorageDealRecordsResponse.AsObject>;
-    // @beta
-    newAddr(name: string, type: 'bls' | 'secp256k1', makeDefault: boolean): Promise<NewAddrResponse.AsObject>;
-    // @beta
-    peers(): Promise<PeersResponse.AsObject>;
-    // @beta
-    show(cid: string): Promise<SendFilResponse.AsObject>;
-    // @beta
-    showAll(): Promise<ShowAllResponse.AsObject>;
+    storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Pow;
 }
@@ -801,7 +775,7 @@ export { ReadInboxMessageResponse }
 //
 // @public
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID_2, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
     // (undocumented)
@@ -813,7 +787,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
     protected readonly modelName: string;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID_2;
+    protected readonly threadID: ThreadID;
 }
 
 export { RemovePathResponse }
@@ -1040,7 +1014,7 @@ export interface WithUserAuthOptions extends CopyAuthOptions {
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID_2, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
@@ -1056,7 +1030,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
     save<T = unknown>(values: T[]): Promise<void>;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID_2;
+    protected readonly threadID: ThreadID;
     verify<T = unknown>(values: T[]): Promise<void>;
 }
 

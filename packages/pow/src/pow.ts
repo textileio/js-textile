@@ -25,12 +25,12 @@ const logger = log.getLogger('pow')
  * ```typescript
  * import { Pow, PrivateKey, UserAuth } from '@textile/hub'
  *
- * const checkHealth = async (auth: UserAuth, user: PrivateKey) => {
+ * const getAddresses = async (auth: UserAuth, user: PrivateKey) => {
  *   const pow = Pow.withUserAuth(auth)
  *   // Scope the API to the current user
  *   await pow.getToken(user)
- *   // List adrs
- *   const health = pow.health()
+ *   // List wallet addresses
+ *   const health = await pow.addresses()
  * }
  * ```
  */
