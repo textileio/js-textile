@@ -1,7 +1,7 @@
 import axios from 'axios'
 import delay from 'delay'
-import * as pb from '@textile/hub-grpc/hub_pb'
-import { APIServiceClient, ServiceError } from '@textile/hub-grpc/hub_pb_service'
+import * as pb from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
+import { APIServiceClient, ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import { ContextInterface } from '@textile/context'
 import { WebsocketTransport } from '@textile/grpc-transport'
 

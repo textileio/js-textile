@@ -326,7 +326,7 @@ export class Buckets extends GrpcAuthentication {
         threadID = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
         this.withThread(threadID)
       } catch (error) {
-        if (error.message !== 'Thread not found') {
+        if (error.message !== 'Thread not found' && !error.message.includes('mongo: no documents in result')) {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
