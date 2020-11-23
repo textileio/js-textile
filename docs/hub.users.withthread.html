@@ -76,7 +76,8 @@
 <pre><code class="hljs css language-@typescript">import { Client, ThreadID } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
 async function example (threadID: ThreadID) {
-  const<span class="hljs-built_in"> users </span>= await Users.withThread(threadID)
+  const id = threadID.toString()
+  const<span class="hljs-built_in"> users </span>= await Users.withThread(id)
 }
 
 </code></pre>

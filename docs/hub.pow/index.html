@@ -66,12 +66,12 @@
 <p>Initialize the Bucket API and open an existing bucket (or create if new).</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Pow, PrivateKey, UserAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">'@textile/hub'</span>
 
-<span class="hljs-keyword">const</span> checkHealth = <span class="hljs-keyword">async</span> (auth: UserAuth, user: PrivateKey) =&gt; {
+<span class="hljs-keyword">const</span> getAddresses = <span class="hljs-keyword">async</span> (auth: UserAuth, user: PrivateKey) =&gt; {
   <span class="hljs-keyword">const</span> pow = Pow.withUserAuth(auth)
   <span class="hljs-comment">// Scope the API to the current user</span>
   <span class="hljs-keyword">await</span> pow.getToken(user)
-  <span class="hljs-comment">// List adrs</span>
-  <span class="hljs-keyword">const</span> health = pow.health()
+  <span class="hljs-comment">// List wallet addresses</span>
+  <span class="hljs-keyword">const</span> health = <span class="hljs-keyword">await</span> pow.addresses()
 }
 
 </code></pre>
@@ -81,21 +81,14 @@
 <tr><th>Method</th><th>Modifiers</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-textile/docs/hub.pow.addrs">addrs()</a></td><td></td><td><b><i>(BETA)</i></b> List all Filecoin wallet addresses associated with the current account or user.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.pow.addresses">addresses()</a></td><td></td><td><b><i>(BETA)</i></b> List all Filecoin wallet addresses associated with the current account or user.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.balance">balance(address)</a></td><td></td><td><b><i>(BETA)</i></b> Get the balance for any wallet address.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.connectedness">connectedness(peerId)</a></td><td></td><td><b><i>(BETA)</i></b> Query for network connectedness to the specified peer.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.pow.cidinfo">cidInfo(cids)</a></td><td></td><td><b><i>(BETA)</i></b> Get information about the storage and job job state of cids stored by the user.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.copyauth">copyAuth(auth, options)</a></td><td><code>static</code></td><td>Copies the full scope and authentication from one API instance to this one. This will copy any existing authentication and authorization info, including:<!-- -->- Information created withKeyInfo and withUserAuth.<!-- -->- Any token generated from getToken or getTokenChallenge.<!-- -->- If you scoped the instance to a specific thread using withThread</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.findpeer">findPeer(peerId)</a></td><td></td><td><b><i>(BETA)</i></b> Find a peer by peer id.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.gettoken">getToken(identity)</a></td><td></td><td>Obtain a token for interacting with the remote API. When your app is creating new private-key based users to interact with the API using User Group keys, you must first create a new token for each new user. Tokens do not change after you create them.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.gettokenchallenge">getTokenChallenge(publicKey, callback)</a></td><td></td><td>Obtain a token for interacting with the remote API. When your app is creating new private-key based users to interact with the API using User Group keys, you must first create a new token for each new user. Tokens do not change after you create them. This callback method will require you to handle challenge signing.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.health">health()</a></td><td></td><td><b><i>(BETA)</i></b></td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.info">info()</a></td><td></td><td><b><i>(BETA)</i></b> Query for general information about Powergate associated with the current account/user.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.listretrievaldealrecords">listRetrievalDealRecords(config)</a></td><td></td><td><b><i>(BETA)</i></b> Query for Filecoin retrieval deal records for the current account/user.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.liststoragedealrecords">listStorageDealRecords(config)</a></td><td></td><td><b><i>(BETA)</i></b> Query for Filecoin storage deal records for the current account/user.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.newaddr">newAddr(name, type, makeDefault)</a></td><td></td><td><b><i>(BETA)</i></b> Create a new Filecoin wallet address.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.peers">peers()</a></td><td></td><td><b><i>(BETA)</i></b> Gets the Powergate node Filecoin peers. This method requires a valid user, token, and session.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.show">show(cid)</a></td><td></td><td><b><i>(BETA)</i></b> Show information about data stored in Powergate.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.pow.showall">showAll()</a></td><td></td><td><b><i>(BETA)</i></b> Show information for all data stored in Powergate for the current account/user.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.pow.retrievaldealrecords">retrievalDealRecords(config)</a></td><td></td><td><b><i>(BETA)</i></b> Query for Filecoin retrieval deal records for the current account/user.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.pow.storagedealrecords">storageDealRecords(config)</a></td><td></td><td><b><i>(BETA)</i></b> Query for Filecoin storage deal records for the current account/user.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.withkeyinfo">withKeyInfo(key, options)</a></td><td><code>static</code></td><td>Creates a new API client instance for accessing the gRPC API using key &amp; secret based authentication. This method is recommended for admin or insecure implementations where the non-signing keys or key with secret can be embedded directly in an app.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pow.withuserauth">withUserAuth(auth, options)</a></td><td><code>static</code></td><td>Creates a new API client instance for accessing the gRPC API using User Group key authentication. This method is recommended for public apps where API secrets need to remain hidden from end users.</td></tr>
 </tbody>
