@@ -36,7 +36,7 @@
     "@textile/grpc-authentication": "^0.3.1-alpha.0",
     "@textile/grpc-connection": "^0.2.1-alpha.0",
     "@textile/grpc-transport": "^0.0.6",
-    "@textile/hub-grpc": "2.1.6",
+    "@textile/hub-grpc": "2.1.7",
     "@textile/hub-threads-client": "^1.1.1-alpha.0",
     "@textile/security": "^0.4.0",
     "@textile/threads-id": "^0.1.16",
