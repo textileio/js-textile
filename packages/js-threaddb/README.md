@@ -93,9 +93,9 @@ npm run test:browser
 
 ### Build
 
-We don't actually use `tsc` to build our javascript outputs. Instead, we use `rollup`, which
-makes it easier to derive different output types (e.g., commonjs vs es modules vs type defs). To
-create the relevant build outputs simply call:
+We use `tsc` to build our nodejs-based javascript outputs, and `rollup` for a single0-file bundle.
+This makes it easier to derive different output types (e.g., commonjs vs es modules vs type defs).
+To create the relevant build outputs simply call:
 
 ```bash
 npm run build
@@ -103,8 +103,7 @@ npm run build
 
 This should produce a dist folder with multiple output types. These are referenced in the
 `package.json`'s `exports` entry, so that the right module types are used in the right context
-(i.e., `import` vs `require`). Note that an `iife` output for browsers is also created, though
-the es modules should be the preferred option for browsers these days.
+(i.e., `import` vs `require`). Note that a single-file ES6 module is output for browsers.
 
 ### Releasing
 
@@ -143,7 +142,7 @@ in-editor linting. Note that we also use prettier for code formatting (called vi
 
 ## API
 
-See [https://textileio.github.io/js-threaddb](https://textileio.github.io/threaddb), which includes
+See [https://textileio.github.io/js-threaddb/](https://textileio.github.io/js-threaddb/), which includes
 the technical API docs for all subpackages.
 
 ## Maintainers
