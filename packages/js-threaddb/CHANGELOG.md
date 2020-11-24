@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/textileio/thread-db/compare/v0.0.3...v0.0.4) (2020-11-24)
+
+### [0.0.3](https://github.com/textileio/thread-db/compare/v0.0.2...v0.0.3) (2020-11-24)
+
+
+### Features
+
+* esm builds for node and browser/bundle ([125d1bf](https://github.com/textileio/thread-db/commit/125d1bf163719faab7064dbb9b65f8fd4041b5d9))
+
 ### 0.0.2 (2020-11-06)
 
 
