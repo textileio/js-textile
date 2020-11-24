@@ -3,7 +3,7 @@ Javascript implementation of Textile's ThreadDB
 [![Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg)](https://textile.io)
 [![Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg)](https://slack.textile.io)
 [![License](https://img.shields.io/github/license/textileio/js-threaddb.svg)](./LICENSE)
-[![Release](https://img.shields.io/github/release/textileio/js-threaddb.svg)](https://github.com/textileio/js-threaddb/releases/latest)
+[![Release](https://img.shields.io/npm/v/@textile/threaddb.svg)](https://www.npmjs.com/package/@textile/threaddb)
 
 ![Test](https://github.com/textileio/js-threaddb/workflows/Test/badge.svg)
 ![Review](https://github.com/textileio/js-threaddb/workflows/Review/badge.svg)
