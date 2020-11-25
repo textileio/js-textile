@@ -21,12 +21,12 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadResponseObj,
+  GetThreadResponse,
   UserMessage,
   getMailboxID,
   watchMailbox,
   MailboxEvent,
-  GetUsageResponseObj,
+  GetUsageResponse,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -222,7 +222,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getUsage(): Promise<GetUsageResponseObj> {
+  async getUsage(): Promise<GetUsageResponse> {
     return getUsage(this)
   }
 
@@ -239,7 +239,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listThreads(): Promise<Array<GetThreadResponseObj>> {
+  async listThreads(): Promise<Array<GetThreadResponse>> {
     return listThreads(this)
   }
 
@@ -256,7 +256,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getThread(name: string): Promise<GetThreadResponseObj> {
+  async getThread(name: string): Promise<GetThreadResponse> {
     return getThread(this, name)
   }
 

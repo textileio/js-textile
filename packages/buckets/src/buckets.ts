@@ -33,14 +33,14 @@ import {
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
-  CreateObject,
-  LinksObject,
+  CreateResponse,
+  Links,
   PathAccessRole,
-  PathItemObject,
-  PathObject,
+  PathItem,
+  Path,
   PushOptions,
   PushPathResult,
-  RootObject,
+  Root,
 } from './api'
 import { listPathFlat, listPathRecursive } from './utils'
 
@@ -74,9 +74,9 @@ export interface GetOrCreateOptions {
  */
 export interface GetOrCreateResponse { 
   /**
-   * RootObject of the bucket
+   * Root of the bucket
    */
-  root?: RootObject
+  root?: Root
   /**
    * ThreadID where the bucket was created.
    */
@@ -303,7 +303,7 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     encrypted = false,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
@@ -325,7 +325,7 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     encrypted = false,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
@@ -368,7 +368,7 @@ export class Buckets extends GrpcAuthentication {
     encrypted?: boolean,
     cid?: string,
     threadID?: string
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     if (!options && (encrypted || cid || threadID) ) {
       // Case where threadName passed as undefined using old signature
       console.warn('update getOrCreate to use GetOrCreateOptions')
@@ -394,7 +394,7 @@ export class Buckets extends GrpcAuthentication {
     encrypted = false,
     cid?: string,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
@@ -436,7 +436,7 @@ export class Buckets extends GrpcAuthentication {
    * @param encrypted encrypt the bucket contents (default `false`)
    * @deprecated Init has been replaced by create
    */
-  async init(name: string, encrypted = false): Promise<CreateObject> {
+  async init(name: string, encrypted = false): Promise<CreateResponse> {
     return this.create(name, {encrypted})
   }
 
@@ -456,8 +456,8 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async create(name: string, options?: CreateOptions): Promise<CreateObject>
-  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateObject> {
+  async create(name: string, options?: CreateOptions): Promise<CreateResponse>
+  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateResponse> {
     logger.debug('create request')
     if (typeof options == 'object') {
       return bucketsCreate(this, name, !!options.encrypted, options.cid)
@@ -499,7 +499,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async links(key: string, path = '/'): Promise<LinksObject> {
+  async links(key: string, path = '/'): Promise<Links> {
     logger.debug('link request')
     return bucketsLinks(this, key, path)
   }
@@ -528,7 +528,7 @@ export class Buckets extends GrpcAuthentication {
    * @param path A file/object (sub)-path within a bucket.
    * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, depth = 1): Promise<PathObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<Path> {
     logger.debug('list path request')
     return await listPathRecursive(this, key, path, depth)
   }
@@ -567,7 +567,7 @@ export class Buckets extends GrpcAuthentication {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<PathItemObject | undefined> {
+  async listIpfsPath(path: string): Promise<PathItem | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }

@@ -35,11 +35,16 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
       .then((meta) => {
         client.getThread(req, meta, (err: ServiceError | null, message: GetThreadResponse | null) => {
           if (err) reject(err)
-          const msg = message?.toObject()
-          if (msg) {
-            msg.id = ThreadID.fromBytes(Buffer.from(msg.id as string, 'base64')).toString()
+          if (message) {
+            const res = {
+              name: message.getName(),
+              isDb: message.getIsDb(),
+              id: ThreadID.fromBytes(message.getId_asU8()).toString(),
+            }
+            resolve(res)
+          } else {
+            resolve()
           }
-          resolve(msg)
         })
       })
       .catch((err: Error) => {
@@ -67,13 +72,15 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThrea
       .then((meta) => {
         client.listThreads(req, meta, (err: ServiceError | null, message: ListThreadsResponse | null) => {
           if (err) reject(err)
-          const msg = message?.toObject()
-          if (msg) {
-            msg.listList.forEach((thread) => {
-              thread.id = ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')).toString()
-            })
+          const lst = message?.getListList()
+          const listList = []
+          if (lst) {
+            for (let thrd of lst) {
+              const row = thrd.toObject()
+              listList.push({...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString()})
+            }
           }
-          resolve(msg)
+          resolve({listList})
         })
       })
       .catch((err: Error) => {

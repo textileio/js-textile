@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { AbortError, CreateObject } from './api'
+import { AbortError, CreateResponse } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 
@@ -21,7 +21,7 @@ const sessionSecret = 'hubsession'
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
-  let buck: CreateObject
+  let buck: CreateResponse
   let fileSize: number
 
   let dev: SignupResponse.AsObject

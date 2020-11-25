@@ -10,7 +10,7 @@ import {
   ArchiveWatchRequest,
   ArchiveWatchResponse,
   CreateRequest,
-  CreateResponse,
+  CreateResponse as _CreateResponse,
   DefaultArchiveConfigRequest,
   DefaultArchiveConfigResponse,
   LinksRequest,
@@ -21,8 +21,8 @@ import {
   ListPathResponse,
   ListRequest,
   ListResponse,
-  Metadata,
-  PathItem,
+  Metadata as _Metadata,
+  PathItem as _PathItem,
   PullIpfsPathRequest,
   PullIpfsPathResponse,
   PullPathAccessRolesRequest,
@@ -34,7 +34,7 @@ import {
   PushPathResponse,
   RemovePathRequest,
   RemoveRequest,
-  Root,
+  Root as _Root,
   RootRequest,
   RootResponse,
   SetDefaultArchiveConfigRequest,
@@ -69,7 +69,7 @@ export interface PushOptions {
    * will enforce fast-forward only updates. It not provided explicitly, the root path will
    * be fetched via an additional API call before each push.
    */
-  root?: RootObject | string
+  root?: Root | string
 
   /**
    * An optional abort signal to allow cancelation or aborting a bucket push.
@@ -95,16 +95,21 @@ export interface PushPathResult {
 /**
  * Response from bucket links query.
  */
-export type LinksObject = {
+export type Links = {
   www: string
   ipns: string
   url: string
 }
 
 /**
+ * @deprecated
+ */
+export type LinksObject = Links
+
+/**
  * Bucket root info
  */
-export type RootObject = {
+export type Root = {
   key: string
   name: string
   path: string
@@ -112,6 +117,10 @@ export type RootObject = {
   updatedAt: number
   thread: string
 }
+/**
+ * @deprecated
+ */
+export type RootObject = Root
 
 export enum PathAccessRole {
   PATH_ACCESS_ROLE_UNSPECIFIED = 0,
@@ -120,32 +129,44 @@ export enum PathAccessRole {
   PATH_ACCESS_ROLE_ADMIN = 3,
 }
 
-export type MetadataObject = {
+export type BuckMetadata = {
   roles: Map<string, PathAccessRole>
   updatedAt: number
 }
+/**
+ * @deprecated
+ */
+export type MetadataObject = BuckMetadata
 
 /**
  * A bucket path item response
  */
-export type PathItemObject = {
+export type PathItem = {
   cid: string
   name: string
   path: string
   size: number
   isDir: boolean
-  items: Array<PathItemObject>
+  items: Array<PathItem>
   count: number
-  metadata?: MetadataObject
+  metadata?: BuckMetadata
 }
+/**
+ * @deprecated
+ */
+export type PathItemObject = PathItem
 
 /**
  * A bucket list path response
  */
-export type PathObject = {
-  item?: PathItemObject
-  root?: RootObject
+export type Path = {
+  item?: PathItem
+  root?: Root
 }
+/**
+ * @deprecated
+ */
+export type PathObject = Path
 
 /**
  * ArchiveConfig is the desired state of a Cid in the Filecoin network.
@@ -299,9 +320,13 @@ export type ArchiveInfo = {
 /**
  * Bucket create response
  */
-export type CreateObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
+export type CreateResponse = { seed: Uint8Array; seedCid: string; root?: Root; links?: Links }
+/**
+ * @deprecated
+ */
+export type CreateObject = CreateResponse
 
-const convertRootObject = (root: Root): RootObject => {
+const convertRootObject = (root: _Root): Root => {
   return {
     key: root.getKey(),
     name: root.getName(),
@@ -312,17 +337,17 @@ const convertRootObject = (root: Root): RootObject => {
   }
 }
 
-const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
+const convertRootObjectNullable = (root?: _Root): Root | undefined => {
   if (!root) return
   return convertRootObject(root)
 }
 
-const convertMetadata = (metadata?: Metadata): MetadataObject | undefined => {
+const convertMetadata = (metadata?: _Metadata): BuckMetadata | undefined => {
   if (!metadata) return
   const roles = metadata.getRolesMap()
   const typedRoles = new Map()
   roles.forEach((entry, key) => typedRoles.set(key, entry))
-  const response: MetadataObject = {
+  const response: BuckMetadata = {
     updatedAt: metadata.getUpdatedAt(),
     roles: typedRoles,
   }
@@ -330,7 +355,7 @@ const convertMetadata = (metadata?: Metadata): MetadataObject | undefined => {
   return response
 }
 
-const convertPathItem = (item: PathItem): PathItemObject => {
+const convertPathItem = (item: _PathItem): PathItem => {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -344,7 +369,7 @@ const convertPathItem = (item: PathItem): PathItemObject => {
   }
 }
 
-const convertPathItemNullable = (item?: PathItem): PathItemObject | undefined => {
+const convertPathItemNullable = (item?: _PathItem): PathItem | undefined => {
   if (!item) return
   return convertPathItem(item)
 }
@@ -373,7 +398,7 @@ export async function bucketsCreate(
   isPrivate = false,
   cid?: string,
   ctx?: ContextInterface,
-): Promise<CreateObject> {
+): Promise<CreateResponse> {
   logger.debug('create request')
   const req = new CreateRequest()
   req.setName(name)
@@ -381,7 +406,7 @@ export async function bucketsCreate(
     req.setBootstrapCid(cid)
   }
   req.setPrivate(isPrivate)
-  const res: CreateResponse = await api.unary(APIService.Create, req, ctx)
+  const res: _CreateResponse = await api.unary(APIService.Create, req, ctx)
   const links = res.getLinks()
   return {
     seed: res.getSeed_asU8(),
@@ -401,7 +426,7 @@ export async function bucketsRoot(
   api: GrpcConnection,
   key: string,
   ctx?: ContextInterface,
-): Promise<RootObject | undefined> {
+): Promise<Root | undefined> {
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
@@ -435,7 +460,7 @@ export async function bucketsLinks(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<LinksObject> {
+): Promise<Links> {
   logger.debug('link request')
   const req = new LinksRequest()
   req.setKey(key)
@@ -459,7 +484,7 @@ export async function bucketsLinks(
  *
  * @internal
  */
-export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>> {
+export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root>> {
   logger.debug('list request')
   const req = new ListRequest()
   const res: ListResponse = await api.unary(APIService.List, req, ctx)
@@ -480,7 +505,7 @@ export async function bucketsListPath(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<PathObject> {
+): Promise<Path> {
   logger.debug('list path request')
   const req = new ListPathRequest()
   req.setKey(key)
@@ -502,7 +527,7 @@ export async function bucketsListIpfsPath(
   api: GrpcConnection,
   path: string,
   ctx?: ContextInterface,
-): Promise<PathItemObject | undefined> {
+): Promise<PathItem | undefined> {
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)

@@ -5,7 +5,7 @@ import {
   SetupMailboxResponse,
   ListThreadsRequest,
   ListThreadsResponse,
-  GetThreadResponse,
+  GetThreadResponse as _GetThreadResponse,
   GetThreadRequest,
   SendMessageRequest,
   SendMessageResponse,
@@ -18,7 +18,7 @@ import {
   DeleteInboxMessageRequest,
   DeleteSentboxMessageRequest,
   GetUsageRequest,
-  GetUsageResponse,
+  GetUsageResponse as _GetUsageResponse,
   Message,
 } from '@textile/users-grpc/api/usersd/pb/usersd_pb'
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
@@ -69,28 +69,32 @@ export interface InboxListOptions {
 /**
  * The response type from getThread and listThreads
  */
-export interface GetThreadResponseObj {
+export interface GetThreadResponse {
   isDB: boolean
   name: string
   id: ThreadID
 }
 
+/**
+ * @deprecated
+ */
+export interface GetThreadResponseObj extends GetThreadResponse {}
 
-export interface UsageObj {
+export interface Usage {
   description: string,
   units: number,
   total: number,
   free: number,
   grace: number,
   cost: number,
-  period?: PeriodObj,
+  period?: Period,
 }
 
-export interface CustomerUsageObj {
-  usageMap: [string, UsageObj][];
+export interface CustomerUsage {
+  usageMap: [string, Usage][];
 }
 
-export interface PeriodObj {
+export interface Period {
   unixStart: number;
   unixEnd: number;
 }
@@ -98,7 +102,7 @@ export interface PeriodObj {
 /**
  * The response type from getUsage
  */
-export interface CustomerResponseObj {
+export interface CustomerResponse {
   key: string
   customerId: string
   parentKey: string
@@ -111,14 +115,14 @@ export interface CustomerResponseObj {
   delinquent: boolean
   createdAt: number,
   gracePeriodEnd: number,
-  invoicePeriod?: PeriodObj,
-  dailyUsageMap: Array<[string, UsageObj]>
+  invoicePeriod?: Period,
+  dailyUsageMap: Array<[string, Usage]>
   dependents: number
 }
 
-export interface GetUsageResponseObj {
-  customer?: CustomerResponseObj
-  usage?: CustomerUsageObj
+export interface GetUsageResponse {
+  customer?: CustomerResponse
+  usage?: CustomerUsage
 } 
 
 /**
@@ -177,18 +181,16 @@ function convertMessageObj(input: Message): UserMessage {
 /**
  * @internal
  */
-export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponseObj>> {
+export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
   const res: ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
-  return res.getListList().map((value: GetThreadResponse) => {
-    const thread = value.toObject()
-    const res = {
-      isDB: thread.isDb,
-      name: thread.name,
-      id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')),
+  return res.getListList().map((value: _GetThreadResponse) => {
+    return {
+      isDB: value.getIsDb(),
+      name: value.getName(),
+      id: ThreadID.fromBytes(value.getId_asU8()),
     }
-    return res
   })
 }
 
@@ -199,16 +201,15 @@ export async function getThread(
   api: GrpcConnection,
   name: string,
   ctx?: ContextInterface,
-): Promise<GetThreadResponseObj> {
+): Promise<GetThreadResponse> {
   logger.debug('get thread request')
   const req = new GetThreadRequest()
   req.setName(name)
-  const res: GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
-  const thread = res.toObject()
+  const res: _GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
   return {
-    isDB: thread.isDb,
-    name: thread.name,
-    id: ThreadID.fromBytes(Buffer.from(thread.id as string, 'base64')),
+    isDB: res.getIsDb(),
+    name: res.getName(),
+    id: ThreadID.fromBytes(res.getId_asU8()),
   }
 }
 
@@ -219,7 +220,7 @@ export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface):
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
   const res: SetupMailboxResponse = await api.unary(APIService.SetupMailbox, req, ctx)
-  const mailboxID = ThreadID.fromBytes(Buffer.from(res.getMailboxId_asB64() as string, 'base64'))
+  const mailboxID = ThreadID.fromBytes(res.getMailboxId_asU8())
   return mailboxID.toString()
 }
 
@@ -390,10 +391,10 @@ export function watchMailbox(
 export async function getUsage(
   api: GrpcConnection,
   ctx?: ContextInterface,
-): Promise<GetUsageResponseObj> {
+): Promise<GetUsageResponse> {
   logger.debug('get usage request')
   const req = new GetUsageRequest()
-  const res: GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
+  const res: _GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
   const usage = res.toObject()
   return {
     customer: usage.customer,
