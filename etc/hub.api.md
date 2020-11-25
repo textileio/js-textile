@@ -164,40 +164,45 @@ export class Buckets extends GrpcAuthentication {
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Buckets;
-    create(name: string, isPrivate?: boolean, cid?: string): Promise<CreateObject>;
+    create(name: string, options?: CreateOptions): Promise<CreateObject>;
     // @beta
     defaultArchiveConfig(key: string): Promise<ArchiveConfig>;
-    getOrCreate(name: string, threadName?: string, isPrivate?: boolean, cid?: string, threadID?: string): Promise<{
+    getOrCreate(name: string, options?: GetOrCreateOptions): Promise<{
+        root?: RootObject;
+        threadID?: string;
+    }>;
+    // @internal (undocumented)
+    _getOrCreate(name: string, threadName?: string, encrypted?: boolean, cid?: string, threadID?: string): Promise<{
         root?: RootObject;
         threadID?: string;
     }>;
     // @deprecated
-    getOrInit(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+    getOrInit(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
         root?: RootObject;
         threadID?: string;
     }>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     // @deprecated
-    init(name: string, isPrivate?: boolean): Promise<CreateObject>;
+    init(name: string, encrypted?: boolean): Promise<CreateObject>;
     links(key: string, path?: string): Promise<LinksObject>;
     list(): Promise<RootObject[]>;
     listIpfsPath(path: string): Promise<PathItemObject | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<PathObject>;
     listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<Array<string>>;
     // @deprecated
-    open(name: string, threadName?: string, isPrivate?: boolean, threadID?: string): Promise<{
+    open(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
         root?: RootObject;
         threadID?: string;
     }>;
-    pullIpfsPath(path: string, opts?: {
+    pullIpfsPath(path: string, options?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
-    pullPath(key: string, path: string, opts?: {
+    pullPath(key: string, path: string, options?: {
         progress?: (num?: number) => void;
     }): AsyncIterableIterator<Uint8Array>;
     pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
-    pushPath(key: string, path: string, input: any, opts?: PushOptions): Promise<PushPathResult>;
+    pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
@@ -394,6 +399,12 @@ export type CreateObject = {
     links?: LinksObject;
 };
 
+// @public (undocumented)
+export interface CreateOptions {
+    cid?: string;
+    encrypted?: boolean;
+}
+
 export { CreateResponse }
 
 // @public
@@ -488,6 +499,14 @@ export interface Filter {
 //
 // @internal (undocumented)
 export function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string>;
+
+// @public
+export interface GetOrCreateOptions {
+    cid?: string;
+    encrypted?: boolean;
+    threadID?: string;
+    threadName?: string;
+}
 
 // Warning: (ae-internal-missing-underscore) The name "getThread" should be prefixed with an underscore because the declaration is marked as @internal
 //

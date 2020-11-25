@@ -147,9 +147,10 @@
       "hub.pathobject",
       "hub.pathaccessrole",
       "hub.pathitemobject",
-      "hub.pathitemobject",
       "hub.rootobject",
-      "hub.metadataobject"
+      "hub.metadataobject",
+      "hub.getorcreateoptions",
+      "hub.createoptions"
     ]
   },
   "client-docs": {
@@ -234,12 +235,6 @@
       "hub.pow.withuserauth"
     ],
     "Types": [
-      "hub.createobject",
-      "hub.linksobject",
-      "hub.pathobject",
-      "hub.pathitemobject",
-      "hub.pathitemobject",
-      "hub.rootobject"
     ]
   },
   "Types": {
