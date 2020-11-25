@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/security": "^0.4.0"
+    "@textile/security": "^0.5.0"
   },
   "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"
 }

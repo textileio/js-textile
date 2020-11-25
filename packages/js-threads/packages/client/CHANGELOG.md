@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.1.1...@textile/threads-client@1.2.0) (2020-11-25)
+
+
+### Bug Fixes
+
+* better types for promises ([6e8f3e2](https://github.com/textileio/js-threads/commit/6e8f3e231dd760446325495f1ac59ebba1e80f52))
+* force thru generic type ([24d575d](https://github.com/textileio/js-threads/commit/24d575daf65832255291d767542e566d9839e85b))
+* tighter type checking on promises ([530c513](https://github.com/textileio/js-threads/commit/530c5134e087f8935954d782f9478eec4ff7f7bd))
+
+
+### Features
+
+* remove buffers + multiaddr optims ([3c57820](https://github.com/textileio/js-threads/commit/3c578203b8614aad0e892832b8efcc90d6e13fac))
+
+
+
+
+
 ## [1.1.1](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.1.0...@textile/threads-client@1.1.1) (2020-11-21)
 
 

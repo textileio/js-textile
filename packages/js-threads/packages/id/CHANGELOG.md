@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/textileio/js-threads/compare/@textile/threads-id@0.1.16...@textile/threads-id@0.2.0) (2020-11-25)
+
+
+### Bug Fixes
+
+* copy bytes into new uint8array ([bec3462](https://github.com/textileio/js-threads/commit/bec34628134ad4e219cf2b5f3a4a87c384e4337b))
+
+
+### Features
+
+* remove buffers + multiaddr optims ([3c57820](https://github.com/textileio/js-threads/commit/3c578203b8614aad0e892832b8efcc90d6e13fac))
+
+
+
+
+
 ## [0.1.16](https://github.com/textileio/js-threads/compare/@textile/threads-id@0.1.13...@textile/threads-id@0.1.16) (2020-09-30)
 
 **Note:** Version bump only for package @textile/threads-id

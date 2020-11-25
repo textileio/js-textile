@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/textileio/js-threads/compare/@textile/security@0.4.0...@textile/security@0.5.0) (2020-11-25)
+
+
+### Bug Fixes
+
+* find & replace error ([5ac17bb](https://github.com/textileio/js-threads/commit/5ac17bbe053f55c48a6fd9457353f50900410247))
+
+
+### Features
+
+* remove buffers + multiaddr optims ([3c57820](https://github.com/textileio/js-threads/commit/3c578203b8614aad0e892832b8efcc90d6e13fac))
+
+
+
+
+
 # [0.4.0](https://github.com/textileio/js-threads/compare/@textile/security@0.2.7...@textile/security@0.4.0) (2020-09-30)
 
 

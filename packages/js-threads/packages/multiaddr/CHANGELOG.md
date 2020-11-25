@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/textileio/js-threads/compare/@textile/multiaddr@0.1.1...@textile/multiaddr@0.2.0) (2020-11-25)
+
+
+### Features
+
+* remove buffers + multiaddr optims ([3c57820](https://github.com/textileio/js-threads/commit/3c578203b8614aad0e892832b8efcc90d6e13fac))
+
+
+
+
+
 ## [0.1.1](https://github.com/textileio/js-threads/compare/@textile/multiaddr@0.1.0...@textile/multiaddr@0.1.1) (2020-11-21)
 
 **Note:** Version bump only for package @textile/multiaddr
