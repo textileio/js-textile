@@ -229,7 +229,7 @@ export class WriteTransaction extends Transaction<
         if (err) {
           reject(new Error(err))
         }
-        resolve(reply && reply.getExists())
+        resolve(reply ? reply.getExists() : false)
       })
       super.setReject(reject)
       this.client.send(req)
@@ -252,7 +252,7 @@ export class WriteTransaction extends Transaction<
           reject(new Error(err))
         }
         if (reply === undefined) {
-          resolve()
+          resolve([])
         } else {
           const ret: Array<T> = reply
             .getInstancesList_asU8()
@@ -269,8 +269,8 @@ export class WriteTransaction extends Transaction<
    * findByID queries the store for the id of an instance.
    * @param ID The id of the instance to search for.
    */
-  public async findByID<T = unknown>(ID: string): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
+  public async findByID<T = unknown>(ID: string): Promise<T | undefined> {
+    return new Promise<T | undefined>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
       const req = new WriteTransactionRequest()
@@ -282,7 +282,7 @@ export class WriteTransaction extends Transaction<
           reject(new Error(err))
         }
         if (reply === undefined) {
-          resolve()
+          resolve(undefined)
         } else {
           resolve(JSON.parse(decoder.decode(reply.getInstance_asU8())))
         }

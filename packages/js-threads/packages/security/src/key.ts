@@ -14,16 +14,17 @@ const keyBytes = 32
  * keyFromString returns a key by decoding a base32-encoded string.
  * @param k Input base32-encoded string.
  */
-export const keyFromString = (k: string): Buffer => {
+export const keyFromString = (k: string): Uint8Array => {
   return multibase.decode(k)
 }
 
 /**
  * String returns the base32-encoded string representation of raw key bytes.
- * @param k Input key buffer.
+ * @param k Input key bytes.
  */
 export const keyToString = (k: Uint8Array): string => {
-  return multibase.encode("base32", k as Buffer).toString()
+  const decoder = new TextDecoder()
+  return decoder.decode(multibase.encode("base32", k))
 }
 
 /**
@@ -96,6 +97,6 @@ export class ThreadKey {
    * Network: "bp2vvqody5zm6yqycsnazb4kpqvycbdosos352zvpsorxce5koh7q"
    */
   toString(): string {
-    return multibase.encode("base32", this.toBytes() as Buffer).toString()
+    return keyToString(this.toBytes())
   }
 }

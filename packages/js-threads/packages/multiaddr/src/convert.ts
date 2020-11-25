@@ -1,19 +1,19 @@
 import { ThreadID } from "@textile/threads-id"
-import { Buffer } from "buffer"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import varint from "varint"
 import { protocols } from "./protocols"
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Convert = require("multiaddr/src/convert")
 
-function thread2buf(str: string) {
-  // const buf = Buffer.from(str)
+function thread2bytes(str: string) {
   const buf = ThreadID.fromString(str).toBytes()
-  const size = Buffer.from(varint.encode(buf.length))
-  return Buffer.concat([size, buf])
+  const size = varint.encode(buf.length)
+  return Uint8Array.from([...size, ...buf])
 }
 
-function buf2thread(buf: Buffer) {
-  const size = varint.decode(buf)
+function bytes2thread(buf: Uint8Array) {
+  const size = varint.decode(buf as any)
   buf = buf.slice(varint.decode.bytes)
 
   if (buf.length !== size) {
@@ -23,22 +23,22 @@ function buf2thread(buf: Buffer) {
   return ThreadID.fromBytes(buf).toString()
 }
 
-export function toString(prt: string | number, buf: Buffer): string {
-  const proto = protocols(prt)
+export function toString(prt: string | number, buf: Uint8Array): string {
+  const proto = (protocols as any)(prt)
   switch (proto.code) {
     case 406:
-      return buf2thread(buf)
+      return bytes2thread(buf)
     default:
       return Convert.toString(prt, buf)
   }
 }
 
-export function toBuffer(prt: string | number, str: string): Buffer {
-  const proto = protocols(prt)
+export function toBytes(prt: string | number, str: string): Uint8Array {
+  const proto = (protocols as any)(prt)
   switch (proto.code) {
     case 406:
-      return thread2buf(str)
+      return thread2bytes(str)
     default:
-      return Convert.toBuffer(prt, str)
+      return Convert.toBytes(prt, str)
   }
 }

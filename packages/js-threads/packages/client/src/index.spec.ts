@@ -216,7 +216,7 @@ describe("Client", function () {
   describe(".newDBFromAddr", function () {
     const client2 = new Client(new Context("http://127.0.0.1:6207"))
     before(async function () {
-      identity = await PrivateKey.fromRandom()
+      identity = PrivateKey.fromRandom()
       await client2.getToken(identity)
     })
     it("response should contain a valid list of thread protocol addrs", async function () {

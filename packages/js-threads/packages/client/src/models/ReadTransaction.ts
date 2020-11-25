@@ -95,7 +95,7 @@ export class ReadTransaction extends Transaction<
         if (err) {
           reject(new Error(err))
         }
-        resolve(reply && reply.getExists())
+        resolve(reply ? reply.getExists() : false)
       })
       this.setReject(reject)
       this.client.send(req)
@@ -137,7 +137,7 @@ export class ReadTransaction extends Transaction<
    * @param ID The id of the instance to search for.
    */
   public async findByID<T = unknown>(ID: string): Promise<T | undefined> {
-    return new Promise<T>((resolve, reject) => {
+    return new Promise<T | undefined>((resolve, reject) => {
       const findReq = new FindByIDRequest()
       findReq.setInstanceid(ID)
       const req = new ReadTransactionRequest()

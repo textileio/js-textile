@@ -1,6 +1,30 @@
 import randomBytes from "@consento/sync-randombytes"
-import multibase, { name as Name } from "multibase"
+import multibase, { BaseNameOrCode } from "multibase"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore // Only used internally, so we can ignore types here
 import { decode, encode } from "varint"
+
+/**
+ * Returns true if the two passed Uint8Arrays have the same content
+ * @see {@link https://github.com/achingbrain/uint8arrays/blob/master/equals.js}
+ */
+function equals(a: Uint8Array, b: Uint8Array): boolean {
+  if (a === b) {
+    return true
+  }
+
+  if (a.byteLength !== b.byteLength) {
+    return false
+  }
+
+  for (let i = 0; i < a.byteLength; i++) {
+    if (a[i] !== b[i]) {
+      return false
+    }
+  }
+
+  return true
+}
 
 /**
  * Variant denotes Thread variant. Currently only two variants are supported.
@@ -38,11 +62,7 @@ export enum Variant {
  * ```
  */
 export class ThreadID {
-  // @todo: Move Buffer -> Uint8Array where possible
-  readonly buf: Buffer
-  constructor(buf: Uint8Array) {
-    this.buf = Buffer.from(buf)
-  }
+  constructor(readonly buf: Uint8Array) {}
 
   /**
    * Versions. Currently only V1 is supported.
@@ -61,10 +81,10 @@ export class ThreadID {
     size = 32
   ): ThreadID {
     // two 8 bytes (max) numbers plus random bytes
-    const bytes = Buffer.concat([
-      Buffer.from(encode(ThreadID.V1)),
-      Buffer.from(encode(variant)),
-      randomBytes(Buffer.alloc(size)),
+    const bytes = Uint8Array.from([
+      ...encode(ThreadID.V1),
+      ...encode(variant),
+      ...randomBytes(new Uint8Array(size)),
     ])
     return new ThreadID(bytes)
   }
@@ -81,20 +101,20 @@ export class ThreadID {
     if (v.length < 2) {
       throw new Error("id too short")
     }
-    const data = multibase.decode(Buffer.from(v))
+    const data = multibase.decode(v)
     return ThreadID.fromBytes(data)
   }
 
   /**
    * fromBytes takes an ID data slice, parses it and returns an ID.
-   * For IDV1, the data buffer is in the form:
+   * For IDV1, the data bytes are arranged as:
    *    <version><variant><random-number>
    * Please use fromEncoded when parsing a regular ID string, as fromBytes does not
    * expect multibase-encoded data. fromBytes accepts the output of ID.bytes().
    * @param data The input Thread ID bytes.
    */
   static fromBytes(data: Uint8Array): ThreadID {
-    let copy = Buffer.from(data)
+    let copy = new Uint8Array(data)
     const version = decode(copy)
     if (version != 1) {
       throw new Error(`expected 1 as the id version number, got: ${version}.`)
@@ -108,7 +128,7 @@ export class ThreadID {
     if (id.length < 16) {
       throw new Error("random component too small.")
     }
-    return new ThreadID(Buffer.from(data))
+    return new ThreadID(data)
   }
 
   /**
@@ -140,8 +160,8 @@ export class ThreadID {
    * toBytes returns the byte representation of an ID.
    * The output of bytes can be parsed back into an ID with fromBytes.
    */
-  toBytes(): Buffer {
-    return Buffer.from(this.buf)
+  toBytes(): Uint8Array {
+    return this.buf // These should not be mutated directly!
   }
 
   /**
@@ -149,7 +169,7 @@ export class ThreadID {
    * @param o The other Thread ID.
    */
   equals(o: ThreadID): boolean {
-    return this.buf.equals(o.buf)
+    return equals(this.buf, o.buf)
   }
 
   /**
@@ -163,7 +183,7 @@ export class ThreadID {
    * variant returns the variant of an ID.
    */
   variant(): number {
-    let copy = Buffer.from(this.buf)
+    let copy = new Uint8Array(this.buf)
     decode(copy)
     copy = copy.slice(decode.bytes)
     return decode(copy)
@@ -173,10 +193,11 @@ export class ThreadID {
    * toString returns the (multibase encoded) string representation of an ID.
    * @param base Name of the base to use for encoding. Defaults to 'base32'.
    */
-  toString(base: Name = "base32"): string {
+  toString(base: BaseNameOrCode = "base32"): string {
+    const decoder = new TextDecoder()
     switch (this.version()) {
       case ThreadID.V1:
-        return multibase.encode(base, this.buf).toString()
+        return decoder.decode(multibase.encode(base, this.buf))
       default:
         throw new Error("unknown ID version.")
     }

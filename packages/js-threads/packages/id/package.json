@@ -22,9 +22,7 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
-    "@types/multibase": "^0.6.0",
-    "@types/varint": "^5.0.0",
-    "multibase": "^1.0.1",
+    "multibase": "^3.1.0",
     "varint": "^6.0.0"
   },
   "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"

@@ -1,11 +1,15 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import { Buffer } from "buffer"
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+// @ts-ignore
 import varint from "varint"
 import * as convert from "./convert"
-import { Protocol, protocols } from "./protocols"
+import { protocols } from "./protocols"
+
+const uint8ArrayConcat = require("uint8arrays/concat")
+const uint8ArrayToString = require("uint8arrays/to-string")
 
 // string -> [[str name, str addr]... ]
-export function stringToStringTuples(str: string): string[][] {
+function stringToStringTuples(str: string) {
   const tuples = []
   const parts = str.split("/").slice(1) // skip first empty elem
   if (parts.length === 1 && parts[0] === "") {
@@ -14,7 +18,7 @@ export function stringToStringTuples(str: string): string[][] {
 
   for (let p = 0; p < parts.length; p++) {
     const part = parts[p]
-    const proto = protocols(part)
+    const proto = (protocols as any)(part)
 
     if (proto.size === 0) {
       tuples.push([part])
@@ -45,7 +49,7 @@ export function stringToStringTuples(str: string): string[][] {
 }
 
 // [[str name, str addr]... ] -> string
-export function stringTuplesToString(tuples: string[][]): string {
+function stringTuplesToString(tuples: any[]) {
   const parts: string[] = []
   tuples.map((tup) => {
     const proto = protoFromTuple(tup)
@@ -58,23 +62,24 @@ export function stringTuplesToString(tuples: string[][]): string {
   return cleanPath(parts.join("/"))
 }
 
-// [[str name, str addr]... ] -> [[int code, Buffer]... ]
-export function stringTuplesToTuples(tuples: string[][]): any[][] {
+// [[str name, str addr]... ] -> [[int code, Uint8Array]... ]
+function stringTuplesToTuples(tuples: any[]) {
   return tuples.map((tup) => {
     if (!Array.isArray(tup)) {
       tup = [tup]
     }
     const proto = protoFromTuple(tup)
     if (tup.length > 1) {
-      return [proto.code, convert.toBuffer(proto.code, tup[1])]
+      return [proto.code, convert.toBytes(proto.code, tup[1])]
     }
     return [proto.code]
   })
 }
 
-// [[int code, Buffer]... ] -> [[str name, str addr]... ]
-export function tuplesToStringTuples(tuples: any[][]): any[][] {
-  return tuples.map((tup) => {
+// [[int code, Uint8Array]... ] -> [[str name, str addr]... ]
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function tuplesToStringTuples(tuples: any): [number, string | number][] {
+  return tuples.map((tup: any) => {
     const proto = protoFromTuple(tup)
     if (tup.length > 1) {
       return [proto.code, convert.toString(proto.code, tup[1])]
@@ -83,16 +88,16 @@ export function tuplesToStringTuples(tuples: any[][]): any[][] {
   })
 }
 
-// [[int code, Buffer ]... ] -> Buffer
-export function tuplesToBuffer(tuples: any[][]): Buffer {
-  return fromBuffer(
-    Buffer.concat(
+// [[int code, Uint8Array ]... ] -> Uint8Array
+function tuplesToBytes(tuples: any[]) {
+  return fromBytes(
+    uint8ArrayConcat(
       tuples.map((tup) => {
         const proto = protoFromTuple(tup)
-        let buf = Buffer.from(varint.encode(proto.code))
+        let buf = Uint8Array.from(varint.encode(proto.code))
 
         if (tup.length > 1) {
-          buf = Buffer.concat([buf, tup[1]]) // add address buffer
+          buf = uint8ArrayConcat([buf, tup[1]]) // add address bytes
         }
 
         return buf
@@ -101,7 +106,7 @@ export function tuplesToBuffer(tuples: any[][]): Buffer {
   )
 }
 
-export function sizeForAddr(p: Protocol, addr: number[] | Buffer): number {
+function sizeForAddr(p: any, addr: any) {
   if (p.size > 0) {
     return p.size / 8
   } else if (p.size === 0) {
@@ -112,20 +117,20 @@ export function sizeForAddr(p: Protocol, addr: number[] | Buffer): number {
   }
 }
 
-// Buffer -> [[int code, Buffer ]... ]
-export function bufferToTuples(buf: Buffer): (number | Buffer)[][] {
-  const tuples = []
+// Uint8Array -> [[int code, Uint8Array ]... ]
+export function bytesToTuples(buf: Uint8Array): [number, Uint8Array][] {
+  const tuples: [number, Uint8Array][] = []
   let i = 0
   while (i < buf.length) {
     const code = varint.decode(buf, i)
     const n = varint.decode.bytes
 
-    const p = protocols(code)
+    const p = (protocols as any)(code)
 
     const size = sizeForAddr(p, buf.slice(i + n))
 
     if (size === 0) {
-      tuples.push([code])
+      tuples.push([code] as any)
       i += n
       continue
     }
@@ -135,8 +140,10 @@ export function bufferToTuples(buf: Buffer): (number | Buffer)[][] {
     i += size + n
 
     if (i > buf.length) {
-      // did not end _exactly_ at buffer.length
-      throw ParseError("Invalid address buffer: " + buf.toString("hex"))
+      // did not end _exactly_ at buf.length
+      throw ParseError(
+        "Invalid address Uint8Array: " + uint8ArrayToString(buf, "base16")
+      )
     }
 
     // ok, tuple seems good.
@@ -146,47 +153,43 @@ export function bufferToTuples(buf: Buffer): (number | Buffer)[][] {
   return tuples
 }
 
-// Buffer -> String
-export function bufferToString(buf: Buffer): string {
-  const a = bufferToTuples(buf)
+// Uint8Array -> String
+export function bytesToString(buf: Uint8Array): string {
+  const a = bytesToTuples(buf)
   const b = tuplesToStringTuples(a)
   return stringTuplesToString(b)
 }
 
-// String -> Buffer
-export function stringToBuffer(str: string): Buffer {
+// String -> Uint8Array
+function stringToBytes(str: string) {
   str = cleanPath(str)
   const a = stringToStringTuples(str)
   const b = stringTuplesToTuples(a)
 
-  return tuplesToBuffer(b)
+  return tuplesToBytes(b)
 }
 
-// String -> Buffer
-export function fromString(str: string): Buffer {
-  return stringToBuffer(str)
+// String -> Uint8Array
+export function fromString(str: string): Uint8Array {
+  return stringToBytes(str)
 }
 
-// Buffer -> Buffer
-export function fromBuffer(buf: Buffer): Buffer {
-  const err = validateBuffer(buf)
+// Uint8Array -> Uint8Array
+export function fromBytes(buf: Uint8Array): Uint8Array {
+  const err = validateBytes(buf)
   if (err) throw err
-  return Buffer.from(buf) // copy
+  return Uint8Array.from(buf) // copy
 }
 
-function validateBuffer(buf: Buffer): any {
+function validateBytes(buf: Uint8Array) {
   try {
-    bufferToTuples(buf) // try to parse. will throw if breaks
+    bytesToTuples(buf) // try to parse. will throw if breaks
   } catch (err) {
     return err
   }
 }
 
-export function isValidBuffer(buf: Buffer): boolean {
-  return validateBuffer(buf) === undefined
-}
-
-export function cleanPath(str: string): string {
+function cleanPath(str: string) {
   return (
     "/" +
     str
@@ -197,11 +200,11 @@ export function cleanPath(str: string): string {
   )
 }
 
-export function ParseError(str: string): Error {
+function ParseError(str: string) {
   return new Error("Error parsing address: " + str)
 }
 
-export function protoFromTuple(tup: any[]): Protocol {
-  const proto = protocols(tup[0])
+function protoFromTuple(tup: (string | number)[]) {
+  const proto = (protocols as any)(tup[0])
   return proto
 }

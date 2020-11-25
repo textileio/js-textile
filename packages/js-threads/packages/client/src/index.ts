@@ -7,7 +7,12 @@ import { UnaryOutput } from "@improbable-eng/grpc-web/dist/typings/unary"
 import { Context, ContextInterface, defaultHost } from "@textile/context"
 import { Identity } from "@textile/crypto"
 import { WebsocketTransport } from "@textile/grpc-transport"
-import { Multiaddr } from "@textile/multiaddr"
+import {
+  bytesFromAddr,
+  bytesToOptions,
+  bytesToTuples,
+  stringFromBytes,
+} from "@textile/multiaddr"
 import { KeyInfo, ThreadKey, UserAuth } from "@textile/security"
 import * as pb from "@textile/threads-client-grpc/threads_pb"
 import {
@@ -778,7 +783,7 @@ export class Client {
     collections?: Array<CollectionConfig>
   ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
-    const addr = new Multiaddr(address).buffer
+    const addr = bytesFromAddr(address)
     req.setAddr(addr)
     // Should always be encoded string, but might already be bytes
     req.setKey(
@@ -807,10 +812,10 @@ export class Client {
     return this.unary(API.NewDBFromAddr, req, (/** res: pb.NewDBReply */) => {
       // Hacky way to extract threadid from addr that succeeded
       // TODO: Return this directly from the gRPC API on the go side?
-      const result = new Multiaddr(req.getAddr_asU8())
-        .stringTuples()
-        .filter(([key]) => key === 406)
-      return ThreadID.fromString(result[0][1])
+      const result = bytesToTuples(req.getAddr_asU8()).filter(
+        ([key]) => key === 406
+      )
+      return ThreadID.fromString(result[0][1] as string)
     })
   }
 
@@ -846,10 +851,12 @@ export class Client {
   ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
     const filtered = info.addrs
-      .map((addr) => new Multiaddr(addr))
-      .filter((addr) => includeLocal || !maybeLocalAddr(addr.toOptions().host))
+      .map(bytesFromAddr)
+      .filter(
+        (addr) => includeLocal || !maybeLocalAddr(bytesToOptions(addr).host)
+      )
     for (const addr of filtered) {
-      req.setAddr(addr.buffer)
+      req.setAddr(addr)
       // Should always be encoded string, but might already be bytes
       req.setKey(
         typeof info.key === "string"
@@ -880,10 +887,10 @@ export class Client {
       return this.unary(API.NewDBFromAddr, req, () => {
         // Hacky way to extract threadid from addr that succeeded
         // @todo: Return this directly from the gRPC API?
-        const result = new Multiaddr(req.getAddr_asU8())
-          .stringTuples()
-          .filter(([key]) => key === 406)
-        return ThreadID.fromString(result[0][1])
+        const result = bytesToTuples(req.getAddr_asU8()).filter(
+          ([key]) => key === 406
+        )
+        return ThreadID.fromString(result[0][1] as string)
       })
     }
     throw new Error("No viable addresses for dialing")
@@ -915,11 +922,7 @@ export class Client {
       const key = ThreadKey.fromBytes(res.getKey_asU8())
       const addrs: string[] = []
       for (const addr of res.getAddrsList()) {
-        // const a =
-        //   typeof addr === "string"
-        //     ? Buffer.from(addr, "base64")
-        //     : Buffer.from(addr)
-        const address = new Multiaddr(addr).toString()
+        const address = stringFromBytes(addr as Uint8Array)
         addrs.push(address)
       }
       return { key: key.toString(), addrs }
@@ -1411,7 +1414,11 @@ export class Client {
     TRequest extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<TRequest, TResponse>,
     O = undefined // Only thing we can't know ahead of time
-  >(methodDescriptor: M, req: TRequest, mapper?: (resp: TResponse) => O) {
+  >(
+    methodDescriptor: M,
+    req: TRequest,
+    mapper: (resp: TResponse) => O | undefined = () => undefined
+  ) {
     const metadata = await this.context.toMetadata()
     return new Promise<O>((resolve, reject) => {
       grpc.unary(methodDescriptor, {
@@ -1423,11 +1430,7 @@ export class Client {
         onEnd: (res: UnaryOutput<TResponse>) => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {
-            if (message && mapper) {
-              resolve(mapper(message))
-            } else {
-              resolve()
-            }
+            resolve(mapper(message as any) as O)
           } else {
             reject(new Error(statusMessage))
           }

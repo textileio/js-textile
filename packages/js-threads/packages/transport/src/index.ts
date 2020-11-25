@@ -1,12 +1,13 @@
 // Copyright improbable-eng Apache License 2.0
 // https://github.com/improbable-eng/grpc-web/blob/master/client/grpc-web/src/transports/websocket/websocket.ts
-import WebSocket from 'isomorphic-ws'
-import { grpc } from '@improbable-eng/grpc-web'
-import log from 'loglevel'
+import { grpc } from "@improbable-eng/grpc-web"
+import WebSocket from "isomorphic-ws"
+import log from "loglevel"
 
-const { debug } = log.getLogger('grpc-transport')
+const { debug } = log.getLogger("grpc-transport")
 
-const isAllowedControlChars = (char: number) => char === 0x9 || char === 0xa || char === 0xd
+const isAllowedControlChars = (char: number) =>
+  char === 0x9 || char === 0xa || char === 0xd
 
 function isValidHeaderAscii(val: number): boolean {
   return isAllowedControlChars(val) || (val >= 0x20 && val <= 0x7e)
@@ -17,7 +18,7 @@ function encodeASCII(input: string): Uint8Array {
   for (let i = 0; i !== input.length; ++i) {
     const charCode = input.charCodeAt(i)
     if (!isValidHeaderAscii(charCode)) {
-      throw new Error('Metadata contains invalid ASCII')
+      throw new Error("Metadata contains invalid ASCII")
     }
     encoded[i] = charCode
   }
@@ -31,24 +32,26 @@ enum WebsocketSignal {
 const finishSendFrame = new Uint8Array([1])
 
 function constructWebSocketAddress(url: string) {
-  if (url.substr(0, 8) === 'https://') {
+  if (url.substr(0, 8) === "https://") {
     return `wss://${url.substr(8)}`
-  } else if (url.substr(0, 7) === 'http://') {
+  } else if (url.substr(0, 7) === "http://") {
     return `ws://${url.substr(7)}`
   }
-  throw new Error('Websocket transport constructed with non-https:// or http:// host.')
+  throw new Error(
+    "Websocket transport constructed with non-https:// or http:// host."
+  )
 }
 
 function headersToBytes(headers: grpc.Metadata): Uint8Array {
-  let asString = ''
+  let asString = ""
   headers.forEach((key, values) => {
-    asString += `${key}: ${values.join(', ')}\r\n`
+    asString += `${key}: ${values.join(", ")}\r\n`
   })
   return encodeASCII(asString)
 }
 
 function websocketRequest(options: grpc.TransportOptions): grpc.Transport {
-  options.debug && debug('websocketRequest', options)
+  options.debug && debug("websocketRequest", options)
 
   const webSocketAddress = constructWebSocketAddress(options.url)
 
@@ -85,10 +88,10 @@ function websocketRequest(options: grpc.TransportOptions): grpc.Transport {
       }
     },
     start: (metadata: grpc.Metadata) => {
-      ws = new WebSocket(webSocketAddress, ['grpc-websockets'])
-      ws.binaryType = 'arraybuffer'
+      ws = new WebSocket(webSocketAddress, ["grpc-websockets"])
+      ws.binaryType = "arraybuffer"
       ws.onopen = function () {
-        options.debug && debug('websocketRequest.onopen')
+        options.debug && debug("websocketRequest.onopen")
         ws.send(headersToBytes(metadata))
 
         // send any messages that were passed to sendMessage before the connection was ready
@@ -98,12 +101,12 @@ function websocketRequest(options: grpc.TransportOptions): grpc.Transport {
       }
 
       ws.onclose = function (closeEvent) {
-        options.debug && debug('websocketRequest.onclose', closeEvent)
+        options.debug && debug("websocketRequest.onclose", closeEvent)
         options.onEnd()
       }
 
       ws.onerror = function (error) {
-        options.debug && debug('websocketRequest.onerror', error)
+        options.debug && debug("websocketRequest.onerror", error)
       }
 
       ws.onmessage = function (e) {
@@ -111,7 +114,7 @@ function websocketRequest(options: grpc.TransportOptions): grpc.Transport {
       }
     },
     cancel: () => {
-      options.debug && debug('websocket.abort')
+      options.debug && debug("websocket.abort")
       ws.close()
     },
   }
