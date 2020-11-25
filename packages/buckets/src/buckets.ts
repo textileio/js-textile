@@ -47,6 +47,54 @@ import { listPathFlat, listPathRecursive } from './utils'
 const logger = log.getLogger('buckets')
 
 /**
+ * Options for getOrCreate
+ */
+export interface GetOrCreateOptions {
+  /**
+   * Name of the Thread where the Bucket will be created.
+   */
+  threadName?: string
+  /**
+   * Encrypt the contents of the bucket on IPFS
+   */
+  encrypted?: boolean
+  /**
+   * Seed a new bucket with the data available at the content address (CID).
+   */
+  cid?: string
+  /**
+   * ID of the Thread where the Bucket will be created.
+   * Will override any ThreadName if different.
+   */
+  threadID?: string
+}
+
+/**
+ * Response from getOrCreate
+ */
+export interface GetOrCreateResponse { 
+  /**
+   * RootObject of the bucket
+   */
+  root?: RootObject
+  /**
+   * ThreadID where the bucket was created.
+   */
+  threadID?: string
+}
+
+export interface CreateOptions {
+  /**
+   * Encrypt the contents of the bucket on IPFS
+   */
+  encrypted?: boolean,
+  /**
+   * Seed a new bucket with the data available at the content address (CID).
+   */
+  cid?: string
+}
+
+/**
  * Buckets a client wrapper for interacting with the Textile Buckets API.
  * @example
  * Initialize the Bucket API and open an existing bucket (or create if new).
@@ -246,34 +294,44 @@ export class Buckets extends GrpcAuthentication {
    * (Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
-   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param encrypted encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
    * @deprecated Open has been replaced with getOrCreate
    */
   async open(
     name: string,
     threadName = 'buckets',
-    isPrivate = false,
+    encrypted = false,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
-    return this.getOrCreate(name, threadName, isPrivate, undefined, threadID)
+    const options: GetOrCreateOptions = {
+      threadName: threadName && threadName !== '' ? threadName : 'buckets',
+      encrypted: !!encrypted,
+      threadID
+    }
+    return this.getOrCreate(name, options)
   }
 
   /**
    * (Deprecated) Open a new / existing bucket by bucket name and ThreadID (create not required)
    * @param name name of bucket
    * @param threadName the name of the thread where the bucket is stored (default `buckets`)
-   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param encrypted encrypt the bucket contents (default `false`)
    * @param threadID id of thread where bucket is stored
    * @deprecated getOrInit has been replaced with getOrCreate
    */
   async getOrInit(
     name: string,
     threadName = 'buckets',
-    isPrivate = false,
+    encrypted = false,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
-    return this.getOrCreate(name, threadName, isPrivate, undefined, threadID)
+    const options: GetOrCreateOptions = {
+      threadName: threadName && threadName !== '' ? threadName : 'buckets',
+      encrypted: !!encrypted,
+      threadID
+    }
+    return this.getOrCreate(name, options)
   }
 
   /**
@@ -281,7 +339,7 @@ export class Buckets extends GrpcAuthentication {
    * Replaces `open` command in older versions.
    * @param name name of bucket
    * @param threadName (optional) the name of the thread where the bucket is stored (default `buckets`)
-   * @param isPrivate (optional) encrypt the bucket contents (default `false`)
+   * @param encrypted (optional) encrypt the bucket contents (default `false`)
    * @param cid (optional) Bootstrap the bucket with a UnixFS Cid from the IPFS network
    * @param threadID (optional) id of thread where bucket is stored
    *
@@ -303,10 +361,37 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
+  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse> 
   async getOrCreate(
     name: string,
+    options?: string | GetOrCreateOptions,
+    encrypted?: boolean,
+    cid?: string,
+    threadID?: string
+  ): Promise<{ root?: RootObject; threadID?: string }> {
+    if (!options && (encrypted || cid || threadID) ) {
+      // Case where threadName passed as undefined using old signature
+      console.warn('update getOrCreate to use GetOrCreateOptions')
+      return this._getOrCreate(name, 'buckets', !!encrypted, cid, threadID)
+    }
+    else if (typeof options !== "object") {
+      // Case where using old signature
+      console.warn('update getOrCreate to use GetOrCreateOptions')
+      return this._getOrCreate(name, options, !!encrypted, cid, threadID)
+    } else {
+      // Using new signature
+      const threadName = options.threadName && options.threadName !== '' ? options.threadName : 'buckets'
+      const encrypted = !!options.encrypted
+      return this._getOrCreate(name, threadName, encrypted, options.cid, options.threadID)
+    }
+  }
+  /**
+   * @internal
+   */
+  private async _getOrCreate(
+    name: string,
     threadName = 'buckets',
-    isPrivate = false,
+    encrypted = false,
     cid?: string,
     threadID?: string,
   ): Promise<{ root?: RootObject; threadID?: string }> {
@@ -341,25 +426,25 @@ export class Buckets extends GrpcAuthentication {
     if (existing) {
       return { root: existing, threadID }
     }
-    const created = await this.create(name, isPrivate, cid)
+    const created = await this.create(name, {encrypted, cid})
     return { root: created.root, threadID }
   }
 
   /**
    * (Deprecated) Creates a new bucket.
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
-   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param encrypted encrypt the bucket contents (default `false`)
    * @deprecated Init has been replaced by create
    */
-  async init(name: string, isPrivate = false): Promise<CreateObject> {
-    return this.create(name, isPrivate)
+  async init(name: string, encrypted = false): Promise<CreateObject> {
+    return this.create(name, {encrypted})
   }
 
   /**
    * Creates a new bucket.
    * @public
    * @param name Human-readable bucket name. It is only meant to help identify a bucket in a UI and is not unique.
-   * @param isPrivate encrypt the bucket contents (default `false`)
+   * @param encrypted encrypt the bucket contents (default `false`)
    * @param cid (optional) Bootstrap the bucket with a UnixFS Cid from the IPFS network
    * @example
    * Create a Bucket called "app-name-files"
@@ -371,9 +456,18 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async create(name: string, isPrivate = false, cid?: string): Promise<CreateObject> {
+  async create(name: string, options?: CreateOptions): Promise<CreateObject>
+  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateObject> {
     logger.debug('create request')
-    return bucketsCreate(this, name, isPrivate, cid)
+    if (typeof options == 'object') {
+      return bucketsCreate(this, name, !!options.encrypted, options.cid)
+    }
+    else {
+      console.warn('update create to use CreateOptions')
+      const encrypted = !!options
+      return bucketsCreate(this, name, encrypted, cid)
+
+    }
   }
 
   /**
@@ -522,8 +616,8 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async pushPath(key: string, path: string, input: any, opts?: PushOptions): Promise<PushPathResult> {
-    return bucketsPushPath(this, key, path, input, opts)
+  async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
+    return bucketsPushPath(this, key, path, input, options)
   }
 
   /**
@@ -545,8 +639,8 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  pullPath(key: string, path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
-    return bucketsPullPath(this, key, path, opts)
+  pullPath(key: string, path: string, options?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+    return bucketsPullPath(this, key, path, options)
   }
 
   /**
@@ -587,8 +681,8 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  pullIpfsPath(path: string, opts?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
-    return bucketsPullIpfsPath(this, path, opts)
+  pullIpfsPath(path: string, options?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+    return bucketsPullIpfsPath(this, path, options)
   }
 
   /**
