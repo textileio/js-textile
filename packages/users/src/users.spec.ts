@@ -19,6 +19,30 @@ const sessionSecret = 'hubsession'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('Users...', () => {
+
+  describe('usage', () => {
+    const ctx = new Context(addrApiurl)
+    let dev: SignupResponse.AsObject
+    before(async function () {
+      this.timeout(10000)
+      const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
+      if (user) dev = user
+    })
+    it('it should return the correct usage per user', async () => {
+      const tmp = new Context(addrApiurl).withSession(dev.session)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
+      const user = new Users(ctx)
+      try {
+        await user.getUsage()
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.code).to.equal(grpc.Code.Unknown)
+        expect(err.message).to.contain("billing is not enabled")
+      }
+    }).timeout(5000)
+  })
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     let dev: SignupResponse.AsObject
@@ -452,5 +476,6 @@ describe('Users...', () => {
         }, 350)
       }, 500)
     }).timeout(5000)
+
   })
 })

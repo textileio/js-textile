@@ -9,6 +9,7 @@ import {
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
 import {
+  getUsage,
   getThread,
   listInboxMessages,
   listThreads,
@@ -25,6 +26,7 @@ import {
   getMailboxID,
   watchMailbox,
   MailboxEvent,
+  GetUsageResponseObj,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -206,6 +208,22 @@ export class Users extends GrpcAuthentication {
     callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
   ): Promise<string> {
     return super.getTokenChallenge(publicKey, callback)
+  }
+
+  /**
+   * GetUsage returns current billing and usage information.
+   *
+   * @example
+   * ```typescript
+   * import { Users } from "@textile/hub"
+   *
+   * async function example(users: Users) {
+   *    const usage = await users.getUsage()
+   * }
+   * ```
+   */
+  async getUsage(): Promise<GetUsageResponseObj> {
+    return getUsage(this)
   }
 
   /**

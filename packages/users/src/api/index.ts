@@ -17,6 +17,8 @@ import {
   ReadInboxMessageResponse,
   DeleteInboxMessageRequest,
   DeleteSentboxMessageRequest,
+  GetUsageRequest,
+  GetUsageResponse,
   Message,
 } from '@textile/users-grpc/api/usersd/pb/usersd_pb'
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
@@ -72,6 +74,52 @@ export interface GetThreadResponseObj {
   name: string
   id: ThreadID
 }
+
+
+export interface UsageObj {
+  description: string,
+  units: number,
+  total: number,
+  free: number,
+  grace: number,
+  cost: number,
+  period?: PeriodObj,
+}
+
+export interface CustomerUsageObj {
+  usageMap: [string, UsageObj][];
+}
+
+export interface PeriodObj {
+  unixStart: number;
+  unixEnd: number;
+}
+
+/**
+ * The response type from getUsage
+ */
+export interface CustomerResponseObj {
+  key: string
+  customerId: string
+  parentKey: string
+  email: string
+  accountType: number
+  accountStatus: string
+  subscriptionStatus: string
+  balance: number
+  billable: boolean
+  delinquent: boolean
+  createdAt: number,
+  gracePeriodEnd: number,
+  invoicePeriod?: PeriodObj,
+  dailyUsageMap: Array<[string, UsageObj]>
+  dependents: number
+}
+
+export interface GetUsageResponseObj {
+  customer?: CustomerResponseObj
+  usage?: CustomerUsageObj
+} 
 
 /**
  * The message format returned from inbox or sentbox
@@ -333,4 +381,22 @@ export function watchMailbox(
   }
   const collectionName = box === 'inbox' ? MailConfig.InboxCollectionName : MailConfig.SentboxCollectionName
   return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
+}
+
+
+/**
+ * @internal
+ */
+export async function getUsage(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<GetUsageResponseObj> {
+  logger.debug('get usage request')
+  const req = new GetUsageRequest()
+  const res: GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
+  const usage = res.toObject()
+  return {
+    customer: usage.customer,
+    usage: usage.usage,
+  }
 }
