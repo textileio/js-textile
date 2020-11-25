@@ -53,18 +53,32 @@ export interface GetOrCreateOptions {
   /**
    * Name of the Thread where the Bucket will be created.
    */
-  threadName?: string,
+  threadName?: string
   /**
    * Encrypt the contents of the bucket on IPFS
    */
-  encrypted?: boolean,
+  encrypted?: boolean
   /**
    * Seed a new bucket with the data available at the content address (CID).
    */
-  cid?: string,
+  cid?: string
   /**
    * ID of the Thread where the Bucket will be created.
    * Will override any ThreadName if different.
+   */
+  threadID?: string
+}
+
+/**
+ * Response from getOrCreate
+ */
+export interface GetOrCreateResponse { 
+  /**
+   * RootObject of the bucket
+   */
+  root?: RootObject
+  /**
+   * ThreadID where the bucket was created.
    */
   threadID?: string
 }
@@ -347,7 +361,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<{ root?: RootObject; threadID?: string }> 
+  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse> 
   async getOrCreate(
     name: string,
     options?: string | GetOrCreateOptions,
@@ -374,7 +388,7 @@ export class Buckets extends GrpcAuthentication {
   /**
    * @internal
    */
-  async _getOrCreate(
+  private async _getOrCreate(
     name: string,
     threadName = 'buckets',
     encrypted = false,
