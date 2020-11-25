@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/context": "^0.8.0",
-    "@textile/grpc-transport": "^0.0.6"
+    "@textile/context": "^0.8.1",
+    "@textile/grpc-transport": "^0.1.0"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

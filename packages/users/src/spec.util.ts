@@ -1,6 +1,7 @@
 import axios from 'axios'
 import delay from 'delay'
 import { HMAC } from 'fast-sha256'
+// @ts-ignore
 import multibase from 'multibase'
 import * as pb from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { APIServiceClient, ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
