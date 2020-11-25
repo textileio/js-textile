@@ -1,8 +1,6 @@
 // Exports all API response types for typescript users
 export {
-  ArchiveInfoResponse,
   ArchiveResponse,
-  ArchiveStatusResponse,
   ArchiveWatchResponse,
   CreateResponse,
   LinksResponse,

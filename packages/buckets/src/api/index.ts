@@ -1,16 +1,18 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import {
+  Archive as PbArchive,
   ArchiveConfig as ProtoArchiveConfig,
-  ArchiveInfoRequest,
-  ArchiveInfoResponse,
   ArchiveRenew as ProtoArchiveRenew,
   ArchiveRequest,
-  ArchiveStatusRequest,
-  ArchiveStatusResponse,
+  ArchivesRequest,
+  ArchivesResponse,
+  ArchiveStatus as PbArchiveStatus,
+  ArchiveStatusMap as PbArchiveStatusMap,
   ArchiveWatchRequest,
   ArchiveWatchResponse,
   CreateRequest,
   CreateResponse,
+  DealInfo as PbDealInfo,
   DefaultArchiveConfigRequest,
   DefaultArchiveConfigResponse,
   LinksRequest,
@@ -260,40 +262,103 @@ const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
 }
 
 /**
+ * Information about a Filecoin deal for a Bucket Archive.
+ */
+export interface DealInfo {
+  proposalCid: string
+  stateId: number
+  stateName: string
+  miner: string
+  pieceCid: string
+  size: number
+  pricePerEpoch: number
+  startEpoch: number
+  duration: number
+  dealId: number
+  activationEpoch: number
+  message: string
+}
+
+/**
  * Archive status codes
  */
-export enum StatusCode {
-  STATUS_UNSPECIFIED,
-  STATUS_EXECUTING,
-  STATUS_FAILED,
-  STATUS_DONE,
-  STATUS_CANCELED,
+export enum ArchiveStatus {
+  UNSPECIFIED,
+  QUEUED,
+  EXECUTING,
+  FAILED,
+  CANCELED,
+  SUCCESS,
 }
 
 /**
- * Response of of bucket archive status request.
+ * Information about a bucket archive.
  */
-export type ArchiveStatus = {
-  key: string
-  status: StatusCode
-  failedMsg: string
+export interface Archive {
+  cid: string
+  jobId: string
+  status: ArchiveStatus
+  aborted: boolean
+  abortedMsg: string
+  failureMsg: string
+  createdAt: number
+  dealInfoList: Array<DealInfo>
 }
 
 /**
- * Metadata for each deal associated with an archive.
+ * Response of of archives request showing current and past archives.
  */
-export type ArchiveDealInfo = {
-  proposalCid: string
-  miner: string
+export interface Archives {
+  current?: Archive
+  history: Array<Archive>
 }
 
-/**
- * Response of of bucket info status request.
- */
-export type ArchiveInfo = {
-  key: string
-  cid?: string
-  deals: Array<ArchiveDealInfo>
+function fromPbDealInfo(pbDealInfo: PbDealInfo): DealInfo {
+  return {
+    activationEpoch: pbDealInfo.getActivationEpoch(),
+    dealId: pbDealInfo.getDealId(),
+    duration: pbDealInfo.getDuration(),
+    message: pbDealInfo.getMessage(),
+    miner: pbDealInfo.getMiner(),
+    pieceCid: pbDealInfo.getPieceCid(),
+    pricePerEpoch: pbDealInfo.getPricePerEpoch(),
+    proposalCid: pbDealInfo.getProposalCid(),
+    size: pbDealInfo.getSize(),
+    startEpoch: pbDealInfo.getStartEpoch(),
+    stateId: pbDealInfo.getStateId(),
+    stateName: pbDealInfo.getStateName(),
+  }
+}
+
+function fromPbArchiveStatus(pbArchiveStatus: PbArchiveStatusMap[keyof PbArchiveStatusMap]): ArchiveStatus {
+  switch (pbArchiveStatus) {
+    case PbArchiveStatus.ARCHIVE_STATUS_CANCELED:
+      return ArchiveStatus.CANCELED
+    case PbArchiveStatus.ARCHIVE_STATUS_EXECUTING:
+      return ArchiveStatus.EXECUTING
+    case PbArchiveStatus.ARCHIVE_STATUS_FAILED:
+      return ArchiveStatus.FAILED
+    case PbArchiveStatus.ARCHIVE_STATUS_QUEUED:
+      return ArchiveStatus.QUEUED
+    case PbArchiveStatus.ARCHIVE_STATUS_SUCCESS:
+      return ArchiveStatus.SUCCESS
+    case PbArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
+      return ArchiveStatus.UNSPECIFIED
+  }
+}
+
+function fromPbArchive(pbArchive: PbArchive): Archive {
+  const foo = pbArchive.getArchiveStatus()
+  return {
+    aborted: pbArchive.getAborted(),
+    abortedMsg: pbArchive.getAbortedMsg(),
+    cid: pbArchive.getCid(),
+    createdAt: pbArchive.getCreatedAt(),
+    failureMsg: pbArchive.getFailureMsg(),
+    jobId: pbArchive.getJobId(),
+    status: fromPbArchiveStatus(pbArchive.getArchiveStatus()),
+    dealInfoList: pbArchive.getDealInfoList().map((item) => fromPbDealInfo(item)),
+  }
 }
 
 /**
@@ -892,51 +957,17 @@ export async function bucketsArchive(
 }
 
 /**
- * archiveStatus returns the status of a Filecoin bucket archive.
  * @internal
- * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<ArchiveStatus> {
-  logger.debug('archive status request')
-  const req = new ArchiveStatusRequest()
+export async function bucketsArchives(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Archives> {
+  logger.debug('archives request')
+  const req = new ArchivesRequest()
   req.setKey(key)
-  const res: ArchiveStatusResponse = await api.unary(APIService.ArchiveStatus, req, ctx)
+  const res: ArchivesResponse = await api.unary(APIService.Archives, req, ctx)
+  const current = res.getCurrent()
   return {
-    key: res.getKey(),
-    status: res.getStatus(),
-    failedMsg: res.getFailedMsg(),
-  }
-}
-
-/**
- * archiveInfo returns info about a Filecoin bucket archive.
- * @internal
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- */
-export async function bucketsArchiveInfo(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<ArchiveInfo> {
-  logger.debug('archive info request')
-  const req = new ArchiveInfoRequest()
-  req.setKey(key)
-  const res: ArchiveInfoResponse = await api.unary(APIService.ArchiveInfo, req, ctx)
-  const archive = res.getArchive()
-  const deals = archive ? archive.getDealsList() : []
-  return {
-    key: res.getKey(),
-    cid: archive ? archive.getCid() : undefined,
-    deals: deals.map((d) => {
-      return {
-        proposalCid: d.getProposalCid(),
-        miner: d.getMiner(),
-      }
-    }),
+    current: current ? fromPbArchive(current) : undefined,
+    history: res.getHistoryList().map((item) => fromPbArchive(item)),
   }
 }
 

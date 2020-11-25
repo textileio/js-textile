@@ -6,9 +6,7 @@
 
 import type { AbortSignal as AbortSignal_2 } from 'abort-controller';
 import { AddressesResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
-import { ArchiveInfoResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ArchiveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ArchiveStatusResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ArchiveWatchResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { BalanceResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import CID from 'cids';
@@ -80,6 +78,26 @@ export type APISig = {
 };
 
 // @public
+export interface Archive {
+    // (undocumented)
+    aborted: boolean;
+    // (undocumented)
+    abortedMsg: string;
+    // (undocumented)
+    cid: string;
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    dealInfoList: Array<DealInfo>;
+    // (undocumented)
+    failureMsg: string;
+    // (undocumented)
+    jobId: string;
+    // (undocumented)
+    status: ArchiveStatus;
+}
+
+// @public
 export interface ArchiveConfig {
     addr: string;
     countryCodes: Array<string>;
@@ -92,21 +110,6 @@ export interface ArchiveConfig {
     repFactor: number;
     trustedMiners: Array<string>;
 }
-
-// @public
-export type ArchiveDealInfo = {
-    proposalCid: string;
-    miner: string;
-};
-
-// @public
-export type ArchiveInfo = {
-    key: string;
-    cid?: string;
-    deals: Array<ArchiveDealInfo>;
-};
-
-export { ArchiveInfoResponse }
 
 // @public
 export interface ArchiveOptions {
@@ -122,13 +125,28 @@ export interface ArchiveRenew {
 export { ArchiveResponse }
 
 // @public
-export type ArchiveStatus = {
-    key: string;
-    status: StatusCode;
-    failedMsg: string;
-};
+export interface Archives {
+    // (undocumented)
+    current?: Archive;
+    // (undocumented)
+    history: Array<Archive>;
+}
 
-export { ArchiveStatusResponse }
+// @public
+export enum ArchiveStatus {
+    // (undocumented)
+    CANCELED = 4,
+    // (undocumented)
+    EXECUTING = 2,
+    // (undocumented)
+    FAILED = 3,
+    // (undocumented)
+    QUEUED = 1,
+    // (undocumented)
+    SUCCESS = 5,
+    // (undocumented)
+    UNSPECIFIED = 0
+}
 
 export { ArchiveWatchResponse }
 
@@ -139,9 +157,7 @@ export class Buckets extends GrpcAuthentication {
     // @beta
     archive(key: string, options?: ArchiveOptions): Promise<void>;
     // @beta
-    archiveInfo(key: string): Promise<ArchiveInfo>;
-    // @beta
-    archiveStatus(key: string): Promise<ArchiveStatus>;
+    archives(key: string): Promise<Archives>;
     // @beta
     archiveWatch(key: string, callback: (reply?: {
         id: string | undefined;
@@ -199,15 +215,10 @@ export class Buckets extends GrpcAuthentication {
 // @internal
 export function bucketsArchive(api: GrpcConnection, key: string, options?: ArchiveOptions, ctx?: ContextInterface): Promise<void>;
 
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveInfo" should be prefixed with an underscore because the declaration is marked as @internal
+// Warning: (ae-internal-missing-underscore) The name "bucketsArchives" should be prefixed with an underscore because the declaration is marked as @internal
 //
-// @internal
-export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfo>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveStatus" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatus>;
+// @internal (undocumented)
+export function bucketsArchives(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Archives>;
 
 // Warning: (ae-internal-missing-underscore) The name "bucketsArchiveWatch" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -406,6 +417,34 @@ export interface CriterionJSON {
 export interface DBInfo {
     addrs: string[];
     key: string;
+}
+
+// @public
+export interface DealInfo {
+    // (undocumented)
+    activationEpoch: number;
+    // (undocumented)
+    dealId: number;
+    // (undocumented)
+    duration: number;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    pieceCid: string;
+    // (undocumented)
+    pricePerEpoch: number;
+    // (undocumented)
+    proposalCid: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    startEpoch: number;
+    // (undocumented)
+    stateId: number;
+    // (undocumented)
+    stateName: string;
 }
 
 // @public
@@ -854,20 +893,6 @@ export enum Status {
     READ = 1,
     // (undocumented)
     UNREAD = 2
-}
-
-// @public
-export enum StatusCode {
-    // (undocumented)
-    STATUS_CANCELED = 4,
-    // (undocumented)
-    STATUS_DONE = 3,
-    // (undocumented)
-    STATUS_EXECUTING = 1,
-    // (undocumented)
-    STATUS_FAILED = 2,
-    // (undocumented)
-    STATUS_UNSPECIFIED = 0
 }
 
 // @public

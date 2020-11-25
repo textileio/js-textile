@@ -1,11 +1,26 @@
 {
   "docs": {
-    "Getting Started": ["index", "hub"],
-    "Users API": ["hub.users"],
-    "Buckets": ["hub.buckets"],
-    "Threads": ["hub.client"],
-    "Filecoin": ["hub.pow"],
-    "Common Methods & Classes": ["hub.threadid", "hub.createuserauth", "hub.createapisig"]
+    "Getting Started": [
+      "index",
+      "hub"
+    ],
+    "Users API": [
+      "hub.users"
+    ],
+    "Buckets": [
+      "hub.buckets"
+    ],
+    "Threads": [
+      "hub.client"
+    ],
+    "Filecoin": [
+      "hub.pow"
+    ],
+    "Common Methods & Classes": [
+      "hub.threadid",
+      "hub.createuserauth",
+      "hub.createapisig"
+    ]
   },
   "thread-id-docs": {
     "ThreadID Methods": [
