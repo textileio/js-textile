@@ -438,9 +438,10 @@ describe('Buckets...', function () {
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
 
+      const { root } = await bobBuckets.listPath(rootKey, '')
       try {
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
