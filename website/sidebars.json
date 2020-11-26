@@ -132,15 +132,6 @@
       "hub.buckets.removepath",
       "hub.buckets.setpath"
     ],
-    "Experimental": [
-      "hub.archive",
-      "hub.archiveinfo",
-      "hub.buckets.archiveinfo",
-      "hub.archivedealinfo",
-      "hub.buckets.archivestatus",
-      "hub.archivestatus",
-      "hub.statuscode"
-    ],
     "Types": [
       "hub.createobject",
       "hub.linksobject",
@@ -151,6 +142,16 @@
       "hub.metadataobject",
       "hub.getorcreateoptions",
       "hub.createoptions"
+    ],
+    "Experimental": [
+      "hub.buckets.defaultarchiveconfig",
+      "hub.buckets.setdefaultarchiveconfig",
+      "hub.buckets.archive",
+      "hub.buckets.archives",
+      "hub.buckets.archivewatch",
+      "hub.archiveconfig",
+      "hub.archiveoptions",
+      "hub.archives"
     ]
   },
   "client-docs": {
@@ -234,8 +235,7 @@
       "hub.pow.withthread",
       "hub.pow.withuserauth"
     ],
-    "Types": [
-    ]
+    "Types": []
   },
   "Types": {
     "Common Types": [

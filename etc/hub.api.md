@@ -167,15 +167,7 @@ export class Buckets extends GrpcAuthentication {
     create(name: string, options?: CreateOptions): Promise<CreateObject>;
     // @beta
     defaultArchiveConfig(key: string): Promise<ArchiveConfig>;
-    getOrCreate(name: string, options?: GetOrCreateOptions): Promise<{
-        root?: RootObject;
-        threadID?: string;
-    }>;
-    // @internal (undocumented)
-    _getOrCreate(name: string, threadName?: string, encrypted?: boolean, cid?: string, threadID?: string): Promise<{
-        root?: RootObject;
-        threadID?: string;
-    }>;
+    getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>;
     // @deprecated
     getOrInit(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
         root?: RootObject;
@@ -506,6 +498,12 @@ export interface GetOrCreateOptions {
     encrypted?: boolean;
     threadID?: string;
     threadName?: string;
+}
+
+// @public
+export interface GetOrCreateResponse {
+    root?: RootObject;
+    threadID?: string;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "getThread" should be prefixed with an underscore because the declaration is marked as @internal
