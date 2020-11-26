@@ -8,6 +8,7 @@ import {
 import { Client } from '@textile/hub-threads-client'
 import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
+import { isNode } from 'browser-or-node'
 import log from 'loglevel'
 import {
   ArchiveConfig,
@@ -28,6 +29,7 @@ import {
   bucketsPullPathAccessRoles,
   bucketsPushPath,
   bucketsPushPathAccessRoles,
+  bucketsPushPathNode,
   bucketsRemove,
   bucketsRemovePath,
   bucketsRoot,
@@ -622,6 +624,9 @@ export class Buckets extends GrpcAuthentication {
    * ```
    */
   async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
+    if (isNode) {
+      return bucketsPushPathNode(this, key, path, input, options)
+    }
     return bucketsPushPath(this, key, path, input, options)
   }
 
