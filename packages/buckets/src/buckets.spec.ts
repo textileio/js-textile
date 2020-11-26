@@ -439,6 +439,7 @@ describe('Buckets...', function () {
       bobBuckets.withThread(aliceThread)
 
       const { root } = await bobBuckets.listPath(rootKey, '')
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       try {
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
