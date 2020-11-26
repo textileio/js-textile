@@ -137,7 +137,26 @@ export class GrpcAuthentication extends GrpcConnection {
    */
   static async withKeyInfo(key: KeyInfo, options: WithKeyInfoOptions = {}) {
     const context = new Context(options.host)
-    await context.withKeyInfo(key, options.date)
+
+    function wait(duration: number): Promise<void> {
+      return new Promise((resolve) => setTimeout(resolve, duration))
+    }
+    const runner = async (runLimit: number = 3, backoff: number = 100, currentRun: number = 1): Promise<PushPathResult> => {
+      try {
+      await context.withKeyInfo(key, options.date)
+      } catch (error) {
+        if (currentRun < runLimit && error.message && error.message.toLowerCase() === 'Response closed without headers'.toLowerCase()) {
+          console.log("context retry", runLimit, backoff, currentRun, error.message)
+          await wait(backoff)
+          return await runner(runLimit, backoff * 2, currentRun += 1)
+        } 
+        else {
+          console.log("no context retry", runLimit, backoff, currentRun, error.message)
+          throw error
+        }
+      }
+    }
+    await runner()
     return new GrpcAuthentication(context, options.debug)
   }
 
