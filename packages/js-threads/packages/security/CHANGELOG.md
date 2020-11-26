@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/textileio/js-threads/compare/@textile/security@0.6.1...@textile/security@0.6.2) (2020-11-26)
+
+
+### Bug Fixes
+
+* use text decoder for uint8array ([597ef19](https://github.com/textileio/js-threads/commit/597ef19fdceb52f6a41138072ecdbfb32d32e000))
+
+
+
+
+
 ## [0.6.1](https://github.com/textileio/js-threads/compare/@textile/security@0.6.0...@textile/security@0.6.1) (2020-11-26)
 
 
