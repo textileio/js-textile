@@ -627,9 +627,8 @@ export class Buckets extends GrpcAuthentication {
         return bucketsPushPathNode(api, key, path, input, options)
       } catch (error) {
         if (currentRun < runLimit && error.message && error.message.toLowerCase() === 'Response closed without headers'.toLowerCase()) {
-          
-          await wait(backoff)
           console.log("retry", runLimit, backoff, currentRun, error.message)
+          await wait(backoff)
           return await runner(api, runLimit, backoff * 2, currentRun += 1)
         } 
         else {
