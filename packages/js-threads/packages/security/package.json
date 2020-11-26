@@ -1,6 +1,6 @@
 {
   "name": "@textile/security",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Common types/interfaces for Textile security including authentication and authorization.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@textile/multiaddr",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -21,7 +21,7 @@
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
-    "@textile/threads-id": "^0.3.0",
+    "@textile/threads-id": "^0.3.1",
     "multiaddr": "^8.1.1",
     "uint8arrays": "^1.1.0",
     "varint": "^6.0.0"

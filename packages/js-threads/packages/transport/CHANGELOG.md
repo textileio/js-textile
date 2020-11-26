@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/textileio/js-threads/compare/@textile/grpc-transport@0.2.0...@textile/grpc-transport@0.2.1) (2020-11-26)
+
+
+### Bug Fixes
+
+* unpushed updates for packaging ([9535fd9](https://github.com/textileio/js-threads/commit/9535fd9d359cd15275f318663d0cc9d47d856206))
+
+
+
+
+
 # [0.2.0](https://github.com/textileio/js-threads/compare/@textile/grpc-transport@0.1.0...@textile/grpc-transport@0.2.0) (2020-11-26)
 
 
