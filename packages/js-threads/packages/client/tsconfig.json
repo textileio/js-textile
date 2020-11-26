@@ -1,12 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "resolveJsonModule": true
+    "outDir": "./dist/cjs",
+    "rootDir": "./src"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "references": [
+    { "path": "../context" },
+    { "path": "../id" },
+    { "path": "../multiaddr" },
+    { "path": "../security" },
+    { "path": "../transport" }
   ]
 }

@@ -6,8 +6,5 @@
     "resolveJsonModule": true,
     "baseUrl": "./src"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "references": [{ "path": "../id" }]
 }

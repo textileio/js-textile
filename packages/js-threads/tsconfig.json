@@ -2,13 +2,18 @@
   "compilerOptions": {
     "target": "es6", // 'es3' (default), 'es5', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019' or 'esnext'
     "module": "commonjs", // 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'esnext'
-    "lib": ["es6", "dom", "esnext"],
+    "lib": [
+      "es6",
+      "dom",
+      "esnext"
+    ],
     "moduleResolution": "node",
-    "outDir": "dist",
+    "outDir": "./dist",
     "rootDir": ".",
     "declaration": true,
     "sourceMap": true,
     "inlineSourceMap": false,
+    "resolveJsonModule": true,
     "inlineSources": true,
     "composite": true,
     "downlevelIteration": true,
@@ -19,7 +24,13 @@
     "emitDecoratorMetadata": true,
     "allowJs": false,
     "importHelpers": false,
-    "types": ["node", "mocha"]
+    "types": [
+      "node",
+      "mocha"
+    ]
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "**/node_modules",
+    "**/dist"
+  ]
 }

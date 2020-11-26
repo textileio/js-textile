@@ -22,9 +22,9 @@ jobs:
           THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
           THRDS_DEBUG: true
         ports:
-          - '4006:4006'
-          - '127.0.0.1:6006:6006'
-          - '127.0.0.1:6007:6007'
+          - "4006:4006"
+          - "127.0.0.1:6006:6006"
+          - "127.0.0.1:6007:6007"
       threads2:
         image: textile/go-threads:latest
         env:
@@ -33,9 +33,9 @@ jobs:
           THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
           THRDS_DEBUG: true
         ports:
-          - '4206:4006'
-          - '127.0.0.1:6206:6006'
-          - '127.0.0.1:6207:6007'
+          - "4206:4006"
+          - "127.0.0.1:6206:6006"
+          - "127.0.0.1:6207:6007"
 
     steps:
       - name: Checkout
@@ -62,16 +62,16 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap -- --hoist
 
+      - name: Build
+        run: npm run build
+
       - name: Test Node
         run: npm run test:node
 
       - name: Test Browser
         run: npm run test:browser
 
-      - name: Compile Node
-        run: npm run build
-
-      - name: Compile Test Browser
+      - name: Compile Webpack
         run: |
           cd packages/threads
           ../../node_modules/webpack/bin/webpack.js --mode production --config ../../webpack.test.js

@@ -12,18 +12,13 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "npx tsc -b tsconfig.json",
-    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo"
+    "prepublishOnly": "npm run clean && npm run build",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "npx tsc -b ./tsconfig.json",
+    "build:esm": "npx tsc -b ./tsconfig.esm.json",
+    "clean": "npx rimraf ./dist"
   },
   "repository": "github:textileio/js-threads",
-  "references": [
-    {
-      "path": "../id"
-    }
-  ],
   "dependencies": {
     "@textile/threads-id": "^0.2.0",
     "multiaddr": "^8.1.1",

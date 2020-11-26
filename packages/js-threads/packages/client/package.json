@@ -1,8 +1,9 @@
 {
   "name": "@textile/threads-client",
   "version": "1.2.0",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
@@ -12,34 +13,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "npx tsc -b tsconfig.json",
-    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
+    "prepublishOnly": "npm run clean && npm run build",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "npx tsc -b ./tsconfig.json",
+    "build:esm": "npx tsc -b ./tsconfig.esm.json",
+    "clean": "npx rimraf ./dist",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-threads",
-  "references": [
-    {
-      "path": "../id"
-    },
-    {
-      "path": "../multiaddr"
-    },
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../context"
-    },
-    {
-      "path": "../security"
-    },
-    {
-      "path": "../transport"
-    }
-  ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/context": "^0.8.1",

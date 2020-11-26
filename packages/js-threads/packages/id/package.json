@@ -12,12 +12,12 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "npx tsc -b tsconfig.json",
-    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
-    "test:browser": "polendina --cleanup  src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+    "prepublishOnly": "npm run clean && npm run build",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "npx tsc -b ./tsconfig.json",
+    "build:esm": "npx tsc -b ./tsconfig.esm.json",
+    "clean": "npx rimraf ./dist",
+    "test:browser": "polendina --cleanup src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-threads",
   "dependencies": {
