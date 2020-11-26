@@ -1,6 +1,6 @@
 {
 	"name": "@textile/crypto",
-	"version": "0.1.2",
+	"version": "1.0.0-alpha.0",
 	"description": "Various crypto modules for use with Textile tools/libraries.",
 	"main": "dist/index",
 	"types": "dist/index",
