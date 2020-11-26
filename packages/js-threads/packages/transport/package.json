@@ -1,8 +1,9 @@
 {
   "name": "@textile/grpc-transport",
   "version": "0.2.0",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
@@ -25,5 +26,6 @@
     "isomorphic-ws": "^4.0.1",
     "loglevel": "^1.6.6",
     "ws": "^7.2.1"
-  }
+  },
+  "gitHead": "cdbfb3a09a606e1c3c90f052e5ee74afa5399a40"
 }

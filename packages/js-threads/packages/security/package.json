@@ -2,8 +2,9 @@
   "name": "@textile/security",
   "version": "0.6.0",
   "description": "Common types/interfaces for Textile security including authentication and authorization.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
@@ -29,5 +30,5 @@
     "fast-sha256": "^1.3.0",
     "multibase": "^3.1.0"
   },
-  "gitHead": "696e9d9dd45fbea8ec6bacb3c7f673c45c1bc12a"
+  "gitHead": "cdbfb3a09a606e1c3c90f052e5ee74afa5399a40"
 }
