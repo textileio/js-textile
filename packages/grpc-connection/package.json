@@ -1,6 +1,6 @@
 {
   "name": "@textile/grpc-connection",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "description": "web-gRPC state manager for grpc-connection.",
   "main": "dist/index",
   "types": "dist/index",
