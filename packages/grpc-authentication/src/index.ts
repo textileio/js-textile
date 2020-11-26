@@ -141,7 +141,7 @@ export class GrpcAuthentication extends GrpcConnection {
     function wait(duration: number): Promise<void> {
       return new Promise((resolve) => setTimeout(resolve, duration))
     }
-    const runner = async (runLimit: number = 3, backoff: number = 100, currentRun: number = 1): Promise<PushPathResult> => {
+    const runner = async (runLimit: number = 3, backoff: number = 100, currentRun: number = 1): Promise<void> => {
       try {
       await context.withKeyInfo(key, options.date)
       } catch (error) {
