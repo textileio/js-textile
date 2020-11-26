@@ -9,6 +9,7 @@ import { Client } from '@textile/hub-threads-client'
 import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import log from 'loglevel'
+import { retryAsync } from 'ts-retry'
 import {
   ArchiveConfig,
   ArchiveInfo,
@@ -618,7 +619,25 @@ export class Buckets extends GrpcAuthentication {
    * ```
    */
   async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
-    return bucketsPushPathNode(this, key, path, input, options)
+    
+    function wait(duration: number): Promise<void> {
+      return new Promise((resolve) => setTimeout(resolve, duration))
+    }
+    const runner = async (api: GrpcAuthentication, runLimit: number = 3, backoff: number = 0, currentRun: number = 1): Promise<PushPathResult> => {
+      try {
+        await wait(backoff)
+        return bucketsPushPathNode(api, key, path, input, options)
+      } catch (error) {
+        if (currentRun < runLimit && error.message && error.message.toLowerCase() === 'Response closed without headers'.toLowerCase()) {
+          return runner(api, runLimit, backoff * 2, currentRun += 1)
+        } 
+        else {
+          console.info(runLimit, backoff, currentRun)
+          throw error
+        }
+      }
+    }
+    return runner(this)
   }
 
   /**
