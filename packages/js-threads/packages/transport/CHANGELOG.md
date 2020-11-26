@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/textileio/js-threads/compare/@textile/grpc-transport@0.1.0...@textile/grpc-transport@0.2.0) (2020-11-26)
+
+
+### Bug Fixes
+
+* build as part of ci ([2733f98](https://github.com/textileio/js-threads/commit/2733f982284a829d8f5022a4467a05732409b475))
+
+
+### Features
+
+* produce esm outputs for all subpackages ([3e401e2](https://github.com/textileio/js-threads/commit/3e401e2af0aa5bdd0b9f57dd23385843c2b6a5b4))
+
+
+
+
+
 # [0.1.0](https://github.com/textileio/js-threads/compare/@textile/grpc-transport@0.0.6...@textile/grpc-transport@0.1.0) (2020-11-25)
 
 

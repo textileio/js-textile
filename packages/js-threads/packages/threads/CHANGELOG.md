@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/textileio/js-threads/compare/@textile/threads@1.2.0...@textile/threads@1.3.0) (2020-11-26)
+
+
+### Features
+
+* produce esm outputs for all subpackages ([3e401e2](https://github.com/textileio/js-threads/commit/3e401e2af0aa5bdd0b9f57dd23385843c2b6a5b4))
+
+
+
+
+
 # [1.2.0](https://github.com/textileio/js-threads/compare/@textile/threads@1.1.1...@textile/threads@1.2.0) (2020-11-25)
 
 
