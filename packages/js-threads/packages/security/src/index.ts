@@ -9,6 +9,7 @@ import { HMAC } from "fast-sha256"
 import multibase from "multibase"
 
 const encoder = new TextEncoder()
+const decoder = new TextDecoder()
 
 /**
  * UserAuth is a type describing the minimal requirements create a session from a user group key. Generate with {@link createUserAuth}.
@@ -97,7 +98,7 @@ export async function createAPISig(
   const msg = date.toISOString()
   const hash = new HMAC(sec)
   const mac = hash.update(encoder.encode(msg)).digest()
-  const sig = multibase.encode("base32", mac).toString()
+  const sig = decoder.decode(multibase.encode("base32", mac))
   return { sig, msg }
 }
 
