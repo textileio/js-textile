@@ -371,12 +371,15 @@ export class Buckets extends GrpcAuthentication {
   ): Promise<{ root?: Root; threadID?: string }> {
     if (!options && (encrypted || cid || threadID) ) {
       // Case where threadName passed as undefined using old signature
-      console.warn('update getOrCreate to use GetOrCreateOptions')
+      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, 'buckets', !!encrypted, cid, threadID)
+    }
+    else if (!options) {
+      return this._getOrCreate(name)
     }
     else if (typeof options !== "object") {
       // Case where using old signature
-      console.warn('update getOrCreate to use GetOrCreateOptions')
+      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, options, !!encrypted, cid, threadID)
     } else {
       // Using new signature
@@ -463,7 +466,9 @@ export class Buckets extends GrpcAuthentication {
       return bucketsCreate(this, name, !!options.encrypted, options.cid)
     }
     else {
-      console.warn('update create to use CreateOptions')
+      if (options !== undefined || cid !== undefined) {
+        console.warn('Update Buckets.create to use CreateOptions input.')
+      }
       const encrypted = !!options
       return bucketsCreate(this, name, encrypted, cid)
 
