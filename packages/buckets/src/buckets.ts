@@ -8,7 +8,6 @@ import {
 import { Client } from '@textile/hub-threads-client'
 import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
-import { isNode } from 'browser-or-node'
 import log from 'loglevel'
 import {
   ArchiveConfig,
@@ -27,7 +26,6 @@ import {
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPullPathAccessRoles,
-  bucketsPushPath,
   bucketsPushPathAccessRoles,
   bucketsPushPathNode,
   bucketsRemove,
@@ -37,9 +35,9 @@ import {
   bucketsSetPath,
   CreateResponse,
   Links,
+  Path,
   PathAccessRole,
   PathItem,
-  Path,
   PushOptions,
   PushPathResult,
   Root,
@@ -74,7 +72,7 @@ export interface GetOrCreateOptions {
 /**
  * Response from getOrCreate
  */
-export interface GetOrCreateResponse { 
+export interface GetOrCreateResponse {
   /**
    * Root of the bucket
    */
@@ -89,7 +87,7 @@ export interface CreateOptions {
   /**
    * Encrypt the contents of the bucket on IPFS
    */
-  encrypted?: boolean,
+  encrypted?: boolean
   /**
    * Seed a new bucket with the data available at the content address (CID).
    */
@@ -309,7 +307,7 @@ export class Buckets extends GrpcAuthentication {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
-      threadID
+      threadID,
     }
     return this.getOrCreate(name, options)
   }
@@ -331,7 +329,7 @@ export class Buckets extends GrpcAuthentication {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
-      threadID
+      threadID,
     }
     return this.getOrCreate(name, options)
   }
@@ -363,23 +361,21 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse> 
+  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>
   async getOrCreate(
     name: string,
     options?: string | GetOrCreateOptions,
     encrypted?: boolean,
     cid?: string,
-    threadID?: string
+    threadID?: string,
   ): Promise<{ root?: Root; threadID?: string }> {
-    if (!options && (encrypted || cid || threadID) ) {
+    if (!options && (encrypted || cid || threadID)) {
       // Case where threadName passed as undefined using old signature
       console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, 'buckets', !!encrypted, cid, threadID)
-    }
-    else if (!options) {
+    } else if (!options) {
       return this._getOrCreate(name)
-    }
-    else if (typeof options !== "object") {
+    } else if (typeof options !== 'object') {
       // Case where using old signature
       console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, options, !!encrypted, cid, threadID)
@@ -431,7 +427,7 @@ export class Buckets extends GrpcAuthentication {
     if (existing) {
       return { root: existing, threadID }
     }
-    const created = await this.create(name, {encrypted, cid})
+    const created = await this.create(name, { encrypted, cid })
     return { root: created.root, threadID }
   }
 
@@ -442,7 +438,7 @@ export class Buckets extends GrpcAuthentication {
    * @deprecated Init has been replaced by create
    */
   async init(name: string, encrypted = false): Promise<CreateResponse> {
-    return this.create(name, {encrypted})
+    return this.create(name, { encrypted })
   }
 
   /**
@@ -466,14 +462,12 @@ export class Buckets extends GrpcAuthentication {
     logger.debug('create request')
     if (typeof options == 'object') {
       return bucketsCreate(this, name, !!options.encrypted, options.cid)
-    }
-    else {
+    } else {
       if (options !== undefined || cid !== undefined) {
         console.warn('Update Buckets.create to use CreateOptions input.')
       }
       const encrypted = !!options
       return bucketsCreate(this, name, encrypted, cid)
-
     }
   }
 
@@ -624,10 +618,7 @@ export class Buckets extends GrpcAuthentication {
    * ```
    */
   async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
-    if (isNode) {
-      return bucketsPushPathNode(this, key, path, input, options)
-    }
-    return bucketsPushPath(this, key, path, input, options)
+    return bucketsPushPathNode(this, key, path, input, options)
   }
 
   /**
@@ -649,7 +640,11 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  pullPath(key: string, path: string, options?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+  pullPath(
+    key: string,
+    path: string,
+    options?: { progress?: (num?: number) => void },
+  ): AsyncIterableIterator<Uint8Array> {
     return bucketsPullPath(this, key, path, options)
   }
 

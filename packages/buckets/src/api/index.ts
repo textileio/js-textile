@@ -40,7 +40,13 @@ import {
   SetDefaultArchiveConfigRequest,
   SetPathRequest,
 } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb'
-import { APIService, APIServiceClient, APIServicePushPath, BidirectionalStream, Status } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
+import {
+  APIService,
+  APIServiceClient,
+  APIServicePushPath,
+  BidirectionalStream,
+  Status,
+} from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
@@ -48,7 +54,6 @@ import type { AbortSignal } from 'abort-controller'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
-import nextTick from 'next-tick'
 import { File, normaliseInput } from './normalize'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -422,11 +427,7 @@ export async function bucketsCreate(
  *
  * @internal
  */
-export async function bucketsRoot(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<Root | undefined> {
+export async function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root | undefined> {
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
@@ -690,7 +691,7 @@ export async function bucketsPushPathNode(
       })
     }
 
-    stream.on("data", (message: PushPathResponse) => {
+    stream.on('data', (message: PushPathResponse) => {
       // Let's just make sure we haven't aborted this outside this function
       if (opts?.signal?.aborted) {
         stream.cancel()
@@ -699,13 +700,13 @@ export async function bucketsPushPathNode(
       if (message.hasEvent()) {
         const event = message.getEvent()?.toObject()
         if (event?.path) {
-          // @todo: Is there an standard library/tool for this step in JS?
+          // TODO: Is there an standard library/tool for this step in JS?
           const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
           const cid = new CID(pth)
           const res: PushPathResult = {
             path: {
-              path: `/ipfs/${cid.toString()}`,
-              cid: cid,
+              path: `/ipfs/${cid?.toString()}`,
+              cid,
               root: cid,
               remainder: '',
             },
@@ -720,22 +721,20 @@ export async function bucketsPushPathNode(
       }
     })
 
-    stream.on("end", (status?: Status) => {
+    stream.on('end', (status?: Status) => {
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
         return resolve()
       }
     })
-    stream.on("status", (status?: Status) => {
-      console.log("status, status")
+    stream.on('status', (status?: Status) => {
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
         return resolve()
       }
     })
-
 
     const head = new PushPathRequest.Header()
     head.setPath(source.path || path)
@@ -1101,7 +1100,7 @@ export async function bucketsArchiveWatch(
         id: rec.getJsPbMessageId(),
         msg: rec.getMsg(),
       }
-      nextTick(() => callback(response))
+      callback(response)
     },
     onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
       if (status !== grpc.Code.OK) {

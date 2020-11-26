@@ -36,11 +36,8 @@
     "@textile/grpc-connection": "^0.2.1",
     "@textile/grpc-powergate-client": "^1.2.1",
     "@textile/hub-grpc": "2.1.7",
-    "@types/next-tick": "^1.0.0",
-    "cids": "^0.8.0",
     "event-iterator": "^2.0.0",
-    "loglevel": "^1.6.8",
-    "next-tick": "^1.1.0"
+    "loglevel": "^1.6.8"
   },
   "devDependencies": {
     "axios": "^0.19.2",

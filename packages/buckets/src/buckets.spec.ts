@@ -40,7 +40,7 @@ describe('Buckets...', function () {
 
   describe('editing', function () {
     it('should open a bucket by name without thread info', async function () {
-      const { root, threadID } = await client.getOrCreate('createbuck', {threadName: 'buckets', encrypted: false})
+      const { root, threadID } = await client.getOrCreate('createbuck', { threadName: 'buckets', encrypted: false })
       expect(threadID).to.not.be.undefined
       expect(root).to.have.ownProperty('key')
       expect(root).to.have.ownProperty('path')

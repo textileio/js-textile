@@ -34,7 +34,6 @@
     "@textile/security": "^0.5.0",
     "@textile/threads-id": "^0.2.0",
     "@textile/users": "^1.1.1",
-    "cids": "^0.8.0",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
   },
