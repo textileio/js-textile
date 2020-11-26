@@ -40,7 +40,7 @@ import {
   SetDefaultArchiveConfigRequest,
   SetPathRequest,
 } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb'
-import { APIService, APIServicePushPath } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
+import { APIService, APIServiceClient, APIServicePushPath, BidirectionalStream, Status } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
@@ -636,6 +636,117 @@ export async function bucketsPushPath(
   })
 }
 
+export async function bucketsPushPathNode(
+  api: GrpcConnection,
+  key: string,
+  path: string,
+  input: any,
+  opts?: PushOptions,
+  ctx?: ContextInterface,
+) {
+  return new Promise<PushPathResult>(async (resolve, reject) => {
+    // Only process the first input if there are more than one
+    const source: File | undefined = (await normaliseInput(input).next()).value
+
+    if (!source) {
+      return reject(AbortError)
+    }
+
+    const clientjs = new APIServiceClient(api.serviceHost, api.rpcOptions)
+
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+
+    const stream: BidirectionalStream<PushPathRequest, PushPathResponse> = clientjs.pushPath(metadata)
+
+    if (opts?.signal !== undefined) {
+      opts.signal.addEventListener('abort', () => {
+        stream.cancel()
+        return reject(AbortError)
+      })
+    }
+
+    stream.on("data", (message: PushPathResponse) => {
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        stream.cancel()
+        return reject(AbortError)
+      }
+      if (message.hasEvent()) {
+        const event = message.getEvent()?.toObject()
+        if (event?.path) {
+          // @todo: Is there an standard library/tool for this step in JS?
+          const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
+          const cid = new CID(pth)
+          const res: PushPathResult = {
+            path: {
+              path: `/ipfs/${cid.toString()}`,
+              cid: cid,
+              root: cid,
+              remainder: '',
+            },
+            root: event.root?.path ?? '',
+          }
+          return resolve(res)
+        } else if (opts?.progress) {
+          opts.progress(event?.bytes)
+        }
+      } else {
+        return reject(new Error('Invalid reply'))
+      }
+    })
+
+    stream.on("end", (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return resolve()
+      }
+    })
+    stream.on("status", (status?: Status) => {
+      console.log("status, status")
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return resolve()
+      }
+    })
+
+
+    const head = new PushPathRequest.Header()
+    head.setPath(source.path || path)
+    head.setKey(key)
+    // Setting root here ensures pushes will error if root is out of date
+    let root = ''
+    if (opts?.root) {
+      // If we explicitly received a root argument, use that
+      root = typeof opts.root === 'string' ? opts.root : opts.root.path
+    } else {
+      // Otherwise, make a call to list path to get the latest known root
+      const head = await bucketsListPath(api, key, '', ctx)
+      root = head.root?.path ?? '' // Shouldn't ever be undefined here
+    }
+    head.setRoot(root)
+    const req = new PushPathRequest()
+    req.setHeader(head)
+
+    stream.write(req)
+    if (source.content) {
+      const process = await block({ size: 32768, noPad: true })
+      for await (const chunk of process(source.content)) {
+        // Let's just make sure we haven't aborted this outside this function
+        if (opts?.signal?.aborted) {
+          stream.cancel()
+          return reject(AbortError)
+        }
+        const buf = chunk.slice()
+        const part = new PushPathRequest()
+        part.setChunk(buf as Buffer)
+        stream.write(part)
+      }
+    }
+    stream.end()
+  })
+}
 /**
  * Pushes a file to a bucket path.
  * @internal

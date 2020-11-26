@@ -46,7 +46,8 @@
     "event-iterator": "^2.0.0",
     "it-block": "^2.0.0",
     "loglevel": "^1.6.8",
-    "next-tick": "^1.1.0"
+    "next-tick": "^1.1.0",
+    "browser-or-node": "1.3.0"
   },
   "devDependencies": {
     "axios": "^0.20.0",
