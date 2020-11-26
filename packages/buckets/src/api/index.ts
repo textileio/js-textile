@@ -348,7 +348,6 @@ function fromPbArchiveStatus(pbArchiveStatus: PbArchiveStatusMap[keyof PbArchive
 }
 
 function fromPbArchive(pbArchive: PbArchive): Archive {
-  const foo = pbArchive.getArchiveStatus()
   return {
     aborted: pbArchive.getAborted(),
     abortedMsg: pbArchive.getAbortedMsg(),
