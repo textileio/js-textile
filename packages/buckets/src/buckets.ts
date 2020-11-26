@@ -628,10 +628,11 @@ export class Buckets extends GrpcAuthentication {
       } catch (error) {
         if (currentRun < runLimit && error.message && error.message.toLowerCase() === 'Response closed without headers'.toLowerCase()) {
           await wait(backoff)
+          console.log("retry", runLimit, backoff, currentRun, error.message)
           return await runner(api, runLimit, backoff * 2, currentRun += 1)
         } 
         else {
-          console.error("no retry", runLimit, backoff, currentRun, error.message)
+          console.log("no retry", runLimit, backoff, currentRun, error.message)
           throw error
         }
       }
