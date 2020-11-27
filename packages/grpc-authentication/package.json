@@ -1,6 +1,6 @@
 {
   "name": "@textile/grpc-authentication",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "web-gRPC state manager for grpc-connection.",
   "main": "dist/index",
   "types": "dist/index",
@@ -29,9 +29,9 @@
   "license": "MIT",
   "dependencies": {
     "@textile/context": "^0.8.1",
-    "@textile/crypto": "^1.0.0",
-    "@textile/grpc-connection": "^1.0.0",
-    "@textile/hub-threads-client": "^2.0.0",
+    "@textile/crypto": "^1.0.1",
+    "@textile/grpc-connection": "^1.0.1",
+    "@textile/hub-threads-client": "^2.0.1",
     "@textile/security": "^0.5.0"
   },
   "devDependencies": {

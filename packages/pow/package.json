@@ -1,6 +1,6 @@
 {
   "name": "@textile/pow",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "web-gRPC wrapper client for interacting with Textile Powergate services.",
   "main": "dist/index",
   "types": "dist/index",
@@ -31,9 +31,9 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.8.1",
-    "@textile/crypto": "^1.0.0",
-    "@textile/grpc-authentication": "^1.0.0",
-    "@textile/grpc-connection": "^1.0.0",
+    "@textile/crypto": "^1.0.1",
+    "@textile/grpc-authentication": "^1.0.1",
+    "@textile/grpc-connection": "^1.0.1",
     "@textile/grpc-powergate-client": "^1.2.1",
     "@textile/hub-grpc": "2.1.7",
     "event-iterator": "^2.0.0",
