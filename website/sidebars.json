@@ -149,9 +149,13 @@
       "hub.buckets.archive",
       "hub.buckets.archives",
       "hub.buckets.archivewatch",
-      "hub.archiveconfig",
+      "hub.archiverenew",
+      "hub.dealinfo",
+      "hub.archivestatus",
+      "hub.archive",
+      "hub.archives",
       "hub.archiveoptions",
-      "hub.archives"
+      "hub.archiveconfig"
     ]
   },
   "client-docs": {
