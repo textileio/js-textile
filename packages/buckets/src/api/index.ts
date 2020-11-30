@@ -173,6 +173,12 @@ export type Path = {
  */
 export type PathObject = Path
 
+export const CHUNK_SIZE = 32768
+
+export function* genChunks(value: Uint8Array, n: number) {
+  return yield* Array.from(Array(Math.ceil(value.byteLength / n)), (_, i) => value.slice(i * n, i * n + n))
+}
+
 /**
  * ArchiveConfig is the desired state of a Cid in the Filecoin network.
  */
@@ -619,8 +625,6 @@ export async function bucketsPushPath(
     })
     if (source) {
       const head = new PushPathRequest.Header()
-      const safePath = source.path || path
-      console.log(safePath)
       head.setPath(source.path || path)
       head.setKey(key)
       // Setting root here ensures pushes will error if root is out of date
@@ -645,17 +649,20 @@ export async function bucketsPushPath(
       client.send(req)
 
       if (source.content) {
-        const process = await block({ size: 32768, noPad: true })
-        for await (const chunk of process(source.content)) {
+        for await (const chunk of source.content) {
           // Let's just make sure we haven't aborted this outside this function
           if (opts?.signal?.aborted) {
-            client.close()
+            try {
+              client.close()
+            } catch {} // noop
             return reject(AbortError)
           }
-          const buf = chunk.slice()
-          const part = new PushPathRequest()
-          part.setChunk(buf as Buffer)
-          client.send(part)
+          // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+          for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
+            const part = new PushPathRequest()
+            part.setChunk(chunklet)
+            client.send(part)
+          }
         }
       }
       // We only need to finish send here if we actually started
@@ -756,24 +763,22 @@ export async function bucketsPushPathNode(
     req.setHeader(head)
 
     stream.write(req)
-    console.log(source)
     if (source.content) {
-      // const process = await block({ size: 32768, noPad: true })
       for await (const chunk of source.content) {
-        // for await (const chunk of process(source.content)) {
-        // Let's just make sure we haven't aborted this outside this function
         if (opts?.signal?.aborted) {
+          // Let's just make sure we haven't aborted this outside this function
           try {
             // Should already have been handled
             stream.cancel()
           } catch {} // noop
           return reject(AbortError)
         }
-        // const buf = chunk.slice()
-        const part = new PushPathRequest()
-        // part.setChunk(buf as Buffer)
-        part.setChunk(chunk as Uint8Array)
-        stream.write(part)
+        // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+        for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
+          const part = new PushPathRequest()
+          part.setChunk(chunklet)
+          stream.write(part)
+        }
       }
     }
     stream.end()

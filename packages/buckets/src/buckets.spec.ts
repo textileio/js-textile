@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { AbortError, CreateResponse } from './api'
+import { AbortError, CreateResponse, genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 
@@ -17,6 +17,20 @@ const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const rightError = new Error('right error!')
 const sessionSecret = 'hubsession'
+
+describe('Buckets utils...', function () {
+  it('should create max-sized chunks from an input Uin8Array', function () {
+    const original = Uint8Array.from(Array.from(Array(1234), (_, i) => i * i))
+    let it = genChunks(original, 1500)
+    const { value } = it.next()
+    expect(value.byteLength).to.equal(1234)
+
+    it = genChunks(original, 50)
+    for (const value of it) {
+      expect(value.byteLength).to.be.lessThan(51)
+    }
+  })
+})
 
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
@@ -440,10 +454,10 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
-        console.log('before push to bobby.jpg')
-        const res = await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
-        console.log('after push to bobby.jpg')
+        // Note: Callers can also specify chunk size directly using highWaterMark:
+        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
+        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)

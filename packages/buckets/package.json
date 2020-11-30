@@ -43,7 +43,6 @@
     "abort-controller": "^3.0.0",
     "cids": "^1.0.2",
     "event-iterator": "^2.0.0",
-    "it-block": "^2.0.0",
     "loglevel": "^1.6.8"
   },
   "devDependencies": {
