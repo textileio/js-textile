@@ -439,10 +439,13 @@ describe('Buckets...', function () {
       bobBuckets.withThread(aliceThread)
 
       const { root } = await bobBuckets.listPath(rootKey, '')
+      console.log(root)
       await new Promise((resolve) => setTimeout(resolve, 1000))
       try {
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+        console.log('before push to bobby.jpg')
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
+        console.log('after push to bobby.jpg')
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)

@@ -16,7 +16,7 @@
     "outdated": "lerna exec -- npx ncu",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",
     "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
-    "test:node": "TS_NODE_FILES=true mocha --exit",
+    "test:node": "TS_NODE_FILES=true mocha --exit -g \"Buckets[...]\"",
     "test:browser": "lerna run --stream test:browser",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
     "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile/.*$/'"
