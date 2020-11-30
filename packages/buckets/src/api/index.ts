@@ -722,6 +722,7 @@ export async function bucketsPushPathNode(
     })
 
     stream.on('end', (status?: Status) => {
+      console.log('stream status', status)
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
@@ -729,6 +730,7 @@ export async function bucketsPushPathNode(
       }
     })
     stream.on('status', (status?: Status) => {
+      console.log('stream status', status)
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
@@ -742,6 +744,7 @@ export async function bucketsPushPathNode(
     // Setting root here ensures pushes will error if root is out of date
     let root = ''
     if (opts?.root) {
+      console.log(opts?.root)
       // If we explicitly received a root argument, use that
       root = typeof opts.root === 'string' ? opts.root : opts.root.path
     } else {
@@ -749,6 +752,7 @@ export async function bucketsPushPathNode(
       const head = await bucketsListPath(api, key, '', ctx)
       root = head.root?.path ?? '' // Shouldn't ever be undefined here
     }
+    console.log(root)
     head.setRoot(root)
     const req = new PushPathRequest()
     req.setHeader(head)
