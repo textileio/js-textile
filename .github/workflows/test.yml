@@ -63,7 +63,6 @@ jobs:
       - name: Test Node
         run: |
           npm run test:node
-          docker logs "${{ job.services.textile.id }}"
 
       - name: Test Browser
         run: |
@@ -73,3 +72,7 @@ jobs:
         run: |
           npm run docs
           npm run test:docs
+
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
