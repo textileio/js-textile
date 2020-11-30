@@ -722,7 +722,7 @@ export async function bucketsPushPathNode(
     })
 
     stream.on('end', (status?: Status) => {
-      console.log('stream status', status)
+      console.log('stream end', status)
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
@@ -758,9 +758,11 @@ export async function bucketsPushPathNode(
     req.setHeader(head)
 
     stream.write(req)
+    console.log(source)
     if (source.content) {
       const process = await block({ size: 32768, noPad: true })
       for await (const chunk of process(source.content)) {
+        console.log(chunk)
         // Let's just make sure we haven't aborted this outside this function
         if (opts?.signal?.aborted) {
           stream.cancel()
