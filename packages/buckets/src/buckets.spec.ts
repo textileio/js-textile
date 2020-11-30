@@ -440,10 +440,9 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-        console.log('before push to bobby.jpg', root)
+        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
+        console.log('before push to bobby.jpg')
         const res = await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
-        console.log(res)
         console.log('after push to bobby.jpg')
         throw wrongError
       } catch (err) {

@@ -3,7 +3,7 @@ import { Buffer } from 'buffer'
 
 export interface File {
   path: string
-  content?: AsyncIterable<Buffer | ArrayBuffer>
+  content?: AsyncIterable<Buffer | Uint8Array | ArrayBuffer>
 
   [key: string]: any
 }
@@ -186,7 +186,7 @@ function toFileObject(input: any) {
   return obj
 }
 
-function toAsyncIterable(input: any) {
+function toAsyncIterable(input: any): AsyncGenerator<Buffer | Uint8Array | ArrayBuffer> {
   // Bytes | String
   if (isBytes(input) || typeof input === 'string') {
     return (async function* () {

@@ -619,6 +619,8 @@ export async function bucketsPushPath(
     })
     if (source) {
       const head = new PushPathRequest.Header()
+      const safePath = source.path || path
+      console.log(safePath)
       head.setPath(source.path || path)
       head.setKey(key)
       // Setting root here ensures pushes will error if root is out of date
@@ -722,7 +724,6 @@ export async function bucketsPushPathNode(
     })
 
     stream.on('end', (status?: Status) => {
-      console.log('stream end', status)
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
@@ -730,7 +731,6 @@ export async function bucketsPushPathNode(
       }
     })
     stream.on('status', (status?: Status) => {
-      console.log('stream status', status)
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
@@ -744,7 +744,6 @@ export async function bucketsPushPathNode(
     // Setting root here ensures pushes will error if root is out of date
     let root = ''
     if (opts?.root) {
-      console.log(opts?.root)
       // If we explicitly received a root argument, use that
       root = typeof opts.root === 'string' ? opts.root : opts.root.path
     } else {
@@ -752,7 +751,6 @@ export async function bucketsPushPathNode(
       const head = await bucketsListPath(api, key, '', ctx)
       root = head.root?.path ?? '' // Shouldn't ever be undefined here
     }
-    console.log(root)
     head.setRoot(root)
     const req = new PushPathRequest()
     req.setHeader(head)
@@ -760,17 +758,21 @@ export async function bucketsPushPathNode(
     stream.write(req)
     console.log(source)
     if (source.content) {
-      const process = await block({ size: 32768, noPad: true })
-      for await (const chunk of process(source.content)) {
-        console.log(chunk)
+      // const process = await block({ size: 32768, noPad: true })
+      for await (const chunk of source.content) {
+        // for await (const chunk of process(source.content)) {
         // Let's just make sure we haven't aborted this outside this function
         if (opts?.signal?.aborted) {
-          stream.cancel()
+          try {
+            // Should already have been handled
+            stream.cancel()
+          } catch {} // noop
           return reject(AbortError)
         }
-        const buf = chunk.slice()
+        // const buf = chunk.slice()
         const part = new PushPathRequest()
-        part.setChunk(buf as Buffer)
+        // part.setChunk(buf as Buffer)
+        part.setChunk(chunk as Uint8Array)
         stream.write(part)
       }
     }
