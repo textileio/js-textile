@@ -26,49 +26,50 @@ jobs:
           HUB_EMAIL_SESSION_SECRET: hubsession
           HUB_LOG_DEBUG: true
         ports:
-          - "127.0.0.1:3006:3006"
-          - "3007:3007"
-          - "4006:4006"
-          - "127.0.0.1:8006:8006"
+          - '127.0.0.1:3006:3006'
+          - '3007:3007'
+          - '4006:4006'
+          - '127.0.0.1:8006:8006'
       mongo:
         image: mongo:latest
         ports:
-          - "127.0.0.1:27017:27017"
+          - '127.0.0.1:27017:27017'
       ipfs:
         image: ipfs/go-ipfs:v0.5.1
         ports:
-          - "4001:4001"
-          - "127.0.0.1:5001:5001"
-          - "8080:8080"
+          - '4001:4001'
+          - '127.0.0.1:5001:5001'
+          - '8080:8080'
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v1
 
-    - name: Setup
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
+      - name: Setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
 
-    - name: Install
-      run: npm install
+      - name: Install
+        run: npm install
 
-    - name: Boostrap
-      run: npm run bootstrap -- --hoist
+      - name: Boostrap
+        run: npm run bootstrap -- --hoist
 
-    - name: Build All
-      run: |
-           npm run build
+      - name: Build All
+        run: |
+          npm run build
 
-    - name: Test Node
-      run: |
-        npm run test:node
+      - name: Test Node
+        run: |
+          npm run test:node
+          docker logs "${{ job.services.textile.id }}"
 
-    - name: Test Browser
-      run: |
-           npm run test:browser
+      - name: Test Browser
+        run: |
+          npm run test:browser
 
-    - name: Test Examples
-      run: |
-           npm run docs
-           npm run test:docs
+      - name: Test Examples
+        run: |
+          npm run docs
+          npm run test:docs
