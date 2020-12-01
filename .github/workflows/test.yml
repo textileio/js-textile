@@ -37,18 +37,11 @@ jobs:
           - '127.0.0.1:27017:27017'
       billing:
         image: textile/textile:billing
-        restart: always
-        environment:
-          - BILLING_LOG_DEBUG
-          - BILLING_LOG_FILE
-          - BILLING_ADDR_API=/ip4/0.0.0.0/tcp/10006
-          - BILLING_ADDR_MONGO_URI=mongodb://mongo:27017
-          - BILLING_ADDR_MONGO_NAME
-          - BILLING_ADDR_GATEWAY_HOST=/ip4/0.0.0.0/tcp/8010
-          - BILLING_ADDR_GATEWAY_URL
-          - BILLING_STRIPE_API_KEY=${{ secrets.STRIPE_API_KEY }}
-          - BILLING_SEGMENT_API_KEY
-          - BILLING_SEGMENT_PREFIX
+        env:
+          BILLING_ADDR_API: /ip4/0.0.0.0/tcp/10006
+          BILLING_ADDR_MONGO_URI: mongodb://mongo:27017
+          BILLING_ADDR_GATEWAY_HOST: /ip4/0.0.0.0/tcp/8010
+          BILLING_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
         ports:
           - "127.0.0.1:10006:10006"
           - "127.0.0.1:8010:8010"
