@@ -1,16 +1,16 @@
-import log from 'loglevel'
-import {
-  GetThreadResponse,
-  ListThreadsResponse,
-  GetThreadRequest,
-  ListThreadsRequest,
-} from '@textile/users-grpc/api/usersd/pb/usersd_pb'
-import { APIServiceClient } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
+import { Context } from '@textile/context'
 import { ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
+import { KeyInfo, UserAuth } from '@textile/security'
 import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
-import { UserAuth, KeyInfo } from '@textile/security'
-import { Context } from '@textile/context'
+import {
+  GetThreadRequest,
+  GetThreadResponse,
+  ListThreadsRequest,
+  ListThreadsResponse,
+} from '@textile/users-grpc/api/usersd/pb/usersd_pb'
+import { APIServiceClient } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
+import log from 'loglevel'
 
 const logger = log.getLogger('users')
 
@@ -43,7 +43,7 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
             }
             resolve(res)
           } else {
-            resolve()
+            reject(new Error('No result'))
           }
         })
       })
@@ -75,12 +75,12 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThrea
           const lst = message?.getListList()
           const listList = []
           if (lst) {
-            for (let thrd of lst) {
+            for (const thrd of lst) {
               const row = thrd.toObject()
-              listList.push({...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString()})
+              listList.push({ ...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString() })
             }
           }
-          resolve({listList})
+          resolve({ listList })
         })
       })
       .catch((err: Error) => {
