@@ -15,11 +15,7 @@ export const createUsername = (size = 12) => {
 }
 
 export const createEmail = () => {
-  const eee = `${createUsername()}@doe.com`
-  console.log('\n============\n\n===========\n')
-  console.log(eee)
-  console.log('\n============\n\n===========\n')
-  return eee
+  return `${createUsername()}@doe.com`
 }
 
 export const confirmEmail = async (gurl: string, secret: string) => {
