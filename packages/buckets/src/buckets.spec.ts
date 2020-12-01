@@ -36,6 +36,10 @@ describe('Buckets utils...', function () {
     expect(value.byteLength).to.equal(1230)
     value = it.next().value
     expect(value.byteLength).to.equal(4)
+
+    const small = Uint8Array.from(Array.from(Array(64), (_, i) => i * i))
+    const arr = Array.from(genChunks(small, 16))
+    expect(arr).to.have.lengthOf(4)
   })
 })
 

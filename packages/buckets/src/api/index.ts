@@ -173,8 +173,8 @@ export type PathObject = Path
 
 export const CHUNK_SIZE = 32768
 
-export function* genChunks(value: Uint8Array, n: number) {
-  return yield* Array.from(Array(Math.ceil(value.byteLength / n)), (_, i) => value.slice(i * n, i * n + n))
+export function* genChunks(value: Uint8Array, size: number) {
+  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
 }
 
 /**
