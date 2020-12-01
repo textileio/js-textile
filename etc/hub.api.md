@@ -294,6 +294,9 @@ export function bucketsPushPath(api: GrpcConnection, key: string, path: string, 
 // @public (undocumented)
 export function bucketsPushPathAccessRoles(api: GrpcConnection, key: string, path: string, roles: Map<string, PathAccessRole>, ctx?: ContextInterface): Promise<void>;
 
+// @public (undocumented)
+export function bucketsPushPathNode(api: GrpcConnection, key: string, path: string, input: any, opts?: PushOptions, ctx?: ContextInterface): Promise<PushPathResult>;
+
 // Warning: (ae-internal-missing-underscore) The name "bucketsRemove" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal
@@ -328,44 +331,49 @@ export type BuckMetadata = {
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
 
+// @public (undocumented)
+export const CHUNK_SIZE = 32768;
+
 // @public
 export class Client {
     constructor(context?: ContextInterface, debug?: boolean);
     // (undocumented)
     context: ContextInterface;
-    create(threadID: ThreadID, collectionName: string, values: any[]): Promise<string[]>;
-    delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
-    deleteCollection(threadID: ThreadID, name: string): Promise<void>;
-    deleteDB(threadID: ThreadID): Promise<void>;
-    find<T = unknown>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<T[]>;
-    findByID<T = unknown>(threadID: ThreadID, collectionName: string, ID: string): Promise<T>;
-    getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
+    create(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<string[]>;
+    delete(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<void>;
+    deleteCollection(threadID: ThreadID_2, name: string): Promise<void>;
+    deleteDB(threadID: ThreadID_2): Promise<void>;
+    find<T = unknown>(threadID: ThreadID_2, collectionName: string, query: QueryJSON): Promise<T[]>;
+    findByID<T = unknown>(threadID: ThreadID_2, collectionName: string, ID: string): Promise<T>;
+    getCollectionIndexes(threadID: ThreadID_2, name: string): Promise<pb.Index.AsObject[]>;
     // (undocumented)
-    getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionConfig>;
-    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
-    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
+    getCollectionInfo(threadID: ThreadID_2, name: string): Promise<CollectionConfig>;
+    getDBInfo(threadID: ThreadID_2): Promise<DBInfo>;
+    // Warning: (ae-forgotten-export) The symbol "Identity" needs to be exported by the entry point index.d.ts
+    getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
-    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
+    has(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<boolean>;
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    listCollections(thread: ThreadID_2): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
-    newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
-    newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    open(threadID: ThreadID, name?: string): Promise<void>;
-    readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
+    listen<T = any>(threadID: ThreadID_2, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
+    newCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    newCollectionFromObject(threadID: ThreadID_2, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "ThreadID" needs to be exported by the entry point index.d.ts
+    newDB(threadID?: ThreadID_2, name?: string): Promise<ThreadID_2>;
+    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    open(threadID: ThreadID_2, name?: string): Promise<void>;
+    readTransaction(threadID: ThreadID_2, collectionName: string): ReadTransaction;
     // (undocumented)
     rpcOptions: grpc.RpcOptions;
-    save(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    save(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
     // (undocumented)
     serviceHost: string;
-    updateCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    verify(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    updateCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    verify(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
-    writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
+    writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
 }
 
 // @public
@@ -530,6 +538,9 @@ export interface Filter {
     collectionName?: string;
     instanceID?: string;
 }
+
+// @public (undocumented)
+export function genChunks(value: Uint8Array, size: number): Generator<Uint8Array, any, undefined>;
 
 // Warning: (ae-internal-missing-underscore) The name "getMailboxID" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -885,7 +896,7 @@ export { ReadInboxMessageResponse }
 //
 // @public
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
     // (undocumented)
@@ -897,7 +908,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
     protected readonly modelName: string;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
 }
 
 export { RemovePathResponse }
@@ -1122,7 +1133,7 @@ export interface WithUserAuthOptions extends CopyAuthOptions {
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
@@ -1138,7 +1149,7 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
     save<T = unknown>(values: T[]): Promise<void>;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
     verify<T = unknown>(values: T[]): Promise<void>;
 }
 
