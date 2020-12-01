@@ -89,7 +89,7 @@
     "typescript": "^3.7.2",
     "typescript-docs-verifier": "^1.1.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.9.0"
   }
 }
