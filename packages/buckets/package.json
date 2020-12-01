@@ -46,7 +46,7 @@
     "loglevel": "^1.6.8"
   },
   "devDependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "browser-or-node": "1.3.0",
     "delay": "^4.4.0",
     "fast-sha256": "^1.3.0",
