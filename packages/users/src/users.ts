@@ -27,6 +27,7 @@ import {
   watchMailbox,
   MailboxEvent,
   GetUsageResponse,
+  UsageOptions,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -183,6 +184,13 @@ export class Users extends GrpcAuthentication {
   }
 
   /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   */
+  setToken(token: string) {
+    return super.setToken(token)
+  }
+
+  /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
    *
    * @example
@@ -222,8 +230,8 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getUsage(): Promise<GetUsageResponse> {
-    return getUsage(this)
+  async getUsage(options?: UsageOptions): Promise<GetUsageResponse> {
+    return getUsage(this, options)
   }
 
   /**

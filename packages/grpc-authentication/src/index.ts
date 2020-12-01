@@ -188,6 +188,13 @@ export class GrpcAuthentication extends GrpcConnection {
   }
 
   /**
+   * Sets the user token for interacting with the remote API.
+   */
+  async setToken(token: string) {
+    this.context.withToken(token)
+  }
+
+  /**
    * Obtain a token for interacting with the remote API.
    * When your app is creating new private-key based users to interact with
    * the API using User Group keys, you must first create a new token for

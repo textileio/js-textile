@@ -14,7 +14,7 @@
       "hub.client"
     ],
     "Filecoin": [
-      "hub.filecoin"
+      "hub.pow"
     ],
     "Common Methods & Classes": [
       "hub.threadid",
@@ -56,6 +56,7 @@
       "hub.users.withkeyinfo",
       "hub.users.gettoken",
       "hub.users.gettokenchallenge",
+      "hub.users.settoken",
       "hub.users.withthread"
     ],
     "Types": [
@@ -67,6 +68,7 @@
       "hub.pushpathresult",
       "hub.sentboxlistoptions",
       "hub.usermessage",
+      "hub.usageoptions",
       "hub.getusageresponse"
     ],
     "Identity interfaces": [
@@ -114,6 +116,7 @@
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
       "hub.buckets.gettokenchallenge",
+      "hub.buckets.settoken",
       "hub.buckets.withthread",
       "hub.buckets.getorcreate",
       "hub.buckets.create",
@@ -134,6 +137,15 @@
       "hub.buckets.removepath",
       "hub.buckets.setpath"
     ],
+    "Experimental": [
+      "hub.archive",
+      "hub.archiveinfo",
+      "hub.buckets.archiveinfo",
+      "hub.archivedealinfo",
+      "hub.buckets.archivestatus",
+      "hub.archivestatus",
+      "hub.statuscode"
+    ],
     "Types": [
       "hub.getorcreateoptions",
       "hub.getorcreateresponse",
@@ -145,20 +157,6 @@
       "hub.pathitem",
       "hub.root",
       "hub.buckmetadata"
-    ],
-    "Experimental": [
-      "hub.buckets.defaultarchiveconfig",
-      "hub.buckets.setdefaultarchiveconfig",
-      "hub.buckets.archive",
-      "hub.buckets.archives",
-      "hub.buckets.archivewatch",
-      "hub.archiverenew",
-      "hub.archivedealinfo",
-      "hub.archivestatus",
-      "hub.archive",
-      "hub.archives",
-      "hub.archiveoptions",
-      "hub.archiveconfig"
     ]
   },
   "client-docs": {
@@ -167,6 +165,7 @@
       "hub.client.withkeyinfo",
       "hub.client.gettoken",
       "hub.client.gettokenchallenge",
+      "hub.client.settoken",
       "hub.client.newdb",
       "hub.client.open",
       "hub.client.deletedb",
@@ -222,43 +221,28 @@
     ]
   },
   "filcoin-docs": {
-    "Filecoin (beta)": [
-      "hub.filecoin.addresses",
-      "hub.filecoin.balance",
-      "hub.filecoin.cidinfo",
-      "hub.filecoin.copyauth",
-      "hub.filecoin.gettoken",
-      "hub.filecoin.gettokenchallenge",
-      "hub.filecoin.retrievaldealrecords",
-      "hub.filecoin.storagedealrecords",
-      "hub.filecoin.withkeyinfo",
-      "hub.filecoin.withuserauth"
+    "Powergate (beta)": [
+      "hub.pow.addrs",
+      "hub.pow.balance",
+      "hub.pow.connectedness",
+      "hub.pow.copyauth",
+      "hub.pow.findpeer",
+      "hub.pow.gettoken",
+      "hub.pow.gettokenchallenge",
+      "hub.pow.settoken",
+      "hub.pow.health",
+      "hub.pow.info",
+      "hub.pow.listretrievaldealrecords",
+      "hub.pow.liststoragedealrecords",
+      "hub.pow.newaddr",
+      "hub.pow.peers",
+      "hub.pow.show",
+      "hub.pow.showall",
+      "hub.pow.withkeyinfo",
+      "hub.pow.withthread",
+      "hub.pow.withuserauth"
     ],
-    "Types": [
-      "hub.addressinfo",
-      "hub.ipfsconfig",
-      "hub.hotconfig",
-      "hub.filrenew",
-      "hub.filconfig",
-      "hub.coldconfig",
-      "hub.storageconfig",
-      "hub.ipfshotinfo",
-      "hub.hotinfo",
-      "hub.filstorage",
-      "hub.filinfo",
-      "hub.coldinfo",
-      "hub.storageinfo",
-      "hub.dealinfo",
-      "hub.dealerror",
-      "hub.jobstatus",
-      "hub.storagejob",
-      "hub.cidinfo",
-      "hub.storagedealinfo",
-      "hub.storagedealrecord",
-      "hub.retrievaldealinfo",
-      "hub.retrievaldealrecord",
-      "hub.dealrecordsconfig"
-    ]
+    "Types": []
   },
   "Types": {
     "Common Types": [

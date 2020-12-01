@@ -55,6 +55,7 @@ describe('Buckets...', function () {
   const apiKeyInfo = { key: '' }
 
   before(async function () {
+    this.timeout(5000)
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     ctx.withSession(user.user?.session)
     if (!user.user) throw new Error('user signup error')
