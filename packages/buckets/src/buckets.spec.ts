@@ -22,13 +22,20 @@ describe('Buckets utils...', function () {
   it('should create max-sized chunks from an input Uin8Array', function () {
     const original = Uint8Array.from(Array.from(Array(1234), (_, i) => i * i))
     let it = genChunks(original, 1500)
-    const { value } = it.next()
+    let value = it.next().value
     expect(value.byteLength).to.equal(1234)
 
     it = genChunks(original, 50)
     for (const value of it) {
       expect(value.byteLength).to.be.lessThan(51)
     }
+
+    // Should be two chunks, one of size 1230, and one of size 4
+    it = genChunks(original, 1230)
+    value = it.next().value
+    expect(value.byteLength).to.equal(1230)
+    value = it.next().value
+    expect(value.byteLength).to.equal(4)
   })
 })
 
