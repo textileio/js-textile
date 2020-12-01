@@ -9,6 +9,7 @@ import {
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
 import {
+  getUsage,
   getThread,
   listInboxMessages,
   listThreads,
@@ -20,11 +21,12 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadResponseObj,
+  GetThreadResponse,
   UserMessage,
   getMailboxID,
   watchMailbox,
   MailboxEvent,
+  GetUsageResponse,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -209,6 +211,22 @@ export class Users extends GrpcAuthentication {
   }
 
   /**
+   * GetUsage returns current billing and usage information.
+   *
+   * @example
+   * ```typescript
+   * import { Users } from "@textile/hub"
+   *
+   * async function example(users: Users) {
+   *    const usage = await users.getUsage()
+   * }
+   * ```
+   */
+  async getUsage(): Promise<GetUsageResponse> {
+    return getUsage(this)
+  }
+
+  /**
    * Lists a users existing threads. This method
    * requires a valid user, token, and session.
    *
@@ -221,7 +239,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listThreads(): Promise<Array<GetThreadResponseObj>> {
+  async listThreads(): Promise<Array<GetThreadResponse>> {
     return listThreads(this)
   }
 
@@ -238,7 +256,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getThread(name: string): Promise<GetThreadResponseObj> {
+  async getThread(name: string): Promise<GetThreadResponse> {
     return getThread(this, name)
   }
 

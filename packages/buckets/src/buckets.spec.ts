@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { AbortError, CreateObject } from './api'
+import { AbortError, CreateResponse, genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 
@@ -18,10 +18,35 @@ const wrongError = new Error('wrong error!')
 const rightError = new Error('right error!')
 const sessionSecret = 'hubsession'
 
+describe('Buckets utils...', function () {
+  it('should create max-sized chunks from an input Uin8Array', function () {
+    const original = Uint8Array.from(Array.from(Array(1234), (_, i) => i * i))
+    let it = genChunks(original, 1500)
+    let value = it.next().value
+    expect(value.byteLength).to.equal(1234)
+
+    it = genChunks(original, 50)
+    for (const value of it) {
+      expect(value.byteLength).to.be.lessThan(51)
+    }
+
+    // Should be two chunks, one of size 1230, and one of size 4
+    it = genChunks(original, 1230)
+    value = it.next().value
+    expect(value.byteLength).to.equal(1230)
+    value = it.next().value
+    expect(value.byteLength).to.equal(4)
+
+    const small = Uint8Array.from(Array.from(Array(64), (_, i) => i * i))
+    const arr = Array.from(genChunks(small, 16))
+    expect(arr).to.have.lengthOf(4)
+  })
+})
+
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
   const client = new Buckets(ctx)
-  let buck: CreateObject
+  let buck: CreateResponse
   let fileSize: number
 
   let dev: SignupResponse.AsObject
@@ -40,7 +65,7 @@ describe('Buckets...', function () {
 
   describe('editing', function () {
     it('should open a bucket by name without thread info', async function () {
-      const { root, threadID } = await client.getOrCreate('createbuck', {threadName: 'buckets', encrypted: false})
+      const { root, threadID } = await client.getOrCreate('createbuck', { threadName: 'buckets', encrypted: false })
       expect(threadID).to.not.be.undefined
       expect(root).to.have.ownProperty('key')
       expect(root).to.have.ownProperty('path')
@@ -438,9 +463,12 @@ describe('Buckets...', function () {
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
 
+      const { root } = await bobBuckets.listPath(rootKey, '')
       try {
+        // Note: Callers can also specify chunk size directly using highWaterMark:
+        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
         const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream)
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)

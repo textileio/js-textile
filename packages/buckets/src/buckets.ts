@@ -26,21 +26,21 @@ import {
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPullPathAccessRoles,
-  bucketsPushPath,
   bucketsPushPathAccessRoles,
+  bucketsPushPathNode,
   bucketsRemove,
   bucketsRemovePath,
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
-  CreateObject,
-  LinksObject,
+  CreateResponse,
+  Links,
+  Path,
   PathAccessRole,
-  PathItemObject,
-  PathObject,
+  PathItem,
   PushOptions,
   PushPathResult,
-  RootObject,
+  Root,
 } from './api'
 import { listPathFlat, listPathRecursive } from './utils'
 
@@ -72,11 +72,11 @@ export interface GetOrCreateOptions {
 /**
  * Response from getOrCreate
  */
-export interface GetOrCreateResponse { 
+export interface GetOrCreateResponse {
   /**
-   * RootObject of the bucket
+   * Root of the bucket
    */
-  root?: RootObject
+  root?: Root
   /**
    * ThreadID where the bucket was created.
    */
@@ -87,7 +87,7 @@ export interface CreateOptions {
   /**
    * Encrypt the contents of the bucket on IPFS
    */
-  encrypted?: boolean,
+  encrypted?: boolean
   /**
    * Seed a new bucket with the data available at the content address (CID).
    */
@@ -303,11 +303,11 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     encrypted = false,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
-      threadID
+      threadID,
     }
     return this.getOrCreate(name, options)
   }
@@ -325,11 +325,11 @@ export class Buckets extends GrpcAuthentication {
     threadName = 'buckets',
     encrypted = false,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const options: GetOrCreateOptions = {
       threadName: threadName && threadName !== '' ? threadName : 'buckets',
       encrypted: !!encrypted,
-      threadID
+      threadID,
     }
     return this.getOrCreate(name, options)
   }
@@ -361,22 +361,23 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse> 
+  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>
   async getOrCreate(
     name: string,
     options?: string | GetOrCreateOptions,
     encrypted?: boolean,
     cid?: string,
-    threadID?: string
-  ): Promise<{ root?: RootObject; threadID?: string }> {
-    if (!options && (encrypted || cid || threadID) ) {
+    threadID?: string,
+  ): Promise<{ root?: Root; threadID?: string }> {
+    if (!options && (encrypted || cid || threadID)) {
       // Case where threadName passed as undefined using old signature
-      console.warn('update getOrCreate to use GetOrCreateOptions')
+      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, 'buckets', !!encrypted, cid, threadID)
-    }
-    else if (typeof options !== "object") {
+    } else if (!options) {
+      return this._getOrCreate(name)
+    } else if (typeof options !== 'object') {
       // Case where using old signature
-      console.warn('update getOrCreate to use GetOrCreateOptions')
+      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
       return this._getOrCreate(name, options, !!encrypted, cid, threadID)
     } else {
       // Using new signature
@@ -394,7 +395,7 @@ export class Buckets extends GrpcAuthentication {
     encrypted = false,
     cid?: string,
     threadID?: string,
-  ): Promise<{ root?: RootObject; threadID?: string }> {
+  ): Promise<{ root?: Root; threadID?: string }> {
     const client = new Client(this.context)
     if (threadID) {
       const id = threadID
@@ -426,7 +427,7 @@ export class Buckets extends GrpcAuthentication {
     if (existing) {
       return { root: existing, threadID }
     }
-    const created = await this.create(name, {encrypted, cid})
+    const created = await this.create(name, { encrypted, cid })
     return { root: created.root, threadID }
   }
 
@@ -436,8 +437,8 @@ export class Buckets extends GrpcAuthentication {
    * @param encrypted encrypt the bucket contents (default `false`)
    * @deprecated Init has been replaced by create
    */
-  async init(name: string, encrypted = false): Promise<CreateObject> {
-    return this.create(name, {encrypted})
+  async init(name: string, encrypted = false): Promise<CreateResponse> {
+    return this.create(name, { encrypted })
   }
 
   /**
@@ -456,17 +457,17 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async create(name: string, options?: CreateOptions): Promise<CreateObject>
-  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateObject> {
+  async create(name: string, options?: CreateOptions): Promise<CreateResponse>
+  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateResponse> {
     logger.debug('create request')
     if (typeof options == 'object') {
       return bucketsCreate(this, name, !!options.encrypted, options.cid)
-    }
-    else {
-      console.warn('update create to use CreateOptions')
+    } else {
+      if (options !== undefined || cid !== undefined) {
+        console.warn('Update Buckets.create to use CreateOptions input.')
+      }
       const encrypted = !!options
       return bucketsCreate(this, name, encrypted, cid)
-
     }
   }
 
@@ -499,7 +500,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async links(key: string, path = '/'): Promise<LinksObject> {
+  async links(key: string, path = '/'): Promise<Links> {
     logger.debug('link request')
     return bucketsLinks(this, key, path)
   }
@@ -528,7 +529,7 @@ export class Buckets extends GrpcAuthentication {
    * @param path A file/object (sub)-path within a bucket.
    * @param depth (optional) will walk the entire bucket to target depth (default = 1)
    */
-  async listPath(key: string, path: string, depth = 1): Promise<PathObject> {
+  async listPath(key: string, path: string, depth = 1): Promise<Path> {
     logger.debug('list path request')
     return await listPathRecursive(this, key, path, depth)
   }
@@ -567,7 +568,7 @@ export class Buckets extends GrpcAuthentication {
    * listIpfsPath returns items at a particular path in a UnixFS path living in the IPFS network.
    * @param path UnixFS path
    */
-  async listIpfsPath(path: string): Promise<PathItemObject | undefined> {
+  async listIpfsPath(path: string): Promise<PathItem | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
   }
@@ -617,7 +618,7 @@ export class Buckets extends GrpcAuthentication {
    * ```
    */
   async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
-    return bucketsPushPath(this, key, path, input, options)
+    return bucketsPushPathNode(this, key, path, input, options)
   }
 
   /**
@@ -639,7 +640,11 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  pullPath(key: string, path: string, options?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+  pullPath(
+    key: string,
+    path: string,
+    options?: { progress?: (num?: number) => void },
+  ): AsyncIterableIterator<Uint8Array> {
     return bucketsPullPath(this, key, path, options)
   }
 
