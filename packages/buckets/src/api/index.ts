@@ -49,7 +49,7 @@ import {
 } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { WebsocketTransport } from '@textile/grpc-transport'
+import { WebsocketTransport } from './ws'
 import type { AbortSignal } from 'abort-controller'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
