@@ -32,7 +32,7 @@
     "@textile/hub-threads-client": "^2.0.2",
     "@textile/pow": "^2.0.2",
     "@textile/security": "^0.6.2",
-    "@textile/threads-id": "^0.2.0",
+    "@textile/threads-id": "^0.3.1",
     "@textile/users": "^2.0.2",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
