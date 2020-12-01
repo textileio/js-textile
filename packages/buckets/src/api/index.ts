@@ -56,8 +56,6 @@ import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
 import { File, normaliseInput } from './normalize'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const block = require('it-block')
 const logger = log.getLogger('buckets-api')
 
 /**

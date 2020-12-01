@@ -1,6 +1,6 @@
 {
   "name": "@textile/users",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "web-gRPC wrapper client for managing Textile Users.",
   "main": "dist/index",
   "types": "dist/index",
