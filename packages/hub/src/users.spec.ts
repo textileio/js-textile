@@ -116,7 +116,7 @@ describe('All apis...', () => {
         // @todo: Use the cli to list keys
       })
 
-      it('should check the users own usage', async function () {
+      it.skip('should check the users own usage', async function () {
         if (isBrowser) return this.skip()
 
         const usage = await users.getUsage()
@@ -142,7 +142,7 @@ describe('All apis...', () => {
           }
         }
       })
-      it('should check the users usage as the developer', async function () {
+      it.skip('should check the users usage as the developer', async function () {
         const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         const devUser = new Users(ctx)
@@ -170,7 +170,7 @@ describe('All apis...', () => {
           }
         }
       })
-      it('should check the developers usage', async function () {
+      it.skip('should check the developers usage', async function () {
 
         const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
