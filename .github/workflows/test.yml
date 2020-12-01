@@ -26,9 +26,6 @@ jobs:
           HUB_EMAIL_SESSION_SECRET: hubsession
           HUB_LOG_DEBUG: true
           HUB_ADDR_BILLING_API: billing:10006
-        depends_on:
-          - ipfs
-          - billing
         ports:
           - '127.0.0.1:3006:3006'
           - '3007:3007'
@@ -73,6 +70,11 @@ jobs:
       - name: Build All
         run: |
           npm run build
+
+      - name: Sleep for 60 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
 
       - name: Test Node
         run: |
