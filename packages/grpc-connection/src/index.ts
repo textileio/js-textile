@@ -1,6 +1,6 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import { Context, ContextInterface } from '@textile/context'
-import { WebsocketTransport } from '@textile/grpc-transport'
+import { WebsocketTransport } from './ws'
 
 export interface ServiceError {
   message: string
