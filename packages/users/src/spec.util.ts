@@ -61,11 +61,3 @@ export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSec
   )
 }
 
-export const createAPISig = async (secret: string, date: Date = new Date(Date.now() + 1000 * 60)) => {
-  const sec = multibase.decode(secret)
-  const msg = (date ?? new Date()).toISOString()
-  const hash = new HMAC(sec)
-  const mac = hash.update(Buffer.from(msg)).digest()
-  const sig = multibase.encode('base32', Buffer.from(mac)).toString()
-  return { sig, msg }
-}

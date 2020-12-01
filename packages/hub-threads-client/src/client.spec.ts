@@ -4,8 +4,8 @@ import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { expect } from 'chai'
 import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
-import { expirationError } from '@textile/security'
-import { signUp, createKey, createAPISig } from './spec.util'
+import { expirationError, createAPISig } from '@textile/security'
+import { signUp, createKey } from './spec.util'
 import { Client } from './client'
 
 // Settings for localhost development and testing

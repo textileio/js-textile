@@ -54,7 +54,13 @@ describe('Buckets...', function () {
 
   before(async function () {
     this.timeout(5000)
+  console.log('\n============\n\n===========\n')
+  console.log('start')
+  console.log('\n============\n\n===========\n')
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
+  console.log('\n============\n\n===========\n')
+  console.log('done')
+  console.log('\n============\n\n===========\n')
     ctx.withSession(user.user?.session)
     if (!user.user) throw new Error('user signup error')
     dev = user.user
