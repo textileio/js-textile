@@ -119,6 +119,13 @@ export class Pow extends GrpcAuthentication {
   }
 
   /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   */
+  setToken(token: string) {
+    return super.setToken(token)
+  }
+
+  /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
    *
    * @example

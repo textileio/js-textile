@@ -94,6 +94,16 @@ export interface CustomerUsage {
   usageMap: [string, Usage][];
 }
 
+/**
+ * GetUsage options
+ */
+export interface UsageOptions {
+  /**
+   * Pubkey of the user. Only available when authenticated using an account key.
+   */
+  key?: string
+}
+
 export interface Period {
   unixStart: number;
   unixEnd: number;
@@ -384,16 +394,19 @@ export function watchMailbox(
   return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
 }
 
-
 /**
  * @internal
  */
 export async function getUsage(
   api: GrpcConnection,
+  options?: UsageOptions,
   ctx?: ContextInterface,
 ): Promise<GetUsageResponse> {
   logger.debug('get usage request')
   const req = new GetUsageRequest()
+  if (options && options.key) {
+    req.setKey(options.key)
+  }
   const res: _GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
   const usage = res.toObject()
   return {

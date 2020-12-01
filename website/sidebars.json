@@ -1,11 +1,26 @@
 {
   "docs": {
-    "Getting Started": ["index", "hub"],
-    "Users API": ["hub.users"],
-    "Buckets": ["hub.buckets"],
-    "Threads": ["hub.client"],
-    "Filecoin": ["hub.pow"],
-    "Common Methods & Classes": ["hub.threadid", "hub.createuserauth", "hub.createapisig"]
+    "Getting Started": [
+      "index",
+      "hub"
+    ],
+    "Users API": [
+      "hub.users"
+    ],
+    "Buckets": [
+      "hub.buckets"
+    ],
+    "Threads": [
+      "hub.client"
+    ],
+    "Filecoin": [
+      "hub.pow"
+    ],
+    "Common Methods & Classes": [
+      "hub.threadid",
+      "hub.createuserauth",
+      "hub.createapisig"
+    ]
   },
   "thread-id-docs": {
     "ThreadID Methods": [
@@ -41,6 +56,7 @@
       "hub.users.withkeyinfo",
       "hub.users.gettoken",
       "hub.users.gettokenchallenge",
+      "hub.users.settoken",
       "hub.users.withthread"
     ],
     "Types": [
@@ -52,6 +68,7 @@
       "hub.pushpathresult",
       "hub.sentboxlistoptions",
       "hub.usermessage",
+      "hub.usageoptions"
       "hub.getusageresponse"
     ],
     "Identity interfaces": [
@@ -99,6 +116,7 @@
       "hub.buckets.withkeyinfo",
       "hub.buckets.gettoken",
       "hub.buckets.gettokenchallenge",
+      "hub.buckets.settoken",
       "hub.buckets.withthread",
       "hub.buckets.getorcreate",
       "hub.buckets.create",
@@ -147,6 +165,7 @@
       "hub.client.withkeyinfo",
       "hub.client.gettoken",
       "hub.client.gettokenchallenge",
+      "hub.client.settoken",
       "hub.client.newdb",
       "hub.client.open",
       "hub.client.deletedb",
@@ -210,6 +229,7 @@
       "hub.pow.findpeer",
       "hub.pow.gettoken",
       "hub.pow.gettokenchallenge",
+      "hub.pow.settoken",
       "hub.pow.health",
       "hub.pow.info",
       "hub.pow.listretrievaldealrecords",
@@ -222,8 +242,7 @@
       "hub.pow.withthread",
       "hub.pow.withuserauth"
     ],
-    "Types": [
-    ]
+    "Types": []
   },
   "Types": {
     "Common Types": [
