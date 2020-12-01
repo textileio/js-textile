@@ -11,7 +11,7 @@ import {
   ArchiveWatchRequest,
   ArchiveWatchResponse,
   CreateRequest,
-  CreateResponse,
+  CreateResponse as _CreateResponse,
   DealInfo as PbDealInfo,
   DefaultArchiveConfigRequest,
   DefaultArchiveConfigResponse,
@@ -23,8 +23,8 @@ import {
   ListPathResponse,
   ListRequest,
   ListResponse,
-  Metadata,
-  PathItem,
+  Metadata as _Metadata,
+  PathItem as _PathItem,
   PullIpfsPathRequest,
   PullIpfsPathResponse,
   PullPathAccessRolesRequest,
@@ -36,13 +36,19 @@ import {
   PushPathResponse,
   RemovePathRequest,
   RemoveRequest,
-  Root,
+  Root as _Root,
   RootRequest,
   RootResponse,
   SetDefaultArchiveConfigRequest,
   SetPathRequest,
 } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb'
-import { APIService, APIServicePushPath } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
+import {
+  APIService,
+  APIServiceClient,
+  APIServicePushPath,
+  BidirectionalStream,
+  Status,
+} from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
@@ -50,11 +56,8 @@ import type { AbortSignal } from 'abort-controller'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
-import nextTick from 'next-tick'
 import { File, normaliseInput } from './normalize'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const block = require('it-block')
 const logger = log.getLogger('buckets-api')
 
 /**
@@ -71,7 +74,7 @@ export interface PushOptions {
    * will enforce fast-forward only updates. It not provided explicitly, the root path will
    * be fetched via an additional API call before each push.
    */
-  root?: RootObject | string
+  root?: Root | string
 
   /**
    * An optional abort signal to allow cancelation or aborting a bucket push.
@@ -97,16 +100,21 @@ export interface PushPathResult {
 /**
  * Response from bucket links query.
  */
-export type LinksObject = {
+export type Links = {
   www: string
   ipns: string
   url: string
 }
 
 /**
+ * @deprecated
+ */
+export type LinksObject = Links
+
+/**
  * Bucket root info
  */
-export type RootObject = {
+export type Root = {
   key: string
   name: string
   path: string
@@ -114,6 +122,10 @@ export type RootObject = {
   updatedAt: number
   thread: string
 }
+/**
+ * @deprecated
+ */
+export type RootObject = Root
 
 export enum PathAccessRole {
   PATH_ACCESS_ROLE_UNSPECIFIED = 0,
@@ -122,31 +134,49 @@ export enum PathAccessRole {
   PATH_ACCESS_ROLE_ADMIN = 3,
 }
 
-export type MetadataObject = {
+export type BuckMetadata = {
   roles: Map<string, PathAccessRole>
   updatedAt: number
 }
+/**
+ * @deprecated
+ */
+export type MetadataObject = BuckMetadata
 
 /**
  * A bucket path item response
  */
-export type PathItemObject = {
+export type PathItem = {
   cid: string
   name: string
   path: string
   size: number
   isDir: boolean
-  items: Array<PathItemObject>
+  items: Array<PathItem>
   count: number
-  metadata?: MetadataObject
+  metadata?: BuckMetadata
 }
+/**
+ * @deprecated
+ */
+export type PathItemObject = PathItem
 
 /**
  * A bucket list path response
  */
-export type PathObject = {
-  item?: PathItemObject
-  root?: RootObject
+export type Path = {
+  item?: PathItem
+  root?: Root
+}
+/**
+ * @deprecated
+ */
+export type PathObject = Path
+
+export const CHUNK_SIZE = 32768
+
+export function* genChunks(value: Uint8Array, size: number) {
+  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
 }
 
 /**
@@ -363,9 +393,13 @@ function fromPbArchive(pbArchive: PbArchive): Archive {
 /**
  * Bucket create response
  */
-export type CreateObject = { seed: Uint8Array; seedCid: string; root?: RootObject; links?: LinksObject }
+export type CreateResponse = { seed: Uint8Array; seedCid: string; root?: Root; links?: Links }
+/**
+ * @deprecated
+ */
+export type CreateObject = CreateResponse
 
-const convertRootObject = (root: Root): RootObject => {
+const convertRootObject = (root: _Root): Root => {
   return {
     key: root.getKey(),
     name: root.getName(),
@@ -376,17 +410,17 @@ const convertRootObject = (root: Root): RootObject => {
   }
 }
 
-const convertRootObjectNullable = (root?: Root): RootObject | undefined => {
+const convertRootObjectNullable = (root?: _Root): Root | undefined => {
   if (!root) return
   return convertRootObject(root)
 }
 
-const convertMetadata = (metadata?: Metadata): MetadataObject | undefined => {
+const convertMetadata = (metadata?: _Metadata): BuckMetadata | undefined => {
   if (!metadata) return
   const roles = metadata.getRolesMap()
   const typedRoles = new Map()
   roles.forEach((entry, key) => typedRoles.set(key, entry))
-  const response: MetadataObject = {
+  const response: BuckMetadata = {
     updatedAt: metadata.getUpdatedAt(),
     roles: typedRoles,
   }
@@ -394,7 +428,7 @@ const convertMetadata = (metadata?: Metadata): MetadataObject | undefined => {
   return response
 }
 
-const convertPathItem = (item: PathItem): PathItemObject => {
+const convertPathItem = (item: _PathItem): PathItem => {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -408,7 +442,7 @@ const convertPathItem = (item: PathItem): PathItemObject => {
   }
 }
 
-const convertPathItemNullable = (item?: PathItem): PathItemObject | undefined => {
+const convertPathItemNullable = (item?: _PathItem): PathItem | undefined => {
   if (!item) return
   return convertPathItem(item)
 }
@@ -437,7 +471,7 @@ export async function bucketsCreate(
   isPrivate = false,
   cid?: string,
   ctx?: ContextInterface,
-): Promise<CreateObject> {
+): Promise<CreateResponse> {
   logger.debug('create request')
   const req = new CreateRequest()
   req.setName(name)
@@ -445,7 +479,7 @@ export async function bucketsCreate(
     req.setBootstrapCid(cid)
   }
   req.setPrivate(isPrivate)
-  const res: CreateResponse = await api.unary(APIService.Create, req, ctx)
+  const res: _CreateResponse = await api.unary(APIService.Create, req, ctx)
   const links = res.getLinks()
   return {
     seed: res.getSeed_asU8(),
@@ -461,11 +495,7 @@ export async function bucketsCreate(
  *
  * @internal
  */
-export async function bucketsRoot(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<RootObject | undefined> {
+export async function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root | undefined> {
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
@@ -499,7 +529,7 @@ export async function bucketsLinks(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<LinksObject> {
+): Promise<Links> {
   logger.debug('link request')
   const req = new LinksRequest()
   req.setKey(key)
@@ -523,7 +553,7 @@ export async function bucketsLinks(
  *
  * @internal
  */
-export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<RootObject>> {
+export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root>> {
   logger.debug('list request')
   const req = new ListRequest()
   const res: ListResponse = await api.unary(APIService.List, req, ctx)
@@ -544,7 +574,7 @@ export async function bucketsListPath(
   key: string,
   path: string,
   ctx?: ContextInterface,
-): Promise<PathObject> {
+): Promise<Path> {
   logger.debug('list path request')
   const req = new ListPathRequest()
   req.setKey(key)
@@ -566,7 +596,7 @@ export async function bucketsListIpfsPath(
   api: GrpcConnection,
   path: string,
   ctx?: ContextInterface,
-): Promise<PathItemObject | undefined> {
+): Promise<PathItem | undefined> {
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)
@@ -681,17 +711,20 @@ export async function bucketsPushPath(
       client.send(req)
 
       if (source.content) {
-        const process = await block({ size: 32768, noPad: true })
-        for await (const chunk of process(source.content)) {
+        for await (const chunk of source.content) {
           // Let's just make sure we haven't aborted this outside this function
           if (opts?.signal?.aborted) {
-            client.close()
+            try {
+              client.close()
+            } catch {} // noop
             return reject(AbortError)
           }
-          const buf = chunk.slice()
-          const part = new PushPathRequest()
-          part.setChunk(buf as Buffer)
-          client.send(part)
+          // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+          for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
+            const part = new PushPathRequest()
+            part.setChunk(chunklet)
+            client.send(part)
+          }
         }
       }
       // We only need to finish send here if we actually started
@@ -700,6 +733,119 @@ export async function bucketsPushPath(
   })
 }
 
+export async function bucketsPushPathNode(
+  api: GrpcConnection,
+  key: string,
+  path: string,
+  input: any,
+  opts?: PushOptions,
+  ctx?: ContextInterface,
+) {
+  return new Promise<PushPathResult>(async (resolve, reject) => {
+    // Only process the first input if there are more than one
+    const source: File | undefined = (await normaliseInput(input).next()).value
+
+    if (!source) {
+      return reject(AbortError)
+    }
+
+    const clientjs = new APIServiceClient(api.serviceHost, api.rpcOptions)
+
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+
+    const stream: BidirectionalStream<PushPathRequest, PushPathResponse> = clientjs.pushPath(metadata)
+
+    if (opts?.signal !== undefined) {
+      opts.signal.addEventListener('abort', () => {
+        stream.cancel()
+        return reject(AbortError)
+      })
+    }
+
+    stream.on('data', (message: PushPathResponse) => {
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        stream.cancel()
+        return reject(AbortError)
+      }
+      if (message.hasEvent()) {
+        const event = message.getEvent()?.toObject()
+        if (event?.path) {
+          // TODO: Is there an standard library/tool for this step in JS?
+          const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
+          const cid = new CID(pth)
+          const res: PushPathResult = {
+            path: {
+              path: `/ipfs/${cid?.toString()}`,
+              cid,
+              root: cid,
+              remainder: '',
+            },
+            root: event.root?.path ?? '',
+          }
+          return resolve(res)
+        } else if (opts?.progress) {
+          opts.progress(event?.bytes)
+        }
+      } else {
+        return reject(new Error('Invalid reply'))
+      }
+    })
+
+    stream.on('end', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return resolve()
+      }
+    })
+    stream.on('status', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return resolve()
+      }
+    })
+
+    const head = new PushPathRequest.Header()
+    head.setPath(source.path || path)
+    head.setKey(key)
+    // Setting root here ensures pushes will error if root is out of date
+    let root = ''
+    if (opts?.root) {
+      // If we explicitly received a root argument, use that
+      root = typeof opts.root === 'string' ? opts.root : opts.root.path
+    } else {
+      // Otherwise, make a call to list path to get the latest known root
+      const head = await bucketsListPath(api, key, '', ctx)
+      root = head.root?.path ?? '' // Shouldn't ever be undefined here
+    }
+    head.setRoot(root)
+    const req = new PushPathRequest()
+    req.setHeader(head)
+
+    stream.write(req)
+    if (source.content) {
+      for await (const chunk of source.content) {
+        if (opts?.signal?.aborted) {
+          // Let's just make sure we haven't aborted this outside this function
+          try {
+            // Should already have been handled
+            stream.cancel()
+          } catch {} // noop
+          return reject(AbortError)
+        }
+        // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+        for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
+          const part = new PushPathRequest()
+          part.setChunk(chunklet)
+          stream.write(part)
+        }
+      }
+    }
+    stream.end()
+  })
+}
 /**
  * Pushes a file to a bucket path.
  * @internal
@@ -995,7 +1141,7 @@ export async function bucketsArchiveWatch(
         id: rec.getJsPbMessageId(),
         msg: rec.getMsg(),
       }
-      nextTick(() => callback(response))
+      callback(response)
     },
     onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
       if (status !== grpc.Code.OK) {

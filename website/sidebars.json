@@ -38,6 +38,7 @@
   },
   "users-docs": {
     "Users API": [
+      "hub.users.getusage",
       "hub.users.setupmailbox",
       "hub.users.getmailboxid",
       "hub.users.sendmessage",
@@ -65,7 +66,8 @@
       "hub.mailboxeventtype",
       "hub.pushpathresult",
       "hub.sentboxlistoptions",
-      "hub.usermessage"
+      "hub.usermessage",
+      "hub.getusageresponse"
     ],
     "Identity interfaces": [
       "hub.identity",
@@ -133,15 +135,16 @@
       "hub.buckets.setpath"
     ],
     "Types": [
-      "hub.createobject",
-      "hub.linksobject",
-      "hub.pathobject",
-      "hub.pathaccessrole",
-      "hub.pathitemobject",
-      "hub.rootobject",
-      "hub.metadataobject",
       "hub.getorcreateoptions",
-      "hub.createoptions"
+      "hub.getorcreateresponse",
+      "hub.createoptions",
+      "hub.createresponse",
+      "hub.links",
+      "hub.path",
+      "hub.pathaccessrole",
+      "hub.pathitem",
+      "hub.root",
+      "hub.buckmetadata"
     ],
     "Experimental": [
       "hub.buckets.defaultarchiveconfig",
