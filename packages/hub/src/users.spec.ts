@@ -2,7 +2,6 @@ import path from 'path'
 import fs from 'fs'
 import { expect } from 'chai'
 import { isBrowser } from 'browser-or-node'
-import { grpc } from '@improbable-eng/grpc-web'
 import { ThreadID } from '@textile/threads-id'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { PrivateKey } from '@textile/crypto'
@@ -85,7 +84,6 @@ describe('All apis...', () => {
       }).timeout(3000)
 
       it('should then create a db for the bucket', async function () {
-        // @todo https://github.com/textileio/js-threads/pull/263 should fix this...
         await db.newDB(ThreadID.fromRandom(), 'my-buckets')
         expect(db.context.toJSON()).to.have.ownProperty('x-textile-thread-name')
       })
