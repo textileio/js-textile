@@ -1,7 +1,7 @@
 {
-  "name": "@textile/pow",
+  "name": "@textile/hub-filecoin",
   "version": "2.0.2",
-  "description": "web-gRPC wrapper client for interacting with Textile Powergate services.",
+  "description": "web-gRPC wrapper client for interacting with Textile Hub Filecoin services.",
   "main": "dist/index",
   "types": "dist/index",
   "files": [

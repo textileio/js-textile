@@ -30,7 +30,7 @@
     "@textile/grpc-authentication": "^1.0.2",
     "@textile/hub-grpc": "2.2.0-rc0",
     "@textile/hub-threads-client": "^2.0.2",
-    "@textile/pow": "^2.0.2",
+    "@textile/hub-filecoin": "^2.0.2",
     "@textile/security": "^0.6.2",
     "@textile/threads-id": "^0.2.0",
     "@textile/users": "^2.0.2",
@@ -61,7 +61,7 @@
       "path": "../hub-threads-client"
     },
     {
-      "path": "../pow"
+      "path": "../hub-filecoin"
     }
   ]
 }

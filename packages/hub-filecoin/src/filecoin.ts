@@ -17,61 +17,61 @@ import { KeyInfo, UserAuth } from '@textile/security'
 import log from 'loglevel'
 import { addresses, balance, cidInfo, retrievalDealRecords, storageDealRecords } from './api'
 
-const logger = log.getLogger('pow')
+const logger = log.getLogger('filecoin')
 /**
- * Pow a client wrapper for interacting with the Textile Powergate API.
+ * Filecoin is a client wrapper for interacting with the Textile Hub Filecoin API.
  * @example
  * Initialize the Bucket API and open an existing bucket (or create if new).
  * ```typescript
- * import { Pow, PrivateKey, UserAuth } from '@textile/hub'
+ * import { Filecoin, PrivateKey, UserAuth } from '@textile/hub'
  *
  * const getAddresses = async (auth: UserAuth, user: PrivateKey) => {
- *   const pow = Pow.withUserAuth(auth)
+ *   const filecoin = Filecoin.withUserAuth(auth)
  *   // Scope the API to the current user
- *   await pow.getToken(user)
+ *   await filecoin.getToken(user)
  *   // List wallet addresses
- *   const health = await pow.addresses()
+ *   const health = await filecoin.addresses()
  * }
  * ```
  */
-export class Pow extends GrpcAuthentication {
+export class Filecoin extends GrpcAuthentication {
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
    *
    * @example
-   * Copy an authenticated Users api instance to Pow.
+   * Copy an authenticated Users api instance to Filecoin.
    * ```typescript
-   * import { Pow, Users } from '@textile/hub'
+   * import { Filecoin, Users } from '@textile/hub'
    *
-   * const usersToPow = async (user: Users) => {
-   *   const pow = Pow.copyAuth(user)
-   *   return pow
+   * const usersToFilecoin = async (user: Users) => {
+   *   const filecoin = Filecoin.copyAuth(user)
+   *   return filecoin
    * }
    * ```
    *
    * @example
-   * Copy an authenticated Pow api instance to Users.
+   * Copy an authenticated Filecoin api instance to Users.
    * ```typescript
-   * import { Pow, Users } from '@textile/hub'
+   * import { Filecoin, Users } from '@textile/hub'
    *
-   * const powToUsers = async (pow: Pow) => {
-   *   const user = Users.copyAuth(pow)
+   * const filecoinToUsers = async (filecoin: Filecoin) => {
+   *   const user = Users.copyAuth(filecoin)
    *   return user
    * }
    * ```
    */
   static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
-    return new Pow(auth.context, options?.debug)
+    return new Filecoin(auth.context, options?.debug)
   }
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
    *
    * @example
    * ```@typescript
-   * import { Pow, UserAuth } from '@textile/hub'
+   * import { Filecoin, UserAuth } from '@textile/hub'
    *
    * async function example (userAuth: UserAuth) {
-   *   const pow = await Pow.withUserAuth(userAuth)
+   *   const filecoin = await Filecoin.withUserAuth(userAuth)
    * }
    * ```
    */
@@ -85,14 +85,14 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```@typescript
-   * import { Pow, KeyInfo } from '@textile/hub'
+   * import { Filecoin, KeyInfo } from '@textile/hub'
    *
    * async function start () {
    *   const keyInfo: KeyInfo = {
    *     key: '<api key>',
    *     secret: '<api secret>'
    *   }
-   *   const pow = await Pow.withKeyInfo(keyInfo)
+   *   const filecoin = await Filecoin.withKeyInfo(keyInfo)
    * }
    * ```
    */
@@ -106,11 +106,11 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```@typescript
-   * import { Pow, PrivateKey } from '@textile/hub'
+   * import { Filecoin, PrivateKey } from '@textile/hub'
    *
-   * async function example (pow: Pow, identity: PrivateKey) {
-   *   const token = await pow.getToken(identity)
-   *   return token // already added to `pow` scope
+   * async function example (filecoin: Filecoin, identity: PrivateKey) {
+   *   const token = await filecoin.getToken(identity)
+   *   return token // already added to `filecoin` scope
    * }
    * ```
    */
@@ -123,10 +123,10 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```typescript
-   * import { Pow, PrivateKey } from '@textile/hub'
+   * import { Filecoin, PrivateKey } from '@textile/hub'
    *
-   * async function example (pow: Pow, identity: PrivateKey) {
-   *   const token = await pow.getTokenChallenge(
+   * async function example (filecoin: Filecoin, identity: PrivateKey) {
+   *   const token = await filecoin.getTokenChallenge(
    *     identity.public.toString(),
    *     (challenge: Uint8Array) => {
    *       return new Promise((resolve, reject) => {

@@ -14,7 +14,7 @@
       "hub.client"
     ],
     "Filecoin": [
-      "hub.pow"
+      "hub.filecoin"
     ],
     "Common Methods & Classes": [
       "hub.threadid",
@@ -222,25 +222,17 @@
     ]
   },
   "filcoin-docs": {
-    "Powergate (beta)": [
-      "hub.pow.addrs",
-      "hub.pow.balance",
-      "hub.pow.connectedness",
-      "hub.pow.copyauth",
-      "hub.pow.findpeer",
-      "hub.pow.gettoken",
-      "hub.pow.gettokenchallenge",
-      "hub.pow.health",
-      "hub.pow.info",
-      "hub.pow.listretrievaldealrecords",
-      "hub.pow.liststoragedealrecords",
-      "hub.pow.newaddr",
-      "hub.pow.peers",
-      "hub.pow.show",
-      "hub.pow.showall",
-      "hub.pow.withkeyinfo",
-      "hub.pow.withthread",
-      "hub.pow.withuserauth"
+    "Filecoin (beta)": [
+      "hub.filecoin.addresses",
+      "hub.filecoin.balance",
+      "hub.filecoin.cidinfo",
+      "hub.filecoin.copyauth",
+      "hub.filecoin.gettoken",
+      "hub.filecoin.gettokenchallenge",
+      "hub.filecoin.retrievaldealrecords",
+      "hub.filecoin.storagedealrecords",
+      "hub.filecoin.withkeyinfo",
+      "hub.filecoin.withuserauth"
     ],
     "Types": []
   },

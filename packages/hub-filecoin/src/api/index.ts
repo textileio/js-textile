@@ -16,7 +16,7 @@ import {
 import { UserService } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb_service'
 import log from 'loglevel'
 
-const logger = log.getLogger('pow-api')
+const logger = log.getLogger('filecoin-api')
 
 /**
  * @internal

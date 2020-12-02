@@ -532,6 +532,27 @@ export const expirationError: Error;
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
+// Warning: (ae-incompatible-release-tags) The symbol "Filecoin" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
+//
+// @public
+export class Filecoin extends GrpcAuthentication {
+    // @beta
+    addresses(): Promise<AddressesResponse.AsObject>;
+    // @beta
+    balance(address: string): Promise<BalanceResponse.AsObject>;
+    // @beta
+    cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject>;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Filecoin;
+    getToken(identity: Identity): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    // @beta
+    retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject>;
+    // @beta
+    storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Filecoin>;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Filecoin;
+}
+
 // @public
 export interface Filter {
     actionTypes?: string[];
@@ -748,27 +769,6 @@ export interface Period {
     unixEnd: number;
     // (undocumented)
     unixStart: number;
-}
-
-// Warning: (ae-incompatible-release-tags) The symbol "Pow" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
-//
-// @public
-export class Pow extends GrpcAuthentication {
-    // @beta
-    addresses(): Promise<AddressesResponse.AsObject>;
-    // @beta
-    balance(address: string): Promise<BalanceResponse.AsObject>;
-    // @beta
-    cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject>;
-    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Pow;
-    getToken(identity: Identity): Promise<string>;
-    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // @beta
-    retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject>;
-    // @beta
-    storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject>;
-    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Pow;
 }
 
 // @public

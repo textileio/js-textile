@@ -1080,7 +1080,7 @@ export interface ArchiveOptions {
 }
 
 /**
- * archive creates a Filecoin bucket archive via Powergate.
+ * archive creates a Filecoin bucket archive.
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param options Options that control the behavior of the bucket archive
