@@ -457,6 +457,7 @@ describe('Buckets...', function () {
     })
 
     it('add a new file into a shared path should fail', async function () {
+      console.log('##################### STARTING TEST ###################')
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
@@ -475,6 +476,7 @@ describe('Buckets...', function () {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('permission denied')
       }
+      console.log('##################### ENDING TEST ###################')
     })
 
     it('remove a file in shared path', async function () {
