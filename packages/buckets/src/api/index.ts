@@ -336,7 +336,7 @@ export interface Archive {
 }
 
 /**
- * Response of of archives request showing current and past archives.
+ * Response of archives request showing current and past archives.
  */
 export interface Archives {
   current?: Archive

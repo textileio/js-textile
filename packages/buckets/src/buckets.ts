@@ -863,7 +863,7 @@ export class Buckets extends GrpcAuthentication {
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    *
    * @example
-   * Get current and historica archives
+   * Get current and historical archives
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
