@@ -62,7 +62,7 @@ jobs:
 
       - name: Test Node
         run: |
-          npm run test:node
+          npm run test:node -- -g "Buckets[...]"
 
       - name: Test Browser
         run: |
