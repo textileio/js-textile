@@ -46,7 +46,7 @@ describe('Buckets utils...', function () {
 
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
-  const client = new Buckets(ctx)
+  const client = new Buckets(ctx, true) // Turn on debug
   let buck: CreateResponse
   let fileSize: number
 
