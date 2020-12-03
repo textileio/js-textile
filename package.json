@@ -4,7 +4,7 @@
   "description": "JS lib for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
-    "docs": "node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
+    "docs": "rm -rf docs markdown temp && node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build",
     "bootstrap": "lerna bootstrap",

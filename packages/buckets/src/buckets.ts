@@ -10,9 +10,6 @@ import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import log from 'loglevel'
 import {
-  ArchiveConfig,
-  ArchiveOptions,
-  Archives,
   bucketsArchive,
   bucketsArchives,
   bucketsArchiveWatch,
@@ -31,6 +28,11 @@ import {
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
+} from './api'
+import {
+  ArchiveConfig,
+  ArchiveOptions,
+  Archives,
   CreateResponse,
   Links,
   Path,
@@ -39,7 +41,7 @@ import {
   PushOptions,
   PushPathResult,
   Root,
-} from './api'
+} from './types'
 import { listPathFlat, listPathRecursive } from './utils'
 
 const logger = log.getLogger('buckets')

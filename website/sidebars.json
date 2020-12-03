@@ -153,7 +153,7 @@
       "hub.buckets.archives",
       "hub.buckets.archivewatch",
       "hub.archiverenew",
-      "hub.dealinfo",
+      "hub.archivedealinfo",
       "hub.archivestatus",
       "hub.archive",
       "hub.archives",
