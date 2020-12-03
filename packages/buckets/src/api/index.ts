@@ -180,6 +180,8 @@ function fromPbArchiveStatus(item: _ArchiveStatusMap[keyof _ArchiveStatusMap]): 
       return ArchiveStatus.Success
     case _ArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
       return ArchiveStatus.Unspecified
+    default:
+      throw new Error('unknown status')
   }
 }
 

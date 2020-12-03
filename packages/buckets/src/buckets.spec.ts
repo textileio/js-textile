@@ -11,6 +11,7 @@ import { genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 import { AbortError, CreateResponse } from './types'
+import { createReadStream } from './utils'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -507,7 +508,7 @@ describe('Buckets...', function () {
       expect(perms.get(bobPubKey)).to.equal(2)
 
       // Over-write the file in the shared path
-      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      const stream = createReadStream(path.join(pth, 'file2.jpg'))
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
       try {
         await bobBuckets.pushPath(rootKey, sharedFile, stream)
