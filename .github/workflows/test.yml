@@ -65,13 +65,13 @@ jobs:
           npm run test:node
 
       - name: Test Browser
-         run: |
-           npm run test:browser
+        run: |
+          npm run test:browser
 
-       - name: Test Examples
-         run: |
-           npm run docs
-           npm run test:docs
+      - name: Test Examples
+        run: |
+          npm run docs
+          npm run test:docs
 
       - name: Dump docker logs on failure
         if: failure()
