@@ -64,15 +64,6 @@ jobs:
         run: |
           npm run test:node -- -g "Buckets[...]"
 
-      - name: Test Browser
-        run: |
-          npm run test:browser
-
-      - name: Test Examples
-        run: |
-          npm run docs
-          npm run test:docs
-
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v1
