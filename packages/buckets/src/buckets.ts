@@ -33,7 +33,10 @@ import {
   ArchiveConfig,
   ArchiveOptions,
   Archives,
+  CreateOptions,
   CreateResponse,
+  GetOrCreateOptions,
+  GetOrCreateResponse,
   Links,
   Path,
   PathAccessRole,
@@ -45,54 +48,6 @@ import {
 import { listPathFlat, listPathRecursive } from './utils'
 
 const logger = log.getLogger('buckets')
-
-/**
- * Options for getOrCreate
- */
-export interface GetOrCreateOptions {
-  /**
-   * Name of the Thread where the Bucket will be created.
-   */
-  threadName?: string
-  /**
-   * Encrypt the contents of the bucket on IPFS
-   */
-  encrypted?: boolean
-  /**
-   * Seed a new bucket with the data available at the content address (CID).
-   */
-  cid?: string
-  /**
-   * ID of the Thread where the Bucket will be created.
-   * Will override any ThreadName if different.
-   */
-  threadID?: string
-}
-
-/**
- * Response from getOrCreate
- */
-export interface GetOrCreateResponse {
-  /**
-   * Root of the bucket
-   */
-  root?: Root
-  /**
-   * ThreadID where the bucket was created.
-   */
-  threadID?: string
-}
-
-export interface CreateOptions {
-  /**
-   * Encrypt the contents of the bucket on IPFS
-   */
-  encrypted?: boolean
-  /**
-   * Seed a new bucket with the data available at the content address (CID).
-   */
-  cid?: string
-}
 
 /**
  * Buckets a client wrapper for interacting with the Textile Buckets API.
