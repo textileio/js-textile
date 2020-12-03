@@ -83,7 +83,7 @@
     "source-map-support": "^0.5.19",
     "ts-loader": "^7.0.2",
     "ts-mocha": "^7.0.0",
-    "ts-node": "^8.2.0",
+    "ts-node": "^9.1.0",
     "tsconfig-paths": "^3.8.0",
     "typedoc": "0.17.7",
     "typescript": "^3.7.2",
