@@ -91,6 +91,9 @@ function fromPbFilRenew(item: _FilRenew.AsObject): FilRenew {
 function fromPbFilConfig(item: _FilConfig.AsObject): FilConfig {
   return {
     ...item,
+    countryCodes: item.countryCodesList,
+    excludedMiners: item.excludedMinersList,
+    trustedMiners: item.trustedMinersList,
     renew: item.renew ? fromPbFilRenew(item.renew) : undefined,
   }
 }
@@ -270,8 +273,8 @@ export async function storageDealRecords(
 ): Promise<StorageDealRecord[]> {
   const c = new _DealRecordsConfig()
   c.setAscending(config.ascending)
-  c.setDataCidsList(config.dataCidsList)
-  c.setFromAddrsList(config.fromAddrsList)
+  c.setDataCidsList(config.dataCids)
+  c.setFromAddrsList(config.fromAddrs)
   c.setIncludeFinal(config.includeFinal)
   c.setIncludePending(config.includePending)
   const req = new StorageDealRecordsRequest()
@@ -290,8 +293,8 @@ export async function retrievalDealRecords(
 ): Promise<RetrievalDealRecord[]> {
   const c = new _DealRecordsConfig()
   c.setAscending(config.ascending)
-  c.setDataCidsList(config.dataCidsList)
-  c.setFromAddrsList(config.fromAddrsList)
+  c.setDataCidsList(config.dataCids)
+  c.setFromAddrsList(config.fromAddrs)
   c.setIncludeFinal(config.includeFinal)
   c.setIncludePending(config.includePending)
   const req = new RetrievalDealRecordsRequest()

@@ -585,9 +585,9 @@ export interface DealRecordsConfig {
     // (undocumented)
     ascending: boolean;
     // (undocumented)
-    dataCidsList: string[];
+    dataCids: string[];
     // (undocumented)
-    fromAddrsList: string[];
+    fromAddrs: string[];
     // (undocumented)
     includeFinal: boolean;
     // (undocumented)
@@ -629,13 +629,13 @@ export interface FilConfig {
     // (undocumented)
     address: string;
     // (undocumented)
-    countryCodesList: string[];
+    countryCodes: string[];
     // (undocumented)
     dealMinDuration: number;
     // (undocumented)
     dealStartOffset: number;
     // (undocumented)
-    excludedMinersList: string[];
+    excludedMiners: string[];
     // (undocumented)
     fastRetrieval: boolean;
     // (undocumented)
@@ -645,7 +645,7 @@ export interface FilConfig {
     // (undocumented)
     replicationFactor: number;
     // (undocumented)
-    trustedMinersList: string[];
+    trustedMiners: string[];
 }
 
 // Warning: (ae-incompatible-release-tags) The symbol "Filecoin" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal

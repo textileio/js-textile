@@ -24,9 +24,9 @@ export interface FilRenew {
 export interface FilConfig {
   replicationFactor: number
   dealMinDuration: number
-  excludedMinersList: string[]
-  trustedMinersList: string[]
-  countryCodesList: string[]
+  excludedMiners: string[]
+  trustedMiners: string[]
+  countryCodes: string[]
   renew?: FilRenew
   address: string
   maxPrice: number
@@ -176,8 +176,8 @@ export interface RetrievalDealRecord {
 }
 
 export interface DealRecordsConfig {
-  fromAddrsList: string[]
-  dataCidsList: string[]
+  fromAddrs: string[]
+  dataCids: string[]
   includePending: boolean
   includeFinal: boolean
   ascending: boolean
