@@ -466,17 +466,15 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        // Note: Callers can also specify chunk size directly using highWaterMark:
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 1234 })
-        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-        console.debug('##################### STARTING TEST ###################')
+        // Note: Nodejs callers should specify chunk size directly using highWaterMark
+        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 1234 })
+        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('permission denied')
       }
-      console.debug('##################### ENDING TEST ###################')
     })
 
     it('remove a file in shared path', async function () {

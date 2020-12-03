@@ -107,6 +107,15 @@ function fromPbMetadata(metadata?: _Metadata): BuckMetadata | undefined {
 
   return response
 }
+<<<<<<< HEAD
+=======
+/**
+ * @deprecated
+ */
+export type PathObject = Path
+
+export const CHUNK_SIZE = 1000
+>>>>>>> fix: reduce default chunk size and revert tests
 
 function fromPbPathItem(item: _PathItem): PathItem {
   const list = item.getItemsList()
@@ -593,7 +602,6 @@ export async function bucketsPushPathNode(
       }
     }
     stream.end()
-    console.debug('stream end called')
   })
 }
 /**
