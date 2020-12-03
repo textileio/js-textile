@@ -467,9 +467,8 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        // Note: Nodejs callers should specify chunk size directly using highWaterMark
-        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 1234 })
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+        // Defaults to highwatermark of CHUNK_SIZE
+        const stream = createReadStream(path.join(pth, 'file2.jpg'))
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
