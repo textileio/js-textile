@@ -29,7 +29,6 @@ import {
   RetrievalDealRecordsRequest,
   RetrievalDealRecordsResponse,
   StorageConfig as _StorageConfig,
-  StorageDealInfo as _StorageDealInfo,
   StorageDealRecord as _StorageDealRecord,
   StorageDealRecordsRequest,
   StorageDealRecordsResponse,
@@ -44,7 +43,6 @@ import {
   ColdConfig,
   ColdInfo,
   DealError,
-  DealInfo,
   DealRecordsConfig,
   FilConfig,
   FilInfo,
@@ -156,7 +154,7 @@ function fromPbStorageInfo(item: _StorageInfo.AsObject): StorageInfo {
   }
 }
 
-function fromPbDealInfo(item: _DealInfo.AsObject): DealInfo {
+function fromPbDealInfo(item: _DealInfo.AsObject): StorageDealInfo {
   return { ...item }
 }
 
@@ -195,7 +193,7 @@ function fromPbStorageJob(item: _StorageJob.AsObject): StorageJob {
 function fromPbCidInfo(item: _CidInfo.AsObject): CidInfo {
   return {
     ...item,
-    latestPushedStorageConfig: item.latestPushedStorageConfig
+    latestStorageConfig: item.latestPushedStorageConfig
       ? fromPbStorageConfig(item.latestPushedStorageConfig)
       : undefined,
     currentStorageInfo: item.currentStorageInfo ? fromPbStorageInfo(item.currentStorageInfo) : undefined,
@@ -208,16 +206,12 @@ function fromPbCidInfo(item: _CidInfo.AsObject): CidInfo {
   }
 }
 
-function fromPbStorageDealInfo(item: _StorageDealInfo.AsObject): StorageDealInfo {
-  return { ...item }
-}
-
 function fromPbStorageDealRecord(item: _StorageDealRecord.AsObject): StorageDealRecord {
   return {
     ...item,
     // TODO: standardize time units from server.
     time: new Date(item.time * 1000),
-    dealInfo: item.dealInfo ? fromPbStorageDealInfo(item.dealInfo) : undefined,
+    dealInfo: item.dealInfo ? fromPbDealInfo(item.dealInfo) : undefined,
   }
 }
 

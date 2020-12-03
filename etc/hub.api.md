@@ -47,15 +47,11 @@ export enum Action {
     SAVE = 1
 }
 
-// @public (undocumented)
+// @public
 export interface AddressInfo {
-    // (undocumented)
     address: string;
-    // (undocumented)
     balance: bigint;
-    // (undocumented)
     name: string;
-    // (undocumented)
     type: string;
 }
 
@@ -202,21 +198,14 @@ export interface BuckMetadata {
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
 
-// @public (undocumented)
+// @public
 export interface CidInfo {
-    // (undocumented)
     cid: string;
-    // (undocumented)
     currentStorageInfo?: StorageInfo;
-    // (undocumented)
     executingStorageJob?: StorageJob;
-    // (undocumented)
     latestFinalStorageJob?: StorageJob;
-    // (undocumented)
-    latestPushedStorageConfig?: StorageConfig;
-    // (undocumented)
+    latestStorageConfig?: StorageConfig;
     latestSuccessfulStorageJob?: StorageJob;
-    // (undocumented)
     queuedStorageJobs: StorageJob[];
 }
 
@@ -262,19 +251,15 @@ export class Client {
     writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
 }
 
-// @public (undocumented)
+// @public
 export interface ColdConfig {
-    // (undocumented)
     enabled: boolean;
-    // (undocumented)
     filecoin?: FilConfig;
 }
 
-// @public (undocumented)
+// @public
 export interface ColdInfo {
-    // (undocumented)
     enabled: boolean;
-    // (undocumented)
     filecoin?: FilInfo;
 }
 
@@ -386,55 +371,19 @@ export interface DBInfo {
     key: string;
 }
 
-// @public (undocumented)
+// @public
 export interface DealError {
-    // (undocumented)
     message: string;
-    // (undocumented)
     miner: string;
-    // (undocumented)
     proposalCid: string;
 }
 
-// @public (undocumented)
-export interface DealInfo {
-    // (undocumented)
-    activationEpoch: number;
-    // (undocumented)
-    dealId: number;
-    // (undocumented)
-    duration: number;
-    // (undocumented)
-    message: string;
-    // (undocumented)
-    miner: string;
-    // (undocumented)
-    pieceCid: string;
-    // (undocumented)
-    pricePerEpoch: number;
-    // (undocumented)
-    proposalCid: string;
-    // (undocumented)
-    size: number;
-    // (undocumented)
-    startEpoch: number;
-    // (undocumented)
-    stateId: number;
-    // (undocumented)
-    stateName: string;
-}
-
-// @public (undocumented)
+// @public
 export interface DealRecordsConfig {
-    // (undocumented)
     ascending: boolean;
-    // (undocumented)
     dataCids: string[];
-    // (undocumented)
     fromAddrs: string[];
-    // (undocumented)
     includeFinal: boolean;
-    // (undocumented)
     includePending: boolean;
 }
 
@@ -468,27 +417,17 @@ export const expirationError: Error;
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
-// @public (undocumented)
+// @public
 export interface FilConfig {
-    // (undocumented)
     address: string;
-    // (undocumented)
     countryCodes: string[];
-    // (undocumented)
     dealMinDuration: number;
-    // (undocumented)
     dealStartOffset: number;
-    // (undocumented)
     excludedMiners: string[];
-    // (undocumented)
     fastRetrieval: boolean;
-    // (undocumented)
     maxPrice: number;
-    // (undocumented)
     renew?: FilRenew;
-    // (undocumented)
     replicationFactor: number;
-    // (undocumented)
     trustedMiners: string[];
 }
 
@@ -513,41 +452,28 @@ export class Filecoin extends GrpcAuthentication {
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Filecoin;
 }
 
-// @public (undocumented)
+// @public
 export interface FilInfo {
-    // (undocumented)
     dataCid: string;
-    // (undocumented)
     proposals: FilStorage[];
-    // (undocumented)
     size: number;
 }
 
-// @public (undocumented)
+// @public
 export interface FilRenew {
-    // (undocumented)
     enabled: boolean;
-    // (undocumented)
     threshold: number;
 }
 
-// @public (undocumented)
+// @public
 export interface FilStorage {
-    // (undocumented)
     activationEpoch: number;
-    // (undocumented)
     duration: number;
-    // (undocumented)
     epochPrice: number;
-    // (undocumented)
     miner: string;
-    // (undocumented)
     pieceCid: string;
-    // (undocumented)
     proposalCid: string;
-    // (undocumented)
     renewed: boolean;
-    // (undocumented)
     startEpoch: number;
 }
 
@@ -616,25 +542,18 @@ export class GrpcAuthentication extends GrpcConnection {
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): GrpcAuthentication;
 }
 
-// @public (undocumented)
+// @public
 export interface HotConfig {
-    // (undocumented)
     allowUnfreeze: boolean;
-    // (undocumented)
     enabled: boolean;
-    // (undocumented)
     ipfs?: IpfsConfig;
-    // (undocumented)
     unfreezeMaxPrice: number;
 }
 
-// @public (undocumented)
+// @public
 export interface HotInfo {
-    // (undocumented)
     enabled: boolean;
-    // (undocumented)
     ipfs?: IpfsHotInfo;
-    // (undocumented)
     size: number;
 }
 
@@ -659,31 +578,23 @@ export interface InboxListOptions {
 // @public (undocumented)
 export const invalidKeyError: Error;
 
-// @public (undocumented)
+// @public
 export interface IpfsConfig {
-    // (undocumented)
     addTimeout: number;
 }
 
-// @public (undocumented)
+// @public
 export interface IpfsHotInfo {
-    // (undocumented)
     created: Date;
 }
 
-// @public (undocumented)
+// @public
 export enum JobStatus {
-    // (undocumented)
     Canceled = 4,
-    // (undocumented)
     Executing = 2,
-    // (undocumented)
     Failed = 3,
-    // (undocumented)
     Queued = 1,
-    // (undocumented)
     Success = 5,
-    // (undocumented)
     Unspecified = 0
 }
 
@@ -963,7 +874,7 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
     protected readonly threadID: ThreadID_2;
 }
 
-// @public (undocumented)
+// @public
 export interface RetrievalDealInfo {
     // (undocumented)
     miner: string;
@@ -975,13 +886,11 @@ export interface RetrievalDealInfo {
     paymentInterval: number;
     // (undocumented)
     paymentIntervalIncrease: number;
-    // (undocumented)
     rootCid: string;
-    // (undocumented)
     size: number;
 }
 
-// @public (undocumented)
+// @public
 export interface RetrievalDealRecord {
     // (undocumented)
     address: string;
@@ -1056,89 +965,56 @@ export enum Status {
     UNREAD = 2
 }
 
-// @public (undocumented)
+// @public
 export interface StorageConfig {
-    // (undocumented)
     cold?: ColdConfig;
-    // (undocumented)
     hot?: HotConfig;
-    // (undocumented)
     repairable: boolean;
 }
 
-// @public (undocumented)
+// @public
 export interface StorageDealInfo {
-    // (undocumented)
     activationEpoch: number;
-    // (undocumented)
     dealId: number;
-    // (undocumented)
     duration: number;
-    // (undocumented)
     message: string;
-    // (undocumented)
     miner: string;
-    // (undocumented)
     pieceCid: string;
-    // (undocumented)
     pricePerEpoch: number;
-    // (undocumented)
     proposalCid: string;
-    // (undocumented)
     size: number;
-    // (undocumented)
     startEpoch: number;
-    // (undocumented)
     stateId: number;
-    // (undocumented)
     stateName: string;
 }
 
-// @public (undocumented)
+// @public
 export interface StorageDealRecord {
-    // (undocumented)
     address: string;
-    // (undocumented)
     dealInfo?: StorageDealInfo;
-    // (undocumented)
     pending: boolean;
-    // (undocumented)
     rootCid: string;
-    // (undocumented)
     time: Date;
 }
 
-// @public (undocumented)
+// @public
 export interface StorageInfo {
-    // (undocumented)
     cid: string;
-    // (undocumented)
     cold?: ColdInfo;
-    // (undocumented)
     created: Date;
-    // (undocumented)
     hot?: HotInfo;
-    // (undocumented)
     jobId: string;
 }
 
-// @public (undocumented)
+// @public
 export interface StorageJob {
-    // (undocumented)
     apiId: string;
-    // (undocumented)
     cid: string;
-    // (undocumented)
     createdAt: Date;
-    // (undocumented)
     dealErrors: DealError[];
-    // (undocumented)
-    dealInfo: DealInfo[];
-    // (undocumented)
+    dealInfo: StorageDealInfo[];
     errorCause: string;
-    // (undocumented)
     id: string;
-    // (undocumented)
     status: JobStatus;
 }
 

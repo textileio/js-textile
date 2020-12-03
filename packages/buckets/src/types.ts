@@ -33,7 +33,7 @@ export interface PushOptions {
   root?: Root | string
 
   /**
-   * An optional abort signal to allow cancelation or aborting a bucket push.
+   * An optional abort signal to allow cancellation or aborting a bucket push.
    */
   signal?: AbortSignal
 }
@@ -262,7 +262,7 @@ export interface ArchiveDealInfo {
 }
 
 /**
- * Archive status codes
+ * Archive job status codes
  */
 export enum ArchiveStatus {
   /**
@@ -308,7 +308,7 @@ export interface Archive {
    */
   status: ArchiveStatus
   /**
-   * Wheterh or not the archive was aborted.
+   * Whether or not the archive was aborted.
    */
   aborted: boolean
   /**

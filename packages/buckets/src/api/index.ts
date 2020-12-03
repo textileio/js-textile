@@ -185,6 +185,7 @@ function fromPbArchiveStatus(item: _ArchiveStatusMap[keyof _ArchiveStatusMap]): 
 function fromPbArchive(item: _Archive.AsObject): Archive {
   return {
     ...item,
+    // TODO: standardize units coming from server.
     createdAt: new Date(item.createdAt * 1000),
     status: fromPbArchiveStatus(item.archiveStatus),
     dealInfo: item.dealInfoList.map(fromPbDealInfo),
