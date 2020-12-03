@@ -5,17 +5,10 @@ import {
   WithKeyInfoOptions,
   WithUserAuthOptions,
 } from '@textile/grpc-authentication'
-import {
-  AddressesResponse,
-  BalanceResponse,
-  CidInfoResponse,
-  DealRecordsConfig,
-  RetrievalDealRecordsResponse,
-  StorageDealRecordsResponse,
-} from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import log from 'loglevel'
 import { addresses, balance, cidInfo, retrievalDealRecords, storageDealRecords } from './api'
+import { AddressInfo, CidInfo, DealRecordsConfig, RetrievalDealRecord, StorageDealRecord } from './types'
 
 const logger = log.getLogger('filecoin')
 /**
@@ -150,7 +143,7 @@ export class Filecoin extends GrpcAuthentication {
    * List all Filecoin wallet addresses associated with the current account or user.
    * @beta
    */
-  async addresses(): Promise<AddressesResponse.AsObject> {
+  async addresses(): Promise<AddressInfo[]> {
     return addresses(this)
   }
 
@@ -159,7 +152,7 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param address The wallet address to check the balance of.
    */
-  async balance(address: string): Promise<BalanceResponse.AsObject> {
+  async balance(address: string): Promise<bigint> {
     return balance(this, address)
   }
 
@@ -168,7 +161,7 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param cids The cids to get info for.
    */
-  async cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject> {
+  async cidInfo(...cids: string[]): Promise<CidInfo[]> {
     return cidInfo(this, undefined, ...cids)
   }
 
@@ -177,7 +170,7 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject> {
+  async storageDealRecords(config: DealRecordsConfig): Promise<StorageDealRecord[]> {
     return storageDealRecords(this, config)
   }
 
@@ -186,7 +179,7 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject> {
+  async retrievalDealRecords(config: DealRecordsConfig): Promise<RetrievalDealRecord[]> {
     return retrievalDealRecords(this, config)
   }
 }

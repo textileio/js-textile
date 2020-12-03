@@ -234,7 +234,31 @@
       "hub.filecoin.withkeyinfo",
       "hub.filecoin.withuserauth"
     ],
-    "Types": []
+    "Types": [
+      "hub.addressinfo",
+      "hub.ipfsconfig",
+      "hub.hotconfig",
+      "hub.filrenew",
+      "hub.filconfig",
+      "hub.coldconfig",
+      "hub.storageconfig",
+      "hub.ipfshotinfo",
+      "hub.hotinfo",
+      "hub.filstorage",
+      "hub.filinfo",
+      "hub.coldinfo",
+      "hub.storageinfo",
+      "hub.dealinfo",
+      "hub.dealerror",
+      "hub.jobstatus",
+      "hub.storagejob",
+      "hub.cidinfo",
+      "hub.storagedealinfo",
+      "hub.storagedealrecord",
+      "hub.retrievaldealinfo",
+      "hub.retrievaldealrecord",
+      "hub.dealrecordsconfig"
+    ]
   },
   "Types": {
     "Common Types": [

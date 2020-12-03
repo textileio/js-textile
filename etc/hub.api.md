@@ -5,16 +5,12 @@
 ```ts
 
 import type { AbortSignal as AbortSignal_2 } from 'abort-controller';
-import { AddressesResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { ArchiveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ArchiveWatchResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { BalanceResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { BaseNameOrCode } from 'multibase';
 import CID from 'cids';
-import { CidInfoResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { ContextInterface } from '@textile/context';
 import { CreateResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { DealRecordsConfig } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
@@ -46,7 +42,6 @@ import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 import { RemovePathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { RemoveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { RetrievalDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { Root } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { RootResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SendMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
@@ -54,7 +49,6 @@ import { SendMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb
 import { SetPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SetupMailboxRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { SetupMailboxResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { StorageDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -69,6 +63,18 @@ export enum Action {
     DELETE = 2,
     // (undocumented)
     SAVE = 1
+}
+
+// @public (undocumented)
+export interface AddressInfo {
+    // (undocumented)
+    address: string;
+    // (undocumented)
+    balance: bigint;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    type: string;
 }
 
 // @public
@@ -88,7 +94,7 @@ export interface Archive {
     // (undocumented)
     createdAt: number;
     // (undocumented)
-    dealInfoList: Array<DealInfo>;
+    dealInfo: Array<ArchiveDealInfo>;
     // (undocumented)
     failureMsg: string;
     // (undocumented)
@@ -109,6 +115,34 @@ export interface ArchiveConfig {
     renew?: ArchiveRenew;
     repFactor: number;
     trustedMiners: Array<string>;
+}
+
+// @public
+export interface ArchiveDealInfo {
+    // (undocumented)
+    activationEpoch: number;
+    // (undocumented)
+    dealId: number;
+    // (undocumented)
+    duration: number;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    pieceCid: string;
+    // (undocumented)
+    pricePerEpoch: number;
+    // (undocumented)
+    proposalCid: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    startEpoch: number;
+    // (undocumented)
+    stateId: number;
+    // (undocumented)
+    stateName: string;
 }
 
 // @public
@@ -334,6 +368,24 @@ export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
 // @public (undocumented)
 export const CHUNK_SIZE = 32768;
 
+// @public (undocumented)
+export interface CidInfo {
+    // (undocumented)
+    cid: string;
+    // (undocumented)
+    currentStorageInfo?: StorageInfo;
+    // (undocumented)
+    executingStorageJob?: StorageJob;
+    // (undocumented)
+    latestFinalStorageJob?: StorageJob;
+    // (undocumented)
+    latestPushedStorageConfig?: StorageConfig;
+    // (undocumented)
+    latestSuccessfulStorageJob?: StorageJob;
+    // (undocumented)
+    queuedStorageJobs: StorageJob[];
+}
+
 // @public
 export class Client {
     constructor(context?: ContextInterface, debug?: boolean);
@@ -374,6 +426,22 @@ export class Client {
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
     writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
+}
+
+// @public (undocumented)
+export interface ColdConfig {
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    filecoin?: FilConfig;
+}
+
+// @public (undocumented)
+export interface ColdInfo {
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    filecoin?: FilInfo;
 }
 
 // @public
@@ -474,7 +542,17 @@ export interface DBInfo {
     key: string;
 }
 
-// @public
+// @public (undocumented)
+export interface DealError {
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    proposalCid: string;
+}
+
+// @public (undocumented)
 export interface DealInfo {
     // (undocumented)
     activationEpoch: number;
@@ -500,6 +578,20 @@ export interface DealInfo {
     stateId: number;
     // (undocumented)
     stateName: string;
+}
+
+// @public (undocumented)
+export interface DealRecordsConfig {
+    // (undocumented)
+    ascending: boolean;
+    // (undocumented)
+    dataCidsList: string[];
+    // (undocumented)
+    fromAddrsList: string[];
+    // (undocumented)
+    includeFinal: boolean;
+    // (undocumented)
+    includePending: boolean;
 }
 
 // @public
@@ -532,25 +624,87 @@ export const expirationError: Error;
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
+// @public (undocumented)
+export interface FilConfig {
+    // (undocumented)
+    address: string;
+    // (undocumented)
+    countryCodesList: string[];
+    // (undocumented)
+    dealMinDuration: number;
+    // (undocumented)
+    dealStartOffset: number;
+    // (undocumented)
+    excludedMinersList: string[];
+    // (undocumented)
+    fastRetrieval: boolean;
+    // (undocumented)
+    maxPrice: number;
+    // (undocumented)
+    renew?: FilRenew;
+    // (undocumented)
+    replicationFactor: number;
+    // (undocumented)
+    trustedMinersList: string[];
+}
+
 // Warning: (ae-incompatible-release-tags) The symbol "Filecoin" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
 //
 // @public
 export class Filecoin extends GrpcAuthentication {
     // @beta
-    addresses(): Promise<AddressesResponse.AsObject>;
+    addresses(): Promise<AddressInfo[]>;
     // @beta
-    balance(address: string): Promise<BalanceResponse.AsObject>;
+    balance(address: string): Promise<bigint>;
     // @beta
-    cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject>;
+    cidInfo(...cids: string[]): Promise<CidInfo[]>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Filecoin;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     // @beta
-    retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject>;
+    retrievalDealRecords(config: DealRecordsConfig): Promise<RetrievalDealRecord[]>;
     // @beta
-    storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject>;
+    storageDealRecords(config: DealRecordsConfig): Promise<StorageDealRecord[]>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Filecoin>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Filecoin;
+}
+
+// @public (undocumented)
+export interface FilInfo {
+    // (undocumented)
+    dataCid: string;
+    // (undocumented)
+    proposals: FilStorage[];
+    // (undocumented)
+    size: number;
+}
+
+// @public (undocumented)
+export interface FilRenew {
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    threshold: number;
+}
+
+// @public (undocumented)
+export interface FilStorage {
+    // (undocumented)
+    activationEpoch: number;
+    // (undocumented)
+    duration: number;
+    // (undocumented)
+    epochPrice: number;
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    pieceCid: string;
+    // (undocumented)
+    proposalCid: string;
+    // (undocumented)
+    renewed: boolean;
+    // (undocumented)
+    startEpoch: number;
 }
 
 // @public
@@ -621,6 +775,28 @@ export class GrpcAuthentication extends GrpcConnection {
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): GrpcAuthentication;
 }
 
+// @public (undocumented)
+export interface HotConfig {
+    // (undocumented)
+    allowUnfreeze: boolean;
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    ipfs?: IpfsConfig;
+    // (undocumented)
+    unfreezeMaxPrice: number;
+}
+
+// @public (undocumented)
+export interface HotInfo {
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    ipfs?: IpfsHotInfo;
+    // (undocumented)
+    size: number;
+}
+
 // @public
 export interface Identity {
     public: Public;
@@ -641,6 +817,34 @@ export interface InboxListOptions {
 
 // @public (undocumented)
 export const invalidKeyError: Error;
+
+// @public (undocumented)
+export interface IpfsConfig {
+    // (undocumented)
+    addTimeout: number;
+}
+
+// @public (undocumented)
+export interface IpfsHotInfo {
+    // (undocumented)
+    created: Date;
+}
+
+// @public (undocumented)
+export enum JobStatus {
+    // (undocumented)
+    Canceled = 4,
+    // (undocumented)
+    Executing = 2,
+    // (undocumented)
+    Failed = 3,
+    // (undocumented)
+    Queued = 1,
+    // (undocumented)
+    Success = 5,
+    // (undocumented)
+    Unspecified = 0
+}
 
 // @public
 export const keyFromString: (k: string) => Uint8Array;
@@ -915,6 +1119,34 @@ export { RemovePathResponse }
 
 export { RemoveResponse }
 
+// @public (undocumented)
+export interface RetrievalDealInfo {
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    minerPeerId: string;
+    // (undocumented)
+    minPrice: number;
+    // (undocumented)
+    paymentInterval: number;
+    // (undocumented)
+    paymentIntervalIncrease: number;
+    // (undocumented)
+    rootCid: string;
+    // (undocumented)
+    size: number;
+}
+
+// @public (undocumented)
+export interface RetrievalDealRecord {
+    // (undocumented)
+    address: string;
+    // (undocumented)
+    dealInfo?: RetrievalDealInfo;
+    // (undocumented)
+    time: Date;
+}
+
 export { Root }
 
 // @public @deprecated (undocumented)
@@ -968,6 +1200,92 @@ export enum Status {
     READ = 1,
     // (undocumented)
     UNREAD = 2
+}
+
+// @public (undocumented)
+export interface StorageConfig {
+    // (undocumented)
+    cold?: ColdConfig;
+    // (undocumented)
+    hot?: HotConfig;
+    // (undocumented)
+    repairable: boolean;
+}
+
+// @public (undocumented)
+export interface StorageDealInfo {
+    // (undocumented)
+    activationEpoch: number;
+    // (undocumented)
+    dealId: number;
+    // (undocumented)
+    duration: number;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    pieceCid: string;
+    // (undocumented)
+    pricePerEpoch: number;
+    // (undocumented)
+    proposalCid: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    startEpoch: number;
+    // (undocumented)
+    stateId: number;
+    // (undocumented)
+    stateName: string;
+}
+
+// @public (undocumented)
+export interface StorageDealRecord {
+    // (undocumented)
+    address: string;
+    // (undocumented)
+    dealInfo?: StorageDealInfo;
+    // (undocumented)
+    pending: boolean;
+    // (undocumented)
+    rootCid: string;
+    // (undocumented)
+    time: Date;
+}
+
+// @public (undocumented)
+export interface StorageInfo {
+    // (undocumented)
+    cid: string;
+    // (undocumented)
+    cold?: ColdInfo;
+    // (undocumented)
+    created: Date;
+    // (undocumented)
+    hot?: HotInfo;
+    // (undocumented)
+    jobId: string;
+}
+
+// @public (undocumented)
+export interface StorageJob {
+    // (undocumented)
+    apiId: string;
+    // (undocumented)
+    cid: string;
+    // (undocumented)
+    createdAt: Date;
+    // (undocumented)
+    dealErrors: DealError[];
+    // (undocumented)
+    dealInfo: DealInfo[];
+    // (undocumented)
+    errorCause: string;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    status: JobStatus;
 }
 
 // @public

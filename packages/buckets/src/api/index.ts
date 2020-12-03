@@ -1,18 +1,18 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import {
-  Archive as PbArchive,
-  ArchiveConfig as ProtoArchiveConfig,
-  ArchiveRenew as ProtoArchiveRenew,
+  Archive as _Archive,
+  ArchiveConfig as _ArchiveConfig,
+  ArchiveRenew as _ArchiveRenew,
   ArchiveRequest,
   ArchivesRequest,
   ArchivesResponse,
-  ArchiveStatus as PbArchiveStatus,
-  ArchiveStatusMap as PbArchiveStatusMap,
+  ArchiveStatus as _ArchiveStatus,
+  ArchiveStatusMap as _ArchiveStatusMap,
   ArchiveWatchRequest,
   ArchiveWatchResponse,
   CreateRequest,
   CreateResponse as _CreateResponse,
-  DealInfo as PbDealInfo,
+  DealInfo as _DealInfo,
   DefaultArchiveConfigRequest,
   DefaultArchiveConfigResponse,
   LinksRequest,
@@ -249,7 +249,7 @@ export interface ArchiveRenew {
   threshold: number
 }
 
-const fromProtoArchiveConfig = (protoConfig: ProtoArchiveConfig): ArchiveConfig => {
+const fromProtoArchiveConfig = (protoConfig: _ArchiveConfig): ArchiveConfig => {
   const config: ArchiveConfig = {
     addr: protoConfig.getAddr(),
     countryCodes: protoConfig.getCountryCodesList(),
@@ -271,8 +271,8 @@ const fromProtoArchiveConfig = (protoConfig: ProtoArchiveConfig): ArchiveConfig 
   return config
 }
 
-const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
-  const protoConfig = new ProtoArchiveConfig()
+const toProtoArchiveConfig = (config: ArchiveConfig): _ArchiveConfig => {
+  const protoConfig = new _ArchiveConfig()
   protoConfig.setAddr(config.addr)
   protoConfig.setCountryCodesList(config.countryCodes)
   protoConfig.setDealMinDuration(config.dealMinDuration)
@@ -283,7 +283,7 @@ const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
   protoConfig.setRepFactor(config.repFactor)
   protoConfig.setTrustedMinersList(config.trustedMiners)
   if (config.renew) {
-    const renew = new ProtoArchiveRenew()
+    const renew = new _ArchiveRenew()
     renew.setEnabled(config.renew.enabled)
     renew.setThreshold(config.renew.threshold)
     protoConfig.setRenew(renew)
@@ -294,7 +294,7 @@ const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
 /**
  * Information about a Filecoin deal for a Bucket Archive.
  */
-export interface DealInfo {
+export interface ArchiveDealInfo {
   proposalCid: string
   stateId: number
   stateName: string
@@ -332,7 +332,7 @@ export interface Archive {
   abortedMsg: string
   failureMsg: string
   createdAt: number
-  dealInfoList: Array<DealInfo>
+  dealInfo: Array<ArchiveDealInfo>
 }
 
 /**
@@ -343,7 +343,7 @@ export interface Archives {
   history: Array<Archive>
 }
 
-function fromPbDealInfo(pbDealInfo: PbDealInfo): DealInfo {
+function fromPbDealInfo(pbDealInfo: _DealInfo): ArchiveDealInfo {
   return {
     activationEpoch: pbDealInfo.getActivationEpoch(),
     dealId: pbDealInfo.getDealId(),
@@ -360,24 +360,24 @@ function fromPbDealInfo(pbDealInfo: PbDealInfo): DealInfo {
   }
 }
 
-function fromPbArchiveStatus(pbArchiveStatus: PbArchiveStatusMap[keyof PbArchiveStatusMap]): ArchiveStatus {
+function fromPbArchiveStatus(pbArchiveStatus: _ArchiveStatusMap[keyof _ArchiveStatusMap]): ArchiveStatus {
   switch (pbArchiveStatus) {
-    case PbArchiveStatus.ARCHIVE_STATUS_CANCELED:
+    case _ArchiveStatus.ARCHIVE_STATUS_CANCELED:
       return ArchiveStatus.CANCELED
-    case PbArchiveStatus.ARCHIVE_STATUS_EXECUTING:
+    case _ArchiveStatus.ARCHIVE_STATUS_EXECUTING:
       return ArchiveStatus.EXECUTING
-    case PbArchiveStatus.ARCHIVE_STATUS_FAILED:
+    case _ArchiveStatus.ARCHIVE_STATUS_FAILED:
       return ArchiveStatus.FAILED
-    case PbArchiveStatus.ARCHIVE_STATUS_QUEUED:
+    case _ArchiveStatus.ARCHIVE_STATUS_QUEUED:
       return ArchiveStatus.QUEUED
-    case PbArchiveStatus.ARCHIVE_STATUS_SUCCESS:
+    case _ArchiveStatus.ARCHIVE_STATUS_SUCCESS:
       return ArchiveStatus.SUCCESS
-    case PbArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
+    case _ArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
       return ArchiveStatus.UNSPECIFIED
   }
 }
 
-function fromPbArchive(pbArchive: PbArchive): Archive {
+function fromPbArchive(pbArchive: _Archive): Archive {
   return {
     aborted: pbArchive.getAborted(),
     abortedMsg: pbArchive.getAbortedMsg(),
@@ -386,7 +386,7 @@ function fromPbArchive(pbArchive: PbArchive): Archive {
     failureMsg: pbArchive.getFailureMsg(),
     jobId: pbArchive.getJobId(),
     status: fromPbArchiveStatus(pbArchive.getArchiveStatus()),
-    dealInfoList: pbArchive.getDealInfoList().map((item) => fromPbDealInfo(item)),
+    dealInfo: pbArchive.getDealInfoList().map((item) => fromPbDealInfo(item)),
   }
 }
 
