@@ -46,7 +46,7 @@ describe('Buckets utils...', function () {
 
 describe('Buckets...', function () {
   const ctx = new Context(addrApiurl)
-  const client = new Buckets(ctx, true) // Turn on debug
+  const client = new Buckets(ctx)
   let buck: CreateResponse
   let fileSize: number
 
@@ -370,7 +370,7 @@ describe('Buckets...', function () {
     it('should allow an abort controler to signal a cancel event on a push', async function () {
       const { root } = await client.getOrCreate('aborted')
 
-      // Create an infinate stream of bytes
+      // Create an infinite stream of bytes
       async function* stream() {
         while (true) {
           yield Buffer.from('data')
@@ -457,11 +457,10 @@ describe('Buckets...', function () {
     })
 
     it('add a new file into a shared path should fail', async function () {
-      console.log('##################### STARTING TEST ###################')
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
-      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl, debug: true })
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
 
@@ -471,15 +470,24 @@ describe('Buckets...', function () {
         // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
         // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
         // Tiny "stream"
-        const content = 'some content'
-        const stream = { path: '/index.html', content: Buffer.from(content) }
-        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
+        // const content = 'some content'
+        // const stream = { path: '/index.html', content: Buffer.from(content) }
+        // Infinite stream
+        async function* stream() {
+          while (true) {
+            yield Buffer.from('data')
+            await new Promise((resolve) => setTimeout(resolve, 100))
+          }
+        }
+        // const stream = gen()
+        console.debug('##################### STARTING TEST ###################')
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream(), { root })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('permission denied')
+        console.debug('##################### ENDING TEST ###################')
       }
-      console.log('##################### ENDING TEST ###################')
     })
 
     it('remove a file in shared path', async function () {
