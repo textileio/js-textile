@@ -62,7 +62,7 @@ jobs:
 
       - name: Test Node
         run: |
-          npm run test:node -- -g "Buckets[...]"
+          npm run test:node
 
       - name: Dump docker logs on failure
         if: failure()
