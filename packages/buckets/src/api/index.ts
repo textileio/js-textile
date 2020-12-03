@@ -593,6 +593,7 @@ export async function bucketsPushPathNode(
       }
     }
     stream.end()
+    console.debug('stream end called')
   })
 }
 /**
