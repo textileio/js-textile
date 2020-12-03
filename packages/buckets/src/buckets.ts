@@ -10,13 +10,8 @@ import { KeyInfo, UserAuth } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import log from 'loglevel'
 import {
-  ArchiveConfig,
-  ArchiveInfo,
-  ArchiveOptions,
-  ArchiveStatus,
   bucketsArchive,
-  bucketsArchiveInfo,
-  bucketsArchiveStatus,
+  bucketsArchives,
   bucketsArchiveWatch,
   bucketsCreate,
   bucketsDefaultArchiveConfig,
@@ -33,7 +28,15 @@ import {
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
+} from './api'
+import {
+  ArchiveConfig,
+  ArchiveOptions,
+  Archives,
+  CreateOptions,
   CreateResponse,
+  GetOrCreateOptions,
+  GetOrCreateResponse,
   Links,
   Path,
   PathAccessRole,
@@ -41,58 +44,10 @@ import {
   PushOptions,
   PushPathResult,
   Root,
-} from './api'
+} from './types'
 import { listPathFlat, listPathRecursive } from './utils'
 
 const logger = log.getLogger('buckets')
-
-/**
- * Options for getOrCreate
- */
-export interface GetOrCreateOptions {
-  /**
-   * Name of the Thread where the Bucket will be created.
-   */
-  threadName?: string
-  /**
-   * Encrypt the contents of the bucket on IPFS
-   */
-  encrypted?: boolean
-  /**
-   * Seed a new bucket with the data available at the content address (CID).
-   */
-  cid?: string
-  /**
-   * ID of the Thread where the Bucket will be created.
-   * Will override any ThreadName if different.
-   */
-  threadID?: string
-}
-
-/**
- * Response from getOrCreate
- */
-export interface GetOrCreateResponse {
-  /**
-   * Root of the bucket
-   */
-  root?: Root
-  /**
-   * ThreadID where the bucket was created.
-   */
-  threadID?: string
-}
-
-export interface CreateOptions {
-  /**
-   * Encrypt the contents of the bucket on IPFS
-   */
-  encrypted?: boolean
-  /**
-   * Seed a new bucket with the data available at the content address (CID).
-   */
-  cid?: string
-}
 
 /**
  * Buckets a client wrapper for interacting with the Textile Buckets API.
@@ -845,7 +800,7 @@ export class Buckets extends GrpcAuthentication {
    * @param options An object to set options that control the behavor of archive.
    *
    * @example
-   * Remove a file by its relative path
+   * Archive a Bucket.
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
@@ -860,44 +815,23 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * archiveStatus returns the status of a Filecoin bucket archive.
+   * archives returns the curent and historical archives for a Bucket.
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    *
    * @example
-   * Remove a file by its relative path
+   * Get current and historical archives
    * ```typescript
    * import { Buckets } from '@textile/hub'
    *
    * async function status (buckets: Buckets, key: string) {
-   *    buckets.archive(key)
+   *    const { current, history } = await buckets.archives(key)
    * }
    * ```
    */
-  async archiveStatus(key: string): Promise<ArchiveStatus> {
-    logger.debug('archive status request')
-    return bucketsArchiveStatus(this, key)
-  }
-
-  /**
-   * archiveInfo returns info about a Filecoin bucket archive.
-   * @beta
-   * @param key Unique (IPNS compatible) identifier key for a bucket.
-   *
-   * @example
-   * Display the info for an existing archives of the bucket
-   * ```typescript
-   * import { Buckets } from '@textile/hub'
-   *
-   * async function log (buckets: Buckets, key: string) {
-   *    const info = await buckets.archiveInfo(key)
-   *    console.log(info.cid, info.deals.length)
-   * }
-   * ```
-   */
-  async archiveInfo(key: string): Promise<ArchiveInfo> {
-    logger.debug('archive info request')
-    return bucketsArchiveInfo(this, key)
+  async archives(key: string): Promise<Archives> {
+    logger.debug('archives request')
+    return bucketsArchives(this, key)
   }
 
   /**

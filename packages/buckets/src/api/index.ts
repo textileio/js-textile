@@ -1,16 +1,18 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import {
-  ArchiveConfig as ProtoArchiveConfig,
-  ArchiveInfoRequest,
-  ArchiveInfoResponse,
-  ArchiveRenew as ProtoArchiveRenew,
+  Archive as _Archive,
+  ArchiveConfig as _ArchiveConfig,
+  ArchiveRenew as _ArchiveRenew,
   ArchiveRequest,
-  ArchiveStatusRequest,
-  ArchiveStatusResponse,
+  ArchivesRequest,
+  ArchivesResponse,
+  ArchiveStatus as _ArchiveStatus,
+  ArchiveStatusMap as _ArchiveStatusMap,
   ArchiveWatchRequest,
   ArchiveWatchResponse,
   CreateRequest,
   CreateResponse as _CreateResponse,
+  DealInfo as _DealInfo,
   DefaultArchiveConfigRequest,
   DefaultArchiveConfigResponse,
   LinksRequest,
@@ -50,292 +52,34 @@ import {
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
-import type { AbortSignal } from 'abort-controller'
 import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
+import {
+  AbortError,
+  Archive,
+  ArchiveConfig,
+  ArchiveDealInfo,
+  ArchiveOptions,
+  ArchiveRenew,
+  Archives,
+  ArchiveStatus,
+  BuckMetadata,
+  CreateResponse,
+  Links,
+  Path,
+  PathAccessRole,
+  PathItem,
+  PushOptions,
+  PushPathResult,
+  Root,
+} from '../types'
 import { File, normaliseInput } from './normalize'
 
 const logger = log.getLogger('buckets-api')
+const CHUNK_SIZE = 32768
 
-/**
- * PushOptions provides additional options for controlling a push to a bucket path.
- */
-export interface PushOptions {
-  /**
-   * A callback function to use for monitoring push progress.
-   */
-  progress?: (num?: number) => void
-  /**
-   * The bucket root path as a string, or root object. Important to set this property when
-   * there is a possibility of multiple parallel pushes to a bucket. Specifying this property
-   * will enforce fast-forward only updates. It not provided explicitly, the root path will
-   * be fetched via an additional API call before each push.
-   */
-  root?: Root | string
-
-  /**
-   * An optional abort signal to allow cancelation or aborting a bucket push.
-   */
-  signal?: AbortSignal
-}
-
-export const AbortError = new Error('aborted')
-
-/**
- * The expected result format from pushing a path to a bucket
- */
-export interface PushPathResult {
-  path: {
-    path: string
-    cid: CID
-    root: CID
-    remainder: string
-  }
-  root: string
-}
-
-/**
- * Response from bucket links query.
- */
-export type Links = {
-  www: string
-  ipns: string
-  url: string
-}
-
-/**
- * @deprecated
- */
-export type LinksObject = Links
-
-/**
- * Bucket root info
- */
-export type Root = {
-  key: string
-  name: string
-  path: string
-  createdAt: number
-  updatedAt: number
-  thread: string
-}
-/**
- * @deprecated
- */
-export type RootObject = Root
-
-export enum PathAccessRole {
-  PATH_ACCESS_ROLE_UNSPECIFIED = 0,
-  PATH_ACCESS_ROLE_READER = 1,
-  PATH_ACCESS_ROLE_WRITER = 2,
-  PATH_ACCESS_ROLE_ADMIN = 3,
-}
-
-export type BuckMetadata = {
-  roles: Map<string, PathAccessRole>
-  updatedAt: number
-}
-/**
- * @deprecated
- */
-export type MetadataObject = BuckMetadata
-
-/**
- * A bucket path item response
- */
-export type PathItem = {
-  cid: string
-  name: string
-  path: string
-  size: number
-  isDir: boolean
-  items: Array<PathItem>
-  count: number
-  metadata?: BuckMetadata
-}
-/**
- * @deprecated
- */
-export type PathItemObject = PathItem
-
-/**
- * A bucket list path response
- */
-export type Path = {
-  item?: PathItem
-  root?: Root
-}
-/**
- * @deprecated
- */
-export type PathObject = Path
-
-export const CHUNK_SIZE = 32768
-
-export function* genChunks(value: Uint8Array, size: number) {
-  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
-}
-
-/**
- * ArchiveConfig is the desired state of a Cid in the Filecoin network.
- */
-export interface ArchiveConfig {
-  /**
-   * RepFactor (ignored in Filecoin testnet) indicates the desired amount of active deals
-   * with different miners to store the data. While making deals
-   * the other attributes of FilConfig are considered for miner selection.
-   */
-  repFactor: number
-  /**
-   * DealMinDuration indicates the duration to be used when making new deals.
-   */
-  dealMinDuration: number
-  /**
-   * ExcludedMiners (ignored in Filecoin testnet) is a set of miner addresses won't be ever be selected
-   *when making new deals, even if they comply to other filters.
-   */
-  excludedMiners: Array<string>
-  /**
-   * TrustedMiners (ignored in Filecoin testnet) is a set of miner addresses which will be forcibly used
-   * when making new deals. An empty/nil list disables this feature.
-   */
-  trustedMiners: Array<string>
-  /**
-   * CountryCodes (ignored in Filecoin testnet) indicates that new deals should select miners on specific countries.
-   */
-  countryCodes: Array<string>
-  /**
-   * Renew indicates deal-renewal configuration.
-   */
-  renew?: ArchiveRenew
-  /**
-   * Addr is the wallet address used to store the data in filecoin
-   */
-  addr: string
-  /**
-   * MaxPrice is the maximum price that will be spent to store the data, 0 is no max
-   */
-  maxPrice: number
-  /**
-   *
-   * FastRetrieval indicates that created deals should enable the
-   * fast retrieval feature.
-   */
-  fastRetrieval: boolean
-  /**
-   * DealStartOffset indicates how many epochs in the future impose a
-   * deadline to new deals being active on-chain. This value might influence
-   * if miners accept deals, since they should seal fast enough to satisfy
-   * this constraint.
-   */
-  dealStartOffset: number
-}
-
-/**
- * ArchiveRenew contains renew configuration for a ArchiveConfig.
- */
-export interface ArchiveRenew {
-  /**
-   * Enabled indicates that deal-renewal is enabled for this Cid.
-   */
-  enabled: boolean
-  /**
-   * Threshold indicates how many epochs before expiring should trigger
-   * deal renewal. e.g: 100 epoch before expiring.
-   */
-  threshold: number
-}
-
-const fromProtoArchiveConfig = (protoConfig: ProtoArchiveConfig): ArchiveConfig => {
-  const config: ArchiveConfig = {
-    addr: protoConfig.getAddr(),
-    countryCodes: protoConfig.getCountryCodesList(),
-    dealMinDuration: protoConfig.getDealMinDuration(),
-    dealStartOffset: protoConfig.getDealStartOffset(),
-    excludedMiners: protoConfig.getExcludedMinersList(),
-    fastRetrieval: protoConfig.getFastRetrieval(),
-    maxPrice: protoConfig.getMaxPrice(),
-    repFactor: protoConfig.getRepFactor(),
-    trustedMiners: protoConfig.getTrustedMinersList(),
-  }
-  const renew = protoConfig.getRenew()
-  if (renew) {
-    config.renew = {
-      enabled: renew.getEnabled(),
-      threshold: renew.getThreshold(),
-    }
-  }
-  return config
-}
-
-const toProtoArchiveConfig = (config: ArchiveConfig): ProtoArchiveConfig => {
-  const protoConfig = new ProtoArchiveConfig()
-  protoConfig.setAddr(config.addr)
-  protoConfig.setCountryCodesList(config.countryCodes)
-  protoConfig.setDealMinDuration(config.dealMinDuration)
-  protoConfig.setDealStartOffset(config.dealStartOffset)
-  protoConfig.setExcludedMinersList(config.excludedMiners)
-  protoConfig.setFastRetrieval(config.fastRetrieval)
-  protoConfig.setMaxPrice(config.maxPrice)
-  protoConfig.setRepFactor(config.repFactor)
-  protoConfig.setTrustedMinersList(config.trustedMiners)
-  if (config.renew) {
-    const renew = new ProtoArchiveRenew()
-    renew.setEnabled(config.renew.enabled)
-    renew.setThreshold(config.renew.threshold)
-    protoConfig.setRenew(renew)
-  }
-  return protoConfig
-}
-
-/**
- * Archive status codes
- */
-export enum StatusCode {
-  STATUS_UNSPECIFIED,
-  STATUS_EXECUTING,
-  STATUS_FAILED,
-  STATUS_DONE,
-  STATUS_CANCELED,
-}
-
-/**
- * Response of of bucket archive status request.
- */
-export type ArchiveStatus = {
-  key: string
-  status: StatusCode
-  failedMsg: string
-}
-
-/**
- * Metadata for each deal associated with an archive.
- */
-export type ArchiveDealInfo = {
-  proposalCid: string
-  miner: string
-}
-
-/**
- * Response of of bucket info status request.
- */
-export type ArchiveInfo = {
-  key: string
-  cid?: string
-  deals: Array<ArchiveDealInfo>
-}
-
-/**
- * Bucket create response
- */
-export type CreateResponse = { seed: Uint8Array; seedCid: string; root?: Root; links?: Links }
-/**
- * @deprecated
- */
-export type CreateObject = CreateResponse
-
-const convertRootObject = (root: _Root): Root => {
+function fromPbRootObject(root: _Root): Root {
   return {
     key: root.getKey(),
     name: root.getName(),
@@ -346,12 +90,12 @@ const convertRootObject = (root: _Root): Root => {
   }
 }
 
-const convertRootObjectNullable = (root?: _Root): Root | undefined => {
+function fromPbRootObjectNullable(root?: _Root): Root | undefined {
   if (!root) return
-  return convertRootObject(root)
+  return fromPbRootObject(root)
 }
 
-const convertMetadata = (metadata?: _Metadata): BuckMetadata | undefined => {
+function fromPbMetadata(metadata?: _Metadata): BuckMetadata | undefined {
   if (!metadata) return
   const roles = metadata.getRolesMap()
   const typedRoles = new Map()
@@ -364,7 +108,7 @@ const convertMetadata = (metadata?: _Metadata): BuckMetadata | undefined => {
   return response
 }
 
-const convertPathItem = (item: _PathItem): PathItem => {
+function fromPbPathItem(item: _PathItem): PathItem {
   const list = item.getItemsList()
   return {
     cid: item.getCid(),
@@ -372,15 +116,84 @@ const convertPathItem = (item: _PathItem): PathItem => {
     path: item.getPath(),
     size: item.getSize(),
     isDir: item.getIsDir(),
-    items: list ? list.map(convertPathItem) : [],
+    items: list ? list.map(fromPbPathItem) : [],
     count: item.getItemsCount(),
-    metadata: convertMetadata(item.getMetadata()),
+    metadata: fromPbMetadata(item.getMetadata()),
   }
 }
 
-const convertPathItemNullable = (item?: _PathItem): PathItem | undefined => {
+function fromPbPathItemNullable(item?: _PathItem): PathItem | undefined {
   if (!item) return
-  return convertPathItem(item)
+  return fromPbPathItem(item)
+}
+
+function fromProtoArchiveRenew(item: _ArchiveRenew.AsObject): ArchiveRenew {
+  return { ...item }
+}
+
+function fromProtoArchiveConfig(item: _ArchiveConfig.AsObject): ArchiveConfig {
+  return {
+    ...item,
+    countryCodes: item.countryCodesList,
+    excludedMiners: item.excludedMinersList,
+    trustedMiners: item.trustedMinersList,
+    renew: item.renew ? fromProtoArchiveRenew(item.renew) : undefined,
+  }
+}
+
+function toProtoArchiveConfig(config: ArchiveConfig): _ArchiveConfig {
+  const protoConfig = new _ArchiveConfig()
+  protoConfig.setAddr(config.addr)
+  protoConfig.setCountryCodesList(config.countryCodes)
+  protoConfig.setDealMinDuration(config.dealMinDuration)
+  protoConfig.setDealStartOffset(config.dealStartOffset)
+  protoConfig.setExcludedMinersList(config.excludedMiners)
+  protoConfig.setFastRetrieval(config.fastRetrieval)
+  protoConfig.setMaxPrice(config.maxPrice)
+  protoConfig.setRepFactor(config.repFactor)
+  protoConfig.setTrustedMinersList(config.trustedMiners)
+  if (config.renew) {
+    const renew = new _ArchiveRenew()
+    renew.setEnabled(config.renew.enabled)
+    renew.setThreshold(config.renew.threshold)
+    protoConfig.setRenew(renew)
+  }
+  return protoConfig
+}
+
+function fromPbDealInfo(item: _DealInfo.AsObject): ArchiveDealInfo {
+  return { ...item }
+}
+
+function fromPbArchiveStatus(item: _ArchiveStatusMap[keyof _ArchiveStatusMap]): ArchiveStatus {
+  switch (item) {
+    case _ArchiveStatus.ARCHIVE_STATUS_CANCELED:
+      return ArchiveStatus.Canceled
+    case _ArchiveStatus.ARCHIVE_STATUS_EXECUTING:
+      return ArchiveStatus.Executing
+    case _ArchiveStatus.ARCHIVE_STATUS_FAILED:
+      return ArchiveStatus.Failed
+    case _ArchiveStatus.ARCHIVE_STATUS_QUEUED:
+      return ArchiveStatus.Queued
+    case _ArchiveStatus.ARCHIVE_STATUS_SUCCESS:
+      return ArchiveStatus.Success
+    case _ArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
+      return ArchiveStatus.Unspecified
+  }
+}
+
+function fromPbArchive(item: _Archive.AsObject): Archive {
+  return {
+    ...item,
+    // TODO: standardize units coming from server.
+    createdAt: new Date(item.createdAt * 1000),
+    status: fromPbArchiveStatus(item.archiveStatus),
+    dealInfo: item.dealInfoList.map(fromPbDealInfo),
+  }
+}
+
+export function* genChunks(value: Uint8Array, size: number) {
+  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
 }
 
 /**
@@ -420,7 +233,7 @@ export async function bucketsCreate(
   return {
     seed: res.getSeed_asU8(),
     seedCid: res.getSeedCid(),
-    root: convertRootObjectNullable(res.getRoot()),
+    root: fromPbRootObjectNullable(res.getRoot()),
     links: links ? links.toObject() : undefined,
   }
 }
@@ -436,7 +249,7 @@ export async function bucketsRoot(api: GrpcConnection, key: string, ctx?: Contex
   const req = new RootRequest()
   req.setKey(key)
   const res: RootResponse = await api.unary(APIService.Root, req, ctx)
-  return convertRootObjectNullable(res.getRoot())
+  return fromPbRootObjectNullable(res.getRoot())
 }
 
 /**
@@ -494,7 +307,7 @@ export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): 
   const req = new ListRequest()
   const res: ListResponse = await api.unary(APIService.List, req, ctx)
   const roots = res.getRootsList()
-  const map = roots ? roots.map((m) => m).map((m) => convertRootObject(m)) : []
+  const map = roots ? roots.map((m) => m).map((m) => fromPbRootObject(m)) : []
   return map
 }
 
@@ -517,8 +330,8 @@ export async function bucketsListPath(
   req.setPath(path)
   const res: ListPathResponse = await api.unary(APIService.ListPath, req, ctx)
   return {
-    item: convertPathItemNullable(res.getItem()),
-    root: convertRootObjectNullable(res.getRoot()),
+    item: fromPbPathItemNullable(res.getItem()),
+    root: fromPbRootObjectNullable(res.getRoot()),
   }
 }
 
@@ -537,7 +350,7 @@ export async function bucketsListIpfsPath(
   const req = new ListIpfsPathRequest()
   req.setPath(path)
   const res: ListIpfsPathResponse = await api.unary(APIService.ListIpfsPath, req, ctx)
-  return convertPathItemNullable(res.getItem())
+  return fromPbPathItemNullable(res.getItem())
 }
 
 /**
@@ -986,7 +799,7 @@ export async function bucketsDefaultArchiveConfig(api: GrpcConnection, key: stri
   if (!config) {
     throw new Error('no archive config returned')
   }
-  return fromProtoArchiveConfig(config)
+  return fromProtoArchiveConfig(config.toObject())
 }
 
 /**
@@ -1005,18 +818,9 @@ export async function bucketsSetDefaultArchiveConfig(
   await api.unary(APIService.SetDefaultArchiveConfig, req, ctx)
   return
 }
-/**
- * An object to configure options for Archive.
- */
-export interface ArchiveOptions {
-  /**
-   * Provide a custom ArchiveConfig to override use of the default.
-   */
-  archiveConfig?: ArchiveConfig
-}
 
 /**
- * archive creates a Filecoin bucket archive via Powergate.
+ * archive creates a Filecoin bucket archive.
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param options Options that control the behavior of the bucket archive
@@ -1038,51 +842,17 @@ export async function bucketsArchive(
 }
 
 /**
- * archiveStatus returns the status of a Filecoin bucket archive.
  * @internal
- * @param key Unique (IPNS compatible) identifier key for a bucket.
  */
-export async function bucketsArchiveStatus(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<ArchiveStatus> {
-  logger.debug('archive status request')
-  const req = new ArchiveStatusRequest()
+export async function bucketsArchives(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Archives> {
+  logger.debug('archives request')
+  const req = new ArchivesRequest()
   req.setKey(key)
-  const res: ArchiveStatusResponse = await api.unary(APIService.ArchiveStatus, req, ctx)
+  const res: ArchivesResponse = await api.unary(APIService.Archives, req, ctx)
+  const current = res.toObject().current
   return {
-    key: res.getKey(),
-    status: res.getStatus(),
-    failedMsg: res.getFailedMsg(),
-  }
-}
-
-/**
- * archiveInfo returns info about a Filecoin bucket archive.
- * @internal
- * @param key Unique (IPNS compatible) identifier key for a bucket.
- */
-export async function bucketsArchiveInfo(
-  api: GrpcConnection,
-  key: string,
-  ctx?: ContextInterface,
-): Promise<ArchiveInfo> {
-  logger.debug('archive info request')
-  const req = new ArchiveInfoRequest()
-  req.setKey(key)
-  const res: ArchiveInfoResponse = await api.unary(APIService.ArchiveInfo, req, ctx)
-  const archive = res.getArchive()
-  const deals = archive ? archive.getDealsList() : []
-  return {
-    key: res.getKey(),
-    cid: archive ? archive.getCid() : undefined,
-    deals: deals.map((d) => {
-      return {
-        proposalCid: d.getProposalCid(),
-        miner: d.getMiner(),
-      }
-    }),
+    current: current ? fromPbArchive(current) : undefined,
+    history: res.toObject().historyList.map(fromPbArchive),
   }
 }
 

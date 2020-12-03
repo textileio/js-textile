@@ -2,7 +2,7 @@
 
 **Info**
 
-You should use the `@textile/hub` library to integrate pow into your application.
+You should use the `@textile/hub` library to integrate hub-filecoin into your application.
 
 **Install**
 
@@ -13,7 +13,7 @@ npm install --save git@github.com:textileio/js-textile.git
 **Usage**
 
 ```js
-import { Pow } from '@textile/hub'
+import { Filecoin } from '@textile/hub'
 ```
 
 [Read the docs](https://textileio.github.io/js-textile/).

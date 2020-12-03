@@ -5,73 +5,66 @@ import {
   WithKeyInfoOptions,
   WithUserAuthOptions,
 } from '@textile/grpc-authentication'
-import {
-  AddressesResponse,
-  BalanceResponse,
-  CidInfoResponse,
-  DealRecordsConfig,
-  RetrievalDealRecordsResponse,
-  StorageDealRecordsResponse,
-} from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb'
 import { KeyInfo, UserAuth } from '@textile/security'
 import log from 'loglevel'
 import { addresses, balance, cidInfo, retrievalDealRecords, storageDealRecords } from './api'
+import { AddressInfo, CidInfo, DealRecordsConfig, RetrievalDealRecord, StorageDealRecord } from './types'
 
-const logger = log.getLogger('pow')
+const logger = log.getLogger('filecoin')
 /**
- * Pow a client wrapper for interacting with the Textile Powergate API.
+ * Filecoin is a client wrapper for interacting with the Textile Hub Filecoin API.
  * @example
  * Initialize the Bucket API and open an existing bucket (or create if new).
  * ```typescript
- * import { Pow, PrivateKey, UserAuth } from '@textile/hub'
+ * import { Filecoin, PrivateKey, UserAuth } from '@textile/hub'
  *
  * const getAddresses = async (auth: UserAuth, user: PrivateKey) => {
- *   const pow = Pow.withUserAuth(auth)
+ *   const filecoin = Filecoin.withUserAuth(auth)
  *   // Scope the API to the current user
- *   await pow.getToken(user)
+ *   await filecoin.getToken(user)
  *   // List wallet addresses
- *   const health = await pow.addresses()
+ *   const health = await filecoin.addresses()
  * }
  * ```
  */
-export class Pow extends GrpcAuthentication {
+export class Filecoin extends GrpcAuthentication {
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.copyAuth}
    *
    * @example
-   * Copy an authenticated Users api instance to Pow.
+   * Copy an authenticated Users api instance to Filecoin.
    * ```typescript
-   * import { Pow, Users } from '@textile/hub'
+   * import { Filecoin, Users } from '@textile/hub'
    *
-   * const usersToPow = async (user: Users) => {
-   *   const pow = Pow.copyAuth(user)
-   *   return pow
+   * const usersToFilecoin = async (user: Users) => {
+   *   const filecoin = Filecoin.copyAuth(user)
+   *   return filecoin
    * }
    * ```
    *
    * @example
-   * Copy an authenticated Pow api instance to Users.
+   * Copy an authenticated Filecoin api instance to Users.
    * ```typescript
-   * import { Pow, Users } from '@textile/hub'
+   * import { Filecoin, Users } from '@textile/hub'
    *
-   * const powToUsers = async (pow: Pow) => {
-   *   const user = Users.copyAuth(pow)
+   * const filecoinToUsers = async (filecoin: Filecoin) => {
+   *   const user = Users.copyAuth(filecoin)
    *   return user
    * }
    * ```
    */
   static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
-    return new Pow(auth.context, options?.debug)
+    return new Filecoin(auth.context, options?.debug)
   }
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.withUserAuth}
    *
    * @example
    * ```@typescript
-   * import { Pow, UserAuth } from '@textile/hub'
+   * import { Filecoin, UserAuth } from '@textile/hub'
    *
    * async function example (userAuth: UserAuth) {
-   *   const pow = await Pow.withUserAuth(userAuth)
+   *   const filecoin = await Filecoin.withUserAuth(userAuth)
    * }
    * ```
    */
@@ -85,14 +78,14 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```@typescript
-   * import { Pow, KeyInfo } from '@textile/hub'
+   * import { Filecoin, KeyInfo } from '@textile/hub'
    *
    * async function start () {
    *   const keyInfo: KeyInfo = {
    *     key: '<api key>',
    *     secret: '<api secret>'
    *   }
-   *   const pow = await Pow.withKeyInfo(keyInfo)
+   *   const filecoin = await Filecoin.withKeyInfo(keyInfo)
    * }
    * ```
    */
@@ -106,11 +99,11 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```@typescript
-   * import { Pow, PrivateKey } from '@textile/hub'
+   * import { Filecoin, PrivateKey } from '@textile/hub'
    *
-   * async function example (pow: Pow, identity: PrivateKey) {
-   *   const token = await pow.getToken(identity)
-   *   return token // already added to `pow` scope
+   * async function example (filecoin: Filecoin, identity: PrivateKey) {
+   *   const token = await filecoin.getToken(identity)
+   *   return token // already added to `filecoin` scope
    * }
    * ```
    */
@@ -123,10 +116,10 @@ export class Pow extends GrpcAuthentication {
    *
    * @example
    * ```typescript
-   * import { Pow, PrivateKey } from '@textile/hub'
+   * import { Filecoin, PrivateKey } from '@textile/hub'
    *
-   * async function example (pow: Pow, identity: PrivateKey) {
-   *   const token = await pow.getTokenChallenge(
+   * async function example (filecoin: Filecoin, identity: PrivateKey) {
+   *   const token = await filecoin.getTokenChallenge(
    *     identity.public.toString(),
    *     (challenge: Uint8Array) => {
    *       return new Promise((resolve, reject) => {
@@ -150,7 +143,7 @@ export class Pow extends GrpcAuthentication {
    * List all Filecoin wallet addresses associated with the current account or user.
    * @beta
    */
-  async addresses(): Promise<AddressesResponse.AsObject> {
+  async addresses(): Promise<AddressInfo[]> {
     return addresses(this)
   }
 
@@ -159,7 +152,7 @@ export class Pow extends GrpcAuthentication {
    * @beta
    * @param address The wallet address to check the balance of.
    */
-  async balance(address: string): Promise<BalanceResponse.AsObject> {
+  async balance(address: string): Promise<bigint> {
     return balance(this, address)
   }
 
@@ -168,7 +161,7 @@ export class Pow extends GrpcAuthentication {
    * @beta
    * @param cids The cids to get info for.
    */
-  async cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject> {
+  async cidInfo(...cids: string[]): Promise<CidInfo[]> {
     return cidInfo(this, undefined, ...cids)
   }
 
@@ -177,7 +170,7 @@ export class Pow extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject> {
+  async storageDealRecords(config: DealRecordsConfig): Promise<StorageDealRecord[]> {
     return storageDealRecords(this, config)
   }
 
@@ -186,7 +179,7 @@ export class Pow extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject> {
+  async retrievalDealRecords(config: DealRecordsConfig): Promise<RetrievalDealRecord[]> {
     return retrievalDealRecords(this, config)
   }
 }

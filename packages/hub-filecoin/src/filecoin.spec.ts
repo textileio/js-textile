@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-describe('Pow...', () => {
+describe('Filecoin...', () => {
   describe('pass', () => {
     it('should pass', async () => {
       expect(true).true

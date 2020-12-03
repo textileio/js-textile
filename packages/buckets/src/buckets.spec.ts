@@ -7,9 +7,10 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { AbortError, CreateResponse, genChunks } from './api'
+import { genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
+import { AbortError, CreateResponse } from './types'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'

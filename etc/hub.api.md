@@ -4,19 +4,9 @@
 
 ```ts
 
-import type { AbortSignal as AbortSignal_2 } from 'abort-controller';
-import { AddressesResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
-import { ArchiveInfoResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ArchiveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ArchiveStatusResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ArchiveWatchResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { BalanceResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { BaseNameOrCode } from 'multibase';
 import CID from 'cids';
-import { CidInfoResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { ContextInterface } from '@textile/context';
-import { CreateResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { DealRecordsConfig } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
@@ -26,37 +16,21 @@ import { GetThreadResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
 import { JSONSchema3or4 } from 'to-json-schema';
-import { LinksResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ListInboxMessagesRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListInboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { ListIpfsPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ListPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { ListResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ListSentboxMessagesRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListSentboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListThreadsRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListThreadsResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { Metadata } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { PathItem } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
-import { PullIpfsPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { PullPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { PushPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { ReadInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ReadInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ReadTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { ReadTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
-import { RemovePathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { RemoveResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { RetrievalDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
-import { Root } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
-import { RootResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SendMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { SendMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { SetPathResponse } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb';
 import { SetupMailboxRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { SetupMailboxResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { StorageDealRecordsResponse } from '@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb';
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
@@ -74,10 +48,30 @@ export enum Action {
 }
 
 // @public
+export interface AddressInfo {
+    address: string;
+    balance: bigint;
+    name: string;
+    type: string;
+}
+
+// @public
 export type APISig = {
     sig: string;
     msg: string;
 };
+
+// @public
+export interface Archive {
+    aborted: boolean;
+    abortedMsg: string;
+    cid: string;
+    createdAt: Date;
+    dealInfo: Array<ArchiveDealInfo>;
+    failureMsg: string;
+    jobId: string;
+    status: ArchiveStatus;
+}
 
 // @public
 export interface ArchiveConfig {
@@ -94,19 +88,20 @@ export interface ArchiveConfig {
 }
 
 // @public
-export type ArchiveDealInfo = {
-    proposalCid: string;
+export interface ArchiveDealInfo {
+    activationEpoch: number;
+    dealId: number;
+    duration: number;
+    message: string;
     miner: string;
-};
-
-// @public
-export type ArchiveInfo = {
-    key: string;
-    cid?: string;
-    deals: Array<ArchiveDealInfo>;
-};
-
-export { ArchiveInfoResponse }
+    pieceCid: string;
+    pricePerEpoch: number;
+    proposalCid: string;
+    size: number;
+    startEpoch: number;
+    stateId: number;
+    stateName: string;
+}
 
 // @public
 export interface ArchiveOptions {
@@ -119,18 +114,21 @@ export interface ArchiveRenew {
     threshold: number;
 }
 
-export { ArchiveResponse }
+// @public
+export interface Archives {
+    current?: Archive;
+    history: Array<Archive>;
+}
 
 // @public
-export type ArchiveStatus = {
-    key: string;
-    status: StatusCode;
-    failedMsg: string;
-};
-
-export { ArchiveStatusResponse }
-
-export { ArchiveWatchResponse }
+export enum ArchiveStatus {
+    Canceled = 4,
+    Executing = 2,
+    Failed = 3,
+    Queued = 1,
+    Success = 5,
+    Unspecified = 0
+}
 
 // Warning: (ae-incompatible-release-tags) The symbol "Buckets" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
 //
@@ -139,39 +137,34 @@ export class Buckets extends GrpcAuthentication {
     // @beta
     archive(key: string, options?: ArchiveOptions): Promise<void>;
     // @beta
-    archiveInfo(key: string): Promise<ArchiveInfo>;
-    // @beta
-    archiveStatus(key: string): Promise<ArchiveStatus>;
+    archives(key: string): Promise<Archives>;
     // @beta
     archiveWatch(key: string, callback: (reply?: {
         id: string | undefined;
         msg: string;
     }, err?: Error) => void): Promise<() => void>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Buckets;
-    create(name: string, options?: CreateOptions): Promise<CreateResponse_2>;
+    create(name: string, options?: CreateOptions): Promise<CreateResponse>;
     // @beta
     defaultArchiveConfig(key: string): Promise<ArchiveConfig>;
     getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>;
     // @deprecated
     getOrInit(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
-        root?: Root_2;
+        root?: Root;
         threadID?: string;
     }>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // Warning: (ae-forgotten-export) The symbol "CreateResponse" needs to be exported by the entry point index.d.ts
-    //
     // @deprecated
-    init(name: string, encrypted?: boolean): Promise<CreateResponse_2>;
+    init(name: string, encrypted?: boolean): Promise<CreateResponse>;
     links(key: string, path?: string): Promise<Links>;
-    list(): Promise<Root_2[]>;
-    // Warning: (ae-forgotten-export) The symbol "PathItem" needs to be exported by the entry point index.d.ts
-    listIpfsPath(path: string): Promise<PathItem_2 | undefined>;
+    list(): Promise<Root[]>;
+    listIpfsPath(path: string): Promise<PathItem | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<Path>;
     listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<Array<string>>;
     // @deprecated
     open(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
-        root?: Root_2;
+        root?: Root;
         threadID?: string;
     }>;
     pullIpfsPath(path: string, options?: {
@@ -185,7 +178,7 @@ export class Buckets extends GrpcAuthentication {
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, root?: string): Promise<void>;
-    root(key: string): Promise<Root_2 | undefined>;
+    root(key: string): Promise<Root | undefined>;
     // @beta
     setDefaultArchiveConfig(key: string, config: ArchiveConfig): Promise<void>;
     setPath(key: string, path: string, cid: string): Promise<void>;
@@ -194,167 +187,80 @@ export class Buckets extends GrpcAuthentication {
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Buckets;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchive" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsArchive(api: GrpcConnection, key: string, options?: ArchiveOptions, ctx?: ContextInterface): Promise<void>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveInfo" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsArchiveInfo(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveInfo>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveStatus" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsArchiveStatus(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveStatus>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsArchiveWatch" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsArchiveWatch(api: GrpcConnection, key: string, callback: (reply?: {
-    id: string | undefined;
-    msg: string;
-}, err?: Error) => void, ctx?: ContextInterface): Promise<() => void>;
-
-// @public
-export function bucketsCreate(api: GrpcConnection, name: string, isPrivate?: boolean, cid?: string, ctx?: ContextInterface): Promise<CreateResponse_2>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsDefaultArchiveConfig" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export function bucketsDefaultArchiveConfig(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<ArchiveConfig>;
-
-// @public
-export class BucketsGrpcClient {
-    constructor(context?: ContextInterface, debug?: boolean);
-    // (undocumented)
-    context: ContextInterface;
-    // (undocumented)
-    rpcOptions: grpc.RpcOptions;
-    // (undocumented)
-    serviceHost: string;
-    // (undocumented)
-    unary<R extends grpc.ProtobufMessage, T extends grpc.ProtobufMessage, M extends grpc.UnaryMethodDefinition<R, T>>(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T>;
-}
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsLinks" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsLinks(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<Links>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsList" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root_2>>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsListIpfsPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsListIpfsPath(api: GrpcConnection, path: string, ctx?: ContextInterface): Promise<PathItem_2 | undefined>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsListPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsListPath(api: GrpcConnection, key: string, path: string, ctx?: ContextInterface): Promise<Path>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsPullIpfsPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsPullIpfsPath(api: GrpcConnection, path: string, opts?: {
-    progress?: (num?: number) => void;
-}, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsPullPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsPullPath(api: GrpcConnection, key: string, path: string, opts?: {
-    progress?: (num?: number) => void;
-}, ctx?: ContextInterface): AsyncIterableIterator<Uint8Array>;
-
 // @public (undocumented)
-export function bucketsPullPathAccessRoles(api: GrpcConnection, key: string, path?: string, ctx?: ContextInterface): Promise<Map<string, 0 | 1 | 2 | 3>>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsPushPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsPushPath(api: GrpcConnection, key: string, path: string, input: any, opts?: PushOptions, ctx?: ContextInterface): Promise<PushPathResult>;
-
-// @public (undocumented)
-export function bucketsPushPathAccessRoles(api: GrpcConnection, key: string, path: string, roles: Map<string, PathAccessRole>, ctx?: ContextInterface): Promise<void>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsRemove" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<void>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsRemovePath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsRemovePath(api: GrpcConnection, key: string, path: string, root?: string, ctx?: ContextInterface): Promise<void>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsRoot" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root_2 | undefined>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsSetDefaultArchiveConfig" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal (undocumented)
-export function bucketsSetDefaultArchiveConfig(api: GrpcConnection, key: string, config: ArchiveConfig, ctx?: ContextInterface): Promise<void>;
-
-// Warning: (ae-internal-missing-underscore) The name "bucketsSetPath" should be prefixed with an underscore because the declaration is marked as @internal
-//
-// @internal
-export function bucketsSetPath(api: GrpcConnection, key: string, path: string, cid: string, ctx?: ContextInterface): Promise<void>;
-
-// @public (undocumented)
-export type BuckMetadata = {
+export interface BuckMetadata {
+    // (undocumented)
     roles: Map<string, PathAccessRole>;
+    // (undocumented)
     updatedAt: number;
-};
+}
 
 // @public
 export function bytesToArray(chunk: Uint8Array, size?: number): Uint8Array[];
+
+// @public
+export interface CidInfo {
+    cid: string;
+    currentStorageInfo?: StorageInfo;
+    executingStorageJob?: StorageJob;
+    latestFinalStorageJob?: StorageJob;
+    latestStorageConfig?: StorageConfig;
+    latestSuccessfulStorageJob?: StorageJob;
+    queuedStorageJobs: StorageJob[];
+}
 
 // @public
 export class Client {
     constructor(context?: ContextInterface, debug?: boolean);
     // (undocumented)
     context: ContextInterface;
-    create(threadID: ThreadID, collectionName: string, values: any[]): Promise<string[]>;
-    delete(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<void>;
-    deleteCollection(threadID: ThreadID, name: string): Promise<void>;
-    deleteDB(threadID: ThreadID): Promise<void>;
-    find<T = unknown>(threadID: ThreadID, collectionName: string, query: QueryJSON): Promise<T[]>;
-    findByID<T = unknown>(threadID: ThreadID, collectionName: string, ID: string): Promise<T>;
-    getCollectionIndexes(threadID: ThreadID, name: string): Promise<pb.Index.AsObject[]>;
+    create(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<string[]>;
+    delete(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<void>;
+    deleteCollection(threadID: ThreadID_2, name: string): Promise<void>;
+    deleteDB(threadID: ThreadID_2): Promise<void>;
+    find<T = unknown>(threadID: ThreadID_2, collectionName: string, query: QueryJSON): Promise<T[]>;
+    findByID<T = unknown>(threadID: ThreadID_2, collectionName: string, ID: string): Promise<T>;
+    getCollectionIndexes(threadID: ThreadID_2, name: string): Promise<pb.Index.AsObject[]>;
     // (undocumented)
-    getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionConfig>;
-    getDBInfo(threadID: ThreadID): Promise<DBInfo>;
-    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
+    getCollectionInfo(threadID: ThreadID_2, name: string): Promise<CollectionConfig>;
+    getDBInfo(threadID: ThreadID_2): Promise<DBInfo>;
+    // Warning: (ae-forgotten-export) The symbol "Identity" needs to be exported by the entry point index.d.ts
+    getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
-    has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
-    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
+    has(threadID: ThreadID_2, collectionName: string, IDs: string[]): Promise<boolean>;
+    joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    listCollections(thread: ThreadID_2): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
     listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
-    listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
-    newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
-    newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
-    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID>;
-    open(threadID: ThreadID, name?: string): Promise<void>;
-    readTransaction(threadID: ThreadID, collectionName: string): ReadTransaction;
+    listen<T = any>(threadID: ThreadID_2, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
+    newCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    newCollectionFromObject(threadID: ThreadID_2, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "ThreadID" needs to be exported by the entry point index.d.ts
+    newDB(threadID?: ThreadID_2, name?: string): Promise<ThreadID_2>;
+    newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID_2>;
+    open(threadID: ThreadID_2, name?: string): Promise<void>;
+    readTransaction(threadID: ThreadID_2, collectionName: string): ReadTransaction;
     // (undocumented)
     rpcOptions: grpc.RpcOptions;
-    save(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    save(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
     // (undocumented)
     serviceHost: string;
-    updateCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    verify(threadID: ThreadID, collectionName: string, values: any[]): Promise<void>;
+    updateCollection(threadID: ThreadID_2, config: CollectionConfig): Promise<void>;
+    verify(threadID: ThreadID_2, collectionName: string, values: any[]): Promise<void>;
     static withKeyInfo(key: KeyInfo, host?: string, debug?: boolean): Promise<Client>;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), host?: string, debug?: boolean): Client;
-    writeTransaction(threadID: ThreadID, collectionName: string): WriteTransaction;
+    writeTransaction(threadID: ThreadID_2, collectionName: string): WriteTransaction;
+}
+
+// @public
+export interface ColdConfig {
+    enabled: boolean;
+    filecoin?: FilConfig;
+}
+
+// @public
+export interface ColdInfo {
+    enabled: boolean;
+    filecoin?: FilInfo;
 }
 
 // @public
@@ -382,7 +288,7 @@ export interface CopyAuthOptions {
 export function createAPISig(secret: string, date?: Date): Promise<APISig>;
 
 // @public @deprecated (undocumented)
-export type CreateObject = CreateResponse_2;
+export type CreateObject = CreateResponse;
 
 // @public (undocumented)
 export interface CreateOptions {
@@ -390,7 +296,17 @@ export interface CreateOptions {
     encrypted?: boolean;
 }
 
-export { CreateResponse }
+// @public
+export interface CreateResponse {
+    // (undocumented)
+    links?: Links;
+    // (undocumented)
+    root?: Root;
+    // (undocumented)
+    seed: Uint8Array;
+    // (undocumented)
+    seedCid: string;
+}
 
 // @public
 export function createUserAuth(key: string, secret: string, date?: Date, token?: string): Promise<UserAuth>;
@@ -456,6 +372,22 @@ export interface DBInfo {
 }
 
 // @public
+export interface DealError {
+    message: string;
+    miner: string;
+    proposalCid: string;
+}
+
+// @public
+export interface DealRecordsConfig {
+    ascending: boolean;
+    dataCids: string[];
+    fromAddrs: string[];
+    includeFinal: boolean;
+    includePending: boolean;
+}
+
+// @public
 export function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type?: string): Promise<Uint8Array>;
 
 // Warning: (ae-internal-missing-underscore) The name "deleteInboxMessage" should be prefixed with an underscore because the declaration is marked as @internal
@@ -486,6 +418,66 @@ export const expirationError: Error;
 export function extractPublicKeyBytes(key: Public): Uint8Array;
 
 // @public
+export interface FilConfig {
+    address: string;
+    countryCodes: string[];
+    dealMinDuration: number;
+    dealStartOffset: number;
+    excludedMiners: string[];
+    fastRetrieval: boolean;
+    maxPrice: number;
+    renew?: FilRenew;
+    replicationFactor: number;
+    trustedMiners: string[];
+}
+
+// Warning: (ae-incompatible-release-tags) The symbol "Filecoin" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
+//
+// @public
+export class Filecoin extends GrpcAuthentication {
+    // @beta
+    addresses(): Promise<AddressInfo[]>;
+    // @beta
+    balance(address: string): Promise<bigint>;
+    // @beta
+    cidInfo(...cids: string[]): Promise<CidInfo[]>;
+    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Filecoin;
+    getToken(identity: Identity): Promise<string>;
+    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
+    // @beta
+    retrievalDealRecords(config: DealRecordsConfig): Promise<RetrievalDealRecord[]>;
+    // @beta
+    storageDealRecords(config: DealRecordsConfig): Promise<StorageDealRecord[]>;
+    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Filecoin>;
+    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Filecoin;
+}
+
+// @public
+export interface FilInfo {
+    dataCid: string;
+    proposals: FilStorage[];
+    size: number;
+}
+
+// @public
+export interface FilRenew {
+    enabled: boolean;
+    threshold: number;
+}
+
+// @public
+export interface FilStorage {
+    activationEpoch: number;
+    duration: number;
+    epochPrice: number;
+    miner: string;
+    pieceCid: string;
+    proposalCid: string;
+    renewed: boolean;
+    startEpoch: number;
+}
+
+// @public
 export interface Filter {
     actionTypes?: string[];
     collectionName?: string;
@@ -507,7 +499,7 @@ export interface GetOrCreateOptions {
 
 // @public
 export interface GetOrCreateResponse {
-    root?: Root_2;
+    root?: Root;
     threadID?: string;
 }
 
@@ -551,6 +543,21 @@ export class GrpcAuthentication extends GrpcConnection {
 }
 
 // @public
+export interface HotConfig {
+    allowUnfreeze: boolean;
+    enabled: boolean;
+    ipfs?: IpfsConfig;
+    unfreezeMaxPrice: number;
+}
+
+// @public
+export interface HotInfo {
+    enabled: boolean;
+    ipfs?: IpfsHotInfo;
+    size: number;
+}
+
+// @public
 export interface Identity {
     public: Public;
     sign(data: Uint8Array): Promise<Uint8Array>;
@@ -572,6 +579,26 @@ export interface InboxListOptions {
 export const invalidKeyError: Error;
 
 // @public
+export interface IpfsConfig {
+    addTimeout: number;
+}
+
+// @public
+export interface IpfsHotInfo {
+    created: Date;
+}
+
+// @public
+export enum JobStatus {
+    Canceled = 4,
+    Executing = 2,
+    Failed = 3,
+    Queued = 1,
+    Success = 5,
+    Unspecified = 0
+}
+
+// @public
 export const keyFromString: (k: string) => Uint8Array;
 
 // @public
@@ -584,16 +611,17 @@ export type KeyInfo = {
 export const keyToString: (k: Uint8Array) => string;
 
 // @public
-export type Links = {
-    www: string;
+export interface Links {
+    // (undocumented)
     ipns: string;
+    // (undocumented)
     url: string;
-};
+    // (undocumented)
+    www: string;
+}
 
 // @public @deprecated (undocumented)
 export type LinksObject = Links;
-
-export { LinksResponse }
 
 // Warning: (ae-internal-missing-underscore) The name "listInboxMessages" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -604,17 +632,11 @@ export { ListInboxMessagesRequest }
 
 export { ListInboxMessagesResponse }
 
-export { ListIpfsPathResponse }
-
 // @public
 export function listPathFlat(grpc: GrpcConnection, bucketKey: string, path: string, dirs: boolean, depth: number): Promise<Array<string>>;
 
 // @public
 export function listPathRecursive(grpc: GrpcConnection, bucketKey: string, path: string, depth: number, currentDepth?: number): Promise<Path>;
-
-export { ListPathResponse }
-
-export { ListResponse }
 
 // Warning: (ae-internal-missing-underscore) The name "listSentboxMessages" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -661,16 +683,16 @@ export const MailConfig: {
     SentboxCollectionName: string;
 };
 
-export { Metadata }
-
 // @public @deprecated (undocumented)
 export type MetadataObject = BuckMetadata;
 
 // @public
-export type Path = {
-    item?: PathItem_2;
-    root?: Root_2;
-};
+export interface Path {
+    // (undocumented)
+    item?: PathItem;
+    // (undocumented)
+    root?: Root;
+}
 
 // @public (undocumented)
 export enum PathAccessRole {
@@ -684,10 +706,28 @@ export enum PathAccessRole {
     PATH_ACCESS_ROLE_WRITER = 2
 }
 
-export { PathItem }
+// @public
+export interface PathItem {
+    // (undocumented)
+    cid: string;
+    // (undocumented)
+    count: number;
+    // (undocumented)
+    isDir: boolean;
+    // (undocumented)
+    items: Array<PathItem>;
+    // (undocumented)
+    metadata?: BuckMetadata;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    size: number;
+}
 
 // @public @deprecated (undocumented)
-export type PathItemObject = PathItem_2;
+export type PathItemObject = PathItem;
 
 // @public @deprecated (undocumented)
 export type PathObject = Path;
@@ -698,27 +738,6 @@ export interface Period {
     unixEnd: number;
     // (undocumented)
     unixStart: number;
-}
-
-// Warning: (ae-incompatible-release-tags) The symbol "Pow" is marked as @public, but its signature references "GrpcAuthentication" which is marked as @internal
-//
-// @public
-export class Pow extends GrpcAuthentication {
-    // @beta
-    addresses(): Promise<AddressesResponse.AsObject>;
-    // @beta
-    balance(address: string): Promise<BalanceResponse.AsObject>;
-    // @beta
-    cidInfo(...cids: string[]): Promise<CidInfoResponse.AsObject>;
-    static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Pow;
-    getToken(identity: Identity): Promise<string>;
-    getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
-    // @beta
-    retrievalDealRecords(config: DealRecordsConfig.AsObject): Promise<RetrievalDealRecordsResponse.AsObject>;
-    // @beta
-    storageDealRecords(config: DealRecordsConfig.AsObject): Promise<StorageDealRecordsResponse.AsObject>;
-    static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Pow>;
-    static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Pow;
 }
 
 // @public
@@ -775,18 +794,12 @@ export function publicKeyBytesToString(bytes: Uint8Array): string;
 // @public
 export function publicKeyToString(key: Public): string;
 
-export { PullIpfsPathResponse }
-
-export { PullPathResponse }
-
 // @public
 export interface PushOptions {
     progress?: (num?: number) => void;
-    root?: Root_2 | string;
-    signal?: AbortSignal_2;
+    root?: Root | string;
+    signal?: AbortSignal;
 }
-
-export { PushPathResponse }
 
 // @public
 export interface PushPathResult {
@@ -846,7 +859,7 @@ export { ReadInboxMessageResponse }
 //
 // @public
 export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<ReadTransactionRequest, ReadTransactionReply>;
     // (undocumented)
@@ -858,19 +871,53 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
     protected readonly modelName: string;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
 }
 
-export { RemovePathResponse }
+// @public
+export interface RetrievalDealInfo {
+    // (undocumented)
+    miner: string;
+    // (undocumented)
+    minerPeerId: string;
+    // (undocumented)
+    minPrice: number;
+    // (undocumented)
+    paymentInterval: number;
+    // (undocumented)
+    paymentIntervalIncrease: number;
+    rootCid: string;
+    size: number;
+}
 
-export { RemoveResponse }
+// @public
+export interface RetrievalDealRecord {
+    // (undocumented)
+    address: string;
+    // (undocumented)
+    dealInfo?: RetrievalDealInfo;
+    // (undocumented)
+    time: Date;
+}
 
-export { Root }
+// @public
+export interface Root {
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    thread: string;
+    // (undocumented)
+    updatedAt: number;
+}
 
 // @public @deprecated (undocumented)
-export type RootObject = Root_2;
-
-export { RootResponse }
+export type RootObject = Root;
 
 // Warning: (ae-internal-missing-underscore) The name "sendMessage" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -890,8 +937,6 @@ export interface SentboxListOptions {
     // (undocumented)
     seek?: string;
 }
-
-export { SetPathResponse }
 
 // Warning: (ae-internal-missing-underscore) The name "setupMailbox" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -921,17 +966,56 @@ export enum Status {
 }
 
 // @public
-export enum StatusCode {
-    // (undocumented)
-    STATUS_CANCELED = 4,
-    // (undocumented)
-    STATUS_DONE = 3,
-    // (undocumented)
-    STATUS_EXECUTING = 1,
-    // (undocumented)
-    STATUS_FAILED = 2,
-    // (undocumented)
-    STATUS_UNSPECIFIED = 0
+export interface StorageConfig {
+    cold?: ColdConfig;
+    hot?: HotConfig;
+    repairable: boolean;
+}
+
+// @public
+export interface StorageDealInfo {
+    activationEpoch: number;
+    dealId: number;
+    duration: number;
+    message: string;
+    miner: string;
+    pieceCid: string;
+    pricePerEpoch: number;
+    proposalCid: string;
+    size: number;
+    startEpoch: number;
+    stateId: number;
+    stateName: string;
+}
+
+// @public
+export interface StorageDealRecord {
+    address: string;
+    dealInfo?: StorageDealInfo;
+    pending: boolean;
+    rootCid: string;
+    time: Date;
+}
+
+// @public
+export interface StorageInfo {
+    cid: string;
+    cold?: ColdInfo;
+    created: Date;
+    hot?: HotInfo;
+    jobId: string;
+}
+
+// @public
+export interface StorageJob {
+    apiId: string;
+    cid: string;
+    createdAt: Date;
+    dealErrors: DealError[];
+    dealInfo: StorageDealInfo[];
+    errorCause: string;
+    id: string;
+    status: JobStatus;
 }
 
 // @public
@@ -1097,7 +1181,7 @@ export interface WithUserAuthOptions extends CopyAuthOptions {
 
 // @public
 export class WriteTransaction extends Transaction<WriteTransactionRequest, WriteTransactionReply> {
-    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID, modelName: string);
+    constructor(context: ContextInterface, client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>, threadID: ThreadID_2, modelName: string);
     // (undocumented)
     protected readonly client: grpc.Client<WriteTransactionRequest, WriteTransactionReply>;
     // (undocumented)
@@ -1113,13 +1197,9 @@ export class WriteTransaction extends Transaction<WriteTransactionRequest, Write
     save<T = unknown>(values: T[]): Promise<void>;
     start(): Promise<void>;
     // (undocumented)
-    protected readonly threadID: ThreadID;
+    protected readonly threadID: ThreadID_2;
     verify<T = unknown>(values: T[]): Promise<void>;
 }
 
-
-// Warnings were encountered during analysis:
-//
-// packages/buckets/dist/buckets.d.ts:233:9 - (ae-forgotten-export) The symbol "Root" needs to be exported by the entry point index.d.ts
 
 ```

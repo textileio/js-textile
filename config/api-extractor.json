@@ -65,7 +65,7 @@
     "@textile/threads-id",
     "@textile/threads-client",
     "@textile/security",
-    "@textile/pow"
+    "@textile/hub-filecoin"
   ],
   /**
    * Determines how the TypeScript compiler engine will be invoked by API Extractor.
