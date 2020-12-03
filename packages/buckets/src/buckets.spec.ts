@@ -461,7 +461,7 @@ describe('Buckets...', function () {
       if (isBrowser) return this.skip()
       if (!aliceThread || !rootKey) throw Error('setup failed')
 
-      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl, debug: true })
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
 
