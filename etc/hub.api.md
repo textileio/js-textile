@@ -169,17 +169,17 @@ export interface Archives {
 // @public
 export enum ArchiveStatus {
     // (undocumented)
-    CANCELED = 4,
+    Canceled = 4,
     // (undocumented)
-    EXECUTING = 2,
+    Executing = 2,
     // (undocumented)
-    FAILED = 3,
+    Failed = 3,
     // (undocumented)
-    QUEUED = 1,
+    Queued = 1,
     // (undocumented)
-    SUCCESS = 5,
+    Success = 5,
     // (undocumented)
-    UNSPECIFIED = 0
+    Unspecified = 0
 }
 
 export { ArchiveWatchResponse }

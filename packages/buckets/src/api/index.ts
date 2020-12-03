@@ -313,12 +313,12 @@ export interface ArchiveDealInfo {
  * Archive status codes
  */
 export enum ArchiveStatus {
-  UNSPECIFIED,
-  QUEUED,
-  EXECUTING,
-  FAILED,
-  CANCELED,
-  SUCCESS,
+  Unspecified,
+  Queued,
+  Executing,
+  Failed,
+  Canceled,
+  Success,
 }
 
 /**
@@ -363,17 +363,17 @@ function fromPbDealInfo(pbDealInfo: _DealInfo): ArchiveDealInfo {
 function fromPbArchiveStatus(pbArchiveStatus: _ArchiveStatusMap[keyof _ArchiveStatusMap]): ArchiveStatus {
   switch (pbArchiveStatus) {
     case _ArchiveStatus.ARCHIVE_STATUS_CANCELED:
-      return ArchiveStatus.CANCELED
+      return ArchiveStatus.Canceled
     case _ArchiveStatus.ARCHIVE_STATUS_EXECUTING:
-      return ArchiveStatus.EXECUTING
+      return ArchiveStatus.Executing
     case _ArchiveStatus.ARCHIVE_STATUS_FAILED:
-      return ArchiveStatus.FAILED
+      return ArchiveStatus.Failed
     case _ArchiveStatus.ARCHIVE_STATUS_QUEUED:
-      return ArchiveStatus.QUEUED
+      return ArchiveStatus.Queued
     case _ArchiveStatus.ARCHIVE_STATUS_SUCCESS:
-      return ArchiveStatus.SUCCESS
+      return ArchiveStatus.Success
     case _ArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
-      return ArchiveStatus.UNSPECIFIED
+      return ArchiveStatus.Unspecified
   }
 }
 
