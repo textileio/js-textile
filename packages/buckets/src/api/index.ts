@@ -77,7 +77,6 @@ import {
 import { File, normaliseInput } from './normalize'
 
 const logger = log.getLogger('buckets-api')
-const CHUNK_SIZE = 32768
 
 function fromPbRootObject(root: _Root): Root {
   return {
@@ -107,15 +106,8 @@ function fromPbMetadata(metadata?: _Metadata): BuckMetadata | undefined {
 
   return response
 }
-<<<<<<< HEAD
-=======
-/**
- * @deprecated
- */
-export type PathObject = Path
 
-export const CHUNK_SIZE = 1000
->>>>>>> fix: reduce default chunk size and revert tests
+export const CHUNK_SIZE = 1024
 
 function fromPbPathItem(item: _PathItem): PathItem {
   const list = item.getItemsList()
