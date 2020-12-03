@@ -28,7 +28,7 @@
     "@textile/buckets": "^2.0.2",
     "@textile/crypto": "^1.0.1",
     "@textile/grpc-authentication": "^1.0.2",
-    "@textile/hub-grpc": "2.2.0-rc0",
+    "@textile/hub-grpc": "2.2.0",
     "@textile/hub-threads-client": "^2.0.2",
     "@textile/hub-filecoin": "^2.0.2",
     "@textile/security": "^0.6.2",

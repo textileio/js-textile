@@ -35,7 +35,7 @@
     "@textile/grpc-authentication": "^1.0.1",
     "@textile/grpc-connection": "^1.0.1",
     "@textile/grpc-powergate-client": "^1.2.1",
-    "@textile/hub-grpc": "2.2.0-rc0",
+    "@textile/hub-grpc": "2.2.0",
     "@textile/security": "^0.6.2",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.6.8"
