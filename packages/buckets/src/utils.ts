@@ -1,12 +1,17 @@
 import { GrpcConnection } from '@textile/grpc-connection'
-import { bucketsListPath } from './api'
+import fs from 'fs'
+import { bucketsListPath, CHUNK_SIZE } from './api'
 import { Path, PathItem } from './types'
+
+export function createReadStream(path: string) {
+  return fs.createReadStream(path, { highWaterMark: CHUNK_SIZE })
+}
 
 /**
  * bytesToArray converts a buffer into <4mb chunks for use with grpc API
  * @param chunk an input Buffer or Uint8Array
  */
-export function bytesToArray(chunk: Uint8Array, size = 1024 * 1024 * 3) {
+export function bytesToArray(chunk: Uint8Array, size = CHUNK_SIZE * CHUNK_SIZE * 3) {
   const result = []
   const len = chunk.length
   let i = 0

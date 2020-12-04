@@ -11,6 +11,7 @@ import { genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 import { AbortError, CreateResponse } from './types'
+import { createReadStream } from './utils'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -370,7 +371,7 @@ describe('Buckets...', function () {
     it('should allow an abort controler to signal a cancel event on a push', async function () {
       const { root } = await client.getOrCreate('aborted')
 
-      // Create an infinate stream of bytes
+      // Create an infinite stream of bytes
       async function* stream() {
         while (true) {
           yield Buffer.from('data')
@@ -466,9 +467,8 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        // Note: Callers can also specify chunk size directly using highWaterMark:
-        // const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), { highWaterMark: 32768 })
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+        // Defaults to highwatermark of CHUNK_SIZE
+        const stream = createReadStream(path.join(pth, 'file2.jpg'))
         await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
         throw wrongError
       } catch (err) {
@@ -507,7 +507,7 @@ describe('Buckets...', function () {
       expect(perms.get(bobPubKey)).to.equal(2)
 
       // Over-write the file in the shared path
-      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
+      const stream = createReadStream(path.join(pth, 'file2.jpg'))
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
       try {
         await bobBuckets.pushPath(rootKey, sharedFile, stream)

@@ -77,7 +77,6 @@ import {
 import { File, normaliseInput } from './normalize'
 
 const logger = log.getLogger('buckets-api')
-const CHUNK_SIZE = 32768
 
 function fromPbRootObject(root: _Root): Root {
   return {
@@ -107,6 +106,8 @@ function fromPbMetadata(metadata?: _Metadata): BuckMetadata | undefined {
 
   return response
 }
+
+export const CHUNK_SIZE = 1024
 
 function fromPbPathItem(item: _PathItem): PathItem {
   const list = item.getItemsList()
@@ -179,6 +180,8 @@ function fromPbArchiveStatus(item: _ArchiveStatusMap[keyof _ArchiveStatusMap]): 
       return ArchiveStatus.Success
     case _ArchiveStatus.ARCHIVE_STATUS_UNSPECIFIED:
       return ArchiveStatus.Unspecified
+    default:
+      throw new Error('unknown status')
   }
 }
 

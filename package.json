@@ -87,9 +87,6 @@
     "tsconfig-paths": "^3.8.0",
     "typedoc": "0.17.7",
     "typescript": "^3.7.2",
-    "typescript-docs-verifier": "^1.1.2",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.9.0"
+    "typescript-docs-verifier": "^1.1.2"
   }
 }

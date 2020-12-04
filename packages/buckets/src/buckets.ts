@@ -535,7 +535,10 @@ export class Buckets extends GrpcAuthentication {
    * @param input The input file/stream/object.
    * @param opts Options to control response stream.
    * @remarks
-   * This will return the resolved path and the bucket's new root path.
+   * - This will return the resolved path and the bucket's new root path.
+   * - If pushing NodeJS streams, ensure you set your highwatermark to an appropriate size
+   * (i.e., ~1024 bytes) for optimal behavior on slow or intermittent connections. See example
+   * below or use `utils.createReadStream`.
    * @example
    * Push a file to the root of a bucket
    * ```typescript
@@ -562,7 +565,7 @@ export class Buckets extends GrpcAuthentication {
    *   const files = await globDir('<dir glob options>')
    *   return await Promise.all(files.map(async (file) => {
    *     const filePath = dir + '/' + file
-   *     var content = fs.createReadStream(filePath, { highWaterMark: 1024 * 1024 * 3 });
+   *     var content = fs.createReadStream(filePath, { highWaterMark: 1024 });
    *     const upload = {
    *       path: file,
    *       content
