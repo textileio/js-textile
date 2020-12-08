@@ -23,7 +23,7 @@ export interface GetThreadResponse {
 declare module '@textile/threads-client' {
   interface Client {
     getThread(name: string, ctx?: Context): Promise<GetThreadResponse>
-    listThreads(ctx?: Context): Promise<GetThreadResponse[]>
+    listThreads(ctx?: Context): Promise<Array<GetThreadResponse>>
   }
 }
 
@@ -65,13 +65,13 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
  * These will be merged with any internal credentials.
  * @note Threads can be created using the threads or threads network clients.
  */
-Client.prototype.listThreads = async function (ctx?: Context): Promise<GetThreadResponse[]> {
+Client.prototype.listThreads = async function (ctx?: Context): Promise<Array<GetThreadResponse>> {
   logger.debug('list threads request')
   const client = new APIServiceClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
   })
-  return new Promise<GetThreadResponse[]>((resolve, reject) => {
+  return new Promise<Array<GetThreadResponse>>((resolve, reject) => {
     const req = new ListThreadsRequest()
     this.context
       .toMetadata(ctx)

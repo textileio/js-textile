@@ -162,7 +162,7 @@ describe('Threads Client...', () => {
       const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
-      let res: GetThreadResponse[] = await client.listThreads()
+      let res: Array<GetThreadResponse> = await client.listThreads()
       expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
@@ -191,7 +191,7 @@ describe('Threads Client...', () => {
       const db = new Client(ctx)
       const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
-      let res: GetThreadResponse[] = await client.listThreads()
+      let res: Array<GetThreadResponse> = await client.listThreads()
       expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
