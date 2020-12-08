@@ -141,6 +141,7 @@ describe('All apis...', () => {
         }
       })
       it('should check the users usage as the developer', async function () {
+        if (isBrowser) return this.skip()
         const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         const devUser = new Users(ctx)
@@ -169,7 +170,7 @@ describe('All apis...', () => {
         }
       })
       it('should check the developers usage', async function () {
-
+        if (isBrowser) return this.skip()
         const { keyInfo } = await createKey(ctx, 'KEY_TYPE_ACCOUNT')
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         const devUser = new Users(ctx)
