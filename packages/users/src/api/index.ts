@@ -99,9 +99,9 @@ export interface CustomerUsage {
  */
 export interface UsageOptions {
   /**
-   * Pubkey of the user. Only available when authenticated using an account key.
+   * Public key of the user. Only available when authenticated using an account key.
    */
-  key?: string
+  dependentUserKey?: string
 }
 
 export interface Period {
@@ -404,8 +404,8 @@ export async function getUsage(
 ): Promise<GetUsageResponse> {
   logger.debug('get usage request')
   const req = new GetUsageRequest()
-  if (options && options.key) {
-    req.setKey(options.key)
+  if (options && options.dependentUserKey) {
+    req.setKey(options.dependentUserKey)
   }
   const res: _GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
   const usage = res.toObject()

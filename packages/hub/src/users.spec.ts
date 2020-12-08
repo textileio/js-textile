@@ -145,7 +145,7 @@ describe('All apis...', () => {
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         const devUser = new Users(ctx)
 
-        const usage = await devUser.getUsage({key: identity.public.toString()})
+        const usage = await devUser.getUsage({dependentUserKey: identity.public.toString()})
         const daily = usage.customer?.dailyUsageMap || []
         for (let use of daily) {
           switch (use[0]) {
