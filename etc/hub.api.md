@@ -12,7 +12,6 @@ import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/us
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { GetThreadRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { GetThreadResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
 import { JSONSchema3or4 } from 'to-json-schema';
@@ -503,18 +502,25 @@ export interface GetOrCreateResponse {
     threadID?: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "GetThreadResponse" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "getThread" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
-export function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadResponse_2>;
+export function getThread(api: GrpcConnection, name: string, ctx?: ContextInterface): Promise<GetThreadResponse>;
 
 export { GetThreadRequest }
 
-export { GetThreadResponse }
+// @public (undocumented)
+export interface GetThreadResponse {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    isDb: boolean;
+    // (undocumented)
+    name: string;
+}
 
 // @public @deprecated (undocumented)
-export interface GetThreadResponseObj extends GetThreadResponse_2 {
+export interface GetThreadResponseObj extends GetThreadResponse {
 }
 
 // Warning: (ae-internal-missing-underscore) The name "getUsage" should be prefixed with an underscore because the declaration is marked as @internal
@@ -651,7 +657,7 @@ export { ListSentboxMessagesResponse }
 // Warning: (ae-internal-missing-underscore) The name "listThreads" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
-export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse_2>>;
+export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>>;
 
 export { ListThreadsRequest }
 
@@ -1127,13 +1133,13 @@ export class Users extends GrpcAuthentication {
     deleteInboxMessage(id: string): Promise<void>;
     deleteSentboxMessage(id: string): Promise<void>;
     getMailboxID(): Promise<string>;
-    getThread(name: string): Promise<GetThreadResponse_2>;
+    getThread(name: string): Promise<GetThreadResponse>;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
     getUsage(options?: UsageOptions): Promise<GetUsageResponse>;
     listInboxMessages(opts?: InboxListOptions): Promise<Array<UserMessage>>;
     listSentboxMessages(opts?: SentboxListOptions): Promise<Array<UserMessage>>;
-    listThreads(): Promise<Array<GetThreadResponse_2>>;
+    listThreads(): Promise<Array<GetThreadResponse>>;
     readInboxMessage(id: string): Promise<{
         readAt: number;
     }>;
