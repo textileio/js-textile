@@ -5,35 +5,41 @@ import { Client } from '@textile/threads-client'
 import { ThreadID } from '@textile/threads-id'
 import {
   GetThreadRequest,
-  GetThreadResponse,
+  GetThreadResponse as _GetThreadResponse,
   ListThreadsRequest,
-  ListThreadsResponse,
+  ListThreadsResponse as _ListThreadsResponse,
 } from '@textile/users-grpc/api/usersd/pb/usersd_pb'
 import { APIServiceClient } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import log from 'loglevel'
 
 const logger = log.getLogger('users')
 
+export interface GetThreadResponse {
+    id: string,
+    name: string,
+    isDb: boolean,
+}
+
 declare module '@textile/threads-client' {
   interface Client {
-    getThread(name: string, ctx?: Context): Promise<GetThreadResponse.AsObject>
-    listThreads(ctx?: Context): Promise<ListThreadsResponse.AsObject>
+    getThread(name: string, ctx?: Context): Promise<GetThreadResponse>
+    listThreads(ctx?: Context): Promise<GetThreadResponse[]>
   }
 }
 
-Client.prototype.getThread = async function (name: string, ctx?: Context): Promise<GetThreadResponse.AsObject> {
+Client.prototype.getThread = async function (name: string, ctx?: Context): Promise<GetThreadResponse> {
   logger.debug('get thread request')
   const client = new APIServiceClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
   })
-  return new Promise<GetThreadResponse.AsObject>((resolve, reject) => {
+  return new Promise<GetThreadResponse>((resolve, reject) => {
     const req = new GetThreadRequest()
     req.setName(name)
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.getThread(req, meta, (err: ServiceError | null, message: GetThreadResponse | null) => {
+        client.getThread(req, meta, (err: ServiceError | null, message: _GetThreadResponse | null) => {
           if (err) reject(err)
           if (message) {
             const res = {
@@ -59,28 +65,28 @@ Client.prototype.getThread = async function (name: string, ctx?: Context): Promi
  * These will be merged with any internal credentials.
  * @note Threads can be created using the threads or threads network clients.
  */
-Client.prototype.listThreads = async function (ctx?: Context): Promise<ListThreadsResponse.AsObject> {
+Client.prototype.listThreads = async function (ctx?: Context): Promise<GetThreadResponse[]> {
   logger.debug('list threads request')
   const client = new APIServiceClient(this.serviceHost, {
     transport: this.rpcOptions.transport,
     debug: this.rpcOptions.debug,
   })
-  return new Promise<ListThreadsResponse.AsObject>((resolve, reject) => {
+  return new Promise<GetThreadResponse[]>((resolve, reject) => {
     const req = new ListThreadsRequest()
     this.context
       .toMetadata(ctx)
       .then((meta) => {
-        client.listThreads(req, meta, (err: ServiceError | null, message: ListThreadsResponse | null) => {
+        client.listThreads(req, meta, (err: ServiceError | null, message: _ListThreadsResponse | null) => {
           if (err) reject(err)
           const lst = message?.getListList()
-          const listList = []
+          const results = []
           if (lst) {
             for (const thrd of lst) {
               const row = thrd.toObject()
-              listList.push({ ...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString() })
+              results.push({ ...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString() })
             }
           }
-          resolve({ listList })
+          resolve(results)
         })
       })
       .catch((err: Error) => {

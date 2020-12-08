@@ -163,13 +163,13 @@ describe('Threads Client...', () => {
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       let res = await client.listThreads()
-      expect(res.listList).to.have.length(0)
+      expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id)
       res = await client.listThreads()
-      expect(res.listList).to.have.length(1)
+      expect(res).to.have.length(1)
     })
 
     it('should handle users keys', async () => {
@@ -192,13 +192,13 @@ describe('Threads Client...', () => {
       const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
       let res = await client.listThreads()
-      expect(res.listList).to.have.length(0)
+      expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
       await db.newDB(id, 'foo')
       res = await client.listThreads()
-      expect(res.listList).to.have.length(1)
-      expect(res.listList[0].name).to.equal('foo')
+      expect(res).to.have.length(1)
+      expect(res[0].name).to.equal('foo')
     })
   })
 })

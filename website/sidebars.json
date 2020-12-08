@@ -120,6 +120,7 @@
       "hub.buckets.withthread",
       "hub.buckets.getorcreate",
       "hub.buckets.create",
+      "hub.buckets.existing",
       "hub.buckets.root",
       "hub.buckets.links",
       "hub.buckets.list",
