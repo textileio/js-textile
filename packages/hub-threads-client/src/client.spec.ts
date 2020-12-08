@@ -6,7 +6,7 @@ import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
 import { expirationError, createAPISig } from '@textile/security'
 import { signUp, createKey } from './spec.util'
-import { Client } from './client'
+import { Client, GetThreadResponse } from './client'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -162,7 +162,7 @@ describe('Threads Client...', () => {
       const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
-      let res = await client.listThreads()
+      let res: GetThreadResponse[] = await client.listThreads()
       expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
@@ -191,7 +191,7 @@ describe('Threads Client...', () => {
       const db = new Client(ctx)
       const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
-      let res = await client.listThreads()
+      let res: GetThreadResponse[] = await client.listThreads()
       expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
