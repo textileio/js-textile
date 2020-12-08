@@ -8,7 +8,6 @@ export {
   SetupMailboxRequest,
   SetupMailboxResponse,
   ListThreadsRequest,
-  ListThreadsResponse,
   GetThreadRequest,
   SendMessageRequest,
   SendMessageResponse,

@@ -4,7 +4,7 @@ import {
   SetupMailboxRequest,
   SetupMailboxResponse,
   ListThreadsRequest,
-  ListThreadsResponse,
+  ListThreadsResponse as _ListThreadsResponse,
   GetThreadResponse as _GetThreadResponse,
   GetThreadRequest,
   SendMessageRequest,
@@ -185,7 +185,7 @@ function convertMessageObj(input: Message): UserMessage {
 export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
-  const res: ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
+  const res: _ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
   return res.getListList().map((value: _GetThreadResponse) => {
     return {
       isDb: value.getIsDb(),
