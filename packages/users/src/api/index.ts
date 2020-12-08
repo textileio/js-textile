@@ -24,7 +24,7 @@ import {
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
-import { Client, Update } from '@textile/hub-threads-client'
+import { Client, Update, GetThreadResponse } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
@@ -64,15 +64,6 @@ export interface InboxListOptions {
   limit?: number
   ascending?: boolean
   status?: Status
-}
-
-/**
- * The response type from getThread and listThreads
- */
-export interface GetThreadResponse {
-  isDB: boolean
-  name: string
-  id: ThreadID
 }
 
 /**
@@ -197,9 +188,9 @@ export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): 
   const res: ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
   return res.getListList().map((value: _GetThreadResponse) => {
     return {
-      isDB: value.getIsDb(),
+      isDb: value.getIsDb(),
       name: value.getName(),
-      id: ThreadID.fromBytes(value.getId_asU8()),
+      id: ThreadID.fromBytes(value.getId_asU8()).toString(),
     }
   })
 }
@@ -217,9 +208,9 @@ export async function getThread(
   req.setName(name)
   const res: _GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
   return {
-    isDB: res.getIsDb(),
+    isDb: res.getIsDb(),
     name: res.getName(),
-    id: ThreadID.fromBytes(res.getId_asU8()),
+    id: ThreadID.fromBytes(res.getId_asU8()).toString(),
   }
 }
 

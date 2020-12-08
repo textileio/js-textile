@@ -8,6 +8,7 @@ import {
 } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
+import { GetThreadResponse } from '@textile/hub-threads-client'
 import {
   getUsage,
   getThread,
@@ -21,7 +22,6 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadResponse,
   UserMessage,
   getMailboxID,
   watchMailbox,

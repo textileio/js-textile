@@ -14,7 +14,7 @@ import log from 'loglevel'
 
 const logger = log.getLogger('users')
 
-export interface GetThreadResponse {
+interface GetThreadResponse {
     id: string,
     name: string,
     isDb: boolean,
@@ -102,4 +102,4 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<Array<Get
 /**
  * Clients is a web-gRPC wrapper client for communicating with the web-gRPC enabled Threads API.
  */
-export { Client, UserAuth, KeyInfo }
+export { Client, GetThreadResponse, KeyInfo, UserAuth }
