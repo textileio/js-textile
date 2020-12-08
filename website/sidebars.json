@@ -60,8 +60,6 @@
       "hub.users.withthread"
     ],
     "Types": [
-      "hub.getthreadresponseobj",
-      "hub.getthreadreplyobj",
       "hub.inboxlistoptions",
       "hub.mailboxevent",
       "hub.mailboxeventtype",
