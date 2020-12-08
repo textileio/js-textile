@@ -82,8 +82,12 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<GetThread
           const results = []
           if (lst) {
             for (const thrd of lst) {
-              const row = thrd.toObject()
-              results.push({ ...row, id: ThreadID.fromBytes(thrd.getId_asU8()).toString() })
+              const res = {
+                name: thrd.getName(),
+                isDb: thrd.getIsDb(),
+                id: ThreadID.fromBytes(thrd.getId_asU8()).toString(),
+              }
+              results.push(res)
             }
           }
           resolve(results)
