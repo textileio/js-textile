@@ -4,9 +4,9 @@ import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { expect } from 'chai'
 import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
-import { expirationError } from '@textile/security'
-import { signUp, createKey, createAPISig } from './spec.util'
-import { Client } from './client'
+import { expirationError, createAPISig } from '@textile/security'
+import { signUp, createKey } from './spec.util'
+import { Client, GetThreadResponse } from './client'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -162,14 +162,14 @@ describe('Threads Client...', () => {
       const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
-      let res = await client.listThreads()
-      expect(res.listList).to.have.length(0)
+      let res: Array<GetThreadResponse> = await client.listThreads()
+      expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
       const db = new Client(ctx)
       await db.newDB(id)
       res = await client.listThreads()
-      expect(res.listList).to.have.length(1)
+      expect(res).to.have.length(1)
     })
 
     it('should handle users keys', async () => {
@@ -191,14 +191,14 @@ describe('Threads Client...', () => {
       const db = new Client(ctx)
       const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
-      let res = await client.listThreads()
-      expect(res.listList).to.have.length(0)
+      let res: Array<GetThreadResponse> = await client.listThreads()
+      expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
       await db.newDB(id, 'foo')
       res = await client.listThreads()
-      expect(res.listList).to.have.length(1)
-      expect(res.listList[0].name).to.equal('foo')
+      expect(res).to.have.length(1)
+      expect(res[0].name).to.equal('foo')
     })
   })
 })

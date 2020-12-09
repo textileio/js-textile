@@ -8,6 +8,7 @@ import {
 } from '@textile/grpc-authentication'
 import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
 import { UserAuth, KeyInfo } from '@textile/security'
+import { GetThreadResponse } from '@textile/hub-threads-client'
 import {
   getUsage,
   getThread,
@@ -21,12 +22,12 @@ import {
   deleteSentboxMessage,
   InboxListOptions,
   SentboxListOptions,
-  GetThreadResponse,
   UserMessage,
   getMailboxID,
   watchMailbox,
   MailboxEvent,
   GetUsageResponse,
+  UsageOptions,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -183,6 +184,13 @@ export class Users extends GrpcAuthentication {
   }
 
   /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   */
+  setToken(token: string) {
+    return super.setToken(token)
+  }
+
+  /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
    *
    * @example
@@ -222,8 +230,8 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getUsage(): Promise<GetUsageResponse> {
-    return getUsage(this)
+  async getUsage(options?: UsageOptions): Promise<GetUsageResponse> {
+    return getUsage(this, options)
   }
 
   /**

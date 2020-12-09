@@ -218,6 +218,13 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
+   * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
+   */
+  setToken(token: string) {
+    return super.setToken(token)
+  }
+
+  /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getTokenChallenge}
    *
    * @example
@@ -355,7 +362,7 @@ export class Buckets extends GrpcAuthentication {
     if (threadID) {
       const id = threadID
       const res = await client.listThreads()
-      const exists = res.listList.find((thread: any) => thread.id === id)
+      const exists = res.find((thread: any) => thread.id === id)
       if (!exists) {
         const id = ThreadID.fromString(threadID)
         await client.newDB(id, threadName)
@@ -384,6 +391,37 @@ export class Buckets extends GrpcAuthentication {
     }
     const created = await this.create(name, { encrypted, cid })
     return { root: created.root, threadID }
+  }
+
+  /**
+   * Existing lists all remote buckets in the thread or in all threads.
+   * @param threadID (optional) if threadID is not defined, this will return buckets from all threads.
+   */
+  async existing(threadID?: string) {
+
+    const client = new Client(this.context)
+    const threads = []
+
+    if (threadID) {
+      threads.push(threadID)
+    } else {
+      const res = await client.listThreads()
+      for (let thread of res) {
+        if (thread.id) threads.push(thread.id)
+      }
+    }
+
+    const bucketList: Root[] = []
+    for (let id of threads) {
+      this.withThread(id)
+      for (let root of await this.list()) {
+        bucketList.push(root)
+      }
+    }
+    // Clear the currently used thread
+    this.withThread(undefined)
+
+    return bucketList
   }
 
   /**

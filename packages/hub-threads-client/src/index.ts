@@ -18,4 +18,4 @@ export {
   Where,
   WriteTransaction,
 } from '@textile/threads-client'
-export { Client } from './client'
+export { Client, GetThreadResponse } from './client'

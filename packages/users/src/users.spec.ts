@@ -5,8 +5,8 @@ import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { Client } from '@textile/hub-threads-client'
-import { expirationError } from '@textile/security'
-import { signUp, createKey, createAPISig } from './spec.util'
+import { expirationError, createAPISig } from '@textile/security'
+import { signUp, createKey } from './spec.util'
 import { Users } from './users'
 import { Status, MailboxEvent } from './api'
 
@@ -252,7 +252,7 @@ describe('Users...', () => {
       const token2 = await user2.getToken(user2Id)
       user2Ctx.withToken(token2) // to skip regen in later calls
       await user2.setupMailbox()
-    })
+    }).timeout(5000)
     it('should send a message to user2 and check sentbox', async () => {
       const user = new Users(user1Ctx)
       const encoder = new TextEncoder()
@@ -452,30 +452,5 @@ describe('Users...', () => {
         }, 350)
       }, 500)
     }).timeout(5000)
-
-  })
-  describe('usage', () => {
-    const ctx = new Context(addrApiurl)
-    let dev: SignupResponse.AsObject
-    before(async function () {
-      this.timeout(10000)
-      const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
-      if (user) dev = user
-    })
-    it('it should return the correct usage per user', async () => {
-      const tmp = new Context(addrApiurl).withSession(dev.session)
-      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
-      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
-      const user = new Users(ctx)
-      try {
-        await user.getUsage()
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unknown)
-        expect(err.message).to.contain("billing is not enabled")
-      }
-    }).timeout(5000)
-  })
-  
+  })  
 })

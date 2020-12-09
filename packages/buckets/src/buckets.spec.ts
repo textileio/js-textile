@@ -55,6 +55,7 @@ describe('Buckets...', function () {
   const apiKeyInfo = { key: '' }
 
   before(async function () {
+    this.timeout(5000)
     const user = await signUp(ctx, addrGatewayUrl, sessionSecret)
     ctx.withSession(user.user?.session)
     if (!user.user) throw new Error('user signup error')
@@ -110,6 +111,7 @@ describe('Buckets...', function () {
 
     it('should push data from filesystem on node', async function () {
       if (isBrowser) return this.skip()
+      this.timeout(5000)
       const pth = path.join(__dirname, '../../..', 'testdata')
       fileSize = fs.statSync(path.join(pth, 'file1.jpg')).size
       let stream = fs.createReadStream(path.join(pth, 'file1.jpg'))

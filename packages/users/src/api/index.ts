@@ -4,7 +4,7 @@ import {
   SetupMailboxRequest,
   SetupMailboxResponse,
   ListThreadsRequest,
-  ListThreadsResponse,
+  ListThreadsResponse as _ListThreadsResponse,
   GetThreadResponse as _GetThreadResponse,
   GetThreadRequest,
   SendMessageRequest,
@@ -24,7 +24,7 @@ import {
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
-import { Client, Update } from '@textile/hub-threads-client'
+import { Client, Update, GetThreadResponse } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
 
 const logger = log.getLogger('users-api')
@@ -67,15 +67,6 @@ export interface InboxListOptions {
 }
 
 /**
- * The response type from getThread and listThreads
- */
-export interface GetThreadResponse {
-  isDB: boolean
-  name: string
-  id: ThreadID
-}
-
-/**
  * @deprecated
  */
 export interface GetThreadResponseObj extends GetThreadResponse {}
@@ -92,6 +83,16 @@ export interface Usage {
 
 export interface CustomerUsage {
   usageMap: [string, Usage][];
+}
+
+/**
+ * GetUsage options
+ */
+export interface UsageOptions {
+  /**
+   * Public key of the user. Only available when authenticated using an account key.
+   */
+  dependentUserKey?: string
 }
 
 export interface Period {
@@ -184,12 +185,12 @@ function convertMessageObj(input: Message): UserMessage {
 export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
-  const res: ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
+  const res: _ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
   return res.getListList().map((value: _GetThreadResponse) => {
     return {
-      isDB: value.getIsDb(),
+      isDb: value.getIsDb(),
       name: value.getName(),
-      id: ThreadID.fromBytes(value.getId_asU8()),
+      id: ThreadID.fromBytes(value.getId_asU8()).toString(),
     }
   })
 }
@@ -207,9 +208,9 @@ export async function getThread(
   req.setName(name)
   const res: _GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
   return {
-    isDB: res.getIsDb(),
+    isDb: res.getIsDb(),
     name: res.getName(),
-    id: ThreadID.fromBytes(res.getId_asU8()),
+    id: ThreadID.fromBytes(res.getId_asU8()).toString(),
   }
 }
 
@@ -384,16 +385,19 @@ export function watchMailbox(
   return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
 }
 
-
 /**
  * @internal
  */
 export async function getUsage(
   api: GrpcConnection,
+  options?: UsageOptions,
   ctx?: ContextInterface,
 ): Promise<GetUsageResponse> {
   logger.debug('get usage request')
   const req = new GetUsageRequest()
+  if (options && options.dependentUserKey) {
+    req.setKey(options.dependentUserKey)
+  }
   const res: _GetUsageResponse = await api.unary(APIService.GetUsage, req, ctx)
   const usage = res.toObject()
   return {

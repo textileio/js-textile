@@ -1,7 +1,5 @@
 import axios from 'axios'
 import delay from 'delay'
-import { HMAC } from 'fast-sha256'
-import multibase from 'multibase'
 import * as pb from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { APIServiceClient, ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import { ContextInterface } from '@textile/context'
@@ -59,13 +57,4 @@ export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSec
       })
     },
   )
-}
-
-export const createAPISig = async (secret: string, date: Date = new Date(Date.now() + 1000 * 60)) => {
-  const sec = multibase.decode(secret)
-  const msg = (date ?? new Date()).toISOString()
-  const hash = new HMAC(sec)
-  const mac = hash.update(Buffer.from(msg)).digest()
-  const sig = multibase.encode('base32', Buffer.from(mac)).toString()
-  return { sig, msg }
 }
