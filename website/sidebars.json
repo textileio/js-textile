@@ -60,6 +60,7 @@
       "hub.users.withthread"
     ],
     "Types": [
+      "hub.getthreadresponse",
       "hub.inboxlistoptions",
       "hub.mailboxevent",
       "hub.mailboxeventtype",
@@ -209,7 +210,6 @@
       "hub.readtransaction.start"
     ],
     "Types": [
-      "hub.getthreadresponse",
       "hub.action",
       "hub.dbinfo",
       "hub.filter",

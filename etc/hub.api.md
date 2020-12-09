@@ -11,6 +11,7 @@ import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/use
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
+import fs from 'fs';
 import { GetThreadRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
@@ -20,7 +21,6 @@ import { ListInboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/use
 import { ListSentboxMessagesRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListSentboxMessagesResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ListThreadsRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import { ListThreadsResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import * as pb from '@textile/threads-client-grpc/threads_pb';
 import { ReadInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { ReadInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
@@ -146,6 +146,7 @@ export class Buckets extends GrpcAuthentication {
     create(name: string, options?: CreateOptions): Promise<CreateResponse>;
     // @beta
     defaultArchiveConfig(key: string): Promise<ArchiveConfig>;
+    existing(threadID?: string): Promise<Root[]>;
     getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>;
     // @deprecated
     getOrInit(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
@@ -181,6 +182,7 @@ export class Buckets extends GrpcAuthentication {
     // @beta
     setDefaultArchiveConfig(key: string, config: ArchiveConfig): Promise<void>;
     setPath(key: string, path: string, cid: string): Promise<void>;
+    setToken(token: string): Promise<void>;
     static withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions): Promise<Buckets>;
     withThread(threadID?: string): void;
     static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions): Buckets;
@@ -293,6 +295,9 @@ export interface CreateOptions {
     cid?: string;
     encrypted?: boolean;
 }
+
+// @public (undocumented)
+export function createReadStream(path: string): fs.ReadStream;
 
 // @public
 export interface CreateResponse {
@@ -660,8 +665,6 @@ export { ListSentboxMessagesResponse }
 export function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>>;
 
 export { ListThreadsRequest }
-
-export { ListThreadsResponse }
 
 // @public
 export interface MailboxEvent {
