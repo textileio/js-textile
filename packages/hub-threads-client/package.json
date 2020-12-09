@@ -36,6 +36,7 @@
     "@textile/threads-client": "^1.3.2",
     "@textile/threads-id": "^0.3.1",
     "@textile/users-grpc": "2.2.2",
+    "@textile/types": "^0.0.0",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
@@ -50,6 +51,9 @@
   "references": [
     {
       "path": "../crypto"
+    },
+    {
+      "path": "../types"
     }
   ]
 }

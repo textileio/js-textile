@@ -10,15 +10,10 @@ import {
   ListThreadsResponse as _ListThreadsResponse,
 } from '@textile/users-grpc/api/usersd/pb/usersd_pb'
 import { APIServiceClient } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
+import { GetThreadResponse } from '@textile/types'
 import log from 'loglevel'
 
 const logger = log.getLogger('users')
-
-interface GetThreadResponse {
-    id: string,
-    name: string,
-    isDb: boolean,
-}
 
 declare module '@textile/threads-client' {
   interface Client {

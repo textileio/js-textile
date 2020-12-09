@@ -24,8 +24,9 @@ import {
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { ContextInterface } from '@textile/context'
-import { Client, Update, GetThreadResponse } from '@textile/hub-threads-client'
+import { Client, Update } from '@textile/hub-threads-client'
 import { ThreadID } from '@textile/threads-id'
+import { GetThreadResponse } from '@textile/types'
 
 const logger = log.getLogger('users-api')
 

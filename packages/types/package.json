@@ -1,0 +1,37 @@
+{
+  "name": "@textile/types",
+  "version": "0.0.0",
+  "description": "Common typescript types for @textile libraries.",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
+    "prebuild": "npm run clean",
+    "build": "tsc -b tsconfig.json",
+    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/textileio/js-textile.git"
+  },
+  "bugs": {
+    "url": "https://github.com/textileio/js-textile/issues"
+  },
+  "author": "Textile",
+  "license": "MIT",
+  "dependencies": {
+    "event-iterator": "^2.0.0",
+    "loglevel": "^1.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.3"
+  }
+}

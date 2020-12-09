@@ -34,6 +34,7 @@
     "@textile/security": "^0.6.2",
     "@textile/threads-id": "^0.3.1",
     "@textile/users": "^3.0.0",
+    "@textile/types": "^0.0.0",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
   },
@@ -62,6 +63,9 @@
     },
     {
       "path": "../hub-filecoin"
+    },
+    {
+      "path": "../types"
     }
   ]
 }

@@ -163,8 +163,6 @@ describe('Threads Client...', () => {
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       let res: Array<GetThreadResponse> = await client.listThreads()
-      console.log(client)
-      console.log(res)
       
       expect(res).to.have.length(0)
       // Got one
@@ -195,8 +193,6 @@ describe('Threads Client...', () => {
       const identity = await PrivateKey.fromRandom()
       await db.getToken(identity)
       let res: Array<GetThreadResponse> = await client.listThreads()
-      console.log(client)
-      console.log(res)
 
       expect(res).to.have.length(0)
       // Got one

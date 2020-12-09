@@ -1,8 +1,6 @@
 export * from './api'
 export * from './users'
 
-export { GetThreadResponse } from '@textile/hub-threads-client'
-
 // Exports all API response types for typescript users
 export {
   SetupMailboxRequest,
