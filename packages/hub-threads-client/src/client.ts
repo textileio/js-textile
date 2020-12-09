@@ -77,24 +77,22 @@ Client.prototype.listThreads = async function (ctx?: Context): Promise<Array<Get
       .toMetadata(ctx)
       .then((meta) => {
         client.listThreads(req, meta, (err: ServiceError | null, message: _ListThreadsResponse | null) => {
-          if (err) reject(err)
+          if (err) return reject(err)
           const lst = message?.getListList()
-          const results = []
-          if (lst) {
-            for (const thrd of lst) {
-              const res = {
+          let results: GetThreadResponse[] = []
+          if (!lst) return resolve(results)
+          results = lst.map((thrd: _GetThreadResponse) => {
+            return {
                 name: thrd.getName(),
                 isDb: thrd.getIsDb(),
                 id: ThreadID.fromBytes(thrd.getId_asU8()).toString(),
               }
-              results.push(res)
-            }
-          }
-          resolve(results)
+          })
+          return resolve(results)
         })
       })
       .catch((err: Error) => {
-        reject(err)
+        return reject(err)
       })
   })
 }
