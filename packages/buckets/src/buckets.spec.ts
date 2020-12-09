@@ -518,5 +518,22 @@ describe('Buckets...', function () {
         expect(err).to.equal(rightError)
       }
     })
+
+    it('list existing', async function () {
+      if (isBrowser) return this.skip()
+      if (!aliceThread || !rootKey) throw Error('setup failed')
+
+      aliceBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await aliceBuckets.getToken(alice)
+
+      const aliceList = await aliceBuckets.existing()
+      expect(aliceList).to.have.lengthOf(1)
+
+      bobBuckets = await Buckets.withKeyInfo(apiKeyInfo, { host: addrApiurl })
+      await bobBuckets.getToken(bob)
+
+      const bobList = await bobBuckets.existing()
+      expect(bobList).to.have.lengthOf(0)
+    })
   })
 })
