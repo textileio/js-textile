@@ -209,6 +209,7 @@
       "hub.readtransaction.start"
     ],
     "Types": [
+      "hub.getthreadresponse",
       "hub.action",
       "hub.dbinfo",
       "hub.filter",
