@@ -1,6 +1,5 @@
-import { expirationError } from "@textile/security"
 import { expect } from "chai"
-import { Context, ContextInterface } from "./index"
+import { Context, ContextInterface, errors } from "./index"
 
 describe("Context", () => {
   let validJson = {}
@@ -16,7 +15,7 @@ describe("Context", () => {
       context.toJSON()
       throw new Error("should have thrown")
     } catch (err) {
-      expect(err).to.equal(expirationError)
+      expect(err).to.equal(errors.expirationError)
     }
     validMsg = new Date(Date.now() + 1000 * 60).toUTCString()
     context.withAPISig({
@@ -48,7 +47,7 @@ describe("Context", () => {
       context.toJSON()
       throw new Error("should have thrown")
     } catch (err) {
-      expect(err).to.equal(expirationError)
+      expect(err).to.equal(errors.expirationError)
     }
     // Should renew
     const metadata = await context.toMetadata()
@@ -90,7 +89,7 @@ describe("Context", () => {
       context.toJSON()
       throw new Error("should have thrown")
     } catch (err) {
-      expect(err).to.equal(expirationError)
+      expect(err).to.equal(errors.expirationError)
     }
   })
 })

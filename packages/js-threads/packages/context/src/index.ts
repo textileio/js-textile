@@ -1,10 +1,15 @@
 import { grpc } from "@improbable-eng/grpc-web"
-import {
-  createAPISig,
-  expirationError,
-  KeyInfo,
-  UserAuth,
-} from "@textile/security"
+import { createAPISig, KeyInfo, UserAuth } from "@textile/security"
+
+export const errors = {
+  /**
+   * expirationError is an error your app will receive anytime your credentials have expired.
+   * @public
+   */
+  expirationError: new Error(
+    "Auth expired. Consider calling withKeyInfo or withAPISig to refresh."
+  ),
+}
 
 /**
  * The set of host strings used by any gPRC clients.
@@ -283,7 +288,7 @@ export class Context implements ContextInterface {
     const { ...json } = this._context
     // If we're expired, throw...
     if (this.isExpired) {
-      throw expirationError
+      throw errors.expirationError
     }
     return json
   }
