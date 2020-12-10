@@ -198,23 +198,6 @@ function fromPbArchive(item: _Archive.AsObject): Archive {
   }
 }
 
-/**
- * Ensures that a Root | string | undefined is converted into a string
- */
-async function ensureRootString(
-  api: GrpcConnection,
-  key: string,
-  root?: Root | string,
-  ctx?: ContextInterface
-): Promise<string> {
-  if (root) {
-    return typeof root === 'string' ? root : root.path
-  } else {
-    const root = await bucketsRoot(api, key, ctx)
-    return root?.path ?? ''
-  }
-}
-
 export function* genChunks(value: Uint8Array, size: number) {
   return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
 }
@@ -950,5 +933,22 @@ export class BucketsGrpcClient {
         },
       })
     })
+  }
+}
+
+/**
+ * Ensures that a Root | string | undefined is converted into a string
+ */
+async function ensureRootString(
+  api: GrpcConnection,
+  key: string,
+  root?: Root | string,
+  ctx?: ContextInterface
+): Promise<string> {
+  if (root) {
+    return typeof root === 'string' ? root : root.path
+  } else {
+    const root = await bucketsRoot(api, key, ctx)
+    return root?.path ?? ''
   }
 }
