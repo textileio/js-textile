@@ -177,7 +177,7 @@ export class Buckets extends GrpcAuthentication {
     pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
     remove(key: string): Promise<void>;
-    removePath(key: string, path: string, root?: string): Promise<void>;
+    removePath(key: string, path: string, options?: RemovePathOptions): Promise<RemovePathResponse>;
     root(key: string): Promise<Root | undefined>;
     // @beta
     setDefaultArchiveConfig(key: string, config: ArchiveConfig): Promise<void>;
@@ -882,6 +882,18 @@ export class ReadTransaction extends Transaction<ReadTransactionRequest, ReadTra
     start(): Promise<void>;
     // (undocumented)
     protected readonly threadID: ThreadID;
+}
+
+// @public
+export interface RemovePathOptions {
+    // (undocumented)
+    root?: Root | string;
+}
+
+// @public
+export interface RemovePathResponse {
+    pinned: number;
+    root?: Root;
 }
 
 // @public
