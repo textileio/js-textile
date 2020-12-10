@@ -35,6 +35,7 @@ import {
   PushPathRequest,
   PushPathResponse,
   RemovePathRequest,
+  RemovePathResponse as _RemovePathResponse,
   RemoveRequest,
   Root as _Root,
   RootRequest,
@@ -72,6 +73,8 @@ import {
   PathItem,
   PushOptions,
   PushPathResult,
+  RemovePathOptions,
+  RemovePathResponse,
   Root,
 } from '../types'
 import { File, normaliseInput } from './normalize'
@@ -192,6 +195,23 @@ function fromPbArchive(item: _Archive.AsObject): Archive {
     createdAt: new Date(item.createdAt * 1000),
     status: fromPbArchiveStatus(item.archiveStatus),
     dealInfo: item.dealInfoList.map(fromPbDealInfo),
+  }
+}
+
+/**
+ * Ensures that a Root | string | undefined is converted into a string
+ */
+async function ensureRootString(
+  api: GrpcConnection,
+  key: string,
+  root?: Root | string,
+  ctx?: ContextInterface
+): Promise<string> {
+  if (root) {
+    return typeof root === 'string' ? root : root.path
+  } else {
+    const root = await bucketsRoot(api, key, ctx)
+    return root?.path ?? ''
   }
 }
 
@@ -442,15 +462,7 @@ export async function bucketsPushPath(
       head.setPath(source.path || path)
       head.setKey(key)
       // Setting root here ensures pushes will error if root is out of date
-      let root = ''
-      if (opts?.root) {
-        // If we explicitly received a root argument, use that
-        root = typeof opts.root === 'string' ? opts.root : opts.root.path
-      } else {
-        // Otherwise, make a call to list path to get the latest known root
-        const head = await bucketsListPath(api, key, '', ctx)
-        root = head.root?.path ?? '' // Shouldn't ever be undefined here
-      }
+      const root = await ensureRootString(api, key, opts?.root, ctx)
       head.setRoot(root)
       const req = new PushPathRequest()
       req.setHeader(head)
@@ -563,15 +575,7 @@ export async function bucketsPushPathNode(
     head.setPath(source.path || path)
     head.setKey(key)
     // Setting root here ensures pushes will error if root is out of date
-    let root = ''
-    if (opts?.root) {
-      // If we explicitly received a root argument, use that
-      root = typeof opts.root === 'string' ? opts.root : opts.root.path
-    } else {
-      // Otherwise, make a call to list path to get the latest known root
-      const head = await bucketsListPath(api, key, '', ctx)
-      root = head.root?.path ?? '' // Shouldn't ever be undefined here
-    }
+    const root = await ensureRootString(api, key, opts?.root, ctx)
     head.setRoot(root)
     const req = new PushPathRequest()
     req.setHeader(head)
@@ -745,16 +749,20 @@ export async function bucketsRemovePath(
   api: GrpcConnection,
   key: string,
   path: string,
-  root?: string,
+  opts?: RemovePathOptions,
   ctx?: ContextInterface,
-) {
+): Promise<RemovePathResponse> {
   logger.debug('remove path request')
   const req = new RemovePathRequest()
   req.setKey(key)
   req.setPath(path)
-  if (root) req.setRoot(root)
-  await api.unary(APIService.RemovePath, req, ctx)
-  return
+  const root = await ensureRootString(api, key, opts?.root, ctx)
+  req.setRoot(root)
+  const res: _RemovePathResponse = await api.unary(APIService.RemovePath, req, ctx)
+  return {
+    pinned: res.getPinned(),
+    root: fromPbRootObjectNullable(res.getRoot())
+  }
 }
 
 export async function bucketsPushPathAccessRoles(

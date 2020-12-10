@@ -43,6 +43,7 @@ import {
   PathItem,
   PushOptions,
   PushPathResult,
+  RemovePathOptions,
   Root,
 } from './types'
 import { listPathFlat, listPathRecursive } from './utils'
@@ -722,9 +723,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async removePath(key: string, path: string, root?: string) {
+  async removePath(key: string, path: string, opts?: RemovePathOptions) {
     logger.debug('remove path request')
-    return bucketsRemovePath(this, key, path, root)
+    return bucketsRemovePath(this, key, path, opts)
   }
 
   /**

@@ -10,7 +10,7 @@ import { Duplex } from 'stream'
 import { genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
-import { AbortError, CreateResponse } from './types'
+import { AbortError, CreateResponse, Root } from './types'
 import { createReadStream } from './utils'
 
 // Settings for localhost development and testing
@@ -246,6 +246,7 @@ describe('Buckets...', function () {
 
     it('should remove files by path', async function () {
       const rootKey = buck.root?.key || ''
+      let wrongRoot = buck.root
       await client.removePath(rootKey, 'path/to/file2.jpg')
       try {
         await client.listPath(rootKey, 'path/to/file2.jpg')
@@ -264,6 +265,13 @@ describe('Buckets...', function () {
       }
       list = await client.listPath(rootKey, '')
       expect(list.item?.items).to.have.length(2) // Includes .textileseed
+
+      try {
+        await client.removePath(rootKey, 'path', {root: wrongRoot})
+        throw wrongError
+      } catch (err) {
+        expect(err.message).to.equal('update is non-fast-forward')
+      }
     })
 
     it('should push data from Buffer', async function () {

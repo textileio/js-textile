@@ -87,6 +87,13 @@ export interface PushOptions {
 }
 
 /**
+ * RemovePathOptions provides additional options for path remove steps.
+ */
+export interface RemovePathOptions {
+  root?: Root | string
+}
+
+/**
  * The expected result format from pushing a path to a bucket
  */
 export interface PushPathResult {
@@ -134,6 +141,21 @@ export enum PathAccessRole {
   PATH_ACCESS_ROLE_READER = 1,
   PATH_ACCESS_ROLE_WRITER = 2,
   PATH_ACCESS_ROLE_ADMIN = 3,
+}
+
+
+/**
+ * Response from remote path.
+ */
+export interface RemovePathResponse {
+  /**
+   * Remaining bytes pinned.
+   */
+  pinned: number
+  /**
+   * New bucket root.
+   */
+  root?: Root
 }
 
 export interface BuckMetadata {
