@@ -1,6 +1,6 @@
 {
   "name": "@textile/grpc-transport",
-  "version": "0.2.1",
+  "version": "0.3.0-alpha.3",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -13,10 +13,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run clean && npm run build",
-    "build": "npm run build:cjs && npm run build:esm",
+    "build": "npm run build:cjs",
     "build:cjs": "npx tsc -b ./tsconfig.json",
-    "build:esm": "npx tsc -b ./tsconfig.esm.json",
     "clean": "npx rimraf ./dist"
   },
   "repository": "github:textileio/js-threads",
@@ -27,5 +25,5 @@
     "loglevel": "^1.6.6",
     "ws": "^7.2.1"
   },
-  "gitHead": "cdbfb3a09a606e1c3c90f052e5ee74afa5399a40"
+  "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
 }

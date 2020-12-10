@@ -142,12 +142,4 @@ export async function createUserAuth(
   }
 }
 
-/**
- * expirationError is an error your app will receive anytime your credentials have expired.
- * @public
- */
-export const expirationError = new Error(
-  "Auth expired. Consider calling withKeyInfo or withAPISig to refresh."
-)
-
 export * from "./key"

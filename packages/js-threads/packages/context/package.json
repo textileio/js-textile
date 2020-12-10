@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.9.2",
+  "version": "0.10.0-alpha.5",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -13,10 +13,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run clean && npm run build",
-    "build": "npm run build:cjs && npm run build:esm",
+    "build": "npm run build:cjs",
     "build:cjs": "npx tsc -b ./tsconfig.json",
-    "build:esm": "npx tsc -b ./tsconfig.esm.json",
     "clean": "npx rimraf ./dist",
     "test:browser": "polendina --cleanup src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
@@ -26,7 +24,7 @@
   },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/security": "^0.6.2"
+    "@textile/security": "^0.7.0-alpha.5"
   },
-  "gitHead": "cdbfb3a09a606e1c3c90f052e5ee74afa5399a40"
+  "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
 }

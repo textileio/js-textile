@@ -5,9 +5,6 @@ import varint from "varint"
 import * as convert from "./convert"
 import { protocols } from "./protocols"
 
-const uint8ArrayConcat = require("uint8arrays/concat")
-const uint8ArrayToString = require("uint8arrays/to-string")
-
 // string -> [[str name, str addr]... ]
 function stringToStringTuples(str: string) {
   const tuples = []
@@ -91,16 +88,14 @@ export function tuplesToStringTuples(tuples: any): [number, string | number][] {
 // [[int code, Uint8Array ]... ] -> Uint8Array
 function tuplesToBytes(tuples: any[]) {
   return fromBytes(
-    uint8ArrayConcat(
-      tuples.map((tup) => {
+    new Uint8Array(
+      tuples.flatMap((tup) => {
         const proto = protoFromTuple(tup)
         let buf = Uint8Array.from(varint.encode(proto.code))
-
         if (tup.length > 1) {
-          buf = uint8ArrayConcat([buf, tup[1]]) // add address bytes
+          buf = new Uint8Array([...buf, ...tup[1]]) // add address bytes
         }
-
-        return buf
+        return [...buf]
       })
     )
   )
@@ -141,9 +136,7 @@ export function bytesToTuples(buf: Uint8Array): [number, Uint8Array][] {
 
     if (i > buf.length) {
       // did not end _exactly_ at buf.length
-      throw ParseError(
-        "Invalid address Uint8Array: " + uint8ArrayToString(buf, "base16")
-      )
+      throw ParseError("Invalid address Uint8Array")
     }
 
     // ok, tuple seems good.

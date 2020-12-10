@@ -3,6 +3,90 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0-alpha.5](https://github.com/textileio/js-threads/compare/@textile/security@0.7.0-alpha.4...@textile/security@0.7.0-alpha.5) (2020-12-09)
+
+**Note:** Version bump only for package @textile/security
+
+
+
+
+
+# [0.7.0-alpha.4](https://github.com/textileio/js-threads/compare/@textile/security@0.7.0-alpha.3...@textile/security@0.7.0-alpha.4) (2020-12-09)
+
+
+### Features
+
+* remove timeout error from security ([7a781f0](https://github.com/textileio/js-threads/commit/7a781f058a01414ee713e4486820a71805b6e9d9))
+
+
+
+
+
+# [0.7.0-alpha.3](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.7.0-alpha.3) (2020-12-09)
+
+
+### Features
+
+* cleanup esm builds + update changelog ([19ea109](https://github.com/textileio/js-threads/commit/19ea109f39e80e159c4f6bd9e40a9a199549371a))
+* cleanup esm builds in multiaddr + dep updates ([b456f60](https://github.com/textileio/js-threads/commit/b456f60d9e43cf21c720f2019f2a920f27db856a))
+
+
+
+
+
+# [0.7.0-alpha.2](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.7.0-alpha.2) (2020-12-09)
+
+
+### Features
+
+* cleanup esm builds + update changelog ([2b342aa](https://github.com/textileio/js-threads/commit/2b342aa41d71e955bc81c9eba5ce56ed21a0ee82))
+* cleanup esm builds in multiaddr + dep updates ([bf93ebd](https://github.com/textileio/js-threads/commit/bf93ebdbb2489a46d9cabb8754c4424a23d12b5d))
+
+
+
+
+
+# [0.7.0-alpha.1](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.7.0-alpha.1) (2020-11-27)
+
+
+### Features
+
+* cleanup esm builds + update changelog ([1c550ec](https://github.com/textileio/js-threads/commit/1c550ec78eab0368d5c758a7068e529c45918729))
+
+
+
+
+
+# [0.7.0-alpha.0](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.7.0-alpha.0) (2020-11-27)
+
+
+### Features
+
+* cleanup esm builds + update changelog ([1c550ec](https://github.com/textileio/js-threads/commit/1c550ec78eab0368d5c758a7068e529c45918729))
+
+
+
+
+
+# [0.7.0-alpha.0](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.7.0-alpha.0) (2020-11-27)
+
+
+### Features
+
+* cleanup esm builds + update changelog ([1c550ec](https://github.com/textileio/js-threads/commit/1c550ec78eab0368d5c758a7068e529c45918729))
+
+
+
+
+
+## [0.6.3-alpha.0](https://github.com/textileio/js-threads/compare/@textile/security@0.6.2...@textile/security@0.6.3-alpha.0) (2020-11-27)
+
+**Note:** Version bump only for package @textile/security
+
+
+
+
+
 ## [0.6.2](https://github.com/textileio/js-threads/compare/@textile/security@0.6.1...@textile/security@0.6.2) (2020-11-26)
 
 

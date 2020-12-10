@@ -1,10 +1,11 @@
 import { ThreadID } from "@textile/threads-id"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import Convert from "multiaddr/src/convert"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import varint from "varint"
 import { protocols } from "./protocols"
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Convert = require("multiaddr/src/convert")
 
 function thread2bytes(str: string) {
   const buf = ThreadID.fromString(str).toBytes()

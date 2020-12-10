@@ -1,7 +1,9 @@
 import randombytes from "@consento/sync-randombytes"
 import multibase from "multibase"
 
-export const invalidKeyError = new Error("Invalid key")
+export const errors = {
+  invalidKeyError: new Error("Invalid key"),
+}
 
 export const randomBytes = (byteLength: number): Uint8Array => {
   return randombytes(new Uint8Array(byteLength))
@@ -51,7 +53,7 @@ export class ThreadKey {
    */
   static fromBytes(bytes: Uint8Array): ThreadKey {
     if (bytes.byteLength !== keyBytes && bytes.byteLength !== keyBytes * 2) {
-      throw invalidKeyError
+      throw errors.invalidKeyError
     }
     const sk = bytes.slice(0, keyBytes)
     let rk: Uint8Array | undefined

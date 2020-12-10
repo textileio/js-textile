@@ -23,6 +23,7 @@ import {
 import { ThreadID } from "@textile/threads-id"
 import toJsonSchema, { JSONSchema3or4 } from "to-json-schema"
 import {
+  ComparisonJSON,
   CriterionJSON,
   Event,
   Filter,
@@ -45,6 +46,7 @@ export {
   ReadTransaction,
   QueryJSON,
   ValueJSON,
+  ComparisonJSON,
   CriterionJSON,
   SortJSON,
   JSONSchema3or4,
