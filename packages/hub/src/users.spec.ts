@@ -1,21 +1,20 @@
-import path from 'path'
-import fs from 'fs'
-import { expect } from 'chai'
-import { isBrowser } from 'browser-or-node'
-import { ThreadID } from '@textile/threads-id'
-import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
-import { PrivateKey } from '@textile/crypto'
-import { Client } from '@textile/hub-threads-client'
 import { Buckets } from '@textile/buckets'
 import { Context } from '@textile/context'
+import { PrivateKey } from '@textile/crypto'
+import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
+import { Client } from '@textile/hub-threads-client'
+import { ThreadID } from '@textile/threads-id'
 import { Users } from '@textile/users'
-import { signUp, createKey } from './spec.util'
+import { isBrowser } from 'browser-or-node'
+import { expect } from 'chai'
+import fs from 'fs'
+import path from 'path'
+import { createKey, signUp } from './spec.util'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
 const addrGatewayUrl = 'http://127.0.0.1:8006'
 const sessionSecret = 'hubsession'
-const wrongError = new Error('wrong error!')
 
 describe('All apis...', () => {
   describe('Buckets and accounts', () => {
@@ -49,7 +48,11 @@ describe('All apis...', () => {
         const pth = path.join(__dirname, '../../..', 'testdata')
         const stream = fs.createReadStream(path.join(pth, 'file1.jpg'))
         const rootKey = buck.root?.key || ''
-        const { root } = await buckets.pushPath(rootKey, 'dir1/file1.jpg', stream)
+        const { root } = await buckets.pushPath(
+          rootKey,
+          'dir1/file1.jpg',
+          stream,
+        )
         expect(root).to.not.be.undefined
 
         // We should have a thread named "my-buckets"
@@ -71,7 +74,10 @@ describe('All apis...', () => {
         if (user) dev = user
         // @note This should be done using the cli
         // This time they create a user key
-        const { keyInfo } = await createKey(ctx.withSession(dev.session), 'KEY_TYPE_USER')
+        const { keyInfo } = await createKey(
+          ctx.withSession(dev.session),
+          'KEY_TYPE_USER',
+        )
 
         // We also explicitly specify a custom context here, which could be omitted as it uses reasonable defaults
         const userContext = await new Context(addrApiurl).withKeyInfo(keyInfo)
@@ -99,7 +105,11 @@ describe('All apis...', () => {
         const pth = path.join(__dirname, '../../..', 'testdata')
         const stream = fs.createReadStream(path.join(pth, 'file1.jpg'))
         const rootKey = buck.root?.key || ''
-        const { root } = await buckets.pushPath(rootKey, 'dir1/file1.jpg', stream)
+        const { root } = await buckets.pushPath(
+          rootKey,
+          'dir1/file1.jpg',
+          stream,
+        )
         expect(root).to.not.be.undefined
 
         // Ensure context is set properly
@@ -119,7 +129,7 @@ describe('All apis...', () => {
 
         const usage = await users.getUsage()
         const daily = usage.customer?.dailyUsageMap || []
-        for (let use of daily) {
+        for (const use of daily) {
           switch (use[0]) {
             case 'instance_reads': {
               expect(use[1].total).to.equal(4)
@@ -146,9 +156,11 @@ describe('All apis...', () => {
         await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
         const devUser = new Users(ctx)
 
-        const usage = await devUser.getUsage({dependentUserKey: identity.public.toString()})
+        const usage = await devUser.getUsage({
+          dependentUserKey: identity.public.toString(),
+        })
         const daily = usage.customer?.dailyUsageMap || []
-        for (let use of daily) {
+        for (const use of daily) {
           switch (use[0]) {
             case 'instance_reads': {
               expect(use[1].total).to.equal(4)
@@ -177,7 +189,7 @@ describe('All apis...', () => {
 
         const usage = await devUser.getUsage()
         const daily = usage.customer?.dailyUsageMap || []
-        for (let use of daily) {
+        for (const use of daily) {
           switch (use[0]) {
             case 'instance_reads': {
               expect(use[1].total).to.equal(4)

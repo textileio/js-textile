@@ -144,7 +144,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
+  static copyAuth(
+    auth: GrpcAuthentication,
+    options?: CopyAuthOptions,
+  ): Buckets {
     return new Buckets(auth.context, options?.debug)
   }
   /**
@@ -159,7 +162,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions) {
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    options?: WithUserAuthOptions,
+  ): Buckets {
     const res = super.withUserAuth(auth, options)
     return this.copyAuth(res, options)
   }
@@ -180,7 +186,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions) {
+  static async withKeyInfo(
+    key: KeyInfo,
+    options?: WithKeyInfoOptions,
+  ): Promise<Buckets> {
     const auth = await super.withKeyInfo(key, options)
     return this.copyAuth(auth, options)
   }
@@ -198,7 +207,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  withThread(threadID?: string) {
+  withThread(threadID?: string): void {
     return super.withThread(threadID)
   }
 
@@ -215,14 +224,14 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async getToken(identity: Identity) {
+  async getToken(identity: Identity): Promise<string> {
     return super.getToken(identity)
   }
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
    */
-  setToken(token: string) {
+  setToken(token: string): Promise<void> {
     return super.setToken(token)
   }
 
@@ -325,7 +334,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async getOrCreate(name: string, options?: GetOrCreateOptions): Promise<GetOrCreateResponse>
+  async getOrCreate(
+    name: string,
+    options?: GetOrCreateOptions,
+  ): Promise<GetOrCreateResponse>
   async getOrCreate(
     name: string,
     options?: string | GetOrCreateOptions,
@@ -335,19 +347,32 @@ export class Buckets extends GrpcAuthentication {
   ): Promise<{ root?: Root; threadID?: string }> {
     if (!options && (encrypted || cid || threadID)) {
       // Case where threadName passed as undefined using old signature
-      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
+      console.warn(
+        'Update Buckets.getOrCreate to use GetOrCreateOptions input.',
+      )
       return this._getOrCreate(name, 'buckets', !!encrypted, cid, threadID)
     } else if (!options) {
       return this._getOrCreate(name)
     } else if (typeof options !== 'object') {
       // Case where using old signature
-      console.warn('Update Buckets.getOrCreate to use GetOrCreateOptions input.')
+      console.warn(
+        'Update Buckets.getOrCreate to use GetOrCreateOptions input.',
+      )
       return this._getOrCreate(name, options, !!encrypted, cid, threadID)
     } else {
       // Using new signature
-      const threadName = options.threadName && options.threadName !== '' ? options.threadName : 'buckets'
+      const threadName =
+        options.threadName && options.threadName !== ''
+          ? options.threadName
+          : 'buckets'
       const encrypted = !!options.encrypted
-      return this._getOrCreate(name, threadName, encrypted, options.cid, options.threadID)
+      return this._getOrCreate(
+        name,
+        threadName,
+        encrypted,
+        options.cid,
+        options.threadID,
+      )
     }
   }
   /**
@@ -373,10 +398,16 @@ export class Buckets extends GrpcAuthentication {
     } else {
       try {
         const res = await client.getThread(threadName)
-        threadID = typeof res.id === 'string' ? res.id : ThreadID.fromBytes(res.id).toString()
+        threadID =
+          typeof res.id === 'string'
+            ? res.id
+            : ThreadID.fromBytes(res.id).toString()
         this.withThread(threadID)
       } catch (error) {
-        if (error.message !== 'Thread not found' && !error.message.includes('mongo: no documents in result')) {
+        if (
+          error.message !== 'Thread not found' &&
+          !error.message.includes('mongo: no documents in result')
+        ) {
           throw new Error(error.message)
         }
         const newId = ThreadID.fromRandom()
@@ -399,8 +430,7 @@ export class Buckets extends GrpcAuthentication {
    * Existing lists all remote buckets in the thread or in all threads.
    * @param threadID (optional) if threadID is not defined, this will return buckets from all threads.
    */
-  async existing(threadID?: string) {
-
+  async existing(threadID?: string): Promise<Root[]> {
     const client = new Client(this.context)
     const threads = []
 
@@ -408,15 +438,15 @@ export class Buckets extends GrpcAuthentication {
       threads.push(threadID)
     } else {
       const res = await client.listThreads()
-      for (let thread of res) {
+      for (const thread of res) {
         if (thread.id) threads.push(thread.id)
       }
     }
 
     const bucketList: Root[] = []
-    for (let id of threads) {
+    for (const id of threads) {
       this.withThread(id)
-      for (let root of await this.list()) {
+      for (const root of await this.list()) {
         bucketList.push(root)
       }
     }
@@ -453,7 +483,11 @@ export class Buckets extends GrpcAuthentication {
    * ```
    */
   async create(name: string, options?: CreateOptions): Promise<CreateResponse>
-  async create(name: string, options?: boolean | CreateOptions, cid?: string): Promise<CreateResponse> {
+  async create(
+    name: string,
+    options?: boolean | CreateOptions,
+    cid?: string,
+  ): Promise<CreateResponse> {
     logger.debug('create request')
     if (typeof options == 'object') {
       return bucketsCreate(this, name, !!options.encrypted, options.cid)
@@ -470,7 +504,7 @@ export class Buckets extends GrpcAuthentication {
    * Returns the bucket root CID
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    */
-  async root(key: string) {
+  async root(key: string): Promise<Root | undefined> {
     logger.debug('root request')
     return bucketsRoot(this, key)
   }
@@ -513,7 +547,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ````
    */
-  async list() {
+  async list(): Promise<Root[]> {
     logger.debug('list request')
     return bucketsList(this)
   }
@@ -554,7 +588,12 @@ export class Buckets extends GrpcAuthentication {
    * // ]
    * ```
    */
-  async listPathFlat(key: string, path: string, dirs = true, depth = 5): Promise<Array<string>> {
+  async listPathFlat(
+    key: string,
+    path: string,
+    dirs = true,
+    depth = 5,
+  ): Promise<Array<string>> {
     logger.debug('list path recursive request')
     return await listPathFlat(this, key, path, dirs, depth)
   }
@@ -615,7 +654,12 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult> {
+  async pushPath(
+    key: string,
+    path: string,
+    input: any,
+    options?: PushOptions,
+  ): Promise<PushPathResult> {
     return bucketsPushPathNode(this, key, path, input, options)
   }
 
@@ -684,7 +728,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  pullIpfsPath(path: string, options?: { progress?: (num?: number) => void }): AsyncIterableIterator<Uint8Array> {
+  pullIpfsPath(
+    path: string,
+    options?: { progress?: (num?: number) => void },
+  ): AsyncIterableIterator<Uint8Array> {
     return bucketsPullIpfsPath(this, path, options)
   }
 
@@ -702,7 +749,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async remove(key: string) {
+  async remove(key: string): Promise<void> {
     logger.debug('remove request')
     return bucketsRemove(this, key)
   }
@@ -724,7 +771,11 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async removePath(key: string, path: string, options?: RemovePathOptions): Promise<RemovePathResponse> {
+  async removePath(
+    key: string,
+    path: string,
+    options?: RemovePathOptions,
+  ): Promise<RemovePathResponse> {
     logger.debug('remove path request')
     return bucketsRemovePath(this, key, path, options)
   }
@@ -760,7 +811,11 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>) {
+  async pushPathAccessRoles(
+    key: string,
+    path: string,
+    roles: Map<string, PathAccessRole>,
+  ): Promise<void> {
     logger.debug('push path access roles request')
     return bucketsPushPathAccessRoles(this, key, path, roles)
   }
@@ -781,7 +836,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async pullPathAccessRoles(key: string, path?: string) {
+  async pullPathAccessRoles(
+    key: string,
+    path?: string,
+  ): Promise<Map<string, 0 | 1 | 2 | 3>> {
     logger.debug('pull path access roles request')
     return bucketsPullPathAccessRoles(this, key, path)
   }
@@ -803,7 +861,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async defaultArchiveConfig(key: string) {
+  async defaultArchiveConfig(key: string): Promise<ArchiveConfig> {
     logger.debug('default archive config request')
     return bucketsDefaultArchiveConfig(this, key)
   }
@@ -825,7 +883,10 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async setDefaultArchiveConfig(key: string, config: ArchiveConfig) {
+  async setDefaultArchiveConfig(
+    key: string,
+    config: ArchiveConfig,
+  ): Promise<void> {
     logger.debug('set default archive config request')
     return bucketsSetDefaultArchiveConfig(this, key, config)
   }
@@ -852,7 +913,7 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async archive(key: string, options?: ArchiveOptions) {
+  async archive(key: string, options?: ArchiveOptions): Promise<void> {
     logger.debug('archive request')
     return bucketsArchive(this, key, options)
   }
@@ -896,7 +957,13 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async archiveWatch(key: string, callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void) {
+  async archiveWatch(
+    key: string,
+    callback: (
+      reply?: { id: string | undefined; msg: string },
+      err?: Error,
+    ) => void,
+  ): Promise<() => void> {
     logger.debug('archive watch request')
     return bucketsArchiveWatch(this, key, callback)
   }

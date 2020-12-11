@@ -143,7 +143,6 @@ export enum PathAccessRole {
   PATH_ACCESS_ROLE_ADMIN = 3,
 }
 
-
 /**
  * Response from remote path.
  */

@@ -1,33 +1,38 @@
-import log from 'loglevel'
 import { grpc } from '@improbable-eng/grpc-web'
+import {
+  encrypt,
+  extractPublicKeyBytes,
+  Identity,
+  Public,
+} from '@textile/crypto'
 import {
   CopyAuthOptions,
   GrpcAuthentication,
   WithKeyInfoOptions,
   WithUserAuthOptions,
 } from '@textile/grpc-authentication'
-import { encrypt, Identity, extractPublicKeyBytes, Public } from '@textile/crypto'
-import { UserAuth, KeyInfo } from '@textile/security'
 import { GetThreadResponse } from '@textile/hub-threads-client'
+import { KeyInfo, UserAuth } from '@textile/security'
+import log from 'loglevel'
 import {
-  getUsage,
-  getThread,
-  listInboxMessages,
-  listThreads,
-  setupMailbox,
-  sendMessage,
-  listSentboxMessages,
-  readInboxMessage,
   deleteInboxMessage,
   deleteSentboxMessage,
-  InboxListOptions,
-  SentboxListOptions,
-  UserMessage,
   getMailboxID,
-  watchMailbox,
-  MailboxEvent,
+  getThread,
+  getUsage,
   GetUsageResponse,
+  InboxListOptions,
+  listInboxMessages,
+  listSentboxMessages,
+  listThreads,
+  MailboxEvent,
+  readInboxMessage,
+  sendMessage,
+  SentboxListOptions,
+  setupMailbox,
   UsageOptions,
+  UserMessage,
+  watchMailbox,
 } from './api'
 
 const logger = log.getLogger('users')
@@ -108,7 +113,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions) {
+  static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Users {
     return new Users(auth.context, options?.debug)
   }
   /**
@@ -123,7 +128,10 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions) {
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    options?: WithUserAuthOptions,
+  ): Users {
     const res = super.withUserAuth(auth, options)
     return this.copyAuth(res, options)
   }
@@ -144,7 +152,10 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, options?: WithKeyInfoOptions) {
+  static async withKeyInfo(
+    key: KeyInfo,
+    options?: WithKeyInfoOptions,
+  ): Promise<Users> {
     const auth = await super.withKeyInfo(key, options)
     return this.copyAuth(auth, options)
   }
@@ -315,7 +326,11 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async sendMessage(from: Identity, to: Public, body: Uint8Array): Promise<UserMessage> {
+  async sendMessage(
+    from: Identity,
+    to: Public,
+    body: Uint8Array,
+  ): Promise<UserMessage> {
     logger.debug('send message using keys')
     const toBytes = extractPublicKeyBytes(to)
     const fromBytes = extractPublicKeyBytes(from.public)
@@ -323,7 +338,15 @@ export class Users extends GrpcAuthentication {
     const fromSig = await from.sign(fromBody)
     const toBody = await encrypt(body, toBytes)
     const toSig = await from.sign(toBody)
-    return sendMessage(this, from.public.toString(), to.toString(), toBody, toSig, fromBody, fromSig)
+    return sendMessage(
+      this,
+      from.public.toString(),
+      to.toString(),
+      toBody,
+      toSig,
+      fromBody,
+      fromSig,
+    )
   }
 
   /**
@@ -342,7 +365,9 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listInboxMessages(opts?: InboxListOptions): Promise<Array<UserMessage>> {
+  async listInboxMessages(
+    opts?: InboxListOptions,
+  ): Promise<Array<UserMessage>> {
     return listInboxMessages(this, opts)
   }
 
@@ -361,7 +386,9 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async listSentboxMessages(opts?: SentboxListOptions): Promise<Array<UserMessage>> {
+  async listSentboxMessages(
+    opts?: SentboxListOptions,
+  ): Promise<Array<UserMessage>> {
     return listSentboxMessages(this, opts)
   }
 
@@ -476,7 +503,10 @@ export class Users extends GrpcAuthentication {
    * ```
    */
 
-  watchInbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
+  watchInbox(
+    id: string,
+    callback: (reply?: MailboxEvent, err?: Error) => void,
+  ): grpc.Request {
     return watchMailbox(this, id, 'inbox', callback)
   }
   /**
@@ -511,7 +541,10 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  watchSentbox(id: string, callback: (reply?: MailboxEvent, err?: Error) => void): grpc.Request {
+  watchSentbox(
+    id: string,
+    callback: (reply?: MailboxEvent, err?: Error) => void,
+  ): grpc.Request {
     return watchMailbox(this, id, 'sentbox', callback)
   }
 }

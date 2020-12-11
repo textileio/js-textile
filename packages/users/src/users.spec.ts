@@ -1,14 +1,14 @@
-import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
-import { expect } from 'chai'
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
+import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { Client } from '@textile/hub-threads-client'
-import { expirationError, createAPISig } from '@textile/security'
-import { signUp, createKey } from './spec.util'
+import { createAPISig, expirationError } from '@textile/security'
+import { ThreadID } from '@textile/threads-id'
+import { expect } from 'chai'
+import { MailboxEvent, Status } from './api'
+import { createKey, signUp } from './spec.util'
 import { Users } from './users'
-import { Status, MailboxEvent } from './api'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -60,7 +60,10 @@ describe('Users...', () => {
       }
       // Old key signature
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
+      const sig = await createAPISig(
+        keyInfo!.secret,
+        new Date(Date.now() - 1000 * 60),
+      )
       try {
         const user = new Users(ctx.withAPISig(sig))
         await user.getThread('foo')
@@ -160,7 +163,10 @@ describe('Users...', () => {
       }
       // Old key signature will fail
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
+      const sig = await createAPISig(
+        keyInfo!.secret,
+        new Date(Date.now() - 1000 * 60),
+      )
       try {
         const user = new Users(ctx.withAPISig(sig))
         await user.listThreads()
@@ -172,7 +178,10 @@ describe('Users...', () => {
     })
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl)
-      const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
+      const { keyInfo } = await createKey(
+        tmp.withSession(dev.session),
+        'KEY_TYPE_ACCOUNT',
+      )
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       const user = new Users(ctx)
@@ -256,7 +265,11 @@ describe('Users...', () => {
     it('should send a message to user2 and check sentbox', async () => {
       const user = new Users(user1Ctx)
       const encoder = new TextEncoder()
-      const res = await user.sendMessage(user1Id, user2Id.public, encoder.encode('first'))
+      const res = await user.sendMessage(
+        user1Id,
+        user2Id.public,
+        encoder.encode('first'),
+      )
       expect(res.id).to.not.be.undefined
 
       const sent = await user.listSentboxMessages()
@@ -337,7 +350,11 @@ describe('Users...', () => {
         const closer = await user1.watchInbox(mailboxID, callback)
         const user2 = new Users(user2Ctx)
         await delay(100)
-        await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
+        await user2.sendMessage(
+          user2Id,
+          user1Id.public,
+          new TextEncoder().encode('watch'),
+        )
         setTimeout(() => {
           closer.close()
           expect(hitCallback).to.be.true
@@ -366,7 +383,11 @@ describe('Users...', () => {
         expect(mailboxID).to.not.be.undefined
         const closer = await user2.watchSentbox(mailboxID, callback)
         await delay(100)
-        await user2.sendMessage(user2Id, user1Id.public, new TextEncoder().encode('watch'))
+        await user2.sendMessage(
+          user2Id,
+          user1Id.public,
+          new TextEncoder().encode('watch'),
+        )
         setTimeout(() => {
           closer.close()
           expect(hitCallback).to.be.true
@@ -452,5 +473,5 @@ describe('Users...', () => {
         }, 350)
       }, 500)
     }).timeout(5000)
-  })  
+  })
 })

@@ -169,7 +169,9 @@ function fromPbDealInfo(item: _DealInfo.AsObject): ArchiveDealInfo {
   return { ...item }
 }
 
-function fromPbArchiveStatus(item: _ArchiveStatusMap[keyof _ArchiveStatusMap]): ArchiveStatus {
+function fromPbArchiveStatus(
+  item: _ArchiveStatusMap[keyof _ArchiveStatusMap],
+): ArchiveStatus {
   switch (item) {
     case _ArchiveStatus.ARCHIVE_STATUS_CANCELED:
       return ArchiveStatus.Canceled
@@ -205,7 +207,7 @@ async function ensureRootString(
   api: GrpcConnection,
   key: string,
   root?: Root | string,
-  ctx?: ContextInterface
+  ctx?: ContextInterface,
 ): Promise<string> {
   if (root) {
     return typeof root === 'string' ? root : root.path
@@ -216,8 +218,13 @@ async function ensureRootString(
   }
 }
 
-export function* genChunks(value: Uint8Array, size: number) {
-  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) => value.slice(i * size, i * size + size))
+export function* genChunks(
+  value: Uint8Array,
+  size: number,
+): Generator<Uint8Array, any, undefined> {
+  return yield* Array.from(Array(Math.ceil(value.byteLength / size)), (_, i) =>
+    value.slice(i * size, i * size + size),
+  )
 }
 
 /**
@@ -268,7 +275,11 @@ export async function bucketsCreate(
  *
  * @internal
  */
-export async function bucketsRoot(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Root | undefined> {
+export async function bucketsRoot(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<Root | undefined> {
   logger.debug('root request')
   const req = new RootRequest()
   req.setKey(key)
@@ -326,7 +337,10 @@ export async function bucketsLinks(
  *
  * @internal
  */
-export async function bucketsList(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<Root>> {
+export async function bucketsList(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<Array<Root>> {
   logger.debug('list request')
   const req = new ListRequest()
   const res: ListResponse = await api.unary(APIService.List, req, ctx)
@@ -373,7 +387,11 @@ export async function bucketsListIpfsPath(
   logger.debug('list path request')
   const req = new ListIpfsPathRequest()
   req.setPath(path)
-  const res: ListIpfsPathResponse = await api.unary(APIService.ListIpfsPath, req, ctx)
+  const res: ListIpfsPathResponse = await api.unary(
+    APIService.ListIpfsPath,
+    req,
+    ctx,
+  )
   return fromPbPathItemNullable(res.getItem())
 }
 
@@ -405,11 +423,15 @@ export async function bucketsPushPath(
   input: any,
   opts?: PushOptions,
   ctx?: ContextInterface,
-) {
+): Promise<PushPathResult> {
   return new Promise<PushPathResult>(async (resolve, reject) => {
     // Only process the first input if there are more than one
     const source: File | undefined = (await normaliseInput(input).next()).value
-    const client = grpc.client<PushPathRequest, PushPathResponse, APIServicePushPath>(APIService.PushPath, {
+    const client = grpc.client<
+      PushPathRequest,
+      PushPathResponse,
+      APIServicePushPath
+    >(APIService.PushPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
       debug: api.rpcOptions.debug,
@@ -431,7 +453,9 @@ export async function bucketsPushPath(
         const event = message.getEvent()?.toObject()
         if (event?.path) {
           // @todo: Is there an standard library/tool for this step in JS?
-          const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
+          const pth = event.path.startsWith('/ipfs/')
+            ? event.path.split('/ipfs/')[1]
+            : event.path
           const cid = new CID(pth)
           const res: PushPathResult = {
             path: {
@@ -505,7 +529,7 @@ export async function bucketsPushPathNode(
   input: any,
   opts?: PushOptions,
   ctx?: ContextInterface,
-) {
+): Promise<PushPathResult> {
   return new Promise<PushPathResult>(async (resolve, reject) => {
     // Only process the first input if there are more than one
     const source: File | undefined = (await normaliseInput(input).next()).value
@@ -518,7 +542,10 @@ export async function bucketsPushPathNode(
 
     const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
 
-    const stream: BidirectionalStream<PushPathRequest, PushPathResponse> = clientjs.pushPath(metadata)
+    const stream: BidirectionalStream<
+      PushPathRequest,
+      PushPathResponse
+    > = clientjs.pushPath(metadata)
 
     if (opts?.signal !== undefined) {
       opts.signal.addEventListener('abort', () => {
@@ -537,7 +564,9 @@ export async function bucketsPushPathNode(
         const event = message.getEvent()?.toObject()
         if (event?.path) {
           // TODO: Is there an standard library/tool for this step in JS?
-          const pth = event.path.startsWith('/ipfs/') ? event.path.split('/ipfs/')[1] : event.path
+          const pth = event.path.startsWith('/ipfs/')
+            ? event.path.split('/ipfs/')[1]
+            : event.path
           const cid = new CID(pth)
           const res: PushPathResult = {
             path: {
@@ -613,7 +642,7 @@ export async function bucketsSetPath(
   path: string,
   cid: string,
   ctx?: ContextInterface,
-) {
+): Promise<void> {
   const request = new SetPathRequest()
   request.setKey(key)
   request.setPath(path)
@@ -656,13 +685,18 @@ export function bucketsPullPath(
           opts.progress(written)
         }
       },
-      onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      onEnd: async (
+        status: grpc.Code,
+        message: string,
+        // _trailers: grpc.Metadata,
+      ) => {
         if (status !== grpc.Code.OK) {
           fail(new Error(message))
         }
         stop()
       },
     })
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     return () => resp.close()
   })
   const it: AsyncIterableIterator<Uint8Array> = {
@@ -706,13 +740,18 @@ export function bucketsPullIpfsPath(
           opts.progress(written)
         }
       },
-      onEnd: async (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+      onEnd: async (
+        status: grpc.Code,
+        message: string,
+        // _trailers: grpc.Metadata,
+      ) => {
         if (status !== grpc.Code.OK) {
           fail(new Error(message))
         }
         stop()
       },
     })
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     return () => resp.close()
   })
   const it: AsyncIterableIterator<Uint8Array> = {
@@ -730,7 +769,11 @@ export function bucketsPullIpfsPath(
  *
  * @internal
  */
-export async function bucketsRemove(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsRemove(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<void> {
   logger.debug('remove request')
   const req = new RemoveRequest()
   req.setKey(key)
@@ -759,10 +802,14 @@ export async function bucketsRemovePath(
   req.setPath(path)
   const root = await ensureRootString(api, key, opts?.root, ctx)
   req.setRoot(root)
-  const res: _RemovePathResponse = await api.unary(APIService.RemovePath, req, ctx)
+  const res: _RemovePathResponse = await api.unary(
+    APIService.RemovePath,
+    req,
+    ctx,
+  )
   return {
     pinned: res.getPinned(),
-    root: fromPbRootObjectNullable(res.getRoot())
+    root: fromPbRootObjectNullable(res.getRoot()),
   }
 }
 
@@ -772,7 +819,7 @@ export async function bucketsPushPathAccessRoles(
   path: string,
   roles: Map<string, PathAccessRole>,
   ctx?: ContextInterface,
-) {
+): Promise<void> {
   logger.debug('remove path request')
   const req = new PushPathAccessRolesRequest()
   req.setKey(key)
@@ -792,7 +839,11 @@ export async function bucketsPullPathAccessRoles(
   const req = new PullPathAccessRolesRequest()
   req.setKey(key)
   req.setPath(path)
-  const response: PullPathAccessRolesResponse = await api.unary(APIService.PullPathAccessRoles, req, ctx)
+  const response: PullPathAccessRolesResponse = await api.unary(
+    APIService.PullPathAccessRoles,
+    req,
+    ctx,
+  )
   const roles = response.getRolesMap()
   const typedRoles = new Map()
   roles.forEach((entry, key) => typedRoles.set(key, entry))
@@ -802,11 +853,19 @@ export async function bucketsPullPathAccessRoles(
 /**
  * @internal
  */
-export async function bucketsDefaultArchiveConfig(api: GrpcConnection, key: string, ctx?: ContextInterface) {
+export async function bucketsDefaultArchiveConfig(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<ArchiveConfig> {
   logger.debug('default archive config request')
   const req = new DefaultArchiveConfigRequest()
   req.setKey(key)
-  const res: DefaultArchiveConfigResponse = await api.unary(APIService.DefaultArchiveConfig, req, ctx)
+  const res: DefaultArchiveConfigResponse = await api.unary(
+    APIService.DefaultArchiveConfig,
+    req,
+    ctx,
+  )
   const config = res.getArchiveConfig()
   if (!config) {
     throw new Error('no archive config returned')
@@ -822,7 +881,7 @@ export async function bucketsSetDefaultArchiveConfig(
   key: string,
   config: ArchiveConfig,
   ctx?: ContextInterface,
-) {
+): Promise<void> {
   logger.debug('set default archive config request')
   const req = new SetDefaultArchiveConfigRequest()
   req.setKey(key)
@@ -842,7 +901,7 @@ export async function bucketsArchive(
   key: string,
   options?: ArchiveOptions,
   ctx?: ContextInterface,
-) {
+): Promise<void> {
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
@@ -856,7 +915,11 @@ export async function bucketsArchive(
 /**
  * @internal
  */
-export async function bucketsArchives(api: GrpcConnection, key: string, ctx?: ContextInterface): Promise<Archives> {
+export async function bucketsArchives(
+  api: GrpcConnection,
+  key: string,
+  ctx?: ContextInterface,
+): Promise<Archives> {
   logger.debug('archives request')
   const req = new ArchivesRequest()
   req.setKey(key)
@@ -876,9 +939,12 @@ export async function bucketsArchives(api: GrpcConnection, key: string, ctx?: Co
 export async function bucketsArchiveWatch(
   api: GrpcConnection,
   key: string,
-  callback: (reply?: { id: string | undefined; msg: string }, err?: Error) => void,
+  callback: (
+    reply?: { id: string | undefined; msg: string },
+    err?: Error,
+  ) => void,
   ctx?: ContextInterface,
-) {
+): Promise<() => void> {
   logger.debug('archive watch request')
   const req = new ArchiveWatchRequest()
   req.setKey(key)
@@ -895,7 +961,10 @@ export async function bucketsArchiveWatch(
       }
       callback(response)
     },
-    onEnd: (status: grpc.Code, message: string, _trailers: grpc.Metadata) => {
+    onEnd: (
+      status: grpc.Code,
+      message: string /** _trailers: grpc.Metadata */,
+    ) => {
       if (status !== grpc.Code.OK) {
         return callback(undefined, new Error(message))
       }

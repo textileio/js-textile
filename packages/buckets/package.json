@@ -1,7 +1,7 @@
 {
   "name": "@textile/buckets",
   "version": "4.1.0",
-  "description": "web-gRPC wrapper client for managing Textile Buckets.",
+  "description": "Web-gRPC wrapper client for managing Textile Buckets.",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -12,22 +12,12 @@
     "access": "public"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+    "build": "npx tsc -b ./tsconfig.json",
+    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/textileio/js-textile.git"
-  },
-  "bugs": {
-    "url": "https://github.com/textileio/js-textile/issues"
-  },
-  "author": "Textile",
   "license": "MIT",
+  "repository": "github:textileio/js-threads",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/buckets-grpc": "2.2.2",
@@ -47,11 +37,6 @@
   },
   "devDependencies": {
     "axios": "^0.20.0",
-    "browser-or-node": "1.3.0",
-    "delay": "^4.4.0",
-    "fast-sha256": "^1.3.0",
-    "multibase": "^3.1.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.9.3"
+    "browser-or-node": "1.3.0"
   }
 }

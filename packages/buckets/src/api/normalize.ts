@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Buffer } from 'buffer'
 
@@ -101,7 +102,11 @@ export function normaliseInput(input: any) {
       // Iterable<Bloby>
       // Iterable<String>
       // Iterable<{ path, content }>
-      if (isFileObject(first.value) || isBloby(first.value) || typeof first.value === 'string') {
+      if (
+        isFileObject(first.value) ||
+        isBloby(first.value) ||
+        typeof first.value === 'string'
+      ) {
         yield toFileObject(first.value)
         for (const obj of iterator) {
           yield toFileObject(obj)
@@ -144,7 +149,11 @@ export function normaliseInput(input: any) {
       // AsyncIterable<Bloby>
       // AsyncIterable<String>
       // AsyncIterable<{ path, content }>
-      if (isFileObject(first.value) || isBloby(first.value) || typeof first.value === 'string') {
+      if (
+        isFileObject(first.value) ||
+        isBloby(first.value) ||
+        typeof first.value === 'string'
+      ) {
         yield toFileObject(first.value)
         for await (const obj of iterator) {
           yield toFileObject(obj)
@@ -186,7 +195,9 @@ function toFileObject(input: any) {
   return obj
 }
 
-function toAsyncIterable(input: any): AsyncGenerator<Buffer | Uint8Array | ArrayBuffer> {
+function toAsyncIterable(
+  input: any,
+): AsyncGenerator<Buffer | Uint8Array | ArrayBuffer> {
   // Bytes | String
   if (isBytes(input) || typeof input === 'string') {
     return (async function* () {
@@ -256,11 +267,17 @@ function toBuffer(chunk: Buffer | ArrayBuffer): Buffer | ArrayBuffer {
 }
 
 function isBytes(obj: Buffer | ArrayBuffer) {
-  return Buffer.isBuffer(obj) || ArrayBuffer.isView(obj) || obj instanceof ArrayBuffer
+  return (
+    Buffer.isBuffer(obj) ||
+    ArrayBuffer.isView(obj) ||
+    obj instanceof ArrayBuffer
+  )
 }
 
 function isBloby(obj: any) {
-  return typeof globalThis.Blob !== 'undefined' && obj instanceof globalThis.Blob
+  return (
+    typeof globalThis.Blob !== 'undefined' && obj instanceof globalThis.Blob
+  )
 }
 
 // An object with a path or content property

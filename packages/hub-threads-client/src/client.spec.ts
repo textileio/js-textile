@@ -1,12 +1,12 @@
-import { ThreadID } from '@textile/threads-id'
 import { grpc } from '@improbable-eng/grpc-web'
-import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
-import { expect } from 'chai'
-import { PrivateKey } from '@textile/crypto'
 import { Context } from '@textile/context'
-import { expirationError, createAPISig } from '@textile/security'
-import { signUp, createKey } from './spec.util'
+import { PrivateKey } from '@textile/crypto'
+import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
+import { createAPISig, expirationError } from '@textile/security'
+import { ThreadID } from '@textile/threads-id'
+import { expect } from 'chai'
 import { Client, GetThreadResponse } from './client'
+import { createKey, signUp } from './spec.util'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -52,8 +52,11 @@ describe('Threads Client...', () => {
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
+      const sig = await createAPISig(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        keyInfo!.secret,
+        new Date(Date.now() - 1000 * 60),
+      )
       try {
         await client.getThread('foo', ctx.withAPISig(sig))
         throw wrongError
@@ -147,8 +150,11 @@ describe('Threads Client...', () => {
         expect(err).to.equal(wrongError)
       }
       // Old key signature will fail
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const sig = await createAPISig(keyInfo!.secret, new Date(Date.now() - 1000 * 60))
+      const sig = await createAPISig(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        keyInfo!.secret,
+        new Date(Date.now() - 1000 * 60),
+      )
       try {
         await client.listThreads(ctx.withAPISig(sig))
         throw wrongError
@@ -159,7 +165,10 @@ describe('Threads Client...', () => {
     })
     it('should handle account keys', async () => {
       const tmp = new Context(addrApiurl)
-      const { keyInfo } = await createKey(tmp.withSession(dev.session), 'KEY_TYPE_ACCOUNT')
+      const { keyInfo } = await createKey(
+        tmp.withSession(dev.session),
+        'KEY_TYPE_ACCOUNT',
+      )
       await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
       // Empty
       let res: Array<GetThreadResponse> = await client.listThreads()
