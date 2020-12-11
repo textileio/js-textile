@@ -4,40 +4,26 @@
   "description": "JS lib for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
-    "docs": "rm -rf docs markdown temp && node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
-    "serve:docs": "npm run docs && cd website && npm run start",
-    "build:docs": "npm run docs && cd website && npm install && npm run build",
-    "bootstrap": "lerna bootstrap",
-    "publish": "lerna publish",
-    "publish:from": "lerna publish from-package",
     "clean": "lerna clean && lerna run clean",
+    "bootstrap": "lerna bootstrap",
+    "publish": "npm run build && lerna publish",
     "build": "lerna run build",
     "references": "npx lerna-to-typescript-project-references --update",
     "references:check": "npx lerna-to-typescript-project-references",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
-    "outdated": "lerna exec -- npx ncu",
+    "lint:check": "eslint --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",
-    "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
+    "test:docs": "npm run docs && typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
+    "textile": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
-    "textile:upgrade": "lerna exec -- npx ncu -u '/^@textile/.*$/'"
+    "docs": "rm -rf docs markdown temp && node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
+    "serve:docs": "npm run docs && cd website && npm run start",
+    "build:docs": "npm run docs && cd website && npm install && npm run build"
   },
   "resolutions": {
     "npm-packlist": "1.1.12"
-  },
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "json"
-    ],
-    "all": true
   },
   "engines": {
     "node": ">= 10.0.0",
@@ -77,7 +63,6 @@
     "lerna": "^3.19.0",
     "mocha": "^7.2.0",
     "npm-check-updates": "^10.2.3",
-    "nyc": "^15.1.0",
     "polendina": "^1.0.0",
     "prettier": "^2.1.1",
     "prettier-eslint": "^11.0.0",
