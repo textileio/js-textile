@@ -1,4 +1,4 @@
-import type CID from 'cids'
+import type { CID } from 'multiformats'
 
 export const AbortError = new Error('aborted')
 

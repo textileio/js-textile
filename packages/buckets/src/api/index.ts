@@ -53,9 +53,9 @@ import {
 import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
-import CID from 'cids'
 import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
+import { CID } from 'multiformats'
 import {
   AbortError,
   Archive,
@@ -456,7 +456,7 @@ export async function bucketsPushPath(
           const pth = event.path.startsWith('/ipfs/')
             ? event.path.split('/ipfs/')[1]
             : event.path
-          const cid = new CID(pth)
+          const cid = CID.parse(pth)
           const res: PushPathResult = {
             path: {
               path: `/ipfs/${cid.toString()}`,
@@ -567,7 +567,7 @@ export async function bucketsPushPathNode(
           const pth = event.path.startsWith('/ipfs/')
             ? event.path.split('/ipfs/')[1]
             : event.path
-          const cid = new CID(pth)
+          const cid = CID.parse(pth)
           const res: PushPathResult = {
             path: {
               path: `/ipfs/${cid?.toString()}`,

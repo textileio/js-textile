@@ -19,6 +19,7 @@
     "downlevelIteration": true,
     "strict": true,
     "noImplicitAny": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
