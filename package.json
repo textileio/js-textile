@@ -1,7 +1,7 @@
 {
   "name": "@textile/hub",
   "version": "0.0.0",
-  "description": "JS lib for interacting with Textile APIs.",
+  "description": "Typescript/Javascript libs for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
     "clean": "lerna clean && lerna run clean",
@@ -26,7 +26,7 @@
     "npm-packlist": "1.1.12"
   },
   "engines": {
-    "node": ">= 10.0.0",
+    "node": ">= 11.0.0",
     "npm": ">= 3.0.0"
   },
   "repository": {
@@ -42,7 +42,7 @@
     "IPFS",
     "p2p"
   ],
-  "author": "Textile",
+  "author": "Textile <contact@textile.io>",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
@@ -75,5 +75,56 @@
     "typedoc": "0.17.7",
     "typescript": "^3.7.2",
     "typescript-docs-verifier": "^1.1.2"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "es2020": true
+    },
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 11,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint",
+      "prettier"
+    ],
+    "ignorePatterns": [
+      "**/*.[j|t]s.map"
+    ],
+    "rules": {
+      "@typescript-eslint/no-explicit-any": 0
+    }
+  },
+  "mocha": {
+    "diff": true,
+    "spec": "packages/*/src/**/*.spec.ts",
+    "reporter": "spec",
+    "recursive": true,
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ]
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "tabWidth": 2
   }
 }
