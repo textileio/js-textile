@@ -31,7 +31,7 @@
     "@textile/security": "^0.6.2",
     "@textile/threads-id": "^0.3.1",
     "abort-controller": "^3.0.0",
-    "cids": "^1.0.2",
+    "cids": "1.0.2",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.6.8"
   },
