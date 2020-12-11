@@ -35,7 +35,6 @@
 		"rimraf": "^3.0.2",
 		"typescript": "^3.9.7"
 	},
-	"references": [],
 	"dependencies": {
 		"@types/ed2curve": "^0.2.2",
 		"@types/multibase": "^0.6.0",

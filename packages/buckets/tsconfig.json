@@ -5,8 +5,11 @@
     "rootDir": "./src",
     "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../crypto" },
+    { "path": "../grpc-authentication" },
+    { "path": "../grpc-connection" },
+    { "path": "../hub-threads-client" }
   ]
 }

@@ -12,6 +12,8 @@
     "publish:from": "lerna publish from-package",
     "clean": "lerna clean && lerna run clean",
     "build": "lerna run build",
+    "references": "npx lerna-to-typescript-project-references --update",
+    "references:check": "npx lerna-to-typescript-project-references",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "outdated": "lerna exec -- npx ncu",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",

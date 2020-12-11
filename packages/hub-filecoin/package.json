@@ -47,16 +47,5 @@
     "multibase": "^3.1.0",
     "rimraf": "^3.0.2",
     "typescript": "^3.9.3"
-  },
-  "references": [
-    {
-      "path": "../grpc-authentication"
-    },
-    {
-      "path": "../grpc-connection"
-    },
-    {
-      "path": "../crypto"
-    }
-  ]
+  }
 }

@@ -37,16 +37,5 @@
   "devDependencies": {
     "rimraf": "^3.0.2",
     "typescript": "^3.9.3"
-  },
-  "references": [
-    {
-      "path": "../hub-threads-client"
-    },
-    {
-      "path": "../grpc-connection"
-    },
-    {
-      "path": "../crypto"
-    }
-  ]
+  }
 }
