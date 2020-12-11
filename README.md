@@ -2,11 +2,12 @@
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
 [![Chat on Slack](https://img.shields.io/badge/slack-slack.textile.io-informational.svg?style=popout-square)](https://slack.textile.io)
-[![Threads version](https://img.shields.io/badge/dynamic/json?style=popout-square&color=3527ff&label=Threads&prefix=v&query=%24.dependencies%5B%27%40textile%2Fthreads-client-grpc%27%5D.version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftextileio%2Fjs-textile%2Fmaster%2Fpackage-lock.json)](https://github.com/textileio/go-threads)
 [![GitHub license](https://img.shields.io/github/license/textileio/js-textile.svg?style=popout-square)](./LICENSE)
-[![Build status](https://img.shields.io/github/workflow/status/textileio/js-textile/lint_test/master.svg?style=popout-square)](https://github.com/textileio/js-textile/actions?query=branch%3Amaster)
+![Tests](https://github.com/textileio/js-threads/workflows/Test/badge.svg)
+![Review](https://github.com/textileio/js-threads/workflows/Review/badge.svg)
+![Docs](https://github.com/textileio/js-threads/workflows/Docs/badge.svg)
 
-> JS lib for interacting with Textile APIs
+> Typescript/Javascript libs for interacting with Textile APIs.
 
 Go to [the docs](https://docs.textile.io/) for more about Textile.
 
@@ -33,18 +34,18 @@ Join us on our [public Slack channel](https://slack.textile.io/) for news, discu
 
 This project is a work in progress. As such, there's a few things you can do right now to help out:
 
--   **Ask questions**! We'll try to help. Be sure to drop a note (on the above issue) if there is anything you'd like to work on and we'll update the issue to let others know. Also [get in touch](https://slack.textile.io) on Slack.
--   **Open issues**, [file issues](https://github.com/textileio/js-textile/issues), submit pull requests!
--   **Perform code reviews**. More eyes will help a) speed the project along b) ensure quality and c) reduce possible future bugs.
--   **Take a look at the code**. Contributions here that would be most helpful are **top-level comments** about how it should look based on your understanding. Again, the more eyes the better.
--   **Add tests**. There can never be enough tests.
+- **Ask questions**! We'll try to help. Be sure to drop a note (on the above issue) if there is anything you'd like to work on and we'll update the issue to let others know. Also [get in touch](https://slack.textile.io) on Slack.
+- **Open issues**, [file issues](https://github.com/textileio/js-textile/issues), submit pull requests!
+- **Perform code reviews**. More eyes will help a) speed the project along b) ensure quality and c) reduce possible future bugs.
+- **Take a look at the code**. Contributions here that would be most helpful are **top-level comments** about how it should look based on your understanding. Again, the more eyes the better.
+- **Add tests**. There can never be enough tests.
 
 ### Building docs
 
 On mac, docs require gnu-sed.
 
 ```
-brew install gnu-sed 
+brew install gnu-sed
 ```
 
 Follow `brew info gnu-sed` instructions to make it default sed.
@@ -67,7 +68,7 @@ Run docs server
 
 ```
 npm run serve:docs
-
+```
 
 ## Changelog
 
