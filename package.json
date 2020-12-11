@@ -13,7 +13,7 @@
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "lint:check": "eslint --ext .js,.ts packages/*/src/**/*",
     "test": "npm run test:node && npm run test:browser && npm run test:docs",
-    "test:docs": "npm run docs && typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
+    "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
     "textile": "lerna exec -- npx ncu -u '/^@textile/.*$/'",

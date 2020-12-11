@@ -5,13 +5,12 @@
 ```ts
 
 import { BaseNameOrCode } from 'multibase';
-import CID from 'cids';
+import type { CID } from 'multiformats';
 import { ContextInterface } from '@textile/context';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteSentboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
-import fs from 'fs';
 import { GetThreadRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { grpc } from '@improbable-eng/grpc-web';
 import { GrpcConnection } from '@textile/grpc-connection';
@@ -295,9 +294,6 @@ export interface CreateOptions {
     cid?: string;
     encrypted?: boolean;
 }
-
-// @public (undocumented)
-export function createReadStream(path: string): fs.ReadStream;
 
 // @public
 export interface CreateResponse {
