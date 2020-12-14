@@ -2,8 +2,9 @@
 	"name": "@textile/crypto",
 	"version": "2.0.0",
 	"description": "Various crypto modules for use with Textile tools/libraries.",
-	"main": "dist/index",
-	"types": "dist/index",
+	"main": "dist/cjs/index.js",
+	"types": "dist/cjs/index.d.ts",
+	"module": "dist/esm/index.js",
 	"files": [
 		"dist/**/!(*.spec).js?(.map)",
 		"dist/**/!(*.spec).d.ts"

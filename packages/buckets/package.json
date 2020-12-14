@@ -2,8 +2,9 @@
   "name": "@textile/buckets",
   "version": "4.1.0",
   "description": "Web-gRPC wrapper client for managing Textile Buckets.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"

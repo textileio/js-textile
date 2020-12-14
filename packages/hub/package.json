@@ -2,8 +2,9 @@
   "name": "@textile/hub",
   "version": "4.1.0",
   "description": "web-gRPC wrapper client for communicating with Textile Hub.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "publishConfig": {
     "access": "public"
   },

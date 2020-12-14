@@ -2,8 +2,9 @@
   "name": "@textile/hub-filecoin",
   "version": "1.1.0",
   "description": "web-gRPC wrapper client for interacting with Textile Hub Filecoin services.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
