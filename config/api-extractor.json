@@ -42,7 +42,7 @@
    *
    * SUPPORTED TOKENS: <projectFolder>, <packageName>, <unscopedPackageName>
    */
-  "mainEntryPointFilePath": "../packages/hub/dist/index.d.ts",
+  "mainEntryPointFilePath": "../packages/hub/dist/cjs/index.d.ts",
   /**
    * A list of NPM package names whose exports should be treated as part of this package.
    *
