@@ -12,33 +12,19 @@
 		"access": "public"
 	},
 	"scripts": {
-		"prepublishOnly": "npm run build",
-		"prepare": "npm run build",
-		"prebuild": "npm run clean",
-		"build": "npm run build:protos && npm run build:compile",
-		"build:compile": "tsc -b tsconfig.json",
+		"build": "npm run build:protos && npm run build:cjs",
+		"build:cjs": "npx tsc -b ./tsconfig.json",
 		"build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
-		"clean": "rimraf ./dist ./tsconfig.tsbuildinfo",
+		"clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
 		"test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/textileio/js-textile.git"
-	},
-	"bugs": {
-		"url": "https://github.com/textileio/js-textile/issues"
-	},
-	"author": "Textile",
 	"license": "MIT",
+	"repository": "github:textileio/js-textile",
 	"devDependencies": {
-		"libp2p-crypto": "^0.17.8",
-		"rimraf": "^3.0.2",
-		"typescript": "^3.9.7"
+		"libp2p-crypto": "^0.17.8"
 	},
-	"references": [],
 	"dependencies": {
 		"@types/ed2curve": "^0.2.2",
-		"@types/multibase": "^0.6.0",
 		"ed2curve": "^0.3.0",
 		"multibase": "^3.1.0",
 		"tweetnacl": "^1.0.3"

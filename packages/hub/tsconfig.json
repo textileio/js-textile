@@ -2,11 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "resolveJsonModule": true
+    "rootDir": "./src"
   },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "references": [
+    { "path": "../buckets" },
+    { "path": "../crypto" },
+    { "path": "../grpc-authentication" },
+    { "path": "../hub-filecoin" },
+    { "path": "../hub-threads-client" },
+    { "path": "../users" }
   ]
 }

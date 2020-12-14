@@ -7,33 +7,31 @@
       "dom",
       "esnext"
     ],
-    "skipLibCheck": true,
-    "composite": true,
     "moduleResolution": "node",
-    "allowJs": false,
+    "outDir": "./dist",
+    "rootDir": ".",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "importHelpers": false,
+    "inlineSourceMap": false,
+    "resolveJsonModule": true,
+    "inlineSources": true,
+    "composite": true,
     "downlevelIteration": true,
     "strict": true,
     "noImplicitAny": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "rootDir": ".",
-    "baseUrl": "src",
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "inlineSourceMap": false,
-    "inlineSources": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowJs": false,
+    "importHelpers": false,
     "types": [
       "node",
       "mocha"
     ]
   },
   "exclude": [
-    "node_modules",
-    "dist"
+    "**/node_modules",
+    "**/dist"
   ]
 }

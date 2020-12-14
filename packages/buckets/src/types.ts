@@ -1,4 +1,4 @@
-import CID from 'cids'
+import type { CID } from 'multiformats'
 
 export const AbortError = new Error('aborted')
 
@@ -142,7 +142,6 @@ export enum PathAccessRole {
   PATH_ACCESS_ROLE_WRITER = 2,
   PATH_ACCESS_ROLE_ADMIN = 3,
 }
-
 
 /**
  * Response from remote path.

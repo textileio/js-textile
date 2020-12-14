@@ -7,11 +7,10 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { genChunks } from './api'
+import { CHUNK_SIZE, genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
-import { AbortError, CreateResponse, Root } from './types'
-import { createReadStream } from './utils'
+import { AbortError, CreateResponse } from './types'
 
 // Settings for localhost development and testing
 const addrApiurl = 'http://127.0.0.1:3007'
@@ -68,7 +67,10 @@ describe('Buckets...', function () {
 
   describe('editing', function () {
     it('should open a bucket by name without thread info', async function () {
-      const { root, threadID } = await client.getOrCreate('createbuck', { threadName: 'buckets', encrypted: false })
+      const { root, threadID } = await client.getOrCreate('createbuck', {
+        threadName: 'buckets',
+        encrypted: false,
+      })
       expect(threadID).to.not.be.undefined
       expect(root).to.have.ownProperty('key')
       expect(root).to.have.ownProperty('path')
@@ -128,7 +130,11 @@ describe('Buckets...', function () {
 
       // Nested bucket path
       stream = fs.createReadStream(path.join(pth, 'file2.jpg'))
-      const { root } = await client.pushPath(rootKey, 'path/to/file2.jpg', stream)
+      const { root } = await client.pushPath(
+        rootKey,
+        'path/to/file2.jpg',
+        stream,
+      )
       expect(root).to.not.be.undefined
 
       // Root dir
@@ -246,7 +252,7 @@ describe('Buckets...', function () {
 
     it('should remove files by path', async function () {
       const rootKey = buck.root?.key || ''
-      let wrongRoot = buck.root
+      const wrongRoot = buck.root
       await client.removePath(rootKey, 'path/to/file2.jpg')
       try {
         await client.listPath(rootKey, 'path/to/file2.jpg')
@@ -267,7 +273,7 @@ describe('Buckets...', function () {
       expect(list.item?.items).to.have.length(2) // Includes .textileseed
 
       try {
-        await client.removePath(rootKey, 'path', {root: wrongRoot})
+        await client.removePath(rootKey, 'path', { root: wrongRoot })
         throw wrongError
       } catch (err) {
         expect(err.message).to.equal('update is non-fast-forward')
@@ -330,8 +336,12 @@ describe('Buckets...', function () {
 
       // Run them in series
       await Promise.resolve()
-        .then(() => client.pushPath(rootKey, 'dir1/file1.jpg', stream1, { root }))
-        .then(() => client.pushPath(rootKey, 'dir1/file2.txt', stream2, { root }))
+        .then(() =>
+          client.pushPath(rootKey, 'dir1/file1.jpg', stream1, { root }),
+        )
+        .then(() =>
+          client.pushPath(rootKey, 'dir1/file2.txt', stream2, { root }),
+        )
         .then(() => {
           throw new Error('wrong error')
         }) // This should never fire
@@ -382,7 +392,7 @@ describe('Buckets...', function () {
       const { root } = await client.getOrCreate('aborted')
 
       // Create an infinite stream of bytes
-      async function* stream() {
+      async function* stream(): AsyncGenerator<Buffer, void, unknown> {
         while (true) {
           yield Buffer.from('data')
           await new Promise((resolve) => setTimeout(resolve, 100))
@@ -394,7 +404,10 @@ describe('Buckets...', function () {
       const { signal } = controller
       setTimeout(() => controller.abort(), 100) // Wait long enough to get the thing started
       try {
-        await client.pushPath(rootKey, 'dir1/file1.jpg', stream(), { root, signal })
+        await client.pushPath(rootKey, 'dir1/file1.jpg', stream(), {
+          root,
+          signal,
+        })
         throw new Error('wrong error')
       } catch (err) {
         expect(err).to.equal(AbortError)
@@ -477,9 +490,13 @@ describe('Buckets...', function () {
 
       const { root } = await bobBuckets.listPath(rootKey, '')
       try {
-        // Defaults to highwatermark of CHUNK_SIZE
-        const stream = createReadStream(path.join(pth, 'file2.jpg'))
-        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, { root })
+        // Use default highwatermark of CHUNK_SIZE!
+        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
+          highWaterMark: CHUNK_SIZE,
+        })
+        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, {
+          root,
+        })
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
@@ -517,7 +534,9 @@ describe('Buckets...', function () {
       expect(perms.get(bobPubKey)).to.equal(2)
 
       // Over-write the file in the shared path
-      const stream = createReadStream(path.join(pth, 'file2.jpg'))
+      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
+        highWaterMark: CHUNK_SIZE,
+      })
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
       try {
         await bobBuckets.pushPath(rootKey, sharedFile, stream)

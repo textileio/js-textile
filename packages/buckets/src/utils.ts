@@ -1,17 +1,15 @@
 import { GrpcConnection } from '@textile/grpc-connection'
-import fs from 'fs'
 import { bucketsListPath, CHUNK_SIZE } from './api'
 import { Path, PathItem } from './types'
-
-export function createReadStream(path: string) {
-  return fs.createReadStream(path, { highWaterMark: CHUNK_SIZE })
-}
 
 /**
  * bytesToArray converts a buffer into <4mb chunks for use with grpc API
  * @param chunk an input Buffer or Uint8Array
  */
-export function bytesToArray(chunk: Uint8Array, size = CHUNK_SIZE * CHUNK_SIZE * 3) {
+export function bytesToArray(
+  chunk: Uint8Array,
+  size = CHUNK_SIZE * CHUNK_SIZE * 3,
+): Uint8Array[] {
   const result = []
   const len = chunk.length
   let i = 0
@@ -38,7 +36,13 @@ export async function listPathRecursive(
       const obj = tree.item.items[i]
       if (!obj.isDir) continue
       const dirPath = `${rootPath}${obj.name}`
-      const { item } = await listPathRecursive(grpc, bucketKey, dirPath, depth, currentDepth + 1)
+      const { item } = await listPathRecursive(
+        grpc,
+        bucketKey,
+        dirPath,
+        depth,
+        currentDepth + 1,
+      )
       if (item) {
         tree.item.items[i] = item
       }
@@ -59,7 +63,13 @@ async function treeToPaths(
     const newPath = path === '' ? `${item.name}` : `${path}/${item.name}`
     if (dirs || !item.isDir) result.push(newPath)
     if (item.isDir && (currentDepth < depth || depth === -1)) {
-      const downtree = await treeToPaths(item.items, newPath, dirs, depth, currentDepth + 1)
+      const downtree = await treeToPaths(
+        item.items,
+        newPath,
+        dirs,
+        depth,
+        currentDepth + 1,
+      )
       result.push(...downtree)
     }
   }

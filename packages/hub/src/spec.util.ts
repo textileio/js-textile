@@ -1,9 +1,15 @@
-import axios from 'axios'
-import delay from 'delay'
-import * as pb from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
-import { APIServiceClient, ServiceError } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { ContextInterface } from '@textile/context'
 import { WebsocketTransport } from '@textile/grpc-transport'
+import * as pb from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
+import {
+  APIServiceClient,
+  ServiceError,
+} from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
+import axios from 'axios'
+
+const delay = (time: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, time))
 
 export const createUsername = (size = 12) => {
   return Array(size)
@@ -29,32 +35,50 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
   return new Promise<pb.CreateKeyResponse.AsObject>((resolve, reject) => {
     const req = new pb.CreateKeyRequest()
     req.setType(pb.KeyType[kind])
-    const client = new APIServiceClient(ctx.host, { transport: WebsocketTransport() })
+    const client = new APIServiceClient(ctx.host, {
+      transport: WebsocketTransport(),
+    })
     ctx.toMetadata().then((meta) => {
-      return client.createKey(req, meta, (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
-        if (err) reject(err)
-        resolve(message?.toObject())
-      })
+      return client.createKey(
+        req,
+        meta,
+        (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
+          if (err) reject(err)
+          resolve(message?.toObject())
+        },
+      )
     })
   })
 }
 
-export const signUp = (ctx: ContextInterface, addrGatewayUrl: string, sessionSecret: string) => {
+export const signUp = (
+  ctx: ContextInterface,
+  addrGatewayUrl: string,
+  sessionSecret: string,
+) => {
   const username = createUsername()
   const email = createEmail()
-  return new Promise<{ user: pb.SignupResponse.AsObject | undefined; username: string; email: string }>(
-    (resolve, reject) => {
-      const req = new pb.SignupRequest()
-      req.setEmail(email)
-      req.setUsername(username)
-      const client = new APIServiceClient(ctx.host, { transport: WebsocketTransport() })
-      ctx.toMetadata().then((meta) => {
-        client.signup(req, meta, (err: ServiceError | null, message: pb.SignupResponse | null) => {
+  return new Promise<{
+    user: pb.SignupResponse.AsObject | undefined
+    username: string
+    email: string
+  }>((resolve, reject) => {
+    const req = new pb.SignupRequest()
+    req.setEmail(email)
+    req.setUsername(username)
+    const client = new APIServiceClient(ctx.host, {
+      transport: WebsocketTransport(),
+    })
+    ctx.toMetadata().then((meta) => {
+      client.signup(
+        req,
+        meta,
+        (err: ServiceError | null, message: pb.SignupResponse | null) => {
           if (err) reject(err)
           resolve({ user: message?.toObject(), username, email })
-        })
-        confirmEmail(addrGatewayUrl, sessionSecret).catch((err) => reject(err))
-      })
-    },
-  )
+        },
+      )
+      confirmEmail(addrGatewayUrl, sessionSecret).catch((err) => reject(err))
+    })
+  })
 }
