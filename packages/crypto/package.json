@@ -1,33 +1,33 @@
 {
-	"name": "@textile/crypto",
-	"version": "2.0.0",
-	"description": "Various crypto modules for use with Textile tools/libraries.",
-	"main": "dist/cjs/index.js",
-	"types": "dist/cjs/index.d.ts",
-	"module": "dist/esm/index.js",
-	"files": [
-		"dist/**/!(*.spec).js?(.map)",
-		"dist/**/!(*.spec).d.ts"
-	],
-	"publishConfig": {
-		"access": "public"
-	},
-	"scripts": {
-		"build": "npm run build:protos && npm run build:cjs",
-		"build:cjs": "npx tsc -b ./tsconfig.json",
-		"build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
-		"clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
-		"test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
-	},
-	"license": "MIT",
-	"repository": "github:textileio/js-textile",
-	"devDependencies": {
-		"libp2p-crypto": "^0.17.8"
-	},
-	"dependencies": {
-		"@types/ed2curve": "^0.2.2",
-		"ed2curve": "^0.3.0",
-		"multibase": "^3.1.0",
-		"tweetnacl": "^1.0.3"
-	}
+  "name": "@textile/crypto",
+  "version": "2.0.0",
+  "description": "Various crypto modules for use with Textile tools/libraries.",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npm run build:protos && npm run build:cjs",
+    "build:cjs": "npx tsc -b ./tsconfig.json",
+    "build:protos": "npx pbjs src/keys.proto --ts src/proto.keys.ts",
+    "clean": "npx rimraf ./dist",
+    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+  },
+  "license": "MIT",
+  "repository": "github:textileio/js-textile",
+  "devDependencies": {
+    "libp2p-crypto": "^0.17.8"
+  },
+  "dependencies": {
+    "@types/ed2curve": "^0.2.2",
+    "ed2curve": "^0.3.0",
+    "multibase": "^3.1.0",
+    "tweetnacl": "^1.0.3"
+  }
 }
