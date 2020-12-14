@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { getPackages } from '@lerna/project'
 import filterPackages from '@lerna/filter-packages'
 import batchPackages from '@lerna/batch-packages'
