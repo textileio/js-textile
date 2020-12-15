@@ -42,11 +42,7 @@ export class GrpcConnection {
         onEnd: (res: grpc.UnaryOutput<T>) => {
           const { status, statusMessage, message } = res
           if (status === grpc.Code.OK) {
-            if (message) {
-              resolve(message)
-            } else {
-              resolve()
-            }
+            resolve(message as any)
           } else {
             const err: ServiceError = {
               message: statusMessage,
