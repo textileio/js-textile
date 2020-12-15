@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { keys } from 'libp2p-crypto'
 import type { Private, Public } from './identity'
 import { PrivateKey, PublicKey } from './keypair'
-import { encrypt, decrypt } from './utils'
+import { decrypt, encrypt } from './utils'
 
 describe('Keypair', () => {
   // Type checking/external lib support
