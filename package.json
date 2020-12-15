@@ -79,7 +79,7 @@
     "prettier-plugin-organize-imports": "^1.1.1",
     "rollup": "^2.35.1",
     "source-map-support": "^0.5.19",
-    "ts-loader": "^7.0.2",
+    "ts-loader": "^8.0.12",
     "ts-mocha": "^7.0.0",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.8.0",
