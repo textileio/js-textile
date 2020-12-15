@@ -36,7 +36,7 @@
     "@lerna/batch-packages": "^3.16.0",
     "@lerna/filter-packages": "^3.18.0",
     "@lerna/project": "^3.21.0",
-    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/chai": "^4.2.7",
