@@ -173,7 +173,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  withThread(threadID?: string) {
+  withThread(threadID?: string): void {
     return super.withThread(threadID)
   }
 
@@ -190,14 +190,14 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async getToken(identity: Identity) {
+  async getToken(identity: Identity): Promise<string> {
     return super.getToken(identity)
   }
 
   /**
    * {@inheritDoc @textile/hub#GrpcAuthentication.getToken}
    */
-  setToken(token: string) {
+  setToken(token: string): Promise<void> {
     return super.setToken(token)
   }
 
@@ -428,7 +428,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async deleteInboxMessage(id: string) {
+  async deleteInboxMessage(id: string): Promise<void> {
     return deleteInboxMessage(this, id)
   }
 
@@ -448,7 +448,7 @@ export class Users extends GrpcAuthentication {
    * }
    * ```
    */
-  async deleteSentboxMessage(id: string) {
+  async deleteSentboxMessage(id: string): Promise<void> {
     return deleteSentboxMessage(this, id)
   }
 

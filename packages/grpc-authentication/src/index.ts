@@ -88,7 +88,10 @@ export class GrpcAuthentication extends GrpcConnection {
    * ```
    */
 
-  static copyAuth(auth: GrpcAuthentication, options: CopyAuthOptions = {}) {
+  static copyAuth(
+    auth: GrpcAuthentication,
+    options: CopyAuthOptions = {},
+  ): GrpcAuthentication {
     return new GrpcAuthentication(auth.context, options.debug)
   }
 
@@ -107,7 +110,10 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options: WithUserAuthOptions = {}) {
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    options: WithUserAuthOptions = {},
+  ): GrpcAuthentication {
     const context =
       typeof auth === 'object'
         ? Context.fromUserAuth(auth, options.host)
@@ -135,7 +141,10 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  static async withKeyInfo(key: KeyInfo, options: WithKeyInfoOptions = {}) {
+  static async withKeyInfo(
+    key: KeyInfo,
+    options: WithKeyInfoOptions = {},
+  ): Promise<GrpcAuthentication> {
     const context = new Context(options.host)
     await context.withKeyInfo(key, options.date)
     return new GrpcAuthentication(context, options.debug)
@@ -158,7 +167,7 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  withThread(threadID?: string) {
+  withThread(threadID?: string): void {
     if (threadID === undefined) return
     this.context.withThread(threadID)
   }
@@ -180,7 +189,7 @@ export class GrpcAuthentication extends GrpcConnection {
    * }
    * ```
    */
-  async getToken(identity: Identity) {
+  async getToken(identity: Identity): Promise<string> {
     const client = new Client(this.context)
     const token = await client.getToken(identity)
     this.context.withToken(token)
@@ -190,7 +199,7 @@ export class GrpcAuthentication extends GrpcConnection {
   /**
    * Sets the user token for interacting with the remote API.
    */
-  async setToken(token: string) {
+  async setToken(token: string): Promise<void> {
     this.context.withToken(token)
   }
 
