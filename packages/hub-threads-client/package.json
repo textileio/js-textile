@@ -2,8 +2,9 @@
   "name": "@textile/hub-threads-client",
   "version": "4.0.0",
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/**/!(*.spec).js?(.map)",
     "dist/**/!(*.spec).d.ts"
@@ -13,7 +14,7 @@
   },
   "scripts": {
     "build": "npx tsc -b ./tsconfig.json",
-    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
+    "clean": "npx rimraf ./dist",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-textile",

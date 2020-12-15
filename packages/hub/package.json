@@ -2,14 +2,15 @@
   "name": "@textile/hub",
   "version": "4.1.0",
   "description": "web-gRPC wrapper client for communicating with Textile Hub.",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "npx tsc -b ./tsconfig.json",
-    "clean": "npx rimraf ./dist ./tsconfig.tsbuildinfo",
+    "clean": "npx rimraf ./dist",
     "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
   },
   "repository": "github:textileio/js-textile",
