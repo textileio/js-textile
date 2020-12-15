@@ -1,19 +1,19 @@
-# @textile/buckets
+# @textile/grpc-connection
 
 **Info**
 
-You should use the `@textile/hub` library to integrate buckets into your application.
+You should use the `@textile/hub` library to integrate this library into your application.
 
 **Install**
 
-```js
-npm install --save git@github.com:textileio/js-textile.git
+```bash
+npm install @textile/hub
 ```
 
 **Usage**
 
 ```js
-import { Buckets } from '@textile/hub'
+import { GrpcConnection } from '@textile/hub'
 ```
 
 [Read the docs](https://textileio.github.io/js-textile/).

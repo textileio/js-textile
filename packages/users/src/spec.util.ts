@@ -44,7 +44,7 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
         meta,
         (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
           if (err) reject(err)
-          resolve(message?.toObject())
+          resolve(message?.toObject() as any)
         },
       )
     })

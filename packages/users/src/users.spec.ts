@@ -16,7 +16,8 @@ const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const sessionSecret = 'hubsession'
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('Users...', () => {
   describe('getThread', () => {
@@ -59,8 +60,8 @@ describe('Users...', () => {
         expect(err.code).to.equal(grpc.Code.NotFound)
       }
       // Old key signature
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const sig = await createAPISig(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         keyInfo!.secret,
         new Date(Date.now() - 1000 * 60),
       )
@@ -162,8 +163,8 @@ describe('Users...', () => {
         expect(err).to.equal(wrongError)
       }
       // Old key signature will fail
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const sig = await createAPISig(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         keyInfo!.secret,
         new Date(Date.now() - 1000 * 60),
       )
@@ -332,7 +333,10 @@ describe('Users...', () => {
     it('inbox listen should return new messages', (done) => {
       const user1 = new Users(user1Ctx)
       let hitCallback = false
-      const callback = async (reply?: MailboxEvent, err?: Error) => {
+      const callback = async (
+        reply?: MailboxEvent,
+        err?: Error,
+      ): Promise<void> => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply || !reply.message) return done()
@@ -366,7 +370,10 @@ describe('Users...', () => {
     it('sentbox listen should return new messages', (done) => {
       const user2 = new Users(user2Ctx)
       let hitCallback = false
-      const callback = async (reply?: MailboxEvent, err?: Error) => {
+      const callback = async (
+        reply?: MailboxEvent,
+        err?: Error,
+      ): Promise<void> => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply || !reply.message) return done()
@@ -381,7 +388,7 @@ describe('Users...', () => {
       setTimeout(async () => {
         const mailboxID = await user2.getMailboxID()
         expect(mailboxID).to.not.be.undefined
-        const closer = await user2.watchSentbox(mailboxID, callback)
+        const closer = user2.watchSentbox(mailboxID, callback)
         await delay(100)
         await user2.sendMessage(
           user2Id,
@@ -399,7 +406,10 @@ describe('Users...', () => {
     it('sentbox listen should return deletes', (done) => {
       const user2 = new Users(user2Ctx)
       let hitCallback = false
-      const callback = async (reply?: MailboxEvent, err?: Error) => {
+      const callback = async (
+        reply?: MailboxEvent,
+        err?: Error,
+      ): Promise<void> => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
@@ -425,7 +435,10 @@ describe('Users...', () => {
     it('inbox listen should return saves', (done) => {
       const user1 = new Users(user1Ctx)
       let hitCallback = false
-      const callback = async (reply?: MailboxEvent, err?: Error) => {
+      const callback = async (
+        reply?: MailboxEvent,
+        err?: Error,
+      ): Promise<void> => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
@@ -451,7 +464,10 @@ describe('Users...', () => {
     it('inbox listen should return deletes', (done) => {
       const user1 = new Users(user1Ctx)
       let hitCallback = false
-      const callback = async (reply?: MailboxEvent, err?: Error) => {
+      const callback = async (
+        reply?: MailboxEvent,
+        err?: Error,
+      ): Promise<void> => {
         expect(err).to.be.undefined
         expect(reply).to.not.be.undefined
         if (!reply) return done()
