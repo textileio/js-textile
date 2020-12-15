@@ -6,6 +6,9 @@
   "command": {
     "version": {
       "message": "chore: release/publish"
+    },
+    "publish": {
+      "conventionalCommits": true
     }
   }
 }
