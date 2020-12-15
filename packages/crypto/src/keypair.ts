@@ -1,15 +1,20 @@
-import nacl from 'tweetnacl'
 import multibase from 'multibase'
+import nacl from 'tweetnacl'
 import { Private, Public } from './identity'
-import { encodePublicKey, encodePrivateKey, KeyType } from './proto.keys'
-// eslint-disable-next-line import/no-cycle
-import { publicKeyToString, privateKeyFromString, publicKeyBytesFromString, encrypt, decrypt } from './utils'
+import { encodePrivateKey, encodePublicKey, KeyType } from './proto.keys'
+import {
+  decrypt,
+  encrypt,
+  privateKeyFromString,
+  publicKeyBytesFromString,
+  publicKeyToString,
+} from './utils'
 
 /**
  * Encode the given PrivateKey to its base-32 encoded multibase representation.
  * @param key The input PrivateKey.
  */
-export function privateKeyToString(key: PrivateKey) {
+export function privateKeyToString(key: PrivateKey): string {
   const encoded = multibase.encode('base32', key.bytes as Buffer)
   return new TextDecoder().decode(encoded)
 }
@@ -88,7 +93,7 @@ export class PublicKey implements Public {
    * @param data The data to use for verification.
    * @param sig The signature to verify.
    */
-  async verify(data: Uint8Array, signature: Uint8Array) {
+  async verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
     return nacl.sign.detached.verify(data, signature, this.pubKey)
   }
 
@@ -103,7 +108,7 @@ export class PublicKey implements Public {
   /**
    * Create a PublicKey from the result of calling `toString()`.
    */
-  static fromString(str: string) {
+  static fromString(str: string): PublicKey {
     const bytes = publicKeyBytesFromString(str)
     return new PublicKey(bytes, 'ed25519')
   }

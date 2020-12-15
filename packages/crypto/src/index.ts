@@ -1,11 +1,12 @@
+import 'fastestsmallesttextencoderdecoder'
+export { Identity, Private, Public } from './identity'
 export { PrivateKey, PublicKey } from './keypair'
-export { Private, Identity, Public } from './identity'
 export {
-  encrypt,
   decrypt,
-  publicKeyToString,
-  publicKeyBytesToString,
-  publicKeyBytesFromString,
-  privateKeyFromString,
+  encrypt,
   extractPublicKeyBytes,
+  privateKeyFromString,
+  publicKeyBytesFromString,
+  publicKeyBytesToString,
+  publicKeyToString,
 } from './utils'

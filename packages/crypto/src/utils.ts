@@ -1,6 +1,6 @@
-import nacl from 'tweetnacl'
 import { convertPublicKey, convertSecretKey } from 'ed2curve'
 import multibase from 'multibase'
+import nacl from 'tweetnacl'
 import type { Public } from './identity'
 import { decodePrivateKey, decodePublicKey } from './proto.keys'
 
@@ -17,7 +17,11 @@ const publicKeyBytes = 32 // Length of nacl ephemeral public key
  * @see {@link https://github.com/dchest/ed2curve-js} for conversion details.
  * @param ciphertext Data to decrypt.
  */
-export async function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type = 'ed25519'): Promise<Uint8Array> {
+export async function decrypt(
+  ciphertext: Uint8Array,
+  privKey: Uint8Array,
+  type = 'ed25519',
+): Promise<Uint8Array> {
   if (type !== 'ed25519') {
     throw Error(`'${type}' type keys are not currently supported`)
   }
@@ -44,7 +48,11 @@ export async function decrypt(ciphertext: Uint8Array, privKey: Uint8Array, type 
  * @see {@link https://github.com/dchest/ed2curve-js} for conversion details.
  * @param data Data to encrypt.
  */
-export async function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25519'): Promise<Uint8Array> {
+export async function encrypt(
+  data: Uint8Array,
+  pubKey: Uint8Array,
+  type = 'ed25519',
+): Promise<Uint8Array> {
   if (type !== 'ed25519') {
     throw Error(`'${type}' type keys are not currently supported`)
   }
@@ -58,7 +66,9 @@ export async function encrypt(data: Uint8Array, pubKey: Uint8Array, type = 'ed25
   // encrypt with nacl
   const nonce = nacl.randomBytes(24)
   const ciphertext = nacl.box(data, nonce, pk, ephemeral.secretKey)
-  const merged = new Uint8Array(nonceBytes + publicKeyBytes + ciphertext.byteLength)
+  const merged = new Uint8Array(
+    nonceBytes + publicKeyBytes + ciphertext.byteLength,
+  )
   // prepend nonce
   merged.set(new Uint8Array(nonce), 0)
   // then ephemeral public key
@@ -90,7 +100,7 @@ export function publicKeyToString(key: Public): string {
  * Decode the given base-32 encoded multibase string into a {@link Public} key.
  * @param str The base-32 encoded multibase string.
  */
-export function publicKeyBytesFromString(str: string) {
+export function publicKeyBytesFromString(str: string): Uint8Array {
   const decoded = multibase.decode(str)
   const obj = decodePublicKey(decoded)
   const bytes = obj.Data
@@ -101,7 +111,7 @@ export function publicKeyBytesFromString(str: string) {
  * Decode the given base-32 encoded multibase string into a {@link Private} key.
  * @param str The base-32 encoded multibase string.
  */
-export function privateKeyFromString(str: string) {
+export function privateKeyFromString(str: string): Uint8Array {
   const decoded = multibase.decode(str)
   const obj = decodePrivateKey(decoded)
   const bytes = obj.Data
