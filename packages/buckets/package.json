@@ -27,7 +27,7 @@
     "@textile/grpc-authentication": "^2.1.0",
     "@textile/grpc-connection": "^2.1.0",
     "@textile/grpc-transport": "^0.2.1",
-    "@textile/hub-grpc": "2.2.2",
+    "@textile/hub-grpc": "2.3.0",
     "@textile/hub-threads-client": "^4.0.0",
     "@textile/security": "^0.6.2",
     "@textile/threads-id": "^0.3.1",
