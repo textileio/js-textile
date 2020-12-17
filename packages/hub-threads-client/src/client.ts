@@ -76,7 +76,7 @@ Client.prototype.listDBs = async function (
   ctx?: Context,
 ): Promise<Record<string, GetThreadResponse | undefined>> {
   const dbs: Record<string, GetThreadResponse | undefined> = {}
-  if (ctx?.get('x-textile-api-sig')) {
+  if (this.context.withContext(ctx).get('x-textile-api-sig')) {
     // We're probably on the Hub
     const threads = await this.listThreads(ctx)
     for (const thread of threads) {
