@@ -119,6 +119,54 @@ describe('Threads Client...', () => {
     })
   })
 
+  describe('listDBs', () => {
+    const ctx = new Context(addrApiurl)
+    const client = new Client(ctx)
+    let dev: SignupResponse.AsObject
+    before(async function () {
+      this.timeout(5000)
+      const { user } = await signUp(ctx, addrGatewayUrl, sessionSecret)
+      if (user) dev = user
+    })
+    it('should handle errors on hub', async () => {
+      // Reset client context (just for the tests)
+      const ctx = new Context(addrApiurl)
+      client.context = ctx
+      const tmp = new Context(addrApiurl).withSession(dev.session)
+      const { keyInfo } = await createKey(tmp, 'KEY_TYPE_USER')
+      await ctx.withAPIKey(keyInfo?.key).withKeyInfo(keyInfo)
+      // No token
+      try {
+        await client.listDBs()
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+      }
+      // Empty
+      const db = new Client(ctx)
+      const identity = PrivateKey.fromRandom()
+      await db.getToken(identity)
+      let res = await client.listDBs()
+      expect(Object.keys(res)).to.have.length(0)
+      // Got one
+      const id = ThreadID.fromRandom()
+      await db.newDB(id, 'foo')
+      res = await client.listDBs()
+      expect(res).to.have.length(1)
+      expect(res[id.toString()]?.name).to.equal('foo')
+      // No signature
+      client.context.set('x-textile-api-sig', undefined)
+      try {
+        await client.listDBs()
+        throw wrongError
+      } catch (err) {
+        expect(err).to.not.equal(wrongError)
+        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+      }
+    })
+  })
+
   describe('listThreads', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
@@ -143,12 +191,7 @@ describe('Threads Client...', () => {
       const tmp = new Context(addrApiurl).withSession(dev.session)
       const { keyInfo } = await createKey(tmp, 'KEY_TYPE_ACCOUNT')
       expect(keyInfo).not.undefined
-      try {
-        await client.listThreads(ctx.withAPIKey(keyInfo?.key))
-        throw wrongError
-      } catch (err) {
-        expect(err).to.equal(wrongError)
-      }
+      await client.listThreads(ctx.withAPIKey(keyInfo?.key))
       // Old key signature will fail
       const sig = await createAPISig(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
