@@ -1,31 +1,31 @@
-import log from 'loglevel'
 import { grpc } from '@improbable-eng/grpc-web'
+import { ContextInterface } from '@textile/context'
+import { GrpcConnection } from '@textile/grpc-connection'
+import { Client, GetThreadResponse, Update } from '@textile/hub-threads-client'
+import { ThreadID } from '@textile/threads-id'
 import {
-  SetupMailboxRequest,
-  SetupMailboxResponse,
-  ListThreadsRequest,
-  ListThreadsResponse as _ListThreadsResponse,
-  GetThreadResponse as _GetThreadResponse,
+  DeleteInboxMessageRequest,
+  DeleteSentboxMessageRequest,
   GetThreadRequest,
-  SendMessageRequest,
-  SendMessageResponse,
+  GetThreadResponse as _GetThreadResponse,
+  GetUsageRequest,
+  GetUsageResponse as _GetUsageResponse,
   ListInboxMessagesRequest,
   ListInboxMessagesResponse,
   ListSentboxMessagesRequest,
   ListSentboxMessagesResponse,
+  ListThreadsRequest,
+  ListThreadsResponse as _ListThreadsResponse,
+  Message,
   ReadInboxMessageRequest,
   ReadInboxMessageResponse,
-  DeleteInboxMessageRequest,
-  DeleteSentboxMessageRequest,
-  GetUsageRequest,
-  GetUsageResponse as _GetUsageResponse,
-  Message,
+  SendMessageRequest,
+  SendMessageResponse,
+  SetupMailboxRequest,
+  SetupMailboxResponse,
 } from '@textile/users-grpc/api/usersd/pb/usersd_pb'
 import { APIService } from '@textile/users-grpc/api/usersd/pb/usersd_pb_service'
-import { GrpcConnection } from '@textile/grpc-connection'
-import { ContextInterface } from '@textile/context'
-import { Client, Update, GetThreadResponse } from '@textile/hub-threads-client'
-import { ThreadID } from '@textile/threads-id'
+import log from 'loglevel'
 
 const logger = log.getLogger('users-api')
 
@@ -69,20 +69,20 @@ export interface InboxListOptions {
 /**
  * @deprecated
  */
-export interface GetThreadResponseObj extends GetThreadResponse {}
+export type GetThreadResponseObj = GetThreadResponse
 
 export interface Usage {
-  description: string,
-  units: number,
-  total: number,
-  free: number,
-  grace: number,
-  cost: number,
-  period?: Period,
+  description: string
+  units: number
+  total: number
+  free: number
+  grace: number
+  cost: number
+  period?: Period
 }
 
 export interface CustomerUsage {
-  usageMap: [string, Usage][];
+  usageMap: [string, Usage][]
 }
 
 /**
@@ -96,8 +96,8 @@ export interface UsageOptions {
 }
 
 export interface Period {
-  unixStart: number;
-  unixEnd: number;
+  unixStart: number
+  unixEnd: number
 }
 
 /**
@@ -114,9 +114,9 @@ export interface CustomerResponse {
   balance: number
   billable: boolean
   delinquent: boolean
-  createdAt: number,
-  gracePeriodEnd: number,
-  invoicePeriod?: Period,
+  createdAt: number
+  gracePeriodEnd: number
+  invoicePeriod?: Period
   dailyUsageMap: Array<[string, Usage]>
   dependents: number
 }
@@ -124,7 +124,7 @@ export interface CustomerResponse {
 export interface GetUsageResponse {
   customer?: CustomerResponse
   usage?: CustomerUsage
-} 
+}
 
 /**
  * The message format returned from inbox or sentbox
@@ -182,10 +182,17 @@ function convertMessageObj(input: Message): UserMessage {
 /**
  * @internal
  */
-export async function listThreads(api: GrpcConnection, ctx?: ContextInterface): Promise<Array<GetThreadResponse>> {
+export async function listThreads(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<Array<GetThreadResponse>> {
   logger.debug('list threads request')
   const req = new ListThreadsRequest()
-  const res: _ListThreadsResponse = await api.unary(APIService.ListThreads, req, ctx)
+  const res: _ListThreadsResponse = await api.unary(
+    APIService.ListThreads,
+    req,
+    ctx,
+  )
   return res.getListList().map((value: _GetThreadResponse) => {
     return {
       isDb: value.getIsDb(),
@@ -206,9 +213,12 @@ export async function getThread(
   logger.debug('get thread request')
   const req = new GetThreadRequest()
   req.setName(name)
-  const res: _GetThreadResponse = await api.unary(APIService.GetThread, req, ctx)
+  const res: _GetThreadResponse = await api.unary(
+    APIService.GetThread,
+    req,
+    ctx,
+  )
   return {
-    isDb: res.getIsDb(),
     name: res.getName(),
     id: ThreadID.fromBytes(res.getId_asU8()).toString(),
   }
@@ -217,10 +227,17 @@ export async function getThread(
 /**
  * @internal
  */
-export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
+export async function setupMailbox(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<string> {
   logger.debug('setup mailbox request')
   const req = new SetupMailboxRequest()
-  const res: SetupMailboxResponse = await api.unary(APIService.SetupMailbox, req, ctx)
+  const res: SetupMailboxResponse = await api.unary(
+    APIService.SetupMailbox,
+    req,
+    ctx,
+  )
   const mailboxID = ThreadID.fromBytes(res.getMailboxId_asU8())
   return mailboxID.toString()
 }
@@ -228,7 +245,10 @@ export async function setupMailbox(api: GrpcConnection, ctx?: ContextInterface):
 /**
  * @internal
  */
-export async function getMailboxID(api: GrpcConnection, ctx?: ContextInterface): Promise<string> {
+export async function getMailboxID(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<string> {
   logger.debug('setup mailbox request')
   const thread = await getThread(api, MailConfig.ThreadName, ctx)
   return thread.id.toString()
@@ -254,7 +274,11 @@ export async function sendMessage(
   req.setToSignature(toSignature)
   req.setFromBody(fromBody)
   req.setFromSignature(fromSignature)
-  const res: SendMessageResponse = await api.unary(APIService.SendMessage, req, ctx)
+  const res: SendMessageResponse = await api.unary(
+    APIService.SendMessage,
+    req,
+    ctx,
+  )
   return {
     id: res.getId(),
     createdAt: res.getCreatedAt(),
@@ -286,7 +310,11 @@ export async function listInboxMessages(
         req.setStatus(ListInboxMessagesRequest.Status.STATUS_UNREAD)
     }
   }
-  const res: ListInboxMessagesResponse = await api.unary(APIService.ListInboxMessages, req, ctx)
+  const res: ListInboxMessagesResponse = await api.unary(
+    APIService.ListInboxMessages,
+    req,
+    ctx,
+  )
   return res.getMessagesList().map(convertMessageObj)
 }
 
@@ -303,7 +331,11 @@ export async function listSentboxMessages(
   if (opts && opts.seek) req.setSeek(opts.seek)
   if (opts && opts.limit) req.setLimit(opts.limit)
   if (opts && opts.ascending) req.setAscending(opts.ascending)
-  const res: ListSentboxMessagesResponse = await api.unary(APIService.ListSentboxMessages, req, ctx)
+  const res: ListSentboxMessagesResponse = await api.unary(
+    APIService.ListSentboxMessages,
+    req,
+    ctx,
+  )
   return res.getMessagesList().map(convertMessageObj)
 }
 
@@ -318,14 +350,22 @@ export async function readInboxMessage(
   logger.debug('read inbox message request')
   const req = new ReadInboxMessageRequest()
   req.setId(id)
-  const res: ReadInboxMessageResponse = await api.unary(APIService.ReadInboxMessage, req, ctx)
+  const res: ReadInboxMessageResponse = await api.unary(
+    APIService.ReadInboxMessage,
+    req,
+    ctx,
+  )
   return { readAt: res.toObject().readAt }
 }
 
 /**
  * @internal
  */
-export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
+export async function deleteInboxMessage(
+  api: GrpcConnection,
+  id: string,
+  ctx?: ContextInterface,
+): Promise<void> {
   logger.debug('delete inbox message request')
   const req = new DeleteInboxMessageRequest()
   req.setId(id)
@@ -336,7 +376,11 @@ export async function deleteInboxMessage(api: GrpcConnection, id: string, ctx?: 
 /**
  * @internal
  */
-export async function deleteSentboxMessage(api: GrpcConnection, id: string, ctx?: ContextInterface) {
+export async function deleteSentboxMessage(
+  api: GrpcConnection,
+  id: string,
+  ctx?: ContextInterface,
+): Promise<void> {
   logger.debug('delete sentbox message request')
   const req = new DeleteSentboxMessageRequest()
   req.setId(id)
@@ -357,7 +401,7 @@ export function watchMailbox(
   logger.debug('new watch inbox request')
   const client = new Client(ctx || api.context)
   const threadID = ThreadID.fromString(id)
-  const retype = (reply?: Update<IntermediateMessage>, err?: Error) => {
+  const retype = (reply?: Update<IntermediateMessage>, err?: Error): void => {
     if (!reply) {
       callback(reply, err)
     } else {
@@ -381,8 +425,15 @@ export function watchMailbox(
       callback(result)
     }
   }
-  const collectionName = box === 'inbox' ? MailConfig.InboxCollectionName : MailConfig.SentboxCollectionName
-  return client.listen<IntermediateMessage>(threadID, [{ collectionName }], retype)
+  const collectionName =
+    box === 'inbox'
+      ? MailConfig.InboxCollectionName
+      : MailConfig.SentboxCollectionName
+  return client.listen<IntermediateMessage>(
+    threadID,
+    [{ collectionName }],
+    retype,
+  )
 }
 
 /**
