@@ -16,8 +16,7 @@ const logger = log.getLogger('users')
 
 interface GetThreadResponse {
   id: string
-  name: string
-  isDb: boolean
+  name?: string
 }
 
 declare module '@textile/threads-client' {
@@ -50,7 +49,6 @@ Client.prototype.getThread = async function (
             if (message) {
               const res = {
                 name: message.getName(),
-                isDb: message.getIsDb(),
                 id: ThreadID.fromBytes(message.getId_asU8()).toString(),
               }
               resolve(res)
@@ -64,6 +62,33 @@ Client.prototype.getThread = async function (
         reject(err)
       })
   })
+}
+
+// Private listDBs method
+const oldListDBs = Client.prototype.listDBs
+
+/**
+ * Lists all known DBs.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+Client.prototype.listDBs = async function (
+  ctx?: Context,
+): Promise<Record<string, GetThreadResponse | undefined>> {
+  const dbs: Record<string, GetThreadResponse | undefined> = {}
+  if (ctx?.get('x-textile-api-sig')) {
+    // We're probably on the Hub
+    const threads = await this.listThreads(ctx)
+    for (const thread of threads) {
+      dbs[thread.id] = thread
+    }
+    return dbs
+  }
+  const threads = await oldListDBs.bind(this)()
+  for (const [id, db] of Object.entries(threads)) {
+    dbs[id] = { id, name: db?.name }
+  }
+  return dbs
 }
 
 /**
@@ -96,7 +121,6 @@ Client.prototype.listThreads = async function (
             results = lst.map((thrd: _GetThreadResponse) => {
               return {
                 name: thrd.getName(),
-                isDb: thrd.getIsDb(),
                 id: ThreadID.fromBytes(thrd.getId_asU8()).toString(),
               }
             })
