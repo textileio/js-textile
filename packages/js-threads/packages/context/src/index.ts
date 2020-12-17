@@ -243,8 +243,7 @@ export class Context implements ContextInterface {
 
   withContext(value?: ContextInterface): this {
     if (value === undefined) return this
-    // Spread to copy rather than reference
-    this._context = value.toJSON()
+    this._context = { ...this._context, ...value.toJSON() }
     return this
   }
 
@@ -285,7 +284,7 @@ export class Context implements ContextInterface {
    * @see toMetadata for an alternative for gRPC clients that supports auto-renewal.
    */
   toJSON(): Record<string | number, any> {
-    const { ...json } = this._context
+    const json = { ...this._context }
     // If we're expired, throw...
     if (this.isExpired) {
       throw errors.expirationError

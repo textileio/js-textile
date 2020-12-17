@@ -21,6 +21,7 @@ import {
   APIListen,
 } from "@textile/threads-client-grpc/threads_pb_service"
 import { ThreadID } from "@textile/threads-id"
+import "fastestsmallesttextencoderdecoder"
 import toJsonSchema, { JSONSchema3or4 } from "to-json-schema"
 import {
   ComparisonJSON,
@@ -108,7 +109,7 @@ export function getFunctionBody(
  */
 export interface CollectionConfig<W = any, R = W> {
   name: string
-  schema?: JSONSchema3or4 | any // Union type to indicate that JSONSchema is preferred but any works
+  schema?: JSONSchema3or4 | any // JSONSchema is preferred but any works
   indexes?: pb.Index.AsObject[]
   writeValidator?:
     | ((writer: string, event: Event, instance: W) => boolean)
@@ -436,18 +437,19 @@ export class Client {
 
   /**
    * Lists all known DBs.
-   * @remarks this API is blocked on the Hub. Use `listThreads` when importing Client
-   * from `@textile/hub` as an alternative.
    */
   public listDBs(): Promise<
-    Record<string, pb.GetDBInfoReply.AsObject | undefined>
+    Record<string, { id: string; name?: string } | undefined>
   > {
     const req = new pb.ListDBsRequest()
     return this.unary(API.ListDBs, req, (res: pb.ListDBsReply) => {
-      const dbs: Record<string, pb.GetDBInfoReply.AsObject | undefined> = {}
+      const dbs: Record<string, { id: string; name?: string } | undefined> = {}
       for (const db of res.getDbsList()) {
         const id = ThreadID.fromBytes(db.getDbid_asU8()).toString()
-        dbs[id] = db.getInfo()?.toObject()
+        dbs[id] = {
+          id,
+          name: db.getInfo()?.getName(),
+        }
       }
       return dbs
     })

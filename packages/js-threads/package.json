@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "description": "Typescript/Javascript implementation of Textile's Threads Protocol",
   "main": "packages/threads",
-  "types": "packages/threads",
   "resolutions": {
     "npm-packlist": "1.1.12"
   },
@@ -22,8 +21,8 @@
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
     "test:docs": "typedoc --out temp && typescript-docs-verifier --input-files=`find temp -type f -name '**.md'`",
+    "textile": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
-    "textile:update": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "docs": "typedoc --plugin typedoc-plugin-lerna-packages && touch ./docs/.nojekyll",
     "ci": "if [ $(npm run textile:check | grep '@textile/' | wc -l) == 0 ]; then echo 'ok'; else exit 1; fi;"
   },

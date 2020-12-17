@@ -14,7 +14,7 @@
 
 ## Using Threads
 
-To get started using Threads, check out the [docs site](https://docs.textile.io/) and [API documentation](https://textileio.github.io/js-threads).
+To get started using Threads, check out the [docs site](https://docs.textile.io/).
 
 ## Getting help
 

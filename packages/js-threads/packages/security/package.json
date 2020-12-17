@@ -26,6 +26,7 @@
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.5",
     "fast-sha256": "^1.3.0",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "multibase": "^3.1.0"
   },
   "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"

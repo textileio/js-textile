@@ -6,6 +6,7 @@
  * @packageDocumentation
  */
 import { HMAC } from "fast-sha256"
+import "fastestsmallesttextencoderdecoder"
 import multibase from "multibase"
 
 const encoder = new TextEncoder()

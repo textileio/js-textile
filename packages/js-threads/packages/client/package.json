@@ -29,6 +29,7 @@
     "@textile/threads-client-grpc": "^1.0.2",
     "@textile/threads-id": "^0.4.0-alpha.3",
     "@types/to-json-schema": "^0.2.0",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "to-json-schema": "^0.2.5"
   },
   "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
