@@ -153,7 +153,7 @@ describe('Threads Client...', () => {
       const id = ThreadID.fromRandom()
       await db.newDB(id, 'foo')
       res = await client.listDBs()
-      expect(res).to.have.length(1)
+      expect(Object.keys(res)).to.have.length(1)
       expect(res[id.toString()]?.name).to.equal('foo')
       // No signature
       client.context.set('x-textile-api-sig', undefined)
