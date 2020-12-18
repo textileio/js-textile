@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads-client",
-  "version": "1.4.0-alpha.5",
+  "version": "1.4.0-alpha.6",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -21,13 +21,13 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.10.0-alpha.5",
+    "@textile/context": "^0.10.0",
     "@textile/crypto": "^2.0.0",
-    "@textile/grpc-transport": "^0.3.0-alpha.3",
-    "@textile/multiaddr": "^0.4.0-alpha.3",
-    "@textile/security": "^0.7.0-alpha.5",
+    "@textile/grpc-transport": "^0.3.0",
+    "@textile/multiaddr": "^0.4.0",
+    "@textile/security": "^0.7.0",
     "@textile/threads-client-grpc": "^1.0.2",
-    "@textile/threads-id": "^0.4.0-alpha.3",
+    "@textile/threads-id": "^0.4.0",
     "@types/to-json-schema": "^0.2.0",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
     "to-json-schema": "^0.2.5"

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0-alpha.6](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.4.0-alpha.5...@textile/threads-client@1.4.0-alpha.6) (2020-12-18)
+
+
+### Features
+
+* include textencode/decoder polyfill ([9ca6941](https://github.com/textileio/js-threads/commit/9ca6941cb4054a776009fcf315a12fc8ef293ac3))
+* see https://github.com/textileio/js-textile/pull/786 ([6a88c5c](https://github.com/textileio/js-threads/commit/6a88c5c5d66b4b87c4cc75637cbee27ff6b89beb))
+
+
+
+
+
 # [1.4.0-alpha.5](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.4.0-alpha.4...@textile/threads-client@1.4.0-alpha.5) (2020-12-09)
 
 **Note:** Version bump only for package @textile/threads-client

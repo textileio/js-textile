@@ -1,6 +1,6 @@
 {
   "name": "@textile/context",
-  "version": "0.10.0-alpha.5",
+  "version": "0.10.0",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/security": "^0.7.0-alpha.5"
+    "@textile/security": "^0.7.0"
   },
   "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
 }

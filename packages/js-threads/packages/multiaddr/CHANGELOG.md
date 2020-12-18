@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/textileio/js-threads/compare/@textile/multiaddr@0.4.0-alpha.3...@textile/multiaddr@0.4.0) (2020-12-18)
+
+**Note:** Version bump only for package @textile/multiaddr
+
+
+
+
+
 # [0.4.0-alpha.3](https://github.com/textileio/js-threads/compare/@textile/multiaddr@0.3.1...@textile/multiaddr@0.4.0-alpha.3) (2020-12-09)
 
 

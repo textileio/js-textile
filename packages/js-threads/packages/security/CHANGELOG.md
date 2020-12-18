@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/textileio/js-threads/compare/@textile/security@0.7.0-alpha.5...@textile/security@0.7.0) (2020-12-18)
+
+
+### Features
+
+* include textencode/decoder polyfill ([9ca6941](https://github.com/textileio/js-threads/commit/9ca6941cb4054a776009fcf315a12fc8ef293ac3))
+
+
+
+
+
 # [0.7.0-alpha.5](https://github.com/textileio/js-threads/compare/@textile/security@0.7.0-alpha.4...@textile/security@0.7.0-alpha.5) (2020-12-09)
 
 **Note:** Version bump only for package @textile/security
