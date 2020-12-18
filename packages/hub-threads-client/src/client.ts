@@ -70,9 +70,6 @@ const oldListDBs = Client.prototype.listDBs
 /**
  * Lists all known DBs.
  */
-// TODO: Remove this ts-ignore as soon as threads-client is caught up
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 Client.prototype.listDBs = async function (
   ctx?: Context,
 ): Promise<Record<string, GetThreadResponse | undefined>> {
