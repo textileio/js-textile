@@ -179,9 +179,11 @@ describe("Client", function () {
       const name2 = "db2"
       await client.newDB(id2, name2)
       const list = await client.listDBs()
-      expect(Object.keys(list).length).to.be.greaterThan(1)
-      expect(list[dbID.toString()]).to.have.ownProperty("name", "test")
-      expect(list[id2.toString()]).to.have.ownProperty("name", name2)
+      expect(list.length).to.be.greaterThan(1)
+      const last = list.pop()
+      const first = list.pop()
+      expect(first).to.have.ownProperty("name", "test")
+      expect(last).to.have.ownProperty("name", name2)
     })
   })
 
@@ -200,9 +202,9 @@ describe("Client", function () {
     it("should cleanly delete a database", async function () {
       const id = ThreadID.fromRandom()
       await client.newDB(id)
-      const before = Object.keys(await client.listDBs()).length
+      const before = (await client.listDBs()).length
       await client.deleteDB(id)
-      const after = Object.keys(await client.listDBs()).length
+      const after = (await client.listDBs()).length
       expect(before).to.equal(after + 1)
       try {
         await client.getDBInfo(id)

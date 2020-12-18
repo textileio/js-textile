@@ -438,18 +438,16 @@ export class Client {
   /**
    * Lists all known DBs.
    */
-  public listDBs(): Promise<
-    Record<string, { id: string; name?: string } | undefined>
-  > {
+  public listDBs(): Promise<Array<{ id: string; name?: string }>> {
     const req = new pb.ListDBsRequest()
     return this.unary(API.ListDBs, req, (res: pb.ListDBsReply) => {
-      const dbs: Record<string, { id: string; name?: string } | undefined> = {}
+      const dbs: Array<{ id: string; name?: string }> = []
       for (const db of res.getDbsList()) {
         const id = ThreadID.fromBytes(db.getDbid_asU8()).toString()
-        dbs[id] = {
+        dbs.push({
           id,
           name: db.getInfo()?.getName(),
-        }
+        })
       }
       return dbs
     })
