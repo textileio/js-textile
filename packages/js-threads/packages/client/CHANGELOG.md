@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@2.0.0...@textile/threads-client@2.1.0) (2020-12-18)
+
+
+### Features
+
+* change to using list for return type ([6952a90](https://github.com/textileio/js-threads/commit/6952a9062e59dfe9c15166a2c426e4f7e30f2e34))
+
+
+
+
+
 # [2.0.0](https://github.com/textileio/js-threads/compare/@textile/threads-client@1.4.0-alpha.6...@textile/threads-client@2.0.0) (2020-12-18)
 
 **Note:** Version bump only for package @textile/threads-client
