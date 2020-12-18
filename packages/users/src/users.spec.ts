@@ -1,9 +1,9 @@
 import { grpc } from '@improbable-eng/grpc-web'
-import { Context } from '@textile/context'
+import { Context, errors } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { Client } from '@textile/hub-threads-client'
-import { createAPISig, expirationError } from '@textile/security'
+import { createAPISig } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import { expect } from 'chai'
 import { MailboxEvent, Status } from './api'
@@ -71,7 +71,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err).to.equal(expirationError)
+        expect(err).to.equal(errors.expirationError)
       }
     })
 
@@ -174,7 +174,7 @@ describe('Users...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err).to.equal(expirationError)
+        expect(err).to.equal(errors.expirationError)
       }
     })
     it('should handle account keys', async () => {
