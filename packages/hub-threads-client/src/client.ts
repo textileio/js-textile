@@ -84,9 +84,18 @@ Client.prototype.listDBs = async function (
     }
     return dbs
   }
-  const threads = await oldListDBs.bind(this)()
-  for (const [id, db] of Object.entries(threads)) {
-    dbs[id] = { id, name: db?.name }
+  try {
+    const threads = await oldListDBs.bind(this)()
+    for (const [id, db] of Object.entries(threads)) {
+      dbs[id] = { id, name: db?.name }
+    }
+  } catch (err) {
+    if (err.message.includes('Method is not accessible')) {
+      // We might be unauthenticated _or_ not on hub.
+      throw new Error(
+        `${err.message}. If using Hub, ensure you are using a valid API signature.`,
+      )
+    }
   }
   return dbs
 }

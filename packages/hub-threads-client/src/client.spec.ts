@@ -162,7 +162,7 @@ describe('Threads Client...', () => {
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
-        expect(err.code).to.equal(grpc.Code.Unauthenticated)
+        expect(err.message).to.include('If using Hub')
       }
     })
   })
