@@ -18,8 +18,10 @@
     "test:docs": "typescript-docs-verifier --input-files=`find docs -type f -name '**.md'`",
     "test:node": "TS_NODE_FILES=true mocha --exit",
     "test:browser": "lerna run --stream test:browser",
-    "textile": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
+    "textile:update": "lerna exec -- npx ncu -u '/^@textile/.*$/'",
     "textile:check": "lerna exec -- npx ncu '/^@textile/.*$/'",
+    "textile:update:next": "lerna exec -- npx ncu -t newest -u '/^@textile/.*$/'",
+    "textile:check:next": "lerna exec -- npx ncu -t newest '/^@textile/.*$/'",
     "docs": "rm -rf docs markdown temp && node scripts/make-docs.js && mkdir -p docs && cp -r markdown/* docs/ && ./scripts/convert-signatures && npm run test:docs",
     "serve:docs": "npm run docs && cd website && npm run start",
     "build:docs": "npm run docs && cd website && npm install && npm run build"
