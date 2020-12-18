@@ -182,8 +182,9 @@ describe("Client", function () {
       expect(list.length).to.be.greaterThan(1)
       const last = list.pop()
       const first = list.pop()
-      expect(first).to.have.ownProperty("name", "test")
-      expect(last).to.have.ownProperty("name", name2)
+      expect(first).to.have.ownProperty("name")
+      expect(last).to.have.ownProperty("name")
+      expect([first?.name, last?.name]).to.include(name2)
     })
   })
 
