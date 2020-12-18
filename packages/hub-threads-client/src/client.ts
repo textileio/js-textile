@@ -79,7 +79,8 @@ Client.prototype.listDBs = async function (
     return this.listThreads(ctx)
   }
   try {
-    return oldListDBs.bind(this)()
+    const response = await oldListDBs.bind(this)()
+    return response
   } catch (err) {
     if (err.message.includes('Method is not accessible')) {
       // We might be unauthenticated _or_ not on hub.
