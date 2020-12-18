@@ -148,13 +148,13 @@ describe('Threads Client...', () => {
       const identity = PrivateKey.fromRandom()
       await db.getToken(identity)
       let res = await client.listDBs()
-      expect(Object.keys(res)).to.have.length(0)
+      expect(res).to.have.length(0)
       // Got one
       const id = ThreadID.fromRandom()
       await db.newDB(id, 'foo')
       res = await client.listDBs()
-      expect(Object.keys(res)).to.have.length(1)
-      expect(res[id.toString()]?.name).to.equal('foo')
+      expect(res).to.have.length(1)
+      expect(res.pop()?.name).to.equal('foo')
       // No signature
       client.context.set('x-textile-api-sig', undefined)
       try {

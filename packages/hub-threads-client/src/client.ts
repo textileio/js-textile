@@ -72,21 +72,14 @@ const oldListDBs = Client.prototype.listDBs
  */
 Client.prototype.listDBs = async function (
   ctx?: Context,
-): Promise<Record<string, GetThreadResponse | undefined>> {
-  const dbs: Record<string, GetThreadResponse | undefined> = {}
+): Promise<Array<GetThreadResponse>> {
+  const dbs: GetThreadResponse[] = []
   if (this.context.withContext(ctx).get('x-textile-api-sig')) {
     // We're probably on the Hub
-    const threads = await this.listThreads(ctx)
-    for (const thread of threads) {
-      dbs[thread.id] = thread
-    }
-    return dbs
+    return this.listThreads(ctx)
   }
   try {
-    const threads = await oldListDBs.bind(this)()
-    for (const [id, db] of Object.entries(threads)) {
-      dbs[id] = { id, name: db?.name }
-    }
+    return oldListDBs.bind(this)()
   } catch (err) {
     if (err.message.includes('Method is not accessible')) {
       // We might be unauthenticated _or_ not on hub.
