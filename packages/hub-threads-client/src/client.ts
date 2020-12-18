@@ -79,7 +79,6 @@ Client.prototype.listDBs = async function (
   }
   return oldListDBs
     .bind(this)()
-    .then((list) => list)
     .catch((err) => {
       if (err.message.includes('Method is not accessible')) {
         // We might be unauthenticated _or_ not on hub.
