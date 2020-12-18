@@ -16,8 +16,7 @@ const logger = log.getLogger('users')
 
 interface GetThreadResponse {
   id: string
-  name: string
-  isDb: boolean
+  name?: string
 }
 
 declare module '@textile/threads-client' {
@@ -50,7 +49,6 @@ Client.prototype.getThread = async function (
             if (message) {
               const res = {
                 name: message.getName(),
-                isDb: message.getIsDb(),
                 id: ThreadID.fromBytes(message.getId_asU8()).toString(),
               }
               resolve(res)
@@ -64,6 +62,32 @@ Client.prototype.getThread = async function (
         reject(err)
       })
   })
+}
+
+// Private listDBs method
+const oldListDBs = Client.prototype.listDBs
+
+/**
+ * Lists all known DBs.
+ */
+Client.prototype.listDBs = async function (
+  ctx?: Context,
+): Promise<Array<GetThreadResponse>> {
+  if (this.context.withContext(ctx).get('x-textile-api-sig')) {
+    // We're probably on the Hub
+    return this.listThreads(ctx)
+  }
+  return oldListDBs
+    .bind(this)()
+    .catch((err) => {
+      if (err.message.includes('Method is not accessible')) {
+        // We might be unauthenticated _or_ not on hub.
+        throw new Error(
+          `${err.message}. If using Hub, ensure you are using a valid API signature.`,
+        )
+      }
+      throw err
+    })
 }
 
 /**
@@ -96,7 +120,6 @@ Client.prototype.listThreads = async function (
             results = lst.map((thrd: _GetThreadResponse) => {
               return {
                 name: thrd.getName(),
-                isDb: thrd.getIsDb(),
                 id: ThreadID.fromBytes(thrd.getId_asU8()).toString(),
               }
             })

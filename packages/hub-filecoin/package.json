@@ -21,13 +21,13 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.12.0",
-    "@textile/context": "^0.9.2",
+    "@textile/context": "^0.10.0",
     "@textile/crypto": "^2.0.0",
     "@textile/grpc-authentication": "^2.1.0",
     "@textile/grpc-connection": "^2.1.0",
-    "@textile/grpc-powergate-client": "^1.2.4",
-    "@textile/hub-grpc": "2.2.2",
-    "@textile/security": "^0.6.2",
+    "@textile/grpc-powergate-client": "^1.2.5",
+    "@textile/hub-grpc": "2.3.0",
+    "@textile/security": "^0.7.0",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.6.8"
   }
