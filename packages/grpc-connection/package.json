@@ -1,6 +1,6 @@
 {
   "name": "@textile/grpc-connection",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "web-gRPC state manager for grpc-connection.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
