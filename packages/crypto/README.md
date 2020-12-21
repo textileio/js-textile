@@ -15,7 +15,7 @@ npm install @textile/hub
 **Usage**
 
 ```js
-import { Keypair } from '@textile/hub'
+import { PrivateKey } from '@textile/hub'
 ```
 
 [Read the docs](https://textileio.github.io/js-textile/).
