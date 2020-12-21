@@ -26,7 +26,7 @@ const external = [
   '@textile/grpc-connection',
   '@textile/hub',
   '@textile/hub-filecoin',
-  '@textile/hub-threads-users',
+  '@textile/hub-threads-client',
   '@textile/users',
   // Others (add externals and valid es modules here)
   'stream',
