@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-threads-client",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -30,7 +30,7 @@
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
-    "@textile/crypto": "^2.1.0",
+    "@textile/crypto": "^2.1.1",
     "axios": "^0.20.0"
   }
 }
