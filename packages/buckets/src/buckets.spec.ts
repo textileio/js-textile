@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { CHUNK_SIZE, genChunks } from './api'
+import { genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 import { AbortError, CreateResponse } from './types'
@@ -504,7 +504,7 @@ describe('Buckets...', function () {
       const { root } = await bobBuckets.listPath(rootKey, '')
       // Use default highwatermark of CHUNK_SIZE!
       const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
-        highWaterMark: CHUNK_SIZE,
+        // highWaterMark: CHUNK_SIZE,
       })
       await bobBuckets
         .pushPath(rootKey, 'path/to/bobby.jpg', stream, {
@@ -552,7 +552,7 @@ describe('Buckets...', function () {
 
       // Over-write the file in the shared path
       const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
-        highWaterMark: CHUNK_SIZE,
+        // highWaterMark: CHUNK_SIZE,
       })
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
       await bobBuckets
