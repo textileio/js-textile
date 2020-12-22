@@ -254,30 +254,36 @@ describe('Buckets...', function () {
       const rootKey = buck.root?.key || ''
       const wrongRoot = buck.root
       await client.removePath(rootKey, 'path/to/file2.jpg')
-      try {
-        await client.listPath(rootKey, 'path/to/file2.jpg')
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-      }
+      await client
+        .listPath(rootKey, 'path/to/file2.jpg')
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err).to.not.equal(wrongError)
+        })
       let list = await client.listPath(rootKey, '')
       expect(list.item?.items).to.have.length(3) // Includes .textileseed
       await client.removePath(rootKey, 'path')
-      try {
-        await client.listPath(rootKey, 'path')
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-      }
+      await client
+        .listPath(rootKey, 'path')
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err).to.not.equal(wrongError)
+        })
       list = await client.listPath(rootKey, '')
       expect(list.item?.items).to.have.length(2) // Includes .textileseed
 
-      try {
-        await client.removePath(rootKey, 'path', { root: wrongRoot })
-        throw wrongError
-      } catch (err) {
-        expect(err.message).to.equal('update is non-fast-forward')
-      }
+      await client
+        .removePath(rootKey, 'path', { root: wrongRoot })
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err.message).to.equal('update is non-fast-forward')
+        })
     })
 
     it('should push data from Buffer', async function () {
@@ -308,12 +314,14 @@ describe('Buckets...', function () {
       const rep = await client.listPath(rootKey, 'dir1/file1.jpg')
       expect(rep).to.not.be.undefined
       await client.remove(rootKey)
-      try {
-        await client.listPath(rootKey, 'dir1/file1.jpg')
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-      }
+      await client
+        .listPath(rootKey, 'dir1/file1.jpg')
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err).to.not.equal(wrongError)
+        })
     })
   })
 
@@ -371,16 +379,17 @@ describe('Buckets...', function () {
       stream2.push(Buffer.from('that spans two buffers'))
       stream2.push(null)
 
-      try {
-        await Promise.all([
-          // Note the names are different from above test
-          client.pushPath(rootKey, 'dir1/file3.jpg', stream1),
-          client.pushPath(rootKey, 'dir1/file4.txt', stream2),
-        ])
-        throw new Error('wrong error')
-      } catch (err) {
-        expect(err.message).to.include('non-fast-forward')
-      }
+      await Promise.all([
+        // Note the names are different from above test
+        client.pushPath(rootKey, 'dir1/file3.jpg', stream1),
+        client.pushPath(rootKey, 'dir1/file4.txt', stream2),
+      ])
+        .then(() => {
+          throw new Error('wrong error')
+        })
+        .catch((err) => {
+          expect(err.message).to.include('non-fast-forward')
+        })
       // Confirm that our second-level dir only includes one of them
       const { item } = await client.listPath(rootKey, '')
       expect(item?.items[1].items).to.have.length(1)
@@ -403,23 +412,27 @@ describe('Buckets...', function () {
       const controller = new AbortController()
       const { signal } = controller
       setTimeout(() => controller.abort(), 100) // Wait long enough to get the thing started
-      try {
-        await client.pushPath(rootKey, 'dir1/file1.jpg', stream(), {
+      await client
+        .pushPath(rootKey, 'dir1/file1.jpg', stream(), {
           root,
           signal,
         })
-        throw new Error('wrong error')
-      } catch (err) {
-        expect(err).to.equal(AbortError)
-      }
-      try {
-        // If the above pushPath was indeed killed, then the following will error, otherwise,
-        // it should timeout!
-        await client.listPath(rootKey, 'dir1/file1.jpg')
-        throw new Error('wrong error')
-      } catch (err) {
-        expect(err.message).to.include('no link named')
-      }
+        .then(() => {
+          throw new Error('wrong error')
+        })
+        .catch((err) => {
+          expect(err).to.equal(AbortError)
+        })
+      // If the above pushPath was indeed killed, then the following will error, otherwise,
+      // it should timeout!
+      await client
+        .listPath(rootKey, 'dir1/file1.jpg')
+        .then(() => {
+          throw new Error('wrong error')
+        })
+        .catch((err) => {
+          expect(err.message).to.include('no link named')
+        })
     })
   })
 
@@ -489,19 +502,21 @@ describe('Buckets...', function () {
       bobBuckets.withThread(aliceThread)
 
       const { root } = await bobBuckets.listPath(rootKey, '')
-      try {
-        // Use default highwatermark of CHUNK_SIZE!
-        const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
-          highWaterMark: CHUNK_SIZE,
-        })
-        await bobBuckets.pushPath(rootKey, 'path/to/bobby.jpg', stream, {
+      // Use default highwatermark of CHUNK_SIZE!
+      const stream = fs.createReadStream(path.join(pth, 'file2.jpg'), {
+        highWaterMark: CHUNK_SIZE,
+      })
+      await bobBuckets
+        .pushPath(rootKey, 'path/to/bobby.jpg', stream, {
           root,
         })
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.message).to.include('permission denied')
-      }
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err).to.not.equal(wrongError)
+          expect(err.message).to.include('permission denied')
+        })
     })
 
     it('remove a file in shared path', async function () {
@@ -512,13 +527,15 @@ describe('Buckets...', function () {
       await bobBuckets.getToken(bob)
       bobBuckets.withThread(aliceThread)
 
-      try {
-        await bobBuckets.removePath(rootKey, sharedFile)
-        throw wrongError
-      } catch (err) {
-        expect(err).to.not.equal(wrongError)
-        expect(err.message).to.include('permission denied')
-      }
+      await bobBuckets
+        .removePath(rootKey, sharedFile)
+        .then(() => {
+          throw wrongError
+        })
+        .catch((err) => {
+          expect(err).to.not.equal(wrongError)
+          expect(err.message).to.include('permission denied')
+        })
     })
 
     it('overwrite an existing shared file', async function () {
@@ -538,12 +555,14 @@ describe('Buckets...', function () {
         highWaterMark: CHUNK_SIZE,
       })
       // Pushing to an existing shared file works: sharedFile = 'path/to/file2.jpg'
-      try {
-        await bobBuckets.pushPath(rootKey, sharedFile, stream)
-        throw rightError
-      } catch (err) {
-        expect(err).to.equal(rightError)
-      }
+      await bobBuckets
+        .pushPath(rootKey, sharedFile, stream)
+        .then(() => {
+          throw rightError
+        })
+        .catch((err) => {
+          expect(err).to.equal(rightError)
+        })
     })
 
     it('list existing', async function () {

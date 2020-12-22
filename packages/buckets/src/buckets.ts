@@ -396,25 +396,25 @@ export class Buckets extends GrpcAuthentication {
       }
       this.withThread(threadID)
     } else {
-      try {
-        const res = await client.getThread(threadName)
-        threadID =
-          typeof res.id === 'string'
-            ? res.id
-            : ThreadID.fromBytes(res.id).toString()
-        this.withThread(threadID)
-      } catch (error) {
-        if (
-          error.message !== 'Thread not found' &&
-          !error.message.includes('mongo: no documents in result')
-        ) {
-          throw new Error(error.message)
-        }
-        const newId = ThreadID.fromRandom()
-        await client.newDB(newId, threadName)
-        threadID = newId.toString()
-        this.withThread(threadID)
-      }
+      const newId = await client
+        .getThread(threadName)
+        .then((threadInfo) => {
+          return typeof threadInfo.id === 'string'
+            ? threadInfo.id
+            : ThreadID.fromBytes(threadInfo.id).toString()
+        })
+        .catch(async (error) => {
+          if (
+            error.message !== 'Thread not found' &&
+            !error.message.includes('mongo: no documents in result')
+          ) {
+            throw error // Re-throw error, don't create new one
+          }
+          const newId = ThreadID.fromRandom()
+          await client.newDB(newId, threadName)
+          return newId.toString()
+        })
+      this.withThread(newId)
     }
 
     const roots = await this.list()
