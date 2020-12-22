@@ -394,9 +394,8 @@ export class Buckets extends GrpcAuthentication {
         const id = ThreadID.fromString(threadID)
         await client.newDB(id, threadName)
       }
-      this.withThread(threadID)
     } else {
-      const newId = await client
+      threadID = await client
         .getThread(threadName)
         .then((threadInfo) => {
           return typeof threadInfo.id === 'string'
@@ -414,8 +413,8 @@ export class Buckets extends GrpcAuthentication {
           await client.newDB(newId, threadName)
           return newId.toString()
         })
-      this.withThread(newId)
     }
+    this.withThread(threadID)
 
     const roots = await this.list()
     const existing = roots.find((bucket) => bucket.name === name)
