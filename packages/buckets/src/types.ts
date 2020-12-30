@@ -229,10 +229,6 @@ export interface ArchiveConfig {
    */
   renew?: ArchiveRenew
   /**
-   * Addr is the wallet address used to store the data in filecoin
-   */
-  addr: string
-  /**
    * MaxPrice is the maximum price that will be spent to store the data, 0 is no max
    */
   maxPrice: number

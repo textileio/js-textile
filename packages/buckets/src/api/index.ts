@@ -147,7 +147,6 @@ function fromProtoArchiveConfig(item: _ArchiveConfig.AsObject): ArchiveConfig {
 
 function toProtoArchiveConfig(config: ArchiveConfig): _ArchiveConfig {
   const protoConfig = new _ArchiveConfig()
-  protoConfig.setAddr(config.addr)
   protoConfig.setCountryCodesList(config.countryCodes)
   protoConfig.setDealMinDuration(config.dealMinDuration)
   protoConfig.setDealStartOffset(config.dealStartOffset)
