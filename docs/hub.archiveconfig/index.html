@@ -11,14 +11,13 @@
 <tr><th>Property</th><th>Type</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="/js-textile/docs/hub.archiveconfig.addr">addr</a></td><td>string</td><td>Addr is the wallet address used to store the data in filecoin</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.countrycodes">countryCodes</a></td><td>Array&lt;string&gt;</td><td>CountryCodes (ignored in Filecoin testnet) indicates that new deals should select miners on specific countries.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.dealminduration">dealMinDuration</a></td><td>number</td><td>DealMinDuration indicates the duration to be used when making new deals.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.dealstartoffset">dealStartOffset</a></td><td>number</td><td>DealStartOffset indicates how many epochs in the future impose a deadline to new deals being active on-chain. This value might influence if miners accept deals, since they should seal fast enough to satisfy this constraint.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.excludedminers">excludedMiners</a></td><td>Array&lt;string&gt;</td><td>ExcludedMiners (ignored in Filecoin testnet) is a set of miner addresses won't be ever be selected when making new deals, even if they comply to other filters.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.fastretrieval">fastRetrieval</a></td><td>boolean</td><td>FastRetrieval indicates that created deals should enable the fast retrieval feature.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.maxprice">maxPrice</a></td><td>number</td><td>MaxPrice is the maximum price that will be spent to store the data, 0 is no max</td></tr>
-<tr><td><a href="/js-textile/docs/hub.archiveconfig.renew">renew</a></td><td><a href="/js-textile/docs/hub.archiverenew">ArchiveRenew</a></td><td>Renew indicates deal-renewal configuration.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.archiveconfig.renew">renew?</a></td><td><a href="/js-textile/docs/hub.archiverenew">ArchiveRenew</a></td><td><i>(Optional)</i> Renew indicates deal-renewal configuration.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.repfactor">repFactor</a></td><td>number</td><td>RepFactor (ignored in Filecoin testnet) indicates the desired amount of active deals with different miners to store the data. While making deals the other attributes of FilConfig are considered for miner selection.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.archiveconfig.trustedminers">trustedMiners</a></td><td>Array&lt;string&gt;</td><td>TrustedMiners (ignored in Filecoin testnet) is a set of miner addresses which will be forcibly used when making new deals. An empty/nil list disables this feature.</td></tr>
 </tbody>

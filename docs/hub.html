@@ -100,10 +100,9 @@
 <tbody>
 <tr><td><a href="/js-textile/docs/hub.bytestoarray">bytesToArray(chunk, size)</a></td><td>bytesToArray converts a buffer into &lt;<!-- -->4mb chunks for use with grpc API</td></tr>
 <tr><td><a href="/js-textile/docs/hub.createapisig">createAPISig(secret, date)</a></td><td>createAPISig generates an authorization signature and message only.<!-- -->This function should NOT be used client-side, as it requires a key secret.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.createreadstream">createReadStream(path)</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.createuserauth">createUserAuth(key, secret, date, token)</a></td><td>Generate a UserAuth containing API key, signature, and message.<!-- -->The gRPC APIs will throw (or return an authorization error) if the message date has passed. This function should NOT be used client-side, as it requires a key secret. The result does not contain the secret and therefor CAN be used client side.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.decrypt">decrypt(ciphertext, privKey, type)</a></td><td>Decrypts the given <code>data</code> using a Curve25519 variant of the private key.<!-- -->Assumes ciphertext includes ephemeral public key and nonce used in original encryption (e.g., via <a href="/js-textile/docs/hub.encrypt">encrypt()</a> function). <a href="https://github.com/dchest/ed2curve-js">https://github.com/dchest/ed2curve-js</a> for conversion details.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.encrypt">encrypt(data, pubKey, type)</a></td><td>Encrypts the given <code>data</code> using a Curve25519 variant of the public key.<!-- -->The encryption uses an ephemeral private key, which is prepended to the ciphertext, along with a nonce of random bytes. <a href="https://github.com/dchest/ed2curve-js">https://github.com/dchest/ed2curve-js</a> for conversion details.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.decrypt">decrypt(ciphertext, privKey, type)</a></td><td>Decrypts the given <code>data</code> using a Curve25519 variant of the private key.<!-- -->Assumes ciphertext includes ephemeral public key and nonce used in original encryption (e.g., via <a href="/js-textile/docs/hub.encrypt">encrypt()</a> function).</td></tr>
+<tr><td><a href="/js-textile/docs/hub.encrypt">encrypt(data, pubKey, type)</a></td><td>Encrypts the given <code>data</code> using a Curve25519 variant of the public key.<!-- -->The encryption uses an ephemeral private key, which is prepended to the ciphertext, along with a nonce of random bytes.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.extractpublickeybytes">extractPublicKeyBytes(key)</a></td><td>Utility function to extract the raw bytes from a <a href="/js-textile/docs/hub.public">Public</a> key.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.listpathflat">listPathFlat(grpc, bucketKey, path, dirs, depth)</a></td><td>listPathFlat returns a string array of all paths in a bucket</td></tr>
 <tr><td><a href="/js-textile/docs/hub.listpathrecursive">listPathRecursive(grpc, bucketKey, path, depth, currentDepth)</a></td><td>listPathRecursive returns a nested object of all paths (and info) in a bucket</td></tr>
@@ -148,7 +147,6 @@
 <tr><td><a href="/js-textile/docs/hub.getorcreateoptions">GetOrCreateOptions</a></td><td>Options for getOrCreate</td></tr>
 <tr><td><a href="/js-textile/docs/hub.getorcreateresponse">GetOrCreateResponse</a></td><td>Response from getOrCreate</td></tr>
 <tr><td><a href="/js-textile/docs/hub.getthreadresponse">GetThreadResponse</a></td><td></td></tr>
-<tr><td><a href="/js-textile/docs/hub.getthreadresponseobj">GetThreadResponseObj</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.getusageresponse">GetUsageResponse</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.hotconfig">HotConfig</a></td><td>Hot storage configuration.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.hotinfo">HotInfo</a></td><td>Current hot storage state.</td></tr>
@@ -165,6 +163,8 @@
 <tr><td><a href="/js-textile/docs/hub.pushoptions">PushOptions</a></td><td>PushOptions provides additional options for controlling a push to a bucket path.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.pushpathresult">PushPathResult</a></td><td>The expected result format from pushing a path to a bucket</td></tr>
 <tr><td><a href="/js-textile/docs/hub.queryjson">QueryJSON</a></td><td>QueryJSON represents a single store Query.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.removepathoptions">RemovePathOptions</a></td><td>RemovePathOptions provides additional options for path remove steps.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.removepathresponse">RemovePathResponse</a></td><td>Response from remote path.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.retrievaldealinfo">RetrievalDealInfo</a></td><td>Information about a retrieval deal.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.retrievaldealrecord">RetrievalDealRecord</a></td><td>A record of a single retrieval deal.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.root">Root</a></td><td>Bucket root info</td></tr>
@@ -191,8 +191,7 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-textile/docs/hub.aborterror">AbortError</a></td><td></td></tr>
-<tr><td><a href="/js-textile/docs/hub.expirationerror">expirationError</a></td><td>expirationError is an error your app will receive anytime your credentials have expired.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.invalidkeyerror">invalidKeyError</a></td><td></td></tr>
+<tr><td><a href="/js-textile/docs/hub.errors">errors</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.keyfromstring">keyFromString</a></td><td>keyFromString returns a key by decoding a base32-encoded string.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.keytostring">keyToString</a></td><td>String returns the base32-encoded string representation of raw key bytes.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.mailconfig">MailConfig</a></td><td>Global settings for mailboxes</td></tr>
@@ -208,6 +207,7 @@
 <tbody>
 <tr><td><a href="/js-textile/docs/hub.apisig">APISig</a></td><td>Create an API signature for use in authenticated systems. Generate with <a href="/js-textile/docs/hub.createapisig">createAPISig()</a><!-- -->.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.createobject">CreateObject</a></td><td></td></tr>
+<tr><td><a href="/js-textile/docs/hub.getthreadresponseobj">GetThreadResponseObj</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.keyinfo">KeyInfo</a></td><td>KeyInfo is a type that contains the API Secret. It should never be shared in insecure environments.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.linksobject">LinksObject</a></td><td></td></tr>
 <tr><td><a href="/js-textile/docs/hub.metadataobject">MetadataObject</a></td><td></td></tr>
