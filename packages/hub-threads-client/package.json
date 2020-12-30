@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-threads-client",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "web-gRPC wrapper client for communicating with Threads APIs on the Hub.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
