@@ -4,6 +4,8 @@
 
 ```ts
 
+import { AbortController as AbortController_2 } from 'abort-controller';
+import { AbortSignal as AbortSignal_2 } from 'abort-controller';
 import { BaseNameOrCode } from 'multibase';
 import type { CID } from 'multiformats';
 import { ContextInterface } from '@textile/context';
@@ -32,8 +34,12 @@ import { SetupMailboxResponse } from '@textile/users-grpc/api/usersd/pb/usersd_p
 import { WriteTransactionReply } from '@textile/threads-client-grpc/threads_pb';
 import { WriteTransactionRequest } from '@textile/threads-client-grpc/threads_pb';
 
+export { AbortController_2 as AbortController }
+
 // @public (undocumented)
 export const AbortError: Error;
+
+export { AbortSignal_2 as AbortSignal }
 
 // @public (undocumented)
 export enum Action {
@@ -73,7 +79,6 @@ export interface Archive {
 
 // @public
 export interface ArchiveConfig {
-    addr: string;
     countryCodes: Array<string>;
     dealMinDuration: number;
     dealStartOffset: number;
@@ -224,13 +229,15 @@ export class Client {
     // (undocumented)
     getCollectionInfo(threadID: ThreadID, name: string): Promise<CollectionConfig>;
     getDBInfo(threadID: ThreadID): Promise<DBInfo>;
-    // Warning: (ae-forgotten-export) The symbol "Identity" needs to be exported by the entry point index.d.ts
-    getToken(identity: Identity_2, ctx?: ContextInterface): Promise<string>;
+    getToken(identity: Identity, ctx?: ContextInterface): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>, ctx?: ContextInterface): Promise<string>;
     has(threadID: ThreadID, collectionName: string, IDs: string[]): Promise<boolean>;
     joinFromInfo(info: DBInfo, includeLocal?: boolean, collections?: Array<CollectionConfig>): Promise<ThreadID>;
     listCollections(thread: ThreadID): Promise<Array<pb.GetCollectionInfoReply.AsObject>>;
-    listDBs(): Promise<Record<string, pb.GetDBInfoReply.AsObject | undefined>>;
+    listDBs(): Promise<Array<{
+        id: string;
+        name?: string;
+    }>>;
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
     newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
@@ -410,8 +417,10 @@ export { DeleteSentboxMessageResponse }
 // @public
 export function encrypt(data: Uint8Array, pubKey: Uint8Array, type?: string): Promise<Uint8Array>;
 
-// @public
-export const expirationError: Error;
+// @public (undocumented)
+export const errors: {
+    invalidKeyError: Error;
+};
 
 // @public
 export function extractPublicKeyBytes(key: Public): Uint8Array;
@@ -515,14 +524,11 @@ export interface GetThreadResponse {
     // (undocumented)
     id: string;
     // (undocumented)
-    isDb: boolean;
-    // (undocumented)
-    name: string;
+    name?: string;
 }
 
 // @public @deprecated (undocumented)
-export interface GetThreadResponseObj extends GetThreadResponse {
-}
+export type GetThreadResponseObj = GetThreadResponse;
 
 // Warning: (ae-internal-missing-underscore) The name "getUsage" should be prefixed with an underscore because the declaration is marked as @internal
 //
@@ -582,9 +588,6 @@ export interface InboxListOptions {
     // (undocumented)
     status?: Status;
 }
-
-// @public (undocumented)
-export const invalidKeyError: Error;
 
 // @public
 export interface IpfsConfig {
