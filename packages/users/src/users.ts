@@ -13,7 +13,6 @@ import {
 } from '@textile/grpc-authentication'
 import { GetThreadResponse } from '@textile/hub-threads-client'
 import { KeyInfo, UserAuth } from '@textile/security'
-import log from 'loglevel'
 import {
   deleteInboxMessage,
   deleteSentboxMessage,
@@ -34,8 +33,6 @@ import {
   UserMessage,
   watchMailbox,
 } from './api'
-
-const logger = log.getLogger('users')
 
 /**
  * Users a client wrapper for interacting with the Textile Users API.
@@ -331,7 +328,6 @@ export class Users extends GrpcAuthentication {
     to: Public,
     body: Uint8Array,
   ): Promise<UserMessage> {
-    logger.debug('send message using keys')
     const toBytes = extractPublicKeyBytes(to)
     const fromBytes = extractPublicKeyBytes(from.public)
     const fromBody = await encrypt(body, fromBytes)

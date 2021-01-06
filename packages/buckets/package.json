@@ -32,9 +32,9 @@
     "@textile/security": "^0.7.0",
     "@textile/threads-id": "^0.4.0",
     "abort-controller": "^3.0.0",
+    "cids": "^1.1.4",
     "event-iterator": "^2.0.0",
-    "loglevel": "^1.6.8",
-    "multiformats": "^4.4.1"
+    "loglevel": "^1.6.8"
   },
   "devDependencies": {
     "axios": "^0.20.0",
