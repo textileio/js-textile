@@ -1,4 +1,3 @@
-import multibase from 'multibase'
 import nacl from 'tweetnacl'
 import { Private, Public } from './identity'
 import { encodePrivateKey, encodePublicKey, KeyType } from './proto.keys'
@@ -6,18 +5,10 @@ import {
   decrypt,
   encrypt,
   privateKeyFromString,
+  privateKeyToString,
   publicKeyBytesFromString,
   publicKeyToString,
 } from './utils'
-
-/**
- * Encode the given PrivateKey to its base-32 encoded multibase representation.
- * @param key The input PrivateKey.
- */
-export function privateKeyToString(key: PrivateKey): string {
-  const encoded = multibase.encode('base32', key.bytes as Buffer)
-  return new TextDecoder().decode(encoded)
-}
 
 /**
  * Default implementation of the {@link Public} interface, with encryption
