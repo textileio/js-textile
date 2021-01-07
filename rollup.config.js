@@ -11,7 +11,7 @@ import path from 'path'
 import minimist from 'minimist'
 
 const external = [
-  // Threads
+  // Textile
   '@textile/threads-client',
   '@textile/context',
   '@textile/threads-id',
@@ -19,7 +19,6 @@ const external = [
   '@textile/security',
   '@textile/threads',
   '@textile/transport',
-  // Textile
   '@textile/buckets',
   '@textile/crypto',
   '@textile/grpc-authentication',
