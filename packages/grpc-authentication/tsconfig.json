@@ -5,8 +5,20 @@
     "rootDir": "./src"
   },
   "references": [
-    { "path": "../crypto" },
-    { "path": "../grpc-connection" },
-    { "path": "../hub-threads-client" }
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../grpc-connection"
+    },
+    {
+      "path": "../hub-threads-client"
+    },
+    {
+      "path": "../security"
+    }
   ]
 }

@@ -5,8 +5,20 @@
     "rootDir": "./src"
   },
   "references": [
-    { "path": "../crypto" },
-    { "path": "../grpc-authentication" },
-    { "path": "../grpc-connection" }
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../grpc-authentication"
+    },
+    {
+      "path": "../grpc-connection"
+    },
+    {
+      "path": "../security"
+    }
   ]
 }

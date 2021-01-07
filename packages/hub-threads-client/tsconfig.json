@@ -5,6 +5,14 @@
     "rootDir": "./src"
   },
   "references": [
-    {"path": "../crypto"}
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../id"
+    },
+    {
+      "path": "../security"
+    }
   ]
 }

@@ -3,5 +3,13 @@
   "compilerOptions": {
     "outDir": "./dist/cjs",
     "rootDir": "./src"
-  }
+  },
+  "references": [
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../transport"
+    }
+  ]
 }
