@@ -196,17 +196,25 @@ function fromPbCidInfo(item: _CidInfo.AsObject): CidInfo {
     latestStorageConfig: item.latestPushedStorageConfig
       ? fromPbStorageConfig(item.latestPushedStorageConfig)
       : undefined,
-    currentStorageInfo: item.currentStorageInfo ? fromPbStorageInfo(item.currentStorageInfo) : undefined,
+    currentStorageInfo: item.currentStorageInfo
+      ? fromPbStorageInfo(item.currentStorageInfo)
+      : undefined,
     queuedStorageJobs: item.queuedStorageJobsList.map(fromPbStorageJob),
-    executingStorageJob: item.executingStorageJob ? fromPbStorageJob(item.executingStorageJob) : undefined,
-    latestFinalStorageJob: item.latestFinalStorageJob ? fromPbStorageJob(item.latestFinalStorageJob) : undefined,
+    executingStorageJob: item.executingStorageJob
+      ? fromPbStorageJob(item.executingStorageJob)
+      : undefined,
+    latestFinalStorageJob: item.latestFinalStorageJob
+      ? fromPbStorageJob(item.latestFinalStorageJob)
+      : undefined,
     latestSuccessfulStorageJob: item.latestSuccessfulStorageJob
       ? fromPbStorageJob(item.latestSuccessfulStorageJob)
       : undefined,
   }
 }
 
-function fromPbStorageDealRecord(item: _StorageDealRecord.AsObject): StorageDealRecord {
+function fromPbStorageDealRecord(
+  item: _StorageDealRecord.AsObject,
+): StorageDealRecord {
   return {
     ...item,
     // TODO: standardize time units from server.
@@ -215,32 +223,49 @@ function fromPbStorageDealRecord(item: _StorageDealRecord.AsObject): StorageDeal
   }
 }
 
-function fromPbRetrievalDealInfo(item: _RetrievalDealInfo.AsObject): RetrievalDealInfo {
+function fromPbRetrievalDealInfo(
+  item: _RetrievalDealInfo.AsObject,
+): RetrievalDealInfo {
   return { ...item }
 }
 
-function fromPbRetrievalDealRecord(item: _RetrievalDealRecord.AsObject): RetrievalDealRecord {
+function fromPbRetrievalDealRecord(
+  item: _RetrievalDealRecord.AsObject,
+): RetrievalDealRecord {
   return {
     ...item,
     // TODO: standardize time units from server.
     time: new Date(item.time * 1000),
-    dealInfo: item.dealInfo ? fromPbRetrievalDealInfo(item.dealInfo) : undefined,
+    dealInfo: item.dealInfo
+      ? fromPbRetrievalDealInfo(item.dealInfo)
+      : undefined,
   }
 }
 
 /**
  * @internal
  */
-export async function addresses(api: GrpcConnection, ctx?: ContextInterface): Promise<AddressInfo[]> {
+export async function addresses(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+): Promise<AddressInfo[]> {
   logger.debug('addresses request')
-  const res: AddressesResponse = await api.unary(UserService.Addresses, new AddressesRequest(), ctx)
+  const res: AddressesResponse = await api.unary(
+    UserService.Addresses,
+    new AddressesRequest(),
+    ctx,
+  )
   return res.toObject().addressesList.map(fromPbAddressInfo)
 }
 
 /**
  * @internal
  */
-export async function balance(api: GrpcConnection, address: string, ctx?: ContextInterface): Promise<bigint> {
+export async function balance(
+  api: GrpcConnection,
+  address: string,
+  ctx?: ContextInterface,
+): Promise<bigint> {
   const req = new BalanceRequest()
   req.setAddress(address)
   const res: BalanceResponse = await api.unary(UserService.Balance, req, ctx)
@@ -250,7 +275,11 @@ export async function balance(api: GrpcConnection, address: string, ctx?: Contex
 /**
  * @internal
  */
-export async function cidInfo(api: GrpcConnection, ctx?: ContextInterface, ...cids: string[]): Promise<CidInfo[]> {
+export async function cidInfo(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+  ...cids: string[]
+): Promise<CidInfo[]> {
   const req = new CidInfoRequest()
   req.setCidsList(cids)
   const res: CidInfoResponse = await api.unary(UserService.CidInfo, req, ctx)
@@ -273,7 +302,11 @@ export async function storageDealRecords(
   c.setIncludePending(config.includePending)
   const req = new StorageDealRecordsRequest()
   req.setConfig(c)
-  const res: StorageDealRecordsResponse = await api.unary(UserService.StorageDealRecords, req, ctx)
+  const res: StorageDealRecordsResponse = await api.unary(
+    UserService.StorageDealRecords,
+    req,
+    ctx,
+  )
   return res.toObject().recordsList.map(fromPbStorageDealRecord)
 }
 
@@ -293,6 +326,10 @@ export async function retrievalDealRecords(
   c.setIncludePending(config.includePending)
   const req = new RetrievalDealRecordsRequest()
   req.setConfig(c)
-  const res: RetrievalDealRecordsResponse = await api.unary(UserService.RetrievalDealRecords, req, ctx)
+  const res: RetrievalDealRecordsResponse = await api.unary(
+    UserService.RetrievalDealRecords,
+    req,
+    ctx,
+  )
   return res.toObject().recordsList.map(fromPbRetrievalDealRecord)
 }
