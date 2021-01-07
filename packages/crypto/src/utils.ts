@@ -1,7 +1,7 @@
 import { convertPublicKey, convertSecretKey } from 'ed2curve'
 import multibase from 'multibase'
 import nacl from 'tweetnacl'
-import type { Public } from './identity'
+import type { Private, Public } from './identity'
 import { decodePrivateKey, decodePublicKey } from './proto.keys'
 
 const nonceBytes = 24 // Length of nacl nonce
@@ -84,7 +84,17 @@ export async function encrypt(
  * @param bytes The protobuf-encoded bytes of a {@link Public} key.
  */
 export function publicKeyBytesToString(bytes: Uint8Array): string {
-  const encoded = multibase.encode('base32', bytes as Buffer)
+  const encoded = multibase.encode('base32', bytes)
+  return new TextDecoder().decode(encoded)
+}
+
+/**
+ * Encode the given privateKey's protobuf-encoded bytes to its base-32 encoded
+ * multibase representation.
+ * @param bytes The protobuf-encoded bytes of a {@link Private} key.
+ */
+export function privateKeyBytesToString(bytes: Uint8Array): string {
+  const encoded = multibase.encode('base32', bytes)
   return new TextDecoder().decode(encoded)
 }
 
@@ -94,6 +104,14 @@ export function publicKeyBytesToString(bytes: Uint8Array): string {
  */
 export function publicKeyToString(key: Public): string {
   return publicKeyBytesToString(key.bytes)
+}
+
+/**
+ * Encode the given PrivateKey to its base-32 encoded multibase representation.
+ * @param key The input PrivateKey.
+ */
+export function privateKeyToString(key: Private): string {
+  return privateKeyBytesToString(key.bytes)
 }
 
 /**

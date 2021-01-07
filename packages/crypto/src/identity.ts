@@ -26,7 +26,12 @@ export interface Identity {
 /**
  * Private is an alias for the {@link Identity} interface.
  */
-export type Private = Identity
+export interface Private extends Identity {
+  /**
+   * Return the protobuf-encoded bytes of this private key.
+   */
+  bytes: Uint8Array
+}
 
 /**
  * Public is any entity associated with a given {@link Identity} that is

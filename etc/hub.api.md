@@ -7,7 +7,7 @@
 import { AbortController as AbortController_2 } from 'abort-controller';
 import { AbortSignal as AbortSignal_2 } from 'abort-controller';
 import { BaseNameOrCode } from 'multibase';
-import type { CID } from 'multiformats';
+import type CID from 'cids';
 import { ContextInterface } from '@textile/context';
 import { DeleteInboxMessageRequest } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
 import { DeleteInboxMessageResponse } from '@textile/users-grpc/api/usersd/pb/usersd_pb';
@@ -750,7 +750,9 @@ export interface Period {
 }
 
 // @public
-export type Private = Identity;
+export interface Private extends Identity {
+    bytes: Uint8Array;
+}
 
 // @public
 export class PrivateKey implements Private {
@@ -772,7 +774,13 @@ export class PrivateKey implements Private {
 }
 
 // @public
+export function privateKeyBytesToString(bytes: Uint8Array): string;
+
+// @public
 export function privateKeyFromString(str: string): Uint8Array;
+
+// @public
+export function privateKeyToString(key: Private): string;
 
 // @public
 export interface Public {
