@@ -22,10 +22,10 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/context": "^0.10.0",
-    "@textile/grpc-authentication": "^3.0.1",
+    "@textile/grpc-authentication": "^3.0.2",
     "@textile/grpc-connection": "^2.2.0",
     "@textile/grpc-transport": "^0.3.0",
-    "@textile/hub-grpc": "^2.4.0",
+    "@textile/hub-grpc": "^2.5.0",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {

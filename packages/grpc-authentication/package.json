@@ -22,7 +22,7 @@
     "@textile/context": "^0.10.0",
     "@textile/crypto": "^2.1.1",
     "@textile/grpc-connection": "^2.2.0",
-    "@textile/hub-threads-client": "^5.0.1",
+    "@textile/hub-threads-client": "^5.0.2",
     "@textile/security": "^0.7.0"
   }
 }
