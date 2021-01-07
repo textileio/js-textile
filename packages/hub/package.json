@@ -31,6 +31,6 @@
   "devDependencies": {
     "@textile/context": "^0.10.0",
     "@textile/grpc-transport": "^0.3.0",
-    "axios": "^0.20.0"
+    "axios": "^0.21.1"
   }
 }
