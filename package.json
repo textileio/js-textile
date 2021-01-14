@@ -4,7 +4,7 @@
   "description": "Typescript/Javascript libs for interacting with Textile APIs.",
   "main": "packages/hub",
   "scripts": {
-    "clean": "lerna clean && lerna run clean",
+    "clean": "npx rimraf dist && lerna clean --yes && lerna run clean",
     "bootstrap": "lerna bootstrap",
     "publish": "npm run build && lerna publish",
     "build": "npm run build:cjs && npm run build:esm",

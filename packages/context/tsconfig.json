@@ -6,12 +6,6 @@
   },
   "references": [
     {
-      "path": "../context"
-    },
-    {
-      "path": "../id"
-    },
-    {
       "path": "../security"
     }
   ]
