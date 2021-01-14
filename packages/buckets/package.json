@@ -21,7 +21,7 @@
   "repository": "github:textileio/js-threads",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/buckets-grpc": "2.5.0",
+    "@textile/buckets-grpc": "2.5.1",
     "@textile/context": "^0.10.0",
     "@textile/crypto": "^4.0.0",
     "@textile/grpc-authentication": "^3.2.0",
