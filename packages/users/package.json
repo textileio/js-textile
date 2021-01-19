@@ -31,7 +31,7 @@
     "@textile/hub-threads-client": "^5.2.0",
     "@textile/security": "^0.7.0",
     "@textile/threads-id": "^0.4.0",
-    "@textile/users-grpc": "2.5.0",
+    "@textile/users-grpc": "2.5.1",
     "event-iterator": "^2.0.0",
     "loglevel": "^1.7.0"
   },
