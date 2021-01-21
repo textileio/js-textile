@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/cjs",
+    "rootDir": "./src"
+  },
+  "references": [
+    {
+      "path": "../context"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../grpc-authentication"
+    },
+    {
+      "path": "../grpc-connection"
+    },
+    {
+      "path": "../hub-threads-client"
+    },
+    {
+      "path": "../id"
+    },
+    {
+      "path": "../security"
+    },
+    {
+      "path": "../transport"
+    }
+  ]
+}
