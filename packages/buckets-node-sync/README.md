@@ -1,4 +1,6 @@
-# @textile/buckets
+# @textile/buckets-node-sync
+
+A node only util for pushing buckets.
 
 **Info**
 
