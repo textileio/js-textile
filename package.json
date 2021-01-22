@@ -74,7 +74,7 @@
     "lerna": "^3.19.0",
     "minimist": "^1.2.5",
     "mocha": "^7.2.0",
-    "npm-check-updates": "^10.2.3",
+    "npm-check-updates": "^11.0.2",
     "polendina": "^1.0.0",
     "prettier": "^2.1.1",
     "prettier-eslint": "^11.0.0",
