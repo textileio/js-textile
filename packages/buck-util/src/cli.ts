@@ -1,120 +1,133 @@
 #!/usr/bin/env node
-import yargs, {Argv} from "yargs"
+import yargs, {Argv} from 'yargs'
 import { execute, RunOutput } from './index'
-
-// Example:
-// buckjs push --api=http://127.0.0.1:3007 -k blp5ihqcs5zdryhc23fx2x7l5ru -s b6dtmohcxvcd3uqnbpx6b7ygb6m7hu4cslgsoroy -t bafku6ozemzot6fwazeolxag2kvd3c753nudnwat4mfoinatiffeicdi -n test -p /Users/andrewhill/Textile/textile/js-textile/packages/buckets-node-sync/test/website
-// buckjs clean --api=http://127.0.0.1:3007 -k blp5ihqcs5zdryhc23fx2x7l5ru -s b6dtmohcxvcd3uqnbpx6b7ygb6m7hu4cslgsoroy -t bafku6ozemzot6fwazeolxag2kvd3c753nudnwat4mfoinatiffeicdi -n test
 
 yargs
   .command(
-    "push", 
-    "push updates to remote bucket.", 
+    'push <path>', 
+    'overwrite the root of a bucket with dir at path.', 
     (yargs: Argv) => {
       return yargs
-      .option('key', {
+      .positional('path', {
+        describe: 'Path of dir to push',
+        type: 'string'
+      })
+      .option('apiKey', {
           alias: 'k',
-          type: "string",
-          describe: "API key",
+          type: 'string',
+          describe: 'API key',
       })
-      .option('secret', {
+      .option('apiSecret', {
           alias: 's',
-          type: "string",
-          describe: "API secret",
-      })
-      .option('path', {
-          alias: 'p',
-          type: "string",
-          describe: "Path of dir to push",
+          type: 'string',
+          describe: 'API secret',
       })
       .option('thread', {
           alias: 't',
-          type: "string",
-          describe: "ThreadID of bucket",
+          type: 'string',
+          describe: 'ThreadID of bucket',
       })
-      .option('name', {
+      .option('bucketName', {
           alias: 'n',
-          type: "string",
-          describe: "Name of bucket",
+          type: 'string',
+          describe: 'Name of bucket',
       })
-      .option('pattern', {
+      .option('globPattern', {
           alias: 'g',
-          describe: "Glob pattern",
-          default: "*/**",
+          describe: 'Glob pattern',
+          default: '*/**',
       })
       .option('api', {
-          type: "string",
-          describe: "API",
+          type: 'string',
+          describe: 'API',
       })
-      .demandOption(['key', 'secret', 'name', 'thread', 'path'])
+      .demandOption(['apiKey', 'apiSecret', 'bucketName', 'thread', 'path'])
     },
     async function handler(argv) {
       const output = await execute(
-        argv.api || "",
-        argv.key,
-        argv.secret,
+        argv.api || '',
+        argv.apiKey,
+        argv.apiSecret,
         argv.thread,
-        argv.name,
-        "false",
-        argv.pattern,
+        argv.bucketName,
+        'false',
+        argv.globPattern,
         argv.path,
-        "",
+        '',
       )
-      return pretty(output)
+      pretty(output)
     }
   )
   .command(
-    "clean", 
-    "remove all files from remote bucket.", 
+    'clean', 
+    'remove all files from remote bucket.', 
     (yargs: Argv) => {
       return yargs
-      .option('key', {
+      .option('apiKey', {
           alias: 'k',
-          type: "string",
-          describe: "API key",
+          type: 'string',
+          describe: 'API key'
       })
-      .option('secret', {
+      .option('apiSecret', {
           alias: 's',
-          type: "string",
-          describe: "API secret",
+          type: 'string',
+          describe: 'API secret',
       })
       .option('thread', {
           alias: 't',
-          type: "string",
-          describe: "ThreadID of bucket",
+          type: 'string',
+          describe: 'ThreadID of bucket',
       })
-      .option('name', {
+      .option('bucketName', {
           alias: 'n',
-          type: "string",
-          describe: "Name of bucket",
+          type: 'string',
+          describe: 'Name of bucket',
       })
       .option('api', {
-          type: "string",
-          describe: "API",
+          type: 'string',
+          describe: 'API',
       })
-      .demandOption(['key', 'secret', 'name', 'thread'])
+      .demandOption(['apiKey', 'apiSecret', 'bucketName', 'thread'])
     },
     async function handler(argv) {
       const output = await execute(
-        argv.api || "",
-        argv.key,
-        argv.secret,
+        argv.api || '',
+        argv.apiKey,
+        argv.apiSecret,
         argv.thread,
-        argv.name,
-        "true",
-        "",
-        "",
-        "",
+        argv.bucketName,
+        'true',
+        '',
+        '',
+        '',
       )
-      return pretty(output)
+      pretty(output)
     }
-  ).argv;
+  )
+  .fail(function(msg: string, err: Error) {
+      if (msg && msg != '') {
+        console.log('Error:', msg)
+      }
+      if (err && err.message && err.message != '') {
+        if (err.message == 'Response closed without headers') {
+          console.log('Error: Connection to remote API failed')
+        } else {
+          console.log('Error:', err.message)
+        }
+      }
+      process.exit(1);
+  })
+  .env('HUB')
+  .help()
+  .argv;
 
 // pretty print format
-function pretty(map: RunOutput): string {
+function pretty(map: RunOutput) {
   const mm: { [key: string]: string } = {}
   for (const [k, v] of map.entries()) {
     mm[k] = v
   }
-  return JSON.stringify(mm, null, 2);
+  console.log(
+    JSON.stringify(mm, null, 2)
+  )
 }
