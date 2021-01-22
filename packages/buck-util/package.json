@@ -1,12 +1,12 @@
 {
-  "name": "@textile/buckets-node-sync",
+  "name": "@textile/buck-util",
   "version": "0.0.0",
-  "description": "NodeJS utility for pushing and pulling buckets.",
+  "description": "NodeJS utiliting for pushing and pulling buckets.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
   "bin": {
-    "buckjs": "dist/cjs/cli.js"
+    "buck-util": "dist/cjs/cli.js"
   },
   "files": [
     "dist/**/!(*.spec).js?(.map)",

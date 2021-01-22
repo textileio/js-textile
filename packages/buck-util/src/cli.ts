@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-
-import yargs, {Argv, string} from "yargs"
+import yargs, {Argv} from "yargs"
 import { execute, RunOutput } from './index'
 
 // Example:
@@ -61,9 +60,7 @@ yargs
         argv.path,
         "",
       )
-      const json = pp(output)
-      console.log(json)
-      return json
+      return pretty(output)
     }
   )
   .command(
@@ -109,14 +106,12 @@ yargs
         "",
         "",
       )
-      const json = pp(output)
-      console.log(json)
-      return json
+      return pretty(output)
     }
   ).argv;
 
 // pretty print format
-function pp(map: RunOutput): string {
+function pretty(map: RunOutput): string {
   const mm: { [key: string]: string } = {}
   for (const [k, v] of map.entries()) {
     mm[k] = v
