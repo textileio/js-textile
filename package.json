@@ -126,7 +126,7 @@
   },
   "mocha": {
     "diff": true,
-    "spec": "packages/buckets/src/**/*.spec.ts",
+    "spec": "packages/*/src/**/*.spec.ts",
     "reporter": "spec",
     "recursive": true,
     "require": [
