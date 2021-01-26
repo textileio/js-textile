@@ -19,6 +19,9 @@ const wrongError = new Error('wrong error!')
 const rightError = new Error('right error!')
 const sessionSecret = 'hubsession'
 
+// Test a large file
+const browserFile = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.repeat(10000)
+
 describe('Buckets utils...', function () {
   it('should create max-sized chunks from an input Uin8Array', function () {
     const original = Uint8Array.from(Array.from(Array(1234), (_, i) => i * i))
@@ -145,10 +148,12 @@ describe('Buckets...', function () {
 
     it('should push data from file API in browser', async function () {
       if (isNode) return this.skip()
+
+      // Uploaded file includes more than just browserFile
       const parts = [
-        new Blob(['you construct a file...'], { type: 'text/plain' }),
-        ' Same way as you do with blob',
+        'Construct a file the same as you do with blob',
         new Uint16Array([33]),
+        new Blob([browserFile], { type: 'text/plain' }),
       ]
       // Construct a file
       const file = new File(parts, 'file1.txt')
@@ -159,7 +164,7 @@ describe('Buckets...', function () {
       const res = await client.pushPath(rootKey, 'dir1/file1.jpg', file, {
         progress: (num) => (length = num || 0),
       })
-      expect(length).to.equal(54)
+      expect(length).to.equal(620047)
       expect(res.path).to.not.be.undefined
       expect(res.root).to.not.be.undefined
 
@@ -210,27 +215,41 @@ describe('Buckets...', function () {
     })
 
     it('should pull files by path and write to file on node', async function () {
-      if (isBrowser) return this.skip()
       // Bucket path
       const rootKey = buck.root?.key || ''
       let length = 0
-
       // Bucket path
       const chunks = client.pullPath(rootKey, 'dir1/file1.jpg', {
         progress: (num) => (length = num || 0),
       })
-      const pth = path.join(__dirname, '../../..', 'testdata')
-      const stream = fs.createWriteStream(path.join(pth, 'output.jpg'))
-      // Should be an AsyncIterable
-      for await (const chunk of chunks) {
-        stream.write(chunk)
+      if (isBrowser) {
+        let result = new Uint8Array();
+        const append = (target: Uint8Array, addition: Uint8Array) => {
+          if (target.length === 0) return addition
+          const extendedBuffer = new Uint8Array(addition.length + target.length)
+          extendedBuffer.set(target)
+          extendedBuffer.set(addition, target.length)
+          return extendedBuffer
+        }
+        let sections = 0
+        for await (const chunk of chunks) {
+          sections += 1
+          result = append(result, chunk);
+        }
+        expect(length).to.equal(620047)
+        const file = new TextDecoder("utf-8").decode(result)
+        expect(file.substr(file.length - 15)).to.equal(browserFile.substr(browserFile.length - 15))
+      } else {
+        const pth = path.join(__dirname, '../../..', 'testdata')
+        const stream = fs.createWriteStream(path.join(pth, 'output.jpg'))
+        // Should be an AsyncIterable
+        for await (const chunk of chunks) {
+          stream.write(chunk)
+        }
+        stream.close()
+        expect(length).to.equal(fileSize)
+        fs.unlinkSync(path.join(pth, 'output.jpg'))
       }
-      stream.close()
-      expect(length).to.equal(fileSize)
-      // const stored = fs.statSync(path.join(pth, 'file1.jpg'))
-      // const written = fs.statSync(path.join(pth, 'output.jpg'))
-      // expect(stored.size).to.equal(written.size)
-      fs.unlinkSync(path.join(pth, 'output.jpg'))
 
       // Should throw correctly when the file isn't available
       try {

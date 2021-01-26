@@ -678,11 +678,11 @@ export function bucketsPullPath(
       metadata,
       onMessage: async (res: PullPathResponse) => {
         const chunk = res.getChunk_asU8()
-        push(chunk)
         written += chunk.byteLength
         if (opts?.progress) {
           opts.progress(written)
         }
+        push(chunk)
       },
       onEnd: async (
         status: grpc.Code,
