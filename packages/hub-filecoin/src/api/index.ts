@@ -9,6 +9,9 @@ import {
   CidInfo as _CidInfo,
   CidInfoRequest,
   CidInfoResponse,
+  CidSummary as _CidSummary,
+  CidSummaryRequest,
+  CidSummaryResponse,
   ColdConfig as _ColdConfig,
   ColdInfo as _ColdInfo,
   DealError as _DealError,
@@ -40,6 +43,7 @@ import log from 'loglevel'
 import {
   AddressInfo,
   CidInfo,
+  CidSummary,
   ColdConfig,
   ColdInfo,
   DealError,
@@ -190,6 +194,14 @@ function fromPbStorageJob(item: _StorageJob.AsObject): StorageJob {
   }
 }
 
+function fromPbCidSummary(item: _CidSummary.AsObject): CidSummary {
+  return {
+    ...item,
+    queuedJobs: item.queuedJobsList,
+    executingJob: item.executingJob != '' ? item.executingJob : undefined,
+  }
+}
+
 function fromPbCidInfo(item: _CidInfo.AsObject): CidInfo {
   return {
     ...item,
@@ -202,12 +214,6 @@ function fromPbCidInfo(item: _CidInfo.AsObject): CidInfo {
     queuedStorageJobs: item.queuedStorageJobsList.map(fromPbStorageJob),
     executingStorageJob: item.executingStorageJob
       ? fromPbStorageJob(item.executingStorageJob)
-      : undefined,
-    latestFinalStorageJob: item.latestFinalStorageJob
-      ? fromPbStorageJob(item.latestFinalStorageJob)
-      : undefined,
-    latestSuccessfulStorageJob: item.latestSuccessfulStorageJob
-      ? fromPbStorageJob(item.latestSuccessfulStorageJob)
       : undefined,
   }
 }
@@ -275,15 +281,40 @@ export async function balance(
 /**
  * @internal
  */
-export async function cidInfo(
+export async function cidSummary(
   api: GrpcConnection,
   ctx?: ContextInterface,
   ...cids: string[]
-): Promise<CidInfo[]> {
-  const req = new CidInfoRequest()
+): Promise<CidSummary[]> {
+  const req = new CidSummaryRequest()
   req.setCidsList(cids)
+  const res: CidSummaryResponse = await api.unary(
+    UserService.CidSummary,
+    req,
+    ctx,
+  )
+  return res.toObject().cidSummaryList.map(fromPbCidSummary)
+}
+
+/**
+ * @internal
+ */
+export async function cidInfo(
+  api: GrpcConnection,
+  ctx?: ContextInterface,
+  cid?: string,
+): Promise<CidInfo> {
+  const req = new CidInfoRequest()
+  if (cid) {
+    req.setCid(cid)
+  }
   const res: CidInfoResponse = await api.unary(UserService.CidInfo, req, ctx)
-  return res.toObject().cidInfosList.map(fromPbCidInfo)
+  const info = res.toObject().cidInfo
+  if (info) {
+    return fromPbCidInfo(info)
+  } else {
+    throw new Error("didn't receive cid info in response")
+  }
 }
 
 /**
