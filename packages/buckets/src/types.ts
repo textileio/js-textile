@@ -107,6 +107,17 @@ export interface PushPathResult {
 }
 
 /**
+ * The expected result format from pushing multiple paths to a bucket
+ */
+export interface PushPathsResult {
+  path: string
+  cid: CID
+  size: number
+  pinned: number
+  root?: Root
+}
+
+/**
  * Response from bucket links query.
  */
 export interface Links {

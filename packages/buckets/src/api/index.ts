@@ -1,4 +1,5 @@
 import { grpc } from '@improbable-eng/grpc-web'
+import { Repeater } from '@repeaterjs/repeater'
 import {
   Archive as _Archive,
   ArchiveConfig as _ArchiveConfig,
@@ -34,6 +35,8 @@ import {
   PushPathAccessRolesRequest,
   PushPathRequest,
   PushPathResponse,
+  PushPathsRequest,
+  PushPathsResponse,
   RemovePathRequest,
   RemovePathResponse as _RemovePathResponse,
   RemoveRequest,
@@ -46,7 +49,6 @@ import {
 import {
   APIService,
   APIServiceClient,
-  APIServicePushPath,
   BidirectionalStream,
   Status,
 } from '@textile/buckets-grpc/api/bucketsd/pb/bucketsd_pb_service'
@@ -54,7 +56,6 @@ import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
 import CID from 'cids'
-import { EventIterator } from 'event-iterator'
 import log from 'loglevel'
 import {
   AbortError,
@@ -73,11 +74,14 @@ import {
   PathItem,
   PushOptions,
   PushPathResult,
+  PushPathsResult,
   RemovePathOptions,
   RemovePathResponse,
   Root,
 } from '../types'
 import { File, normaliseInput } from './normalize'
+
+export { File }
 
 const logger = log.getLogger('buckets-api')
 
@@ -412,116 +416,9 @@ export async function bucketsListIpfsPath(
  *    return await buckets.pushPath(bucketKey!, 'index.html', file)
  * }
  * ```
- *
  * @internal
  */
 export async function bucketsPushPath(
-  api: GrpcConnection,
-  key: string,
-  path: string,
-  input: any,
-  opts?: PushOptions,
-  ctx?: ContextInterface,
-): Promise<PushPathResult> {
-  return new Promise<PushPathResult>(async (resolve, reject) => {
-    // Only process the first input if there are more than one
-    const source: File | undefined = (await normaliseInput(input).next()).value
-    const client = grpc.client<
-      PushPathRequest,
-      PushPathResponse,
-      APIServicePushPath
-    >(APIService.PushPath, {
-      host: api.serviceHost,
-      transport: api.rpcOptions.transport,
-      debug: api.rpcOptions.debug,
-    })
-    // Send a close event to the bucket api upon abort
-    if (opts?.signal !== undefined) {
-      opts.signal.addEventListener('abort', () => {
-        client.close()
-        return reject(AbortError)
-      })
-    }
-    client.onMessage((message) => {
-      // Let's just make sure we haven't aborted this outside this function
-      if (opts?.signal?.aborted) {
-        client.close()
-        return reject(AbortError)
-      }
-      if (message.hasEvent()) {
-        const event = message.getEvent()?.toObject()
-        if (event?.path) {
-          // @todo: Is there an standard library/tool for this step in JS?
-          const pth = event.path.startsWith('/ipfs/')
-            ? event.path.split('/ipfs/')[1]
-            : event.path
-          const cid = new CID(pth)
-          const res: PushPathResult = {
-            path: {
-              path: `/ipfs/${cid.toString()}`,
-              cid: cid,
-              root: cid,
-              remainder: '',
-            },
-            root: event.root?.path ?? '',
-          }
-          return resolve(res)
-        } else if (opts?.progress) {
-          opts.progress(event?.bytes)
-        }
-      } else {
-        return reject(new Error('Invalid reply'))
-      }
-    })
-    client.onEnd((code, msg) => {
-      if (code !== grpc.Code.OK) {
-        const message = msg ? msg : code.toString()
-        return reject(new Error(message))
-      } else {
-        return resolve()
-      }
-    })
-    if (source) {
-      const head = new PushPathRequest.Header()
-      head.setPath(source.path || path)
-      head.setKey(key)
-      // Setting root here ensures pushes will error if root is out of date
-      const root = await ensureRootString(api, key, opts?.root, ctx)
-      head.setRoot(root)
-      const req = new PushPathRequest()
-      req.setHeader(head)
-      const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
-      // Let's just make sure we haven't aborted this outside this function
-      if (opts?.signal?.aborted) {
-        return reject(AbortError)
-      }
-      client.start(metadata)
-      client.send(req)
-
-      if (source.content) {
-        for await (const chunk of source.content) {
-          // Let's just make sure we haven't aborted this outside this function
-          if (opts?.signal?.aborted) {
-            try {
-              client.close()
-            } catch {} // noop
-            return reject(AbortError)
-          }
-          // Naively chunk into chunks smaller than CHUNK_SIZE bytes
-          for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
-            const part = new PushPathRequest()
-            part.setChunk(chunklet)
-            client.send(part)
-          }
-        }
-      }
-      // We only need to finish send here if we actually started
-      client.finishSend()
-    }
-  })
-}
-
-export async function bucketsPushPathNode(
   api: GrpcConnection,
   key: string,
   path: string,
@@ -589,14 +486,14 @@ export async function bucketsPushPathNode(
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
-        return resolve()
+        return reject(new Error('undefined result'))
       }
     })
     stream.on('status', (status?: Status) => {
       if (status && status.code !== grpc.Code.OK) {
         return reject(new Error(status.details))
       } else {
-        return resolve()
+        return reject(new Error('undefined result'))
       }
     })
 
@@ -631,8 +528,210 @@ export async function bucketsPushPathNode(
     stream.end()
   })
 }
+
+export async function bucketsPushPaths(
+  api: GrpcConnection,
+  key: string,
+  input: any,
+  opts?: PushOptions,
+  ctx?: ContextInterface,
+): Promise<PushPathsResult> {
+  return new Promise<PushPathsResult>(async (resolve, reject) => {
+    // Only process the first input if there are more than one
+    const source: File | undefined = (await normaliseInput(input).next()).value
+
+    if (!source) {
+      return reject(AbortError)
+    }
+
+    const clientjs = new APIServiceClient(api.serviceHost, api.rpcOptions)
+
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+
+    const stream: BidirectionalStream<
+      PushPathsRequest,
+      PushPathsResponse
+    > = clientjs.pushPaths(metadata)
+
+    if (opts?.signal !== undefined) {
+      opts.signal.addEventListener('abort', () => {
+        stream.cancel()
+        return reject(AbortError)
+      })
+    }
+    let total = 0
+    stream.on('data', (message: PushPathsResponse) => {
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        stream.cancel()
+        return reject(AbortError)
+      }
+      const obj: PushPathsResult = {
+        path: message.getPath(),
+        root: fromPbRootObjectNullable(message.getRoot()),
+        cid: new CID(message.getCid()),
+        pinned: message.getPinned(),
+        size: message.getSize(),
+      }
+      total += obj.size
+      if (opts?.progress) {
+        opts.progress(total)
+      }
+      resolve(obj)
+    })
+
+    stream.on('end', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return reject(new Error('undefined result'))
+      }
+    })
+    stream.on('status', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return reject(new Error(status.details))
+      } else {
+        return reject(new Error('undefined result'))
+      }
+    })
+
+    const head = new PushPathsRequest.Header()
+    head.setKey(key)
+    // Setting root here ensures pushes will error if root is out of date
+    const root = await ensureRootString(api, key, opts?.root, ctx)
+    head.setRoot(root)
+    const req = new PushPathsRequest()
+    req.setHeader(head)
+
+    stream.write(req)
+    if (source.content) {
+      for await (const chunk of source.content) {
+        if (opts?.signal?.aborted) {
+          // Let's just make sure we haven't aborted this outside this function
+          try {
+            // Should already have been handled
+            stream.cancel()
+          } catch {} // noop
+          return reject(AbortError)
+        }
+        // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+        for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
+          const chunk = new PushPathsRequest.Chunk()
+          chunk.setData(chunklet)
+          chunk.setPath(source.path)
+          const part = new PushPathsRequest()
+          part.setChunk(chunk)
+          stream.write(part)
+        }
+      }
+    }
+    stream.end()
+  })
+}
+
 /**
- * Pushes a file to a bucket path.
+ * Pushes an iterable of files to a bucket.
+ * @param key Unique (IPNS compatible) identifier key for a bucket.
+ * @param input The input array of file/stream/objects.
+ * @param opts Options to control response stream.
+ * @internal
+ */
+export function bucketsPushPaths2(
+  api: GrpcConnection,
+  key: string,
+  input: any,
+  opts?: PushOptions,
+  ctx?: ContextInterface,
+): AsyncIterableIterator<PushPathsResult> {
+  return new Repeater<PushPathsResult>(async (push, stop) => {
+    const clientjs = new APIServiceClient(api.serviceHost, api.rpcOptions)
+
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+
+    const stream: BidirectionalStream<
+      PushPathsRequest,
+      PushPathsResponse
+    > = clientjs.pushPaths(metadata)
+
+    if (opts?.signal !== undefined) {
+      opts.signal.addEventListener('abort', () => {
+        stream.cancel()
+        throw AbortError
+      })
+    }
+
+    let total = 0
+    stream.on('data', (message: PushPathsResponse) => {
+      // Let's just make sure we haven't aborted this outside this function
+      if (opts?.signal?.aborted) {
+        stream.cancel()
+        return stop(AbortError)
+      }
+      const obj: PushPathsResult = {
+        path: message.getPath(),
+        root: fromPbRootObjectNullable(message.getRoot()),
+        cid: new CID(message.getCid()),
+        pinned: message.getPinned(),
+        size: message.getSize(),
+      }
+      total += obj.size
+      if (opts?.progress) {
+        opts.progress(total)
+      }
+      push(obj)
+    })
+
+    stream.on('end', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return stop(new Error(status.details))
+      }
+      return stop()
+    })
+    stream.on('status', (status?: Status) => {
+      if (status && status.code !== grpc.Code.OK) {
+        return stop(new Error(status.details))
+      }
+      return stop()
+    })
+
+    const head = new PushPathsRequest.Header()
+    head.setKey(key)
+    // Setting root here ensures pushes will error if root is out of date
+    const root = await ensureRootString(api, key, opts?.root, ctx)
+    head.setRoot(root)
+    const req = new PushPathsRequest()
+    req.setHeader(head)
+    stream.write(req)
+
+    for await (const { path, content } of normaliseInput(input)) {
+      const req = new PushPathsRequest()
+      const chunk = new PushPathsRequest.Chunk()
+      chunk.setPath(path)
+      if (content) {
+        for await (const data of content) {
+          if (opts?.signal?.aborted) {
+            // Let's just make sure we haven't aborted this outside this function
+            try {
+              // Should already have been handled
+              stream.cancel()
+            } catch {} // noop
+            return stop(AbortError)
+          }
+          // Naively chunk into chunks smaller than CHUNK_SIZE bytes
+          for (const chunklet of genChunks(data as Uint8Array, CHUNK_SIZE)) {
+            chunk.setData(chunklet)
+            req.setChunk(chunk)
+            stream.write(req)
+          }
+        }
+      }
+    }
+    stop.then(() => stream.end())
+  })
+}
+
+/**
+ * Sets a file at a given bucket path.
  * @internal
  */
 export async function bucketsSetPath(
@@ -664,12 +763,12 @@ export function bucketsPullPath(
   opts?: { progress?: (num?: number) => void },
   ctx?: ContextInterface,
 ): AsyncIterableIterator<Uint8Array> {
-  const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
-  const request = new PullPathRequest()
-  request.setKey(key)
-  request.setPath(path)
-  let written = 0
-  const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
+  return new Repeater<Uint8Array>((push, stop) => {
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+    const request = new PullPathRequest()
+    request.setKey(key)
+    request.setPath(path)
+    let written = 0
     const resp = grpc.invoke(APIService.PullPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
@@ -690,21 +789,14 @@ export function bucketsPullPath(
         // _trailers: grpc.Metadata,
       ) => {
         if (status !== grpc.Code.OK) {
-          fail(new Error(message))
+          stop(new Error(message))
         }
         stop()
       },
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    return () => resp.close()
+    // Cleanup afterwards
+    stop.then(() => resp.close())
   })
-  const it: AsyncIterableIterator<Uint8Array> = {
-    [Symbol.asyncIterator]() {
-      return this
-    },
-    ...events[Symbol.asyncIterator](),
-  }
-  return it
 }
 
 /**
@@ -720,11 +812,11 @@ export function bucketsPullIpfsPath(
   opts?: { progress?: (num?: number) => void },
   ctx?: ContextInterface,
 ): AsyncIterableIterator<Uint8Array> {
-  const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
-  const request = new PullIpfsPathRequest()
-  request.setPath(path)
-  let written = 0
-  const events = new EventIterator<Uint8Array>(({ push, stop, fail }) => {
+  return new Repeater<Uint8Array>((push, stop) => {
+    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
+    const request = new PullIpfsPathRequest()
+    request.setPath(path)
+    let written = 0
     const resp = grpc.invoke(APIService.PullIpfsPath, {
       host: api.serviceHost,
       transport: api.rpcOptions.transport,
@@ -745,21 +837,13 @@ export function bucketsPullIpfsPath(
         // _trailers: grpc.Metadata,
       ) => {
         if (status !== grpc.Code.OK) {
-          fail(new Error(message))
+          stop(new Error(message))
         }
         stop()
       },
     })
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    return () => resp.close()
+    stop.then(() => resp.close())
   })
-  const it: AsyncIterableIterator<Uint8Array> = {
-    [Symbol.asyncIterator]() {
-      return this
-    },
-    ...events[Symbol.asyncIterator](),
-  }
-  return it
 }
 
 /**
@@ -996,8 +1080,8 @@ export class BucketsGrpcClient {
     R extends grpc.ProtobufMessage,
     T extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<R, T>
-  >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
+  >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T | void> {
+    return new Promise<T | void>((resolve, reject) => {
       const metadata = { ...this.context.toJSON(), ...ctx?.toJSON() }
       grpc.unary(methodDescriptor, {
         request: req,

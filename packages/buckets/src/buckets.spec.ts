@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
 import { Duplex } from 'stream'
-import { CHUNK_SIZE, genChunks } from './api'
+import { CHUNK_SIZE, File, genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
 import { AbortError, CreateResponse } from './types'
@@ -372,11 +372,10 @@ describe('Buckets...', function () {
       expect(item?.items[1].items).to.have.length(1)
     })
 
-    it.skip('should not be able to push in parallel', async function () {
-      //TODO: Right now, the Go client doesn't "locK" a bucket for pushes, this is something
-      // we should add/support to ensure buckets pushed in parallel don't corrupt things
+    it('should be able to push bulk file uploads', async function () {
       if (isBrowser) return this.skip()
-      const { root } = await client.getOrCreate('pushes')
+      this.timeout(30000)
+      const { root } = await client.getOrCreate('pushPaths1')
 
       // Grab a reference to a relatively large file
       const pth = path.join(__dirname, '../../..', 'testdata')
@@ -390,19 +389,61 @@ describe('Buckets...', function () {
       stream2.push(Buffer.from('that spans two buffers'))
       stream2.push(null)
 
-      try {
-        await Promise.all([
-          // Note the names are different from above test
-          client.pushPath(rootKey, 'dir1/file3.jpg', stream1),
-          client.pushPath(rootKey, 'dir1/file4.txt', stream2),
-        ])
-        throw new Error('wrong error')
-      } catch (err) {
-        expect(err.message).to.include('non-fast-forward')
+      let total = 0
+      const progress = (size?: number): void => {
+        total += size ?? 0
       }
-      // Confirm that our second-level dir only includes one of them
-      const { item } = await client.listPath(rootKey, '')
-      expect(item?.items[1].items).to.have.length(1)
+
+      const files: File[] = [
+        {
+          path: 'dir1/file3.jpg',
+          content: stream1,
+        },
+        {
+          path: 'dir1/file4.txt',
+          content: stream2,
+        },
+      ]
+      const iter = client.pushPaths(
+        rootKey,
+        {
+          path: 'dir1/file3.jpg',
+          content: stream1,
+        },
+        {
+          progress,
+          root,
+        },
+      )
+
+      const res = await iter
+
+      // for await (const next of iter) {
+      //   expect(next.path).to.not.be.undefined
+      //   expect(next.root).to.not.be.undefined
+      // }
+      console.log(res)
+      expect(total).to.equal(fileSize)
+
+      // Check
+      // let check = await client.listPath(rootKey, '')
+      // expect(check.item?.items).to.have.lengthOf(3)
+
+      // // Try overwriting the path
+      // // Now create a relatively small stream that should finish first
+      // const r = new Readable()
+      // r.push('seeya!')
+      // r.push(null)
+      // files = [
+      //   {
+      //     path: 'dir1/file3.jpg',
+      //     content: r,
+      //   },
+      // ]
+      // // The iter won't be fully consumed until it is drained.
+      // await drain(client.pushPaths(rootKey, files))
+      // check = await client.listPath(rootKey, '')
+      // expect(check.item?.items).to.have.lengthOf(3)
     })
   })
 

@@ -87,6 +87,7 @@ __pycache__
 
 # Swarm
 docker-compose.swarm.yml
+docker-compose.yml
 
 # Other
 **/tmp.db

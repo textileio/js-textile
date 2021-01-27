@@ -10,7 +10,7 @@
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "lerna run build --stream",
     "build:esm": "rollup -c",
-    "references": "npx lerna-to-typescript-project-references --update",
+    "references:update": "npx lerna-to-typescript-project-references --update",
     "references:check": "npx lerna-to-typescript-project-references",
     "lint": "eslint --fix --ext .js,.ts packages/*/src/**/*",
     "lint:check": "eslint --ext .js,.ts packages/*/src/**/*",
