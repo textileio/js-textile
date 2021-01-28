@@ -415,8 +415,7 @@ describe('Buckets...', function () {
         expect(root).to.not.be.undefined
         totals.set(path, size)
       }
-      // TODO: For some reason I'm getting slightly larger size from buckets
-      // expect(totals.get('file1.jpg')).to.equal(fileSize)
+      expect(totals.get('file1.jpg')).to.be.greaterThan(fileSize)
       expect(totals.get('path/to/file2.txt')).to.equal(47)
 
       // Check
