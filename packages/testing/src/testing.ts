@@ -8,7 +8,12 @@ import {
 } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import axios from 'axios'
 
-const delay = (time: number): Promise<void> =>
+// Settings for localhost development and testing
+export const addrApiurl = 'http://127.0.0.1:3007'
+export const addrGatewayUrl = 'http://127.0.0.1:8006'
+export const sessionSecret = 'hubsession'
+
+export const delay = (time: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, time))
 
 export const createUsername = (size = 12) => {
@@ -38,13 +43,13 @@ export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
     const client = new APIServiceClient(ctx.host, {
       transport: WebsocketTransport(),
     })
-    ctx.toMetadata().then((meta) => {
+    ctx.toMetadata().then((meta: any) => {
       return client.createKey(
         req,
         meta,
         (err: ServiceError | null, message: pb.CreateKeyResponse | null) => {
           if (err) reject(err)
-          resolve(message?.toObject())
+          resolve(message?.toObject() as any)
         },
       )
     })
@@ -69,7 +74,7 @@ export const signUp = (
     const client = new APIServiceClient(ctx.host, {
       transport: WebsocketTransport(),
     })
-    ctx.toMetadata().then((meta) => {
+    ctx.toMetadata().then((meta: any) => {
       client.signup(
         req,
         meta,

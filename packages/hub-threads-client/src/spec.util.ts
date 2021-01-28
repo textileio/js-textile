@@ -7,16 +7,10 @@ import {
   ServiceError,
 } from '@textile/hub-grpc/api/hubd/pb/hubd_pb_service'
 import axios from 'axios'
+import { createUsername } from '@textile/testing'
 
 const delay = (time: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, time))
-
-export const createUsername = (size = 12) => {
-  return Array(size)
-    .fill(0)
-    .map(() => Math.random().toString(36).charAt(2))
-    .join('')
-}
 
 export const createEmail = () => {
   return `${createUsername()}@doe.com`

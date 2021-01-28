@@ -9,12 +9,7 @@ import { isBrowser } from 'browser-or-node'
 import { expect } from 'chai'
 import fs from 'fs'
 import path from 'path'
-import { createKey, signUp } from './spec.util'
-
-// Settings for localhost development and testing
-const addrApiurl = 'http://127.0.0.1:3007'
-const addrGatewayUrl = 'http://127.0.0.1:8006'
-const sessionSecret = 'hubsession'
+import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
 
 describe('All apis...', () => {
   describe('Buckets and accounts', () => {
