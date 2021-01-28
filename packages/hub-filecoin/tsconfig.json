@@ -18,9 +18,6 @@
       "path": "../grpc-connection"
     },
     {
-      "path": "../testing"
-    },
-    {
       "path": "../security"
     }
   ]

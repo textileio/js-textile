@@ -5,8 +5,8 @@ import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { createAPISig } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
 import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
-import { Client, GetThreadResponse } from './client'
 import { expect } from 'chai'
+import { Client, GetThreadResponse } from './client'
 
 const wrongError = new Error('wrong error!')
 

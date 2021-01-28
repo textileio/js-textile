@@ -11,9 +11,11 @@
     {
       "path": "../context"
     },
-    { "path": "../grpc-connection" },
-    { "path": "../security" },
-    { "path": "../testing" },
-    { "path": "../transport" }
+    {
+      "path": "../grpc-connection"
+    },
+    {
+      "path": "../testing"
+    }
   ]
 }

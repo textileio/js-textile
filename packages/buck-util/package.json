@@ -32,10 +32,6 @@
     "yargs": "16.2.0"
   },
   "devDependencies": {
-    "@textile/hub-grpc": "2.6.0",
-    "@textile/security": "^0.7.0",
-    "@textile/grpc-transport": "^0.3.0",
-    "@textile/grpc-connection": "^2.3.0",
     "@textile/testing": "^0.0.0",
     "@types/glob": "^7.1.1",
     "@types/jest": "^25.2.3",

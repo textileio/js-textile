@@ -19,9 +19,6 @@
     },
     {
       "path": "../security"
-    },
-    {
-      "path": "../testing"
     }
   ]
 }
