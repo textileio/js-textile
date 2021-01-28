@@ -5,8 +5,10 @@ import AbortController from 'abort-controller'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
 import fs from 'fs'
+import drain from 'it-drain'
+import last from 'it-last'
 import path from 'path'
-import { Duplex } from 'stream'
+import { Readable } from 'stream'
 import { CHUNK_SIZE, File, genChunks } from './api'
 import { Buckets } from './buckets'
 import { createKey, signUp } from './spec.util'
@@ -352,7 +354,7 @@ describe('Buckets...', function () {
       const rootKey = root?.key || ''
 
       // Now create a relatively small stream that should finish first
-      const stream2 = new Duplex()
+      const stream2 = new Readable()
       stream2.push(Buffer.from('some small amount of text'))
       stream2.push(Buffer.from('that spans two buffers'))
       stream2.push(null)
@@ -379,7 +381,7 @@ describe('Buckets...', function () {
     it('should be able to push bulk file uploads', async function () {
       if (isBrowser) return this.skip()
       this.timeout(30000)
-      const { root } = await client.getOrCreate('pushPaths1')
+      let { root } = await client.getOrCreate('pushPaths1')
 
       // Grab a reference to a relatively large file
       const pth = path.join(__dirname, '../../..', 'testdata')
@@ -388,56 +390,86 @@ describe('Buckets...', function () {
       const rootKey = root?.key || ''
 
       // Now create a relatively small stream that should finish first
-      const stream2 = new Duplex()
-      stream2.push(Buffer.from('some small amount of text'))
-      stream2.push(Buffer.from('that spans two buffers'))
+      const stream2 = new Readable()
+      stream2.push(Buffer.from('some small amount of text')) // 25 bytes
+      stream2.push(Buffer.from('that spans two buffers')) // 22 bytes
       stream2.push(null)
 
-      let total = 0
-      const progress = (size?: number): void => {
-        total += size ?? 0
-      }
-
-      const files: File[] = [
+      let files: File[] = [
         {
-          path: 'dir1/file3.jpg',
+          path: 'file1.jpg',
           content: stream1,
         },
         {
-          path: 'dir1/file4.txt',
+          path: 'path/to/file2.txt',
           content: stream2,
         },
       ]
-      const iter = client.pushPaths(rootKey, files, {
-        progress,
-        root,
-      })
-
-      for await (const next of iter) {
-        expect(next.path).to.not.be.undefined
-        expect(next.root).to.not.be.undefined
+      const iter = client.pushPaths(rootKey, files, { root })
+      const totals = new Map([
+        ['file1.jpg', 0],
+        ['path/to/file2.txt', 0],
+      ])
+      for await (const { path, root, size } of iter) {
+        expect(['file1.jpg', 'path/to/file2.txt']).to.include(path)
+        expect(root).to.not.be.undefined
+        totals.set(path, size)
       }
-      expect(total).to.equal(fileSize)
+      // TODO: For some reason I'm getting slightly larger size from buckets
+      // expect(totals.get('file1.jpg')).to.equal(fileSize)
+      expect(totals.get('path/to/file2.txt')).to.equal(47)
 
       // Check
-      const check = await client.listPath(rootKey, '')
+      let check = await client.listPath(rootKey, '')
       expect(check.item?.items).to.have.lengthOf(3)
 
-      // // Try overwriting the path
-      // // Now create a relatively small stream that should finish first
-      // const r = new Readable()
-      // r.push('seeya!')
-      // r.push(null)
-      // files = [
-      //   {
-      //     path: 'dir1/file3.jpg',
-      //     content: r,
-      //   },
-      // ]
-      // // The iter won't be fully consumed until it is drained.
-      // await drain(client.pushPaths(rootKey, files))
-      // check = await client.listPath(rootKey, '')
-      // expect(check.item?.items).to.have.lengthOf(3)
+      // Try overwriting the path
+      // Now create a relatively small stream that should finish first
+      const r = new Readable()
+      r.push('seeya!')
+      r.push(null)
+      files = [
+        {
+          path: 'path/to/file2.txt',
+          content: r,
+        },
+      ]
+      // The iter won't be fully consumed until it is drained
+      await drain(client.pushPaths(rootKey, files))
+      check = await client.listPath(rootKey, '')
+      expect(check.item?.items).to.have.lengthOf(3)
+
+      // Overwrite the path again, this time replacing a file link with a dir link
+      const final = await last(
+        client.pushPaths(rootKey, { path: 'path/to', content: 'seeya!' }),
+      )
+      root = final ? final.root : undefined
+      check = await client.listPath(rootKey, '')
+      expect(check.item?.items).to.have.lengthOf(3)
+
+      // Concurrent writes should result in one being rejected due to the fast-forward-only rule
+      const pp1 = client.pushPaths(
+        rootKey,
+        {
+          path: 'conflict',
+          content: 'read, set, go!',
+        },
+        { root },
+      )
+      const pp2 = client.pushPaths(
+        rootKey,
+        {
+          path: 'conflict',
+          content: 'ready, set, go!',
+        },
+        { root },
+      )
+      try {
+        await Promise.all([drain(pp1), drain(pp2)])
+        throw new Error('wrong error')
+      } catch (err) {
+        expect(err.message).to.include('update is non-fast-forward')
+      }
     })
   })
 

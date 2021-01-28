@@ -56,7 +56,10 @@ import { Context, ContextInterface } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
 import { WebsocketTransport } from '@textile/grpc-transport'
 import CID from 'cids'
+import drain from 'it-drain'
 import log from 'loglevel'
+// @ts-expect-error
+import paramap from 'paramap-it'
 import {
   AbortError,
   Archive,
@@ -529,106 +532,6 @@ export async function bucketsPushPath(
   })
 }
 
-export async function bucketsPushPaths(
-  api: GrpcConnection,
-  key: string,
-  input: any,
-  opts?: PushOptions,
-  ctx?: ContextInterface,
-): Promise<PushPathsResult> {
-  return new Promise<PushPathsResult>(async (resolve, reject) => {
-    // Only process the first input if there are more than one
-    const source: File | undefined = (await normaliseInput(input).next()).value
-
-    if (!source) {
-      return reject(AbortError)
-    }
-
-    const clientjs = new APIServiceClient(api.serviceHost, api.rpcOptions)
-
-    const metadata = { ...api.context.toJSON(), ...ctx?.toJSON() }
-
-    const stream: BidirectionalStream<
-      PushPathsRequest,
-      PushPathsResponse
-    > = clientjs.pushPaths(metadata)
-
-    if (opts?.signal !== undefined) {
-      opts.signal.addEventListener('abort', () => {
-        stream.cancel()
-        return reject(AbortError)
-      })
-    }
-    let total = 0
-    stream.on('data', (message: PushPathsResponse) => {
-      // Let's just make sure we haven't aborted this outside this function
-      if (opts?.signal?.aborted) {
-        stream.cancel()
-        return reject(AbortError)
-      }
-      const obj: PushPathsResult = {
-        path: message.getPath(),
-        root: fromPbRootObjectNullable(message.getRoot()),
-        cid: new CID(message.getCid()),
-        pinned: message.getPinned(),
-        size: message.getSize(),
-      }
-      total += obj.size
-      if (opts?.progress) {
-        opts.progress(total)
-      }
-      resolve(obj)
-    })
-
-    stream.on('end', (status?: Status) => {
-      if (status && status.code !== grpc.Code.OK) {
-        return reject(new Error(status.details))
-      } else {
-        return reject(new Error('undefined result'))
-      }
-    })
-    stream.on('status', (status?: Status) => {
-      if (status && status.code !== grpc.Code.OK) {
-        return reject(new Error(status.details))
-      } else {
-        return reject(new Error('undefined result'))
-      }
-    })
-
-    const head = new PushPathsRequest.Header()
-    head.setKey(key)
-    // Setting root here ensures pushes will error if root is out of date
-    const root = await ensureRootString(api, key, opts?.root, ctx)
-    head.setRoot(root)
-    const req = new PushPathsRequest()
-    req.setHeader(head)
-
-    stream.write(req)
-    if (source.content) {
-      for await (const chunk of source.content) {
-        if (opts?.signal?.aborted) {
-          // Let's just make sure we haven't aborted this outside this function
-          try {
-            // Should already have been handled
-            stream.cancel()
-          } catch {} // noop
-          return reject(AbortError)
-        }
-        // Naively chunk into chunks smaller than CHUNK_SIZE bytes
-        for (const chunklet of genChunks(chunk as Uint8Array, CHUNK_SIZE)) {
-          const chunk = new PushPathsRequest.Chunk()
-          chunk.setData(chunklet)
-          chunk.setPath(source.path)
-          const part = new PushPathsRequest()
-          part.setChunk(chunk)
-          stream.write(part)
-        }
-      }
-    }
-    stream.end()
-  })
-}
-
 /**
  * Pushes an iterable of files to a bucket.
  * @param key Unique (IPNS compatible) identifier key for a bucket.
@@ -636,11 +539,11 @@ export async function bucketsPushPaths(
  * @param opts Options to control response stream.
  * @internal
  */
-export function bucketsPushPaths2(
+export function bucketsPushPaths(
   api: GrpcConnection,
   key: string,
   input: any,
-  opts?: PushOptions,
+  opts?: Omit<PushOptions, 'progress'>,
   ctx?: ContextInterface,
 ): AsyncIterableIterator<PushPathsResult> {
   return new Repeater<PushPathsResult>(async (push, stop) => {
@@ -660,7 +563,6 @@ export function bucketsPushPaths2(
       })
     }
 
-    let total = 0
     stream.on('data', (message: PushPathsResponse) => {
       // Let's just make sure we haven't aborted this outside this function
       if (opts?.signal?.aborted) {
@@ -673,10 +575,6 @@ export function bucketsPushPaths2(
         cid: new CID(message.getCid()),
         pinned: message.getPinned(),
         size: message.getSize(),
-      }
-      total += obj.size
-      if (opts?.progress) {
-        opts.progress(total)
       }
       push(obj)
     })
@@ -703,7 +601,8 @@ export function bucketsPushPaths2(
     req.setHeader(head)
     stream.write(req)
 
-    for await (const { path, content } of normaliseInput(input)) {
+    // Map the following over the top level inputs for parallel pushes
+    const mapper = async ({ path, content }: File): Promise<void> => {
       const req = new PushPathsRequest()
       const chunk = new PushPathsRequest.Chunk()
       chunk.setPath(path)
@@ -731,7 +630,10 @@ export function bucketsPushPaths2(
       req.setChunk(final)
       stream.write(req)
     }
-    stop.then(() => stream.end())
+
+    // We don't care about the top level order, progress is labeled by path
+    await drain(paramap(normaliseInput(input), mapper, { ordered: false }))
+    stream.end()
   })
 }
 
