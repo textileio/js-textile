@@ -725,6 +725,11 @@ export function bucketsPushPaths2(
           }
         }
       }
+      // Close out the file
+      const final = new PushPathsRequest.Chunk()
+      final.setPath(path)
+      req.setChunk(final)
+      stream.write(req)
     }
     stop.then(() => stream.end())
   })
