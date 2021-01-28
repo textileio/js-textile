@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "@textile/crypto": "^4.0.0",
-    "@textile/testing": "^0.0.1",
-    "axios": "^0.21.1"
+    "@textile/testing": "^0.0.0"
   }
 }

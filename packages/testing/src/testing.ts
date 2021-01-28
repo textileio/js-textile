@@ -36,6 +36,18 @@ export const confirmEmail = async (gurl: string, secret: string) => {
   return true
 }
 
+export const acceptInvite = async (
+  gurl: string,
+  token: string,
+): Promise<boolean> => {
+  await delay(500)
+  const resp = await axios.get(`${gurl}/consent/${token}`)
+  if (resp.status !== 200) {
+    throw new Error(resp.statusText)
+  }
+  return true
+}
+
 export const createKey = (ctx: ContextInterface, kind: keyof pb.KeyTypeMap) => {
   return new Promise<pb.CreateKeyResponse.AsObject>((resolve, reject) => {
     const req = new pb.CreateKeyRequest()

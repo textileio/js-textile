@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "@textile/context": "^0.10.0",
-    "@textile/testing": "^0.0.1"
+    "@textile/testing": "^0.0.0"
   }
 }
