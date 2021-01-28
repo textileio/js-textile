@@ -21,8 +21,9 @@ import {
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPullPathAccessRoles,
+  bucketsPushPath,
   bucketsPushPathAccessRoles,
-  bucketsPushPathNode,
+  bucketsPushPaths,
   bucketsRemove,
   bucketsRemovePath,
   bucketsRoot,
@@ -43,6 +44,7 @@ import {
   PathItem,
   PushOptions,
   PushPathResult,
+  PushPathsResult,
   RemovePathOptions,
   RemovePathResponse,
   Root,
@@ -660,7 +662,15 @@ export class Buckets extends GrpcAuthentication {
     input: any,
     options?: PushOptions,
   ): Promise<PushPathResult> {
-    return bucketsPushPathNode(this, key, path, input, options)
+    return bucketsPushPath(this, key, path, input, options)
+  }
+
+  pushPaths(
+    key: string,
+    input: any,
+    options?: PushOptions,
+  ): AsyncIterableIterator<PushPathsResult> {
+    return bucketsPushPaths(this, key, input, options)
   }
 
   /**
