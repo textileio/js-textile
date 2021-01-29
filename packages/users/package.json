@@ -36,6 +36,6 @@
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
-    "axios": "^0.21.1"
+    "@textile/testing": "^0.0.0"
   }
 }

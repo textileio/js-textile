@@ -4,15 +4,11 @@ import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { createAPISig } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
+import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
 import { expect } from 'chai'
 import { Client, GetThreadResponse } from './client'
-import { createKey, signUp } from './spec.util'
 
-// Settings for localhost development and testing
-const addrApiurl = 'http://127.0.0.1:3007'
-const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
-const sessionSecret = 'hubsession'
 
 describe('Threads Client...', () => {
   describe('getThread', () => {

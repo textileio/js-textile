@@ -10,6 +10,12 @@
     },
     {
       "path": "../context"
+    },
+    {
+      "path": "../grpc-connection"
+    },
+    {
+      "path": "../testing"
     }
   ]
 }

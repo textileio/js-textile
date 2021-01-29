@@ -1,0 +1,29 @@
+{
+  "name": "@textile/testing",
+  "version": "0.0.0",
+  "private": true,
+  "description": "test helpers for monorepo",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist/**/!(*.spec).js?(.map)",
+    "dist/**/!(*.spec).d.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npx tsc -b ./tsconfig.json",
+    "clean": "npx rimraf ./dist"
+  },
+  "repository": "github:textileio/js-textile",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@textile/context": "^0.10.0",
+    "@textile/grpc-transport": "^0.3.0",
+    "@textile/hub-grpc": "2.5.1",
+    "axios": "^0.21.1"
+  }
+}

@@ -3,26 +3,20 @@ import { PrivateKey, PublicKey } from '@textile/crypto'
 import { expect } from 'chai'
 import { Admin } from './admin'
 import { SigninOrSignupResponse } from './api'
+import { acceptInvite, addrApiurl, addrGatewayUrl, createEmail, createUsername, sessionSecret } from '@textile/testing'
 import {
-  acceptInvite,
-  createFakeEmail,
-  createFakeUsername,
   signin,
   signup,
 } from './spec.utils'
 
-// Settings for localhost development and testing
-const addrApiurl = 'http://127.0.0.1:3007'
-const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
-const sessionSecret = 'hubsession'
 
 describe('Hub Admin...', function () {
   // Freeze context for rehydration use only
   const ctx = Object.freeze(new Context(addrApiurl))
   let dev: SigninOrSignupResponse
-  const email = createFakeEmail()
-  const username = createFakeUsername()
+  const email = createEmail()
+  const username = createUsername()
 
   before(async function () {
     this.timeout(10000)
@@ -169,7 +163,7 @@ describe('Hub Admin...', function () {
   context('Orgs...', function () {
     it('should create an org', async function () {
       let admin = new Admin(ctx)
-      const name = createFakeUsername()
+      const name = createUsername()
       try {
         // Without session
         await admin.createOrg(name)
@@ -188,7 +182,7 @@ describe('Hub Admin...', function () {
 
     it('should get org', async function () {
       this.timeout(5000)
-      const name = createFakeUsername()
+      const name = createUsername()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       const org = await admin.createOrg(name)
@@ -222,7 +216,7 @@ describe('Hub Admin...', function () {
 
     it('should remove orgs', async function () {
       this.timeout(5000)
-      const name = createFakeUsername()
+      const name = createUsername()
       let creds = new Context(addrApiurl).withSession(dev.session)
       let admin = new Admin(creds)
       const org = await admin.createOrg(name)
@@ -258,7 +252,8 @@ describe('Hub Admin...', function () {
     })
 
     it('should invite to org', async function () {
-      const name = createFakeUsername()
+      this.timeout(5000)
+      const name = createUsername()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       const org = await admin.createOrg(name)
@@ -270,14 +265,14 @@ describe('Hub Admin...', function () {
         expect(err).to.not.equal(wrongError)
       }
       // Good email
-      const token = await admin.inviteToOrg(createFakeEmail(), name)
+      const token = await admin.inviteToOrg(createEmail(), name)
       const accepted = await acceptInvite(addrGatewayUrl, token)
       expect(accepted).to.be.true
     })
 
     it('should leave an org', async function () {
       this.timeout(10000)
-      const name = createFakeUsername()
+      const name = createUsername()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       const org = await admin.createOrg(name)
@@ -288,7 +283,7 @@ describe('Hub Admin...', function () {
       } catch (err) {
         expect(err).to.not.equal(wrongError)
       }
-      const [username, email] = [createFakeUsername(), createFakeEmail()]
+      const [username, email] = [createUsername(), createEmail()]
       const user = await signup(
         admin,
         username,
@@ -332,8 +327,8 @@ describe('Hub Admin...', function () {
   context('Utils', function () {
     it('should check that a username is available', async function () {
       this.timeout(5000)
-      const username = createFakeUsername()
-      const email = createFakeEmail()
+      const username = createUsername()
+      const email = createEmail()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       let available = await admin.isUsernameAvailable(username)
@@ -346,8 +341,8 @@ describe('Hub Admin...', function () {
 
     it('should check that an org name is available', async function () {
       this.timeout(5000)
-      const username = createFakeUsername()
-      const email = createFakeEmail()
+      const username = createUsername()
+      const email = createEmail()
       let admin = new Admin(ctx)
       const user = await signup(
         admin,
@@ -378,8 +373,8 @@ describe('Hub Admin...', function () {
 
     it('should allow a user to destroy their account', async function () {
       this.timeout(5000)
-      const username = createFakeUsername()
-      const email = createFakeEmail()
+      const username = createUsername()
+      const email = createEmail()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
 

@@ -27,6 +27,9 @@
       "path": "../security"
     },
     {
+      "path": "../testing"
+    },
+    {
       "path": "../transport"
     }
   ]
