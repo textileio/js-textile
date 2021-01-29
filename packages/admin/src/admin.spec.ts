@@ -252,6 +252,7 @@ describe('Hub Admin...', function () {
     })
 
     it('should invite to org', async function () {
+      this.timeout(5000)
       const name = createUsername()
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
