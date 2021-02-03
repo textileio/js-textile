@@ -1,4 +1,4 @@
-name: Test
+name: Threads-Test
 on:
   pull_request:
   push:
@@ -30,8 +30,8 @@ jobs:
           BILLING_ADDR_GATEWAY_HOST: /ip4/0.0.0.0/tcp/8010
           BILLING_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
         ports:
-          - "127.0.0.1:10006:10006"
-          - "127.0.0.1:8010:8010"
+          - '127.0.0.1:10006:10006'
+          - '127.0.0.1:8010:8010'
       textile:
         image: textile/textile:latest
         env:

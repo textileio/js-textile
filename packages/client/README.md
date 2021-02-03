@@ -1,4 +1,4 @@
-# @textile/crypto
+# @textile/threads-client
 
 **Info**
 
@@ -13,7 +13,7 @@ npm install @textile/hub
 **Usage**
 
 ```js
-import { PrivateKey } from '@textile/hub'
+import { Client } from '@textile/hub'
 ```
 
 [Read the docs](https://textileio.github.io/js-textile/).

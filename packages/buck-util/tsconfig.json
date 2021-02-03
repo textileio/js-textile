@@ -1,21 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist/cjs",
-    "rootDir": "./src"
-  },
+  "compilerOptions": { "outDir": "./dist/cjs", "rootDir": "./src" },
   "references": [
-    {
-      "path": "../buckets"
-    },
-    {
-      "path": "../context"
-    },
-    {
-      "path": "../grpc-connection"
-    },
-    {
-      "path": "../testing"
-    }
+    { "path": "../buckets" },
+    { "path": "../context" },
+    { "path": "../grpc-connection" }
   ]
 }
