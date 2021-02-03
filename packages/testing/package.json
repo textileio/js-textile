@@ -1,6 +1,6 @@
 {
   "name": "@textile/testing",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "test helpers for monorepo",
   "main": "dist/cjs/index.js",
@@ -19,10 +19,9 @@
   },
   "repository": "github:textileio/js-textile",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
-    "@textile/context": "^0.10.0",
-    "@textile/grpc-transport": "^0.3.0",
+    "@textile/context": "^0.11.0",
+    "@textile/grpc-transport": "^0.4.0",
     "@textile/hub-grpc": "2.5.1",
     "axios": "^0.21.1"
   }
