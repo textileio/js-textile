@@ -178,9 +178,9 @@ export interface HotInfo {
  */
 export interface FilStorage {
   /**
-   * The deal proposal cid.
+   * The unique deal id.
    */
-  proposalCid: string
+  dealId: number
   /**
    * Whether or not the current storage is a renewal.
    */
@@ -189,10 +189,6 @@ export interface FilStorage {
    * The number of epochs the data is being stored for.
    */
   duration: number
-  /**
-   * The epoch in which the deal was activated.
-   */
-  activationEpoch: number
   /**
    * The starting epoch in which the deal is considered active on-chain.
    */
@@ -410,6 +406,28 @@ export interface StorageJob {
 }
 
 /**
+ * Summary information about a cid in Powergate.
+ */
+export interface CidSummary {
+  /**
+   * The cid.
+   */
+  cid: string
+  /**
+   * Whether or not the data is already stored by Powergate.
+   */
+  stored: boolean
+  /**
+   * A list of queued job ids for the cid.
+   */
+  queuedJobs: string[]
+  /**
+   * The id of the executing job for the cid if there is one.
+   */
+  executingJob?: string
+}
+
+/**
  * Information about the current jobs and storage state of a data cid.
  */
 export interface CidInfo {
@@ -433,14 +451,6 @@ export interface CidInfo {
    * Information about the executing storage job or undefined if there isn't one.
    */
   executingStorageJob?: StorageJob
-  /**
-   * Information about the latest successful, canceled, or failed storage job or undefined if there isn't one.
-   */
-  latestFinalStorageJob?: StorageJob
-  /**
-   * Information about the latest successful storage job or undefined if there isn't one.
-   */
-  latestSuccessfulStorageJob?: StorageJob
 }
 
 /**
