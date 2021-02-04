@@ -1,7 +1,5 @@
 # @textile/crypto
 
-> Various crypto modules for use with Textile tools/libraries.
-
 **Info**
 
 You should use the `@textile/hub` library to integrate this library into your application.

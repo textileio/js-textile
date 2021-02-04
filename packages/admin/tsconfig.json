@@ -1,21 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist/cjs",
-    "rootDir": "./src"
-  },
+  "compilerOptions": { "outDir": "./dist/cjs", "rootDir": "./src" },
   "references": [
-    {
-      "path": "../context"
-    },
-    {
-      "path": "../grpc-authentication"
-    },
-    {
-      "path": "../grpc-connection"
-    },
-    {
-      "path": "../transport"
-    }
+    { "path": "../context" },
+    { "path": "../grpc-authentication" },
+    { "path": "../grpc-connection" },
+    { "path": "../transport" }
   ]
 }

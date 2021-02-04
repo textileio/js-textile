@@ -1,15 +1,84 @@
 name: Test
 on:
-  pull_request:
   push:
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
 jobs:
-  test:
-    name: Test
+  threads:
+    name: Test Threads
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
+
+    services:
+      threads1:
+        image: textile/go-threads:latest
+        env:
+          THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
+          THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
+          THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
+          THRDS_DEBUG: true
+        ports:
+          - '4006:4006'
+          - '127.0.0.1:6006:6006'
+          - '127.0.0.1:6007:6007'
+      threads2:
+        image: textile/go-threads:latest
+        env:
+          THRDS_HOSTADDR: /ip4/0.0.0.0/tcp/4006
+          THRDS_APIADDR: /ip4/0.0.0.0/tcp/6006
+          THRDS_APIPROXYADDR: /ip4/0.0.0.0/tcp/6007
+          THRDS_DEBUG: true
+        ports:
+          - '4206:4006'
+          - '127.0.0.1:6206:6006'
+          - '127.0.0.1:6207:6007'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install
+        run: npm install
+
+      - name: Bootstrap
+        run: npm run bootstrap -- --hoist
+
+      - name: Build
+        run: npm run build
+
+      - name: Test Node
+        run: npm run test:threads:node
+
+      - name: Test Browser
+        run: npm run test:threads:browser
+
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
+
+  hub:
+    name: Test Hub
+    runs-on: ubuntu-latest
+    needs: threads
 
     services:
       ipfs:
@@ -30,8 +99,8 @@ jobs:
           BILLING_ADDR_GATEWAY_HOST: /ip4/0.0.0.0/tcp/8010
           BILLING_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
         ports:
-          - "127.0.0.1:10006:10006"
-          - "127.0.0.1:8010:8010"
+          - '127.0.0.1:10006:10006'
+          - '127.0.0.1:8010:8010'
       textile:
         image: textile/textile:latest
         env:
@@ -54,6 +123,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Setup
         uses: actions/setup-node@v1
         with:
@@ -62,20 +141,17 @@ jobs:
       - name: Install
         run: npm install
 
-      - name: Boostrap
+      - name: Bootstrap
         run: npm run bootstrap -- --hoist
 
-      - name: Build All
-        run: |
-          npm run build
+      - name: Build
+        run: npm run build
 
       - name: Test Node
-        run: |
-          npm run test:node
+        run: npm run test:hub:node
 
       - name: Test Browser
-        run: |
-          npm run test:browser
+        run: npm run test:hub:browser
 
       - name: Test Examples
         run: |

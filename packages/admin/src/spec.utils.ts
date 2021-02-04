@@ -1,44 +1,6 @@
-import axios from 'axios'
 import type { Admin } from './admin'
 import type { SigninOrSignupResponse } from './api'
-
-const delay = (time: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, time))
-
-export const createFakeUsername = (size = 12): string => {
-  return Array(size)
-    .fill(0)
-    .map(() => Math.random().toString(36).charAt(2))
-    .join('')
-}
-
-export const createFakeEmail = (): string => {
-  return `${createFakeUsername()}@doe.com`
-}
-
-export const acceptInvite = async (
-  gurl: string,
-  token: string,
-): Promise<boolean> => {
-  await delay(500)
-  const resp = await axios.get(`${gurl}/consent/${token}`)
-  if (resp.status !== 200) {
-    throw new Error(resp.statusText)
-  }
-  return true
-}
-
-export const confirmEmail = async (
-  gurl: string,
-  secret: string,
-): Promise<boolean> => {
-  await delay(500)
-  const resp = await axios.get(`${gurl}/confirm/${secret}`)
-  if (resp.status !== 200) {
-    throw new Error(resp.statusText)
-  }
-  return true
-}
+import { confirmEmail } from '@textile/testing'
 
 // Function for reusable signup
 export const signup = (

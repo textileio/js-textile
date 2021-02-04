@@ -5,9 +5,9 @@ import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { Client } from '@textile/hub-threads-client'
 import { createAPISig } from '@textile/security'
 import { ThreadID } from '@textile/threads-id'
+import { createKey, signUp } from '@textile/testing'
 import { expect } from 'chai'
 import { MailboxEvent, Status } from './api'
-import { createKey, signUp } from './spec.util'
 import { Users } from './users'
 
 // Settings for localhost development and testing

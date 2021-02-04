@@ -11,15 +11,12 @@ import path from 'path'
 import { Readable } from 'stream'
 import { CHUNK_SIZE, File, genChunks } from './api'
 import { Buckets } from './buckets'
-import { createKey, signUp } from './spec.util'
+import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
 import { AbortError, CreateResponse } from './types'
 
 // Settings for localhost development and testing
-const addrApiurl = 'http://127.0.0.1:3007'
-const addrGatewayUrl = 'http://127.0.0.1:8006'
 const wrongError = new Error('wrong error!')
 const rightError = new Error('right error!')
-const sessionSecret = 'hubsession'
 
 // Test a large file
 const browserFile = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.repeat(

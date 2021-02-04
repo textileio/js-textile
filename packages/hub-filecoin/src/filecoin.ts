@@ -7,8 +7,22 @@ import {
 } from '@textile/grpc-authentication'
 import { KeyInfo, UserAuth } from '@textile/security'
 import log from 'loglevel'
-import { addresses, balance, cidInfo, retrievalDealRecords, storageDealRecords } from './api'
-import { AddressInfo, CidInfo, DealRecordsConfig, RetrievalDealRecord, StorageDealRecord } from './types'
+import {
+  addresses,
+  balance,
+  cidInfo,
+  cidSummary,
+  retrievalDealRecords,
+  storageDealRecords,
+} from './api'
+import {
+  AddressInfo,
+  CidInfo,
+  CidSummary,
+  DealRecordsConfig,
+  RetrievalDealRecord,
+  StorageDealRecord,
+} from './types'
 
 const logger = log.getLogger('filecoin')
 /**
@@ -68,7 +82,10 @@ export class Filecoin extends GrpcAuthentication {
    * }
    * ```
    */
-  static withUserAuth(auth: UserAuth | (() => Promise<UserAuth>), options?: WithUserAuthOptions) {
+  static withUserAuth(
+    auth: UserAuth | (() => Promise<UserAuth>),
+    options?: WithUserAuthOptions,
+  ) {
     const res = super.withUserAuth(auth, options)
     return this.copyAuth(res, options)
   }
@@ -164,12 +181,21 @@ export class Filecoin extends GrpcAuthentication {
   }
 
   /**
-   * Get information about the storage and job job state of cids stored by the user.
+   * Get summary information about the storage and storage job state of cids stored by the user.
    * @beta
-   * @param cids The cids to get info for.
+   * @param cids The cids to get summary info for.
    */
-  async cidInfo(...cids: string[]): Promise<CidInfo[]> {
-    return cidInfo(this, undefined, ...cids)
+  async cidSummary(...cids: string[]): Promise<CidSummary[]> {
+    return cidSummary(this, undefined, ...cids)
+  }
+
+  /**
+   * Get information about the storage and storage job state of a cid stored by the user.
+   * @beta
+   * @param cid The cid to get info for.
+   */
+  async cidInfo(cid: string): Promise<CidInfo> {
+    return cidInfo(this, undefined, cid)
   }
 
   /**
@@ -177,7 +203,9 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async storageDealRecords(config: DealRecordsConfig): Promise<StorageDealRecord[]> {
+  async storageDealRecords(
+    config: DealRecordsConfig,
+  ): Promise<StorageDealRecord[]> {
     return storageDealRecords(this, config)
   }
 
@@ -186,7 +214,9 @@ export class Filecoin extends GrpcAuthentication {
    * @beta
    * @param config A config object to control the behavior of the query.
    */
-  async retrievalDealRecords(config: DealRecordsConfig): Promise<RetrievalDealRecord[]> {
+  async retrievalDealRecords(
+    config: DealRecordsConfig,
+  ): Promise<RetrievalDealRecord[]> {
     return retrievalDealRecords(this, config)
   }
 }
