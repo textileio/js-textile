@@ -66,10 +66,10 @@ jobs:
         run: npm run build
 
       - name: Test Node
-        run: npm run test:node -- -g Client
+        run: npm run test:threads:node
 
       - name: Test Browser
-        run: npm run test:browser -- -g Client
+        run: npm run test:threads:browser
 
       - name: Dump docker logs on failure
         if: failure()
@@ -121,10 +121,10 @@ jobs:
 
     steps:
       - name: Test Node
-        run: npm run test:node -- -g !Client
+        run: npm run test:hub:node
 
       - name: Test Browser
-        run: npm run test:browser -- -g !Client
+        run: npm run test:hub:browser
 
       - name: Test Examples
         run: |
