@@ -2,8 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": { "outDir": "./dist/cjs", "rootDir": "./src" },
   "references": [
-    { "path": "../buckets" },
     { "path": "../context" },
-    { "path": "../grpc-connection" }
+    { "path": "../crypto" },
+    { "path": "../id" },
+    { "path": "../multiaddr" },
+    { "path": "../security" },
+    { "path": "../transport" }
   ]
 }

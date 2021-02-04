@@ -3,14 +3,20 @@ import { Context, errors } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { createAPISig } from '@textile/security'
+import {
+  addrApiurl,
+  addrGatewayUrl,
+  createKey,
+  sessionSecret,
+  signUp,
+} from '@textile/testing'
 import { ThreadID } from '@textile/threads-id'
-import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
 import { expect } from 'chai'
 import { Client, GetThreadResponse } from './client'
 
 const wrongError = new Error('wrong error!')
 
-describe('Threads Client...', () => {
+describe('Threads...', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
