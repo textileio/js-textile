@@ -35,7 +35,7 @@ yargs
       .option('globPattern', {
           alias: 'g',
           describe: 'Glob pattern',
-          default: '*/**',
+          default: '**/*',
       })
       .option('api', {
           type: 'string',
