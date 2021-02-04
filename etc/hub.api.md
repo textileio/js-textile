@@ -208,10 +208,16 @@ export interface CidInfo {
     cid: string;
     currentStorageInfo?: StorageInfo;
     executingStorageJob?: StorageJob;
-    latestFinalStorageJob?: StorageJob;
     latestStorageConfig?: StorageConfig;
-    latestSuccessfulStorageJob?: StorageJob;
     queuedStorageJobs: StorageJob[];
+}
+
+// @public
+export interface CidSummary {
+    cid: string;
+    executingJob?: string;
+    queuedJobs: string[];
+    stored: boolean;
 }
 
 // @public
@@ -448,7 +454,9 @@ export class Filecoin extends GrpcAuthentication {
     // @beta
     balance(address: string): Promise<bigint>;
     // @beta
-    cidInfo(...cids: string[]): Promise<CidInfo[]>;
+    cidInfo(cid: string): Promise<CidInfo>;
+    // @beta
+    cidSummary(...cids: string[]): Promise<CidSummary[]>;
     static copyAuth(auth: GrpcAuthentication, options?: CopyAuthOptions): Filecoin;
     getToken(identity: Identity): Promise<string>;
     getTokenChallenge(publicKey: string, callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>): Promise<string>;
@@ -476,12 +484,11 @@ export interface FilRenew {
 
 // @public
 export interface FilStorage {
-    activationEpoch: number;
+    dealId: number;
     duration: number;
     epochPrice: number;
     miner: string;
     pieceCid: string;
-    proposalCid: string;
     renewed: boolean;
     startEpoch: number;
 }
