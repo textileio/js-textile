@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module @textile/threads-client/models
  */
-import { grpc } from "@improbable-eng/grpc-web"
-import { ContextInterface } from "@textile/context"
+import { grpc } from '@improbable-eng/grpc-web'
+import { ContextInterface } from '@textile/context'
 import {
   CreateRequest,
   DeleteRequest,
@@ -16,10 +16,10 @@ import {
   VerifyRequest,
   WriteTransactionReply,
   WriteTransactionRequest,
-} from "@textile/threads-client-grpc/threads_pb"
-import { ThreadID } from "@textile/threads-id"
-import { QueryJSON } from "./query"
-import { Transaction } from "./Transaction"
+} from '@textile/threads-client-grpc/threads_pb'
+import { ThreadID } from '@textile/threads-id'
+import { QueryJSON } from './query'
+import { Transaction } from './Transaction'
 
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
@@ -89,7 +89,7 @@ export class WriteTransaction extends Transaction<
       WriteTransactionReply
     >,
     protected readonly threadID: ThreadID,
-    protected readonly modelName: string
+    protected readonly modelName: string,
   ) {
     super(client, threadID, modelName)
   }
@@ -170,8 +170,8 @@ export class WriteTransaction extends Transaction<
       const saveReq = new SaveRequest()
       const list: Uint8Array[] = []
       values.forEach((v) => {
-        if (!("_id" in v)) {
-          ;(v as any)._id = "" // The server will add an _id if empty.
+        if (!('_id' in v)) {
+          ;(v as any)._id = '' // The server will add an _id if empty.
         }
         list.push(encoder.encode(JSON.stringify(v)))
       })
@@ -330,7 +330,7 @@ export class WriteTransaction extends Transaction<
         if (reply) {
           resolve()
         } else {
-          reject(new Error("unexpected response type"))
+          reject(new Error('unexpected response type'))
         }
       })
       super.setReject(reject)

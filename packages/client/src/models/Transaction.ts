@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module @textile/threads-client
  */
-import { grpc } from "@improbable-eng/grpc-web"
-import { ThreadID } from "@textile/threads-id"
+import { grpc } from '@improbable-eng/grpc-web'
+import { ThreadID } from '@textile/threads-id'
 
 /**
  * Transaction represents a bulk transaction on a store.
@@ -22,7 +22,7 @@ export class Transaction<
   constructor(
     protected readonly client: grpc.Client<TRequest, TResponse>,
     protected readonly threadID: ThreadID,
-    protected readonly modelName: string
+    protected readonly modelName: string,
   ) {}
 
   /**

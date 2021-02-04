@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module @textile/threads-client/models
  */
-export * from "./query"
-export * from "./ReadTransaction"
-export * from "./WriteTransaction"
+export * from './query'
+export * from './ReadTransaction'
+export * from './WriteTransaction'
 
 /**
  * Event represents an update event.
@@ -33,7 +33,7 @@ export interface Event {
 /**
  * PatchType represents the type of instance update. One of delete, create, or save.
  */
-export type PatchType = "delete" | "create" | "save"
+export type PatchType = 'delete' | 'create' | 'save'
 
 /**
  * Patch represents an update to an instance.

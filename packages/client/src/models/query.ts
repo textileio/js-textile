@@ -78,14 +78,14 @@ export interface QueryJSON {
  */
 const valueToJSONValue = (value: Value): ValueJSON => {
   switch (typeof value) {
-    case "string":
+    case 'string':
       return { string: value }
-    case "boolean":
+    case 'boolean':
       return { bool: value }
-    case "number":
+    case 'number':
       return { float: value }
     default:
-      throw new Error("unsupported JSON value type")
+      throw new Error('unsupported JSON value type')
   }
 }
 
@@ -97,7 +97,7 @@ export class Criterion implements CriterionJSON {
     public fieldPath: string,
     public operation?: ComparisonJSON,
     public value?: ValueJSON,
-    public query?: Query
+    public query?: Query,
   ) {}
 
   /**
@@ -197,7 +197,7 @@ export class Query implements QueryJSON {
   constructor(
     public ands: CriterionJSON[] = [],
     public ors: QueryJSON[] = [],
-    public sort?: SortJSON
+    public sort?: SortJSON,
   ) {}
 
   /**
@@ -252,7 +252,7 @@ export class Query implements QueryJSON {
    * On multiple calls, only the last one is considered.
    */
   orderByID(): Query {
-    this.sort = { fieldPath: "_id", desc: false }
+    this.sort = { fieldPath: '_id', desc: false }
     return this
   }
 
@@ -271,7 +271,7 @@ export class Query implements QueryJSON {
    * On multiple calls, only the last one is considered.
    */
   orderByIDDesc(): Query {
-    this.sort = { fieldPath: "_id", desc: true }
+    this.sort = { fieldPath: '_id', desc: true }
     return this
   }
 

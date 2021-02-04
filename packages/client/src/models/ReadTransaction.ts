@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module @textile/threads-client/models
  */
-import { grpc } from "@improbable-eng/grpc-web"
-import { ContextInterface } from "@textile/context"
+import { grpc } from '@improbable-eng/grpc-web'
+import { ContextInterface } from '@textile/context'
 import {
   FindByIDRequest,
   FindRequest,
@@ -11,10 +11,10 @@ import {
   ReadTransactionReply,
   ReadTransactionRequest,
   StartTransactionRequest,
-} from "@textile/threads-client-grpc/threads_pb"
-import { ThreadID } from "@textile/threads-id"
-import { QueryJSON } from "./query"
-import { Transaction } from "./Transaction"
+} from '@textile/threads-client-grpc/threads_pb'
+import { ThreadID } from '@textile/threads-id'
+import { QueryJSON } from './query'
+import { Transaction } from './Transaction'
 
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
@@ -61,7 +61,7 @@ export class ReadTransaction extends Transaction<
       ReadTransactionReply
     >,
     protected readonly threadID: ThreadID,
-    protected readonly modelName: string
+    protected readonly modelName: string,
   ) {
     super(client, threadID, modelName)
   }

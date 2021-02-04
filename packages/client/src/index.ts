@@ -2,27 +2,27 @@
  * @packageDocumentation
  * @module @textile/threads-client
  */
-import { grpc } from "@improbable-eng/grpc-web"
-import { UnaryOutput } from "@improbable-eng/grpc-web/dist/typings/unary"
-import { Context, ContextInterface, defaultHost } from "@textile/context"
-import { Identity } from "@textile/crypto"
-import { WebsocketTransport } from "@textile/grpc-transport"
+import { grpc } from '@improbable-eng/grpc-web'
+import { UnaryOutput } from '@improbable-eng/grpc-web/dist/typings/unary'
+import { Context, ContextInterface, defaultHost } from '@textile/context'
+import { Identity } from '@textile/crypto'
+import { WebsocketTransport } from '@textile/grpc-transport'
 import {
   bytesFromAddr,
   bytesToOptions,
   bytesToTuples,
   stringFromBytes,
-} from "@textile/multiaddr"
-import { KeyInfo, ThreadKey, UserAuth } from "@textile/security"
-import * as pb from "@textile/threads-client-grpc/threads_pb"
+} from '@textile/multiaddr'
+import { KeyInfo, ThreadKey, UserAuth } from '@textile/security'
+import * as pb from '@textile/threads-client-grpc/threads_pb'
 import {
   API,
   APIGetToken,
   APIListen,
-} from "@textile/threads-client-grpc/threads_pb_service"
-import { ThreadID } from "@textile/threads-id"
-import "fastestsmallesttextencoderdecoder"
-import toJsonSchema, { JSONSchema3or4 } from "to-json-schema"
+} from '@textile/threads-client-grpc/threads_pb_service'
+import { ThreadID } from '@textile/threads-id'
+import 'fastestsmallesttextencoderdecoder'
+import toJsonSchema, { JSONSchema3or4 } from 'to-json-schema'
 import {
   ComparisonJSON,
   CriterionJSON,
@@ -37,7 +37,7 @@ import {
   ValueJSON,
   Where,
   WriteTransaction,
-} from "./models"
+} from './models'
 
 export {
   Filter,
@@ -61,17 +61,17 @@ function isEmpty(obj: any) {
 }
 
 export function getFunctionBody(
-  fn: ((...args: any[]) => any) | string
+  fn: ((...args: any[]) => any) | string,
 ): string {
   // https://stackoverflow.com/a/25229488/1256988
   function removeCommentsFromSource(str: string) {
     return str.replace(
       /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm,
-      "$1"
+      '$1',
     )
   }
   const s = removeCommentsFromSource(fn.toString())
-  return s.substring(s.indexOf("{") + 1, s.lastIndexOf("}"))
+  return s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'))
 }
 
 /**
@@ -122,11 +122,11 @@ const decoder = new TextDecoder()
 
 export function maybeLocalAddr(ip: string): boolean | RegExpMatchArray {
   return (
-    ["localhost", "", "::1"].includes(ip) ||
+    ['localhost', '', '::1'].includes(ip) ||
     ip.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/) ||
-    ip.startsWith("192.168.") ||
-    ip.startsWith("10.0.") ||
-    ip.endsWith(".local")
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.0.') ||
+    ip.endsWith('.local')
   )
 }
 
@@ -234,10 +234,10 @@ export class Client {
   static withUserAuth(
     auth: UserAuth | (() => Promise<UserAuth>),
     host = defaultHost,
-    debug = false
+    debug = false,
   ): Client {
     const context =
-      typeof auth === "object"
+      typeof auth === 'object'
         ? Context.fromUserAuth(auth, host)
         : Context.fromUserAuthCallback(auth, host)
     return new Client(context, debug)
@@ -260,7 +260,7 @@ export class Client {
   static async withKeyInfo(
     key: KeyInfo,
     host = defaultHost,
-    debug = false
+    debug = false,
   ): Promise<Client> {
     return new Client(await new Context(host).withKeyInfo(key), debug)
   }
@@ -289,7 +289,7 @@ export class Client {
       async (challenge: Uint8Array) => {
         return identity.sign(challenge)
       },
-      ctx
+      ctx,
     )
   }
 
@@ -308,7 +308,7 @@ export class Client {
   getTokenChallenge(
     publicKey: string,
     callback: (challenge: Uint8Array) => Uint8Array | Promise<Uint8Array>,
-    ctx?: ContextInterface
+    ctx?: ContextInterface,
   ): Promise<string> {
     const client = grpc.client<
       pb.GetTokenRequest,
@@ -320,7 +320,7 @@ export class Client {
       debug: this.rpcOptions.debug,
     })
     return new Promise<string>((resolve, reject) => {
-      let token = ""
+      let token = ''
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
           const challenge = message.getChallenge_asU8()
@@ -335,7 +335,7 @@ export class Client {
       })
       client.onEnd((
         code: grpc.Code,
-        message: string /** trailers: grpc.Metadata */
+        message: string /** trailers: grpc.Metadata */,
       ) => {
         client.close()
         if (code === grpc.Code.OK) {
@@ -458,14 +458,14 @@ export class Client {
    * @param thread the ID of the database
    */
   public listCollections(
-    thread: ThreadID
+    thread: ThreadID,
   ): Promise<Array<pb.GetCollectionInfoReply.AsObject>> {
     const req = new pb.ListCollectionsRequest()
     req.setDbid(thread.toBytes())
     return this.unary(
       API.ListCollections,
       req,
-      (res: pb.ListCollectionsReply) => res.toObject().collectionsList
+      (res: pb.ListCollectionsReply) => res.toObject().collectionsList,
     )
   }
 
@@ -558,14 +558,14 @@ export class Client {
    */
   public newCollection(
     threadID: ThreadID,
-    config: CollectionConfig
+    config: CollectionConfig,
   ): Promise<void> {
     const req = new pb.NewCollectionRequest()
     const conf = new pb.CollectionConfig()
     conf.setName(config.name)
     if (config.schema === undefined || isEmpty(config.schema)) {
       // We'll use our default schema
-      config.schema = { properties: { _id: { type: "string" } } }
+      config.schema = { properties: { _id: { type: 'string' } } }
     }
     conf.setSchema(encoder.encode(JSON.stringify(config.schema)))
 
@@ -615,7 +615,7 @@ export class Client {
   public newCollectionFromObject(
     threadID: ThreadID,
     obj: Record<string, any>,
-    config: Omit<CollectionConfig, "schema">
+    config: Omit<CollectionConfig, 'schema'>,
   ): Promise<void> {
     const schema: JSONSchema3or4 = toJsonSchema(obj)
     return this.newCollection(threadID, { ...config, schema })
@@ -662,14 +662,14 @@ export class Client {
   public updateCollection(
     threadID: ThreadID,
     // Everything except "name" is optional here
-    config: CollectionConfig
+    config: CollectionConfig,
   ): Promise<void> {
     const req = new pb.UpdateCollectionRequest()
     const conf = new pb.CollectionConfig()
     conf.setName(config.name)
     if (config.schema === undefined || isEmpty(config.schema)) {
       // We'll use our default schema
-      config.schema = { properties: { _id: { type: "string" } } }
+      config.schema = { properties: { _id: { type: 'string' } } }
     }
     conf.setSchema(encoder.encode(JSON.stringify(config.schema)))
     if (config.writeValidator) {
@@ -730,7 +730,7 @@ export class Client {
    */
   public getCollectionIndexes(
     threadID: ThreadID,
-    name: string
+    name: string,
   ): Promise<pb.Index.AsObject[]> {
     const req = new pb.GetCollectionIndexesRequest()
     req.setDbid(threadID.toBytes())
@@ -738,13 +738,13 @@ export class Client {
     return this.unary(
       API.GetCollectionIndexes,
       req,
-      (res: pb.GetCollectionIndexesReply) => res.toObject().indexesList
+      (res: pb.GetCollectionIndexesReply) => res.toObject().indexesList,
     )
   }
 
   public getCollectionInfo(
     threadID: ThreadID,
-    name: string
+    name: string,
   ): Promise<CollectionConfig> {
     const req = new pb.GetCollectionInfoRequest()
     req.setDbid(threadID.toBytes())
@@ -762,7 +762,7 @@ export class Client {
           readFilter: res.getReadfilter(),
         }
         return result
-      }
+      },
     )
   }
 
@@ -782,14 +782,14 @@ export class Client {
   public newDBFromAddr(
     address: string,
     key: string | Uint8Array,
-    collections?: Array<CollectionConfig>
+    collections?: Array<CollectionConfig>,
   ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
     const addr = bytesFromAddr(address)
     req.setAddr(addr)
     // Should always be encoded string, but might already be bytes
     req.setKey(
-      typeof key === "string" ? ThreadKey.fromString(key).toBytes() : key
+      typeof key === 'string' ? ThreadKey.fromString(key).toBytes() : key,
     )
     if (collections !== undefined) {
       req.setCollectionsList(
@@ -808,14 +808,14 @@ export class Client {
             config.setIndexesList(idxs)
           }
           return config
-        })
+        }),
       )
     }
     return this.unary(API.NewDBFromAddr, req, (/** res: pb.NewDBReply */) => {
       // Hacky way to extract threadid from addr that succeeded
       // TODO: Return this directly from the gRPC API on the go side?
       const result = bytesToTuples(req.getAddr_asU8()).filter(
-        ([key]) => key === 406
+        ([key]) => key === 406,
       )
       return ThreadID.fromString(result[0][1] as string)
     })
@@ -849,21 +849,21 @@ export class Client {
   public joinFromInfo(
     info: DBInfo,
     includeLocal = false,
-    collections?: Array<CollectionConfig>
+    collections?: Array<CollectionConfig>,
   ): Promise<ThreadID> {
     const req = new pb.NewDBFromAddrRequest()
     const filtered = info.addrs
       .map(bytesFromAddr)
       .filter(
-        (addr) => includeLocal || !maybeLocalAddr(bytesToOptions(addr).host)
+        (addr) => includeLocal || !maybeLocalAddr(bytesToOptions(addr).host),
       )
     for (const addr of filtered) {
       req.setAddr(addr)
       // Should always be encoded string, but might already be bytes
       req.setKey(
-        typeof info.key === "string"
+        typeof info.key === 'string'
           ? ThreadKey.fromString(info.key).toBytes()
-          : info.key
+          : info.key,
       )
       if (collections !== undefined) {
         req.setCollectionsList(
@@ -882,7 +882,7 @@ export class Client {
               config.setIndexesList(idxs)
             }
             return config
-          })
+          }),
         )
       }
       // Try to add addrs one at a time, if one succeeds, we are done.
@@ -890,12 +890,12 @@ export class Client {
         // Hacky way to extract threadid from addr that succeeded
         // @todo: Return this directly from the gRPC API?
         const result = bytesToTuples(req.getAddr_asU8()).filter(
-          ([key]) => key === 406
+          ([key]) => key === 406,
         )
         return ThreadID.fromString(result[0][1] as string)
       })
     }
-    throw new Error("No viable addresses for dialing")
+    throw new Error('No viable addresses for dialing')
   }
 
   /**
@@ -962,7 +962,7 @@ export class Client {
   public create(
     threadID: ThreadID,
     collectionName: string,
-    values: any[]
+    values: any[],
   ): Promise<string[]> {
     const req = new pb.CreateRequest()
     req.setDbid(threadID.toBytes())
@@ -975,7 +975,7 @@ export class Client {
     return this.unary(
       API.Create,
       req,
-      (res: pb.CreateReply) => res.toObject().instanceidsList
+      (res: pb.CreateReply) => res.toObject().instanceidsList,
     )
   }
 
@@ -1013,15 +1013,15 @@ export class Client {
   public save(
     threadID: ThreadID,
     collectionName: string,
-    values: any[]
+    values: any[],
   ): Promise<void> {
     const req = new pb.SaveRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     const list: any[] = []
     values.forEach((v) => {
-      if (!v.hasOwnProperty("_id")) {
-        v["_id"] = "" // The server will add an _id if empty.
+      if (!v.hasOwnProperty('_id')) {
+        v['_id'] = '' // The server will add an _id if empty.
       }
       list.push(encoder.encode(JSON.stringify(v)))
     })
@@ -1060,7 +1060,7 @@ export class Client {
   public delete(
     threadID: ThreadID,
     collectionName: string,
-    IDs: string[]
+    IDs: string[],
   ): Promise<void> {
     const req = new pb.DeleteRequest()
     req.setDbid(threadID.toBytes())
@@ -1088,7 +1088,7 @@ export class Client {
   public has(
     threadID: ThreadID,
     collectionName: string,
-    IDs: string[]
+    IDs: string[],
   ): Promise<boolean> {
     const req = new pb.HasRequest()
     req.setDbid(threadID.toBytes())
@@ -1124,7 +1124,7 @@ export class Client {
   public find<T = unknown>(
     threadID: ThreadID,
     collectionName: string,
-    query: QueryJSON
+    query: QueryJSON,
   ): Promise<T[]> {
     const req = new pb.FindRequest()
     req.setDbid(threadID.toBytes())
@@ -1174,14 +1174,14 @@ export class Client {
   public findByID<T = unknown>(
     threadID: ThreadID,
     collectionName: string,
-    ID: string
+    ID: string,
   ): Promise<T> {
     const req = new pb.FindByIDRequest()
     req.setDbid(threadID.toBytes())
     req.setCollectionname(collectionName)
     req.setInstanceid(ID)
     return this.unary(API.FindByID, req, (res: pb.FindByIDReply) =>
-      JSON.parse(decoder.decode(res.getInstance_asU8()))
+      JSON.parse(decoder.decode(res.getInstance_asU8())),
     )
   }
 
@@ -1220,7 +1220,7 @@ export class Client {
   public verify(
     threadID: ThreadID,
     collectionName: string,
-    values: any[]
+    values: any[],
   ): Promise<void> {
     const req = new pb.VerifyRequest()
     req.setDbid(threadID.toBytes())
@@ -1237,7 +1237,7 @@ export class Client {
    */
   public readTransaction(
     threadID: ThreadID,
-    collectionName: string
+    collectionName: string,
   ): ReadTransaction {
     // TODO: We can do this setup much cleaner!
     const client: grpc.Client<
@@ -1258,7 +1258,7 @@ export class Client {
    */
   public writeTransaction(
     threadID: ThreadID,
-    collectionName: string
+    collectionName: string,
   ): WriteTransaction {
     const client: grpc.Client<
       pb.WriteTransactionRequest,
@@ -1325,7 +1325,7 @@ export class Client {
   public listen<T = any>(
     threadID: ThreadID,
     filters: Filter[],
-    callback: (reply?: Update<T>, err?: Error) => void
+    callback: (reply?: Update<T>, err?: Error) => void,
   ): grpc.Request {
     const req = new pb.ListenRequest()
     req.setDbid(threadID.toBytes())
@@ -1339,19 +1339,19 @@ export class Client {
       if (filter.actionTypes) {
         for (const at of filter.actionTypes) {
           switch (at) {
-            case "ALL": {
+            case 'ALL': {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.ALL)
               break
             }
-            case "CREATE": {
+            case 'CREATE': {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.CREATE)
               break
             }
-            case "SAVE": {
+            case 'SAVE': {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.SAVE)
               break
             }
-            case "DELETE": {
+            case 'DELETE': {
               requestFilter.setAction(pb.ListenRequest.Filter.Action.DELETE)
               break
             }
@@ -1371,7 +1371,7 @@ export class Client {
         host: this.serviceHost,
         transport: this.rpcOptions.transport,
         debug: this.rpcOptions.debug,
-      }
+      },
     )
     client.onMessage((message: pb.ListenReply) => {
       // Pull it apart explicitly
@@ -1387,7 +1387,7 @@ export class Client {
         action,
         instance: undefined,
       }
-      if (instanceString !== "") {
+      if (instanceString !== '') {
         ret.instance = JSON.parse(instanceString)
       }
       callback(ret)
@@ -1395,7 +1395,7 @@ export class Client {
 
     client.onEnd((
       status: grpc.Code,
-      message: string /** trailers: grpc.Metadata */
+      message: string /** trailers: grpc.Metadata */,
     ) => {
       if (status !== grpc.Code.OK) {
         callback(undefined, new Error(message))
@@ -1419,7 +1419,7 @@ export class Client {
   >(
     methodDescriptor: M,
     req: TRequest,
-    mapper: (resp: TResponse) => O | undefined = () => undefined
+    mapper: (resp: TResponse) => O | undefined = () => undefined,
   ) {
     const metadata = await this.context.toMetadata()
     return new Promise<O>((resolve, reject) => {
