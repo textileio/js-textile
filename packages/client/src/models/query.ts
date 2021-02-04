@@ -228,7 +228,7 @@ export class Query implements QueryJSON {
 
   /**
    * or concatenates a new condition that is sufficient for an instance to
-   * satisfy, independant of the current Query. Has left-associativity as:
+   * satisfy, independent of the current Query. Has left-associativity as:
    * (a And b) Or c
    * @param query The 'sub-query' to concat to the existing query.
    */
