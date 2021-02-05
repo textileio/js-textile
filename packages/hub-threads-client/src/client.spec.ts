@@ -16,7 +16,7 @@ import { Client, GetThreadResponse } from './client'
 
 const wrongError = new Error('wrong error!')
 
-describe('Threads...', () => {
+describe('Hub Threads Client', () => {
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     const client = new Client(ctx)
