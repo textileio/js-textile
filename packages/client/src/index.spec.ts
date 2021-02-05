@@ -59,7 +59,7 @@ const createPerson = (): Person => {
   }
 }
 
-describe('Client', function () {
+describe('Thread Client', function () {
   const dbID = ThreadID.fromRandom()
   let dbKey: string
   let identity: Identity
