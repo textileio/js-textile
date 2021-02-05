@@ -86,7 +86,6 @@
     "rollup-plugin-terser": "^7.0.2",
     "source-map-support": "^0.5.19",
     "ts-loader": "^8.0.12",
-    "ts-mocha": "^7.0.0",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.8.0",
     "typedoc": "0.20.20",
@@ -129,14 +128,15 @@
     }
   },
   "mocha": {
-    "diff": true,
     "spec": "packages/*/src/**/*.spec.ts",
     "reporter": "spec",
     "recursive": true,
     "require": [
       "ts-node/register",
       "source-map-support/register"
-    ]
+    ],
+    "exit": true,
+    "esmLoader": true
   },
   "prettier": {
     "semi": false,
