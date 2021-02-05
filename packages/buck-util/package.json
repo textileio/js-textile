@@ -1,6 +1,6 @@
 {
   "name": "@textile/buck-util",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NodeJS utiliting for pushing and pulling buckets.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
