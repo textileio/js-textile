@@ -1,5 +1,7 @@
 import { expect } from 'chai'
 import Dexie from 'dexie'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 import setGlobalVars from 'indexeddbshim'
 import { changesAddon, ChangeTableName } from '.'
 const { indexedDB, IDBKeyRange } = setGlobalVars({}, { checkOrigin: false })

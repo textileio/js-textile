@@ -1,4 +1,6 @@
 import Dexie, { DexieOptions } from 'dexie'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 import setGlobalVars from 'indexeddbshim'
 import { changesAddon } from '../middleware/changes'
 // This is a pure side-effects addon :(

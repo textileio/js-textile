@@ -67,6 +67,7 @@ export async function getToken(
   config?: Partial<GrpcConfig>,
 ): Promise<string> {
   const opts = { ...defaults, ...config }
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   return getTokenChallenge(
     identity.public.toString(),
     async (challenge: Uint8Array) => {

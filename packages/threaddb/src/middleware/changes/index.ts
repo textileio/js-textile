@@ -72,8 +72,10 @@ export function createTrackedChangesMiddleware(core: DBCore): DBCore {
           // TODO: We might not need to worry about this given our use of ulid
           const autoIncrement = Boolean(primaryKey.autoIncrement)
           // TODO: Does this need to run in a special promise (like hooks middleware uses)?
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           let keys = req.keys || getEffectiveKeys(primaryKey, req)
           // Extract the state of things _before_ this mutation
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           let before = await getExistingValues(table, req, keys)
           // If we're auto-incrementing and adding things, we want results
           if (autoIncrement && (req.type === 'add' || req.type === 'put')) {

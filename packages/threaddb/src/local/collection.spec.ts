@@ -88,6 +88,7 @@ describe('ThreadDB', function () {
       }
 
       // Function to setup a new default collection based on the person interface
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       const setupCollection = () => {
         return new Collection<Person>(db.table('Person'))
       }
@@ -325,7 +326,8 @@ describe('ThreadDB', function () {
           const Person = setupCollection()
           const person = copyPerson()
           const [id] = await Person.insert(person)
-          expect(await Person.has(id)).to.be.true
+          const test = await Person.has(id)
+          expect(test).to.be.true
           const personInstance = await Person.findById(id)
           // Should be an actual class instance, that we can export to JSON
           if (personInstance) {

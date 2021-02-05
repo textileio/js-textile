@@ -1,5 +1,7 @@
 import { expect } from 'chai'
 import Dexie from 'dexie'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 import setGlobalVars from 'indexeddbshim'
 import { schemaAddon, SchemasTableName } from '.'
 import { personSchema, shouldHaveThrown } from '../../utils/spec.utils'
