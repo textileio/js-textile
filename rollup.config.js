@@ -4,6 +4,7 @@ import filterPackages from '@lerna/filter-packages'
 import batchPackages from '@lerna/batch-packages'
 import typescript from '@wessberg/rollup-plugin-ts'
 import commonjs from '@rollup/plugin-commonjs'
+import { terser } from 'rollup-plugin-terser'
 
 import resolve from '@rollup/plugin-node-resolve'
 import json from '@rollup/plugin-json'
@@ -18,6 +19,7 @@ const external = [
   '@textile/multiaddr',
   '@textile/security',
   '@textile/threads',
+  '@textile/threaddb',
   '@textile/transport',
   '@textile/buckets',
   '@textile/crypto',
@@ -29,6 +31,8 @@ const external = [
   '@textile/users',
   // Others (add externals and valid es modules here)
   'stream',
+  'fs',
+  'path',
 ]
 
 /**
@@ -55,6 +59,7 @@ async function main() {
   const { scope, ignore } = minimist(process.argv.slice(2))
   const packages = await getSortedPackages(scope, ignore)
   packages.forEach((pkg) => {
+    if (pkg.name.includes('buck-util')) return
     /* Absolute path to package directory */
     const basePath = path.resolve(__dirname, pkg.location)
     /* Absolute path to input file */
@@ -78,6 +83,7 @@ async function main() {
         }),
         commonjs(),
         typescript(),
+        terser(),
       ],
       onwarn(warning, warn) {
         // suppress eval warnings
