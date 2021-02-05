@@ -59,7 +59,7 @@
 <h2><a class="anchor" aria-hidden="true" id="clientnewcollectionfromobject-method"></a><a href="#clientnewcollectionfromobject-method" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Client.newCollectionFromObject() method</h2>
 <p>newCollectionFromObject creates and registers a new collection under the given name. The input object must be serializable to JSON, and contain only json-schema.org types.</p>
 <p><b>Signature:</b></p>
-<pre><code class="hljs css language-javascript">newCollectionFromObject(threadID: ThreadID, <span class="hljs-attr">obj</span>: Record&lt;string, any&gt;, <span class="hljs-attr">config</span>: Omit&lt;CollectionConfig, <span class="hljs-string">"schema"</span>&gt;): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt;;
+<pre><code class="hljs css language-javascript">newCollectionFromObject(threadID: ThreadID, <span class="hljs-attr">obj</span>: Record&lt;string, any&gt;, <span class="hljs-attr">config</span>: Omit&lt;CollectionConfig, <span class="hljs-string">'schema'</span>&gt;): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt;;
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="parameters"></a><a href="#parameters" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Parameters</h2>
 <table>
@@ -69,7 +69,7 @@
 <tbody>
 <tr><td>threadID</td><td><a href="/js-textile/docs/hub.threadid">ThreadID</a></td><td>the ID of the database</td></tr>
 <tr><td>obj</td><td>Record&lt;string, any&gt;</td><td>The actual object to attempt to extract a schema from.</td></tr>
-<tr><td>config</td><td>Omit&lt;<a href="/js-textile/docs/hub.collectionconfig">CollectionConfig</a><!-- -->, &quot;schema&quot;&gt;</td><td>A configuration object for the collection. See <a href="/js-textile/docs/hub.collectionconfig">CollectionConfig</a><!-- -->.</td></tr>
+<tr><td>config</td><td>Omit&lt;<a href="/js-textile/docs/hub.collectionconfig">CollectionConfig</a><!-- -->, 'schema'&gt;</td><td>A configuration object for the collection. See <a href="/js-textile/docs/hub.collectionconfig">CollectionConfig</a><!-- -->.</td></tr>
 </tbody>
 </table>
 <p><b>Returns:</b></p>

@@ -78,7 +78,11 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-textile/docs/hub.query.ands">ands</a></td><td></td><td><a href="/js-textile/docs/hub.criterionjson">CriterionJSON</a><!-- -->[]</td><td></td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.index">index?</a></td><td></td><td>string</td><td><i>(Optional)</i></td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.limit">limit?</a></td><td></td><td>number</td><td><i>(Optional)</i></td></tr>
 <tr><td><a href="/js-textile/docs/hub.query.ors">ors</a></td><td></td><td><a href="/js-textile/docs/hub.queryjson">QueryJSON</a><!-- -->[]</td><td></td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.seek">seek?</a></td><td></td><td>string</td><td><i>(Optional)</i></td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.skip">skip?</a></td><td></td><td>number</td><td><i>(Optional)</i></td></tr>
 <tr><td><a href="/js-textile/docs/hub.query.sort">sort?</a></td><td></td><td><a href="/js-textile/docs/hub.sortjson">SortJSON</a> | undefined</td><td><i>(Optional)</i></td></tr>
 </tbody>
 </table>
@@ -89,9 +93,15 @@
 </thead>
 <tbody>
 <tr><td><a href="/js-textile/docs/hub.query.and">and(fieldPath)</a></td><td></td><td>and concatenates a new condition in an existing field.</td></tr>
-<tr><td><a href="/js-textile/docs/hub.query.or">or(query)</a></td><td></td><td>or concatenates a new condition that is sufficient for an instance to satisfy, independant of the current Query. Has left-associativity as: (a And b) Or c</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.limitto">limitTo(limit)</a></td><td></td><td>limitTo sets the maximum number of results.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.or">or(query)</a></td><td></td><td>or concatenates a new condition that is sufficient for an instance to satisfy, independent of the current Query. Has left-associativity as: (a And b) Or c</td></tr>
 <tr><td><a href="/js-textile/docs/hub.query.orderby">orderBy(fieldPath)</a></td><td></td><td>orderBy specify ascending order for the query results. On multiple calls, only the last one is considered.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.query.orderbydesc">orderByDesc(fieldPath)</a></td><td></td><td>orderByDesc specify descending order for the query results. On multiple calls, only the last one is considered.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.orderbyid">orderByID()</a></td><td></td><td>orderByID specifies ascending ID order for the query results. On multiple calls, only the last one is considered.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.orderbyiddesc">orderByIDDesc()</a></td><td></td><td>orderByIDDesc specifies descending ID order for the query results. On multiple calls, only the last one is considered.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.seekid">seekID(id)</a></td><td></td><td>seekID seeks to the given ID before returning query results.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.skipnum">skipNum(num)</a></td><td></td><td>skipNum skips the given number of results.</td></tr>
+<tr><td><a href="/js-textile/docs/hub.query.useindex">useIndex(fieldPath)</a></td><td></td><td>useIndex specifies the index to use when running this query.</td></tr>
 <tr><td><a href="/js-textile/docs/hub.query.where">where(fieldPath)</a></td><td><code>static</code></td><td>where starts to create a query condition for a field</td></tr>
 </tbody>
 </table>
