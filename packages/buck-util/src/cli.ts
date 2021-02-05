@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import yargs, {Argv} from 'yargs'
 import { execute, RunOutput } from './index'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 yargs
   .command(
