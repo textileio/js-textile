@@ -1,6 +1,13 @@
 import { Context } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
+import {
+  addrApiurl,
+  addrGatewayUrl,
+  createKey,
+  sessionSecret,
+  signUp,
+} from '@textile/testing'
 import AbortController from 'abort-controller'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
@@ -11,7 +18,6 @@ import path from 'path'
 import { Readable } from 'stream'
 import { CHUNK_SIZE, File, genChunks } from './api'
 import { Buckets } from './buckets'
-import { addrApiurl, addrGatewayUrl, createKey, sessionSecret, signUp } from '@textile/testing'
 import { AbortError, CreateResponse } from './types'
 
 // Settings for localhost development and testing
@@ -225,6 +231,7 @@ describe('Buckets...', function () {
       })
       if (isBrowser) {
         let result = new Uint8Array()
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         const append = (target: Uint8Array, addition: Uint8Array) => {
           if (target.length === 0) return addition
           const extendedBuffer = new Uint8Array(addition.length + target.length)
@@ -232,9 +239,7 @@ describe('Buckets...', function () {
           extendedBuffer.set(addition, target.length)
           return extendedBuffer
         }
-        let sections = 0
         for await (const chunk of chunks) {
-          sections += 1
           result = append(result, chunk)
         }
         expect(length).to.equal(620047)
