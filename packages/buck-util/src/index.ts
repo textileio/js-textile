@@ -7,14 +7,15 @@ import {
   bucketsLinks,
   bucketsRemove,
   bucketsCreate,
-  bucketsPushPath,
+  bucketsPushPaths,
   bucketsListPath,
   bucketsRemovePath,
   bucketsRoot,
+  CHUNK_SIZE,
 } from '@textile/buckets/dist/cjs/api'
 import { Context } from '@textile/context'
 import { GrpcConnection } from '@textile/grpc-connection'
-import { Root } from '@textile/buckets/dist/cjs/types'
+import { RemovePathResponse, Root } from '@textile/buckets/dist/cjs/types'
 
 const readFile = util.promisify(fs.readFile)
 const globDir = util.promisify(glob)
@@ -207,29 +208,34 @@ export async function execute(
   if (files.length === 0) {
     throw Error(`No files found: ${dir}`)
   }
-  // avoid requesting new head on every push path
-  let root: string | Root | undefined = await bucketsRoot(connection, bucketKey)
-  let raw
+  let streams = []
   for (const file of files) {
     pathTree.remove(`/${file}`)
-    const filePath = `${cwd}/${file}`
-    const buffer = await readFile(filePath)
-    const content = chunkBuffer(buffer)
-    const upload = {
-      path: `/${file}`,
-      content,
-    }
-    raw = await bucketsPushPath(connection, bucketKey, `/${file}`, upload, { root })
-    root = raw.root
+    const stream = fs.createReadStream(path.join(cwd, file), {
+      highWaterMark: CHUNK_SIZE,
+    })
+    streams.push({
+      path: file,
+      content: stream,
+    })
+  }
+
+  // avoid requesting new head on every push path
+  let root: string | Root | undefined = await bucketsRoot(connection, bucketKey)
+  const iter = bucketsPushPaths(connection, bucketKey, streams, { root })
+  let raw
+  for await (raw of iter) root = raw.root
+  if (!raw) {
+    throw Error(`Failed to push data`)
   }
   for (const orphan of pathTree.getDeletes()) {
-    const rm = await bucketsRemovePath(connection, bucketKey, orphan, { root })
+    const rm: RemovePathResponse = await bucketsRemovePath(connection, bucketKey, orphan, { root })
     root = rm.root
   }
 
   const links = await bucketsLinks(connection, bucketKey, '/')
 
-  const ipfs = raw ? raw.root.replace('/ipfs/', '') : ''
+  const ipfs = !root ? '' : typeof root == 'string' ? root : root.path
   response.set('ipfs', ipfs)
   response.set('ipfsUrl', `https://hub.textile.io/ipfs/${ipfs}`)
 

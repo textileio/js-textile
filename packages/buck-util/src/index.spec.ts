@@ -30,9 +30,6 @@ describe('Buckets node util...', function () {
   it('push bucket updates', async function () {
     this.timeout(15000)
     const cwd = path.join(__dirname, '../test')
-    console.log(
-      addrApiurl, key, secret, testThread, 'test', 'false', '**/*', 'website', cwd
-    )
     const result = await execute(addrApiurl, key, secret, testThread, 'test', 'false', '**/*', 'website', cwd)
     expect(result.get('ipfs')).to.not.be.undefined
   })
