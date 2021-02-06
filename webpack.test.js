@@ -1,5 +1,6 @@
 module.exports = {
   target: 'web',
+  entry: ['@babel/polyfill'],
   module: {
     rules: [
       {

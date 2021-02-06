@@ -53,6 +53,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@lerna/batch-packages": "^3.16.0",
     "@lerna/filter-packages": "^3.18.0",
     "@lerna/project": "^3.21.0",
