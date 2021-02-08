@@ -9,6 +9,7 @@ describe('Buckets node util...', function () {
   let key = ''
   let secret = ''
   let testThread = ''
+  let cid = ''
   before(async function () {
     this.timeout(10000)
     const ctx = new Context(addrApiurl)
@@ -28,10 +29,20 @@ describe('Buckets node util...', function () {
   })
 
   it('push bucket updates', async function () {
-    this.timeout(15000)
-    const cwd = path.join(__dirname, '../test')
-    const result = await execute(addrApiurl, key, secret, testThread, 'test', 'false', '**/*', 'website', cwd)
+    this.timeout(60000)
+    const cwd = path.join(__dirname, '../')
+    const result = await execute(addrApiurl, key, secret, testThread, 'test', 'false', '**/*', 'src', cwd)
     expect(result.get('ipfs')).to.not.be.undefined
+    cid = result.get('ipfs') || 'wrong'
+  })
+  
+  it('overwrite updates', async function () {
+    this.timeout(15000)
+    const cwd = path.join(__dirname, '../../..')
+    console.log(cwd)
+    const result = await execute(addrApiurl, key, secret, testThread, 'test', 'false', '**/*', 'testdata', cwd)
+    expect(result.get('ipfs')).to.not.be.undefined
+    expect(result.get('ipfs')).to.not.equal(cid)
   })
 })
 

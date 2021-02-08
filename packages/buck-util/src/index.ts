@@ -222,12 +222,13 @@ export async function execute(
 
   // avoid requesting new head on every push path
   let root: string | Root | undefined = await bucketsRoot(connection, bucketKey)
-  const iter = bucketsPushPaths(connection, bucketKey, streams, { root })
   let raw
-  for await (raw of iter) root = raw.root
+  for await (raw of bucketsPushPaths(connection, bucketKey, streams, { root })) root = raw.root
   if (!raw) {
     throw Error(`Failed to push data`)
   }
+  // ensure latest root
+  root = await bucketsRoot(connection, bucketKey)
   for (const orphan of pathTree.getDeletes()) {
     const rm: RemovePathResponse = await bucketsRemovePath(connection, bucketKey, orphan, { root })
     root = rm.root
