@@ -59,7 +59,7 @@ const createPerson = (): Person => {
   }
 }
 
-describe('Client', function () {
+describe('Thread Client', function () {
   const dbID = ThreadID.fromRandom()
   let dbKey: string
   let identity: Identity
@@ -176,15 +176,12 @@ describe('Client', function () {
   describe('.listDBs', function () {
     it('should list the correct number of dbs with the correct name', async function () {
       const id2 = ThreadID.fromRandom()
-      const name2 = 'db2'
+      const random = Math.floor(Math.random() * 10)
+      const name2 = `db2-${random}`
       await client.newDB(id2, name2)
       const list = await client.listDBs()
       expect(list.length).to.be.greaterThan(1)
-      const last = list.pop()
-      const first = list.pop()
-      expect(first).to.have.ownProperty('name')
-      expect(last).to.have.ownProperty('name')
-      expect([first?.name, last?.name]).to.include(name2)
+      expect(list.map((db) => db.name)).to.include(name2)
     })
   })
 

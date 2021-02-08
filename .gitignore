@@ -156,6 +156,9 @@ sourcemap.js
 coverage/
 junit/
 
+# local dbs for testing
+**.sqlite
+
 # Related to generated docs
 website/package-lock.json
 website/i18n/en.json
