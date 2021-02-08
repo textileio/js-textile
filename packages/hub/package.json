@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "web-gRPC wrapper client for communicating with Textile Hub.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -16,20 +16,20 @@
   "repository": "github:textileio/js-textile",
   "license": "MIT",
   "dependencies": {
-    "@textile/buckets": "^6.0.1",
+    "@textile/buckets": "^6.0.2",
     "@textile/crypto": "^4.1.1",
-    "@textile/grpc-authentication": "^3.3.1",
-    "@textile/hub-filecoin": "^2.0.1",
+    "@textile/grpc-authentication": "^3.3.2",
+    "@textile/hub-filecoin": "^2.0.2",
     "@textile/hub-grpc": "2.6.0",
-    "@textile/hub-threads-client": "^5.3.1",
+    "@textile/hub-threads-client": "^5.3.2",
     "@textile/security": "^0.8.1",
     "@textile/threads-id": "^0.5.1",
-    "@textile/users": "^6.0.1",
+    "@textile/users": "^6.0.2",
     "loglevel": "^1.6.8",
     "multihashes": "0.4.19"
   },
   "devDependencies": {
     "@textile/context": "^0.11.1",
-    "@textile/testing": "^0.0.2"
+    "@textile/testing": "^0.0.3"
   }
 }

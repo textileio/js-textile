@@ -1,6 +1,6 @@
 {
   "name": "@textile/buck-util",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NodeJS utiliting for pushing and pulling buckets.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/buckets": "^6.0.1",
+    "@textile/buckets": "^6.0.2",
     "@textile/context": "^0.11.1",
     "@textile/grpc-connection": "^2.4.1",
     "dotenv": "8.2.0",
@@ -33,7 +33,7 @@
     "yargs": "16.2.0"
   },
   "devDependencies": {
-    "@textile/testing": "^0.0.2",
+    "@textile/testing": "^0.0.3",
     "@types/glob": "^7.1.1",
     "@types/jest": "^25.2.3",
     "@types/node": "^14.14.22",

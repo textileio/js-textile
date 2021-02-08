@@ -1,6 +1,6 @@
 {
   "name": "@textile/threaddb",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "ThreadDB Javascript implementation",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -19,14 +19,13 @@
   },
   "repository": "github:textileio/js-textile",
   "license": "MIT",
-  "devDependencies": {},
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.14.0",
     "@textile/context": "^0.11.1",
     "@textile/crypto": "^4.1.1",
     "@textile/grpc-transport": "0.4.0",
     "@textile/security": "^0.8.1",
-    "@textile/threads-client": "^2.1.1",
+    "@textile/threads-client": "^2.1.2",
     "@textile/threads-client-grpc": "^1.0.2",
     "@textile/threads-id": "^0.5.1",
     "@types/json-schema": "^7.0.7",
