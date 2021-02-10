@@ -86,7 +86,7 @@ export class Admin extends GrpcAuthentication {
   /**
    * Creates a new key for the current session.
    */
-  createKey(org?: string): Promise<api.KeyInfo> {
+  createKey(org = ''): Promise<api.KeyInfo> {
     return api.createKey(this, this.context.withOrg(org))
   }
 
@@ -95,14 +95,14 @@ export class Admin extends GrpcAuthentication {
    * @param key The session key to invalidate.
    * @note New threads cannot be created with an invalid key.
    */
-  invalidateKey(key: string, org?: string): Promise<void> {
+  invalidateKey(key: string, org = ''): Promise<void> {
     return api.invalidateKey(this, key, this.context.withOrg(org))
   }
 
   /**
    * Returns a list of keys for the current session.
    */
-  listKeys(org?: string): Promise<Array<api.KeyInfo>> {
+  listKeys(org = ''): Promise<Array<api.KeyInfo>> {
     return api.listKeys(this, this.context.withOrg(org))
   }
 
