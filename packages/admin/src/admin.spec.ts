@@ -1,13 +1,17 @@
 import { Context } from '@textile/context'
 import { PrivateKey, PublicKey } from '@textile/crypto'
+import {
+  acceptInvite,
+  addrApiurl,
+  addrGatewayUrl,
+  createEmail,
+  createUsername,
+  sessionSecret,
+} from '@textile/testing'
 import { expect } from 'chai'
 import { Admin } from './admin'
 import { SigninOrSignupResponse } from './api'
-import { acceptInvite, addrApiurl, addrGatewayUrl, createEmail, createUsername, sessionSecret } from '@textile/testing'
-import {
-  signin,
-  signup,
-} from './spec.utils'
+import { signin, signup } from './spec.utils'
 
 const wrongError = new Error('wrong error!')
 
@@ -212,6 +216,26 @@ describe('Hub Admin...', function () {
       const list = await admin.listOrgs()
       // Should be 2+ depending on test run
       expect(list).to.have.lengthOf(existing.length + 2)
+    })
+
+    it('should create and list keys specific to an org', async function () {
+      const creds = new Context(addrApiurl).withSession(dev.session)
+      const admin = new Admin(creds)
+      // Grab the first org
+      const [org] = await admin.listOrgs()
+
+      const key = await admin.createKey(org.name)
+      expect(key).to.not.be.undefined
+
+      // The key should be scoped to the org
+      let list = await admin.listKeys() // Don't pass org
+      let mapped = list.map((key) => key.key)
+      // So not visible here
+      expect(mapped).to.not.include(key.key)
+      list = await admin.listKeys(org.name)
+      mapped = list.map((key) => key.key)
+      // But visible here
+      expect(mapped).to.include(key.key)
     })
 
     it('should remove orgs', async function () {
