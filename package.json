@@ -55,7 +55,7 @@
   "devDependencies": {
     "@babel/polyfill": "^7.12.1",
     "@lerna/batch-packages": "^3.16.0",
-    "@lerna/filter-packages": "^3.18.0",
+    "@lerna/filter-packages": "^4.0.0",
     "@lerna/project": "^4.0.0",
     "@microsoft/api-documenter": "^7.8.42",
     "@microsoft/api-extractor": "^7.9.13",
