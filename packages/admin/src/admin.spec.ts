@@ -224,7 +224,7 @@ describe('Hub Admin...', function () {
       // Grab the first org
       const [org] = await admin.listOrgs()
 
-      const key = await admin.createKey(org.name)
+      const key = await admin.createKey(0, false, org.name)
       expect(key).to.not.be.undefined
 
       // The key should be scoped to the org
