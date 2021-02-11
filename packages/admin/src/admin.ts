@@ -85,9 +85,15 @@ export class Admin extends GrpcAuthentication {
 
   /**
    * Creates a new key for the current session.
+   * @param type The key type, should be one of `USER`, `ACCOUNT`, `UNSPECIFIED`.
+   * @param secure Whether the key should be flagged as secure. Defaults to true.
    */
-  createKey(org = ''): Promise<api.KeyInfo> {
-    return api.createKey(this, this.context.withOrg(org))
+  createKey(
+    type: api.KeyType = api.KeyType.UNSPECIFIED,
+    secure = true,
+    org = '',
+  ): Promise<api.KeyInfo> {
+    return api.createKey(this, type, secure, this.context.withOrg(org))
   }
 
   /**
