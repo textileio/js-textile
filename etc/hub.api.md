@@ -180,6 +180,8 @@ export class Buckets extends GrpcAuthentication {
     pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
     pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
+    // (undocumented)
+    pushPaths(key: string, input: any, options?: PushOptions): AsyncIterableIterator<PushPathsResult>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, options?: RemovePathOptions): Promise<RemovePathResponse>;
     root(key: string): Promise<Root | undefined>;
@@ -246,7 +248,7 @@ export class Client {
     }>>;
     listen<T = any>(threadID: ThreadID, filters: Filter[], callback: (reply?: Update<T>, err?: Error) => void): grpc.Request;
     newCollection(threadID: ThreadID, config: CollectionConfig): Promise<void>;
-    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, "schema">): Promise<void>;
+    newCollectionFromObject(threadID: ThreadID, obj: Record<string, any>, config: Omit<CollectionConfig, 'schema'>): Promise<void>;
     newDB(threadID?: ThreadID, name?: string): Promise<ThreadID>;
     newDBFromAddr(address: string, key: string | Uint8Array, collections?: Array<CollectionConfig>): Promise<ThreadID>;
     open(threadID: ThreadID, name?: string): Promise<void>;
@@ -839,18 +841,46 @@ export interface PushPathResult {
 }
 
 // @public
+export interface PushPathsResult {
+    // (undocumented)
+    cid: CID;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    pinned: number;
+    // (undocumented)
+    root?: Root;
+    // (undocumented)
+    size: number;
+}
+
+// @public
 export class Query implements QueryJSON {
     constructor(ands?: CriterionJSON[], ors?: QueryJSON[], sort?: SortJSON | undefined);
     and(fieldPath: string): Criterion;
     // (undocumented)
     ands: CriterionJSON[];
+    // (undocumented)
+    index?: string;
+    // (undocumented)
+    limit?: number;
+    limitTo(limit: number): Query;
     or(query: Query): Query;
     orderBy(fieldPath: string): Query;
     orderByDesc(fieldPath: string): Query;
+    orderByID(): Query;
+    orderByIDDesc(): Query;
     // (undocumented)
     ors: QueryJSON[];
     // (undocumented)
+    seek?: string;
+    seekID(id: string): Query;
+    // (undocumented)
+    skip?: number;
+    skipNum(num: number): Query;
+    // (undocumented)
     sort?: SortJSON | undefined;
+    useIndex(fieldPath: string): Query;
     // Warning: (ae-forgotten-export) The symbol "Criterion" needs to be exported by the entry point index.d.ts
     static where(fieldPath: string): Criterion;
 }
@@ -860,7 +890,15 @@ export interface QueryJSON {
     // (undocumented)
     ands?: CriterionJSON[];
     // (undocumented)
+    index?: string;
+    // (undocumented)
+    limit?: number;
+    // (undocumented)
     ors?: QueryJSON[];
+    // (undocumented)
+    seek?: string;
+    // (undocumented)
+    skip?: number;
     // (undocumented)
     sort?: SortJSON;
 }
