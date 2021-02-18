@@ -237,8 +237,8 @@ export async function execute(
   const links = await bucketsLinks(connection, bucketKey, '/')
 
   const ipfs = !root ? '' : typeof root == 'string' ? root : root.path
-  response.set('ipfs', ipfs)
-  response.set('ipfsUrl', `https://hub.textile.io/ipfs/${ipfs}`)
+  response.set('ipfs', ipfs.replace('/ipfs/', ''))
+  response.set('ipfsUrl', `https://hub.textile.io${ipfs}`)
 
   const ipnsData = links.ipns.split('/')
   const ipns = ipnsData.length > 0 ? ipnsData[ipnsData.length - 1] : ''
