@@ -611,7 +611,7 @@ export class Buckets extends GrpcAuthentication {
   }
 
   /**
-   * Pushes a file to a bucket path.
+   * Move a file or subpath to a new path.
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param fromPath A file/object or subpath within a bucket.
    * @param toPath The path within a bucket to move fromPath to.
