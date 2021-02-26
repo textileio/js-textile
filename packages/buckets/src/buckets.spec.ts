@@ -335,24 +335,34 @@ describe('Buckets...', function () {
       await client.movePath(rootKey, 'dir1/file1.jpg', 'dir1/file2.jpg')
       const rep = await client.listPath(rootKey, 'dir1/file2.jpg')
       expect(rep).to.not.be.undefined
-      const rep2 = await client.listPath(rootKey, 'dir1/file1.jpg')
-      expect(rep2).to.be.undefined
+      try {
+        await client.listPath(rootKey, 'dir1/file1.jpg')
+        throw wrongError
+      } catch (err) {
+        expect(err.message).to.contain('no link named "file1.jpg"')
+      }
     })
 
     it('should move files in a bucket', async function () {
       const rootKey = buck.root?.key || ''
-      await client.movePath(rootKey, 'dir1/file2.jpg', 'dir2')
+      // move to a new path
+      await client.movePath(rootKey, 'dir1/file2.jpg', 'dir2/file2.jpg')
       const rep = await client.listPath(rootKey, 'dir2')
       expect(rep).to.not.be.undefined
+
+      // move to an existing path
+      await client.movePath(rootKey, 'dir2/file2.jpg', 'dir1')
+      const rep2 = await client.listPath(rootKey, 'dir1/file2.jpg')
+      expect(rep2).to.not.be.undefined
     })
 
     it('should remove an entire bucket', async function () {
       const rootKey = buck.root?.key || ''
-      const rep = await client.listPath(rootKey, 'dir2/file2.jpg')
+      const rep = await client.listPath(rootKey, 'dir1/file2.jpg')
       expect(rep).to.not.be.undefined
       await client.remove(rootKey)
       try {
-        await client.listPath(rootKey, 'dir2/file2.jpg')
+        await client.listPath(rootKey, 'dir1/file2.jpg')
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
