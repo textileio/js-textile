@@ -22,7 +22,7 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@repeaterjs/repeater": "^3.0.4",
-    "@textile/buckets-grpc": "2.6.0",
+    "@textile/buckets-grpc": "2.6.4-rc2",
     "@textile/context": "^0.11.1",
     "@textile/crypto": "^4.1.1",
     "@textile/grpc-authentication": "^3.3.2",
