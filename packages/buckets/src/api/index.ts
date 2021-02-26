@@ -25,6 +25,7 @@ import {
   ListRequest,
   ListResponse,
   Metadata as _Metadata,
+  MovePathRequest,
   PathItem as _PathItem,
   PullIpfsPathRequest,
   PullIpfsPathResponse,
@@ -399,6 +400,24 @@ export async function bucketsListIpfsPath(
     ctx,
   )
   return fromPbPathItemNullable(res.getItem())
+}
+
+/**
+ * Sets a file at a given bucket path.
+ * @internal
+ */
+export async function bucketsMovePath(
+  api: GrpcConnection,
+  key: string,
+  fromPath: string,
+  toPath: string,
+  ctx?: ContextInterface,
+): Promise<void> {
+  const request = new MovePathRequest()
+  request.setKey(key)
+  request.setFromPath(fromPath)
+  request.setToPath(toPath)
+  await api.unary(APIService.MovePath, request, ctx)
 }
 
 /**

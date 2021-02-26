@@ -330,13 +330,29 @@ describe('Buckets...', function () {
       expect(rep.ipns).to.not.equal('')
     })
 
+    it('should rename files in a bucket', async function () {
+      const rootKey = buck.root?.key || ''
+      await client.movePath(rootKey, 'dir1/file1.jpg', 'dir1/file2.jpg')
+      const rep = await client.listPath(rootKey, 'dir1/file2.jpg')
+      expect(rep).to.not.be.undefined
+      const rep2 = await client.listPath(rootKey, 'dir1/file1.jpg')
+      expect(rep2).to.be.undefined
+    })
+
+    it('should move files in a bucket', async function () {
+      const rootKey = buck.root?.key || ''
+      await client.movePath(rootKey, 'dir1/file2.jpg', 'dir2')
+      const rep = await client.listPath(rootKey, 'dir2')
+      expect(rep).to.not.be.undefined
+    })
+
     it('should remove an entire bucket', async function () {
       const rootKey = buck.root?.key || ''
-      const rep = await client.listPath(rootKey, 'dir1/file1.jpg')
+      const rep = await client.listPath(rootKey, 'dir2/file2.jpg')
       expect(rep).to.not.be.undefined
       await client.remove(rootKey)
       try {
-        await client.listPath(rootKey, 'dir1/file1.jpg')
+        await client.listPath(rootKey, 'dir2/file2.jpg')
         throw wrongError
       } catch (err) {
         expect(err).to.not.equal(wrongError)
