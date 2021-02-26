@@ -403,7 +403,7 @@ export async function bucketsListIpfsPath(
 }
 
 /**
- * Sets a file at a given bucket path.
+ * Move a file or subpath to a new path.
  * @internal
  */
 export async function bucketsMovePath(
