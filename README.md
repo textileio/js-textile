@@ -28,7 +28,7 @@ Join us on our [public Slack channel](https://slack.textile.io/) for news, discu
 
 ## Usage
 
-`@textile/hub` provides access to Textile APIs in apps based on API Keys. For details on getting keys, see [textileio/textile](https://docs.textile.io/hub/app-apis/) or join the [Textile Slack](https://slack.textile.io).
+`@textile/hub` provides access to Textile APIs in apps based on API Keys. For details on getting keys, see [textileio/textile](https://docs.textile.io/hub/) or join the [Textile Slack](https://slack.textile.io).
 
 ## Contributing
 
