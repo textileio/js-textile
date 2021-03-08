@@ -21,7 +21,7 @@
   "repository": "github:textileio/js-textile",
   "dependencies": {
     "@consento/sync-randombytes": "^1.0.4",
-    "multibase": "^3.1.0",
+    "multibase": "^4.0.2",
     "varint": "^6.0.0"
   },
   "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
