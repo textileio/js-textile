@@ -60,6 +60,7 @@ async function main() {
   const packages = await getSortedPackages(scope, ignore)
   packages.forEach((pkg) => {
     if (pkg.name.includes('buck-util')) return
+    if (pkg.name.includes('buckr')) return
     /* Absolute path to package directory */
     const basePath = path.resolve(__dirname, pkg.location)
     /* Absolute path to input file */

@@ -18,6 +18,7 @@ import {
   bucketsLinks,
   bucketsList,
   bucketsListIpfsPath,
+  bucketsMovePath,
   bucketsPullIpfsPath,
   bucketsPullPath,
   bucketsPullPathAccessRoles,
@@ -607,6 +608,26 @@ export class Buckets extends GrpcAuthentication {
   async listIpfsPath(path: string): Promise<PathItem | undefined> {
     logger.debug('list path request')
     return bucketsListIpfsPath(this, path)
+  }
+
+  /**
+   * Move a file or subpath to a new path.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param fromPath A file/object or subpath within a bucket.
+   * @param toPath The path within a bucket to move fromPath to.
+   *
+   * @example
+   * Push a file to the root of a bucket
+   * ```typescript
+   * import { Buckets } from '@textile/hub'
+   *
+   * const moveToRoot = async (buckets: Buckets, key: string, fromPath: string) => {
+   *    return await buckets.movePath(key, fromPath, "")
+   * }
+   * ```
+   */
+  async movePath(key: string, fromPath: string, toPath: string): Promise<void> {
+    return bucketsMovePath(this, key, fromPath, toPath)
   }
 
   /**

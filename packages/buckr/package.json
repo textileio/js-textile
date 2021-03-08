@@ -1,12 +1,12 @@
 {
-  "name": "@textile/buck-util",
-  "version": "1.0.5-alpha.0",
-  "description": "This library has been replaced by @textile/buckr. This library is deprecated.",
+  "name": "@textile/buckr",
+  "version": "1.0.0",
+  "description": "NodeJS utility for working with remote buckets.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
   "bin": {
-    "buck-util": "dist/cjs/cli.js"
+    "buckr": "dist/cjs/cli.js"
   },
   "files": [
     "dist/**/!(*.spec).js?(.map)",
@@ -20,7 +20,7 @@
     "clean": "npx rimraf ./dist"
   },
   "license": "MIT",
-  "repository": "github:textileio/js-threads",
+  "repository": "github:textileio/js-textile",
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@improbable-eng/grpc-web": "^0.13.0",
