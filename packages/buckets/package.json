@@ -1,6 +1,6 @@
 {
   "name": "@textile/buckets",
-  "version": "6.0.3-alpha.0",
+  "version": "6.0.3",
   "description": "Web-gRPC wrapper client for managing Textile Buckets.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
