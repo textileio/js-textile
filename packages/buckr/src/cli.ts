@@ -70,11 +70,11 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('name', {
+      .positional('bucketName', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'name'])
+      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
     },
     async function handler(argv) {
       if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
@@ -86,12 +86,12 @@ yargs
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.name)
+      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.name}`)
+        throw Error(`Bucket does not exist: ${argv.bucketName}`)
       }
-      const pathTree = await getJSONTree(conn, existing.key, argv.name, '')
+      const pathTree = await getJSONTree(conn, existing.key, argv.bucketName, '')
       console.log(JSON.stringify(pathTree, null, 2))
     }
   )
@@ -115,11 +115,11 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('name', {
+      .positional('bucketName', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'name'])
+      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
     },
     async function handler(argv) {
       if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
@@ -131,12 +131,12 @@ yargs
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.name)
+      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
 
       if (existing) {
-        throw Error(`Bucket alread exist: ${argv.name}`)
+        throw Error(`Bucket alread exist: ${argv.bucketName}`)
       }
-      const res = await bucketsCreate(conn, argv.name, false)
+      const res = await bucketsCreate(conn, argv.bucketName, false)
       console.log(JSON.stringify(res, null, 2))
     }
   )
@@ -160,7 +160,7 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('name', {
+      .positional('bucketName', {
         describe: 'Name of the bucket',
         type: 'string'
       })
@@ -172,7 +172,7 @@ yargs
         describe: 'Destination path in bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'name', 'path', 'dest'])
+      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName', 'path', 'dest'])
     },
     async function handler(argv) {
       if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
@@ -184,10 +184,10 @@ yargs
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.name)
+      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.name}`)
+        throw Error(`Bucket does not exist: ${argv.bucketName}`)
       }
       
       await bucketsMovePath(conn, existing.key, argv.path, argv.dest)
@@ -214,7 +214,7 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('name', {
+      .positional('bucketName', {
         describe: 'Name of the bucket',
         type: 'string'
       })
@@ -226,7 +226,7 @@ yargs
         describe: 'CID available from IPFS to set at path',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'name', 'path', 'cid'])
+      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName', 'path', 'cid'])
     },
     async function handler(argv) {
       if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
@@ -238,10 +238,10 @@ yargs
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.name)
+      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.name}`)
+        throw Error(`Bucket does not exist: ${argv.bucketName}`)
       }
       
       await bucketsSetPath(conn, existing.key, argv.path, argv.cid)
@@ -268,11 +268,11 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('name', {
+      .positional('bucketName', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'name'])
+      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
     },
     async function handler(argv) {
       if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
@@ -284,10 +284,10 @@ yargs
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.name)
+      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.name}`)
+        throw Error(`Bucket does not exist: ${argv.bucketName}`)
       }
       
       await bucketsArchive(conn, existing.key)
