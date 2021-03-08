@@ -1,7 +1,7 @@
 {
   "name": "@textile/buck-util",
   "version": "1.0.5-alpha.0",
-  "description": "NodeJS utiliting for pushing and pulling buckets.",
+  "description": "This library has been replaced by @textile/buckr. This library is deprecated.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
