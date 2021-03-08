@@ -18,12 +18,12 @@ yargs
     'show all buckets in the thread.', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key',
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -33,13 +33,13 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread'])
+      .demandOption(['key', 'secret', 'thread'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
@@ -55,12 +55,12 @@ yargs
     'list bucket contents', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key',
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -70,28 +70,28 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('bucketName', {
+      .positional('name', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
+      .demandOption(['key', 'secret', 'thread', 'name'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
         // @ts-ignore
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
+      const existing = roots.find((bucket: any) => bucket.name === argv.name)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.bucketName}`)
+        throw Error(`Bucket does not exist: ${argv.name}`)
       }
-      const pathTree = await getJSONTree(conn, existing.key, argv.bucketName, '')
+      const pathTree = await getJSONTree(conn, existing.key, argv.name, '')
       console.log(JSON.stringify(pathTree, null, 2))
     }
   )
@@ -100,12 +100,12 @@ yargs
     'init a new bucket', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key',
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -115,28 +115,28 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('bucketName', {
+      .positional('name', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
+      .demandOption(['key', 'secret', 'thread', 'name'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
         // @ts-ignore
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
+      const existing = roots.find((bucket: any) => bucket.name === argv.name)
 
       if (existing) {
-        throw Error(`Bucket alread exist: ${argv.bucketName}`)
+        throw Error(`Bucket alread exist: ${argv.name}`)
       }
-      const res = await bucketsCreate(conn, argv.bucketName, false)
+      const res = await bucketsCreate(conn, argv.name, false)
       console.log(JSON.stringify(res, null, 2))
     }
   )
@@ -145,12 +145,12 @@ yargs
     'mv a bucket path', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key',
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -160,7 +160,7 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('bucketName', {
+      .positional('name', {
         describe: 'Name of the bucket',
         type: 'string'
       })
@@ -172,22 +172,22 @@ yargs
         describe: 'Destination path in bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName', 'path', 'dest'])
+      .demandOption(['key', 'secret', 'thread', 'name', 'path', 'dest'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
         // @ts-ignore
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
+      const existing = roots.find((bucket: any) => bucket.name === argv.name)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.bucketName}`)
+        throw Error(`Bucket does not exist: ${argv.name}`)
       }
       
       await bucketsMovePath(conn, existing.key, argv.path, argv.dest)
@@ -199,12 +199,12 @@ yargs
     'adds the data of a cid to a path', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key'
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -214,7 +214,7 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('bucketName', {
+      .positional('name', {
         describe: 'Name of the bucket',
         type: 'string'
       })
@@ -226,22 +226,22 @@ yargs
         describe: 'CID available from IPFS to set at path',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName', 'path', 'cid'])
+      .demandOption(['key', 'secret', 'thread', 'name', 'path', 'cid'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
         // @ts-ignore
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
+      const existing = roots.find((bucket: any) => bucket.name === argv.name)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.bucketName}`)
+        throw Error(`Bucket does not exist: ${argv.name}`)
       }
       
       await bucketsSetPath(conn, existing.key, argv.path, argv.cid)
@@ -253,12 +253,12 @@ yargs
     'adds the data of a cid to a path', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key'
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -268,26 +268,26 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .positional('bucketName', {
+      .positional('name', {
         describe: 'Name of the bucket',
         type: 'string'
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
+      .demandOption(['key', 'secret', 'thread', 'name'])
     },
     async function handler(argv) {
-      if (!argv.apiKey || !argv.apiSecret || !argv.thread) throw Error("env variables missing")
+      if (!argv.key || !argv.secret || !argv.thread) throw Error("env variables missing")
       const conn = await apiConn(
         // @ts-ignore
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread
       )
 
       const roots = await bucketsList(conn)
-      const existing = roots.find((bucket: any) => bucket.name === argv.bucketName)
+      const existing = roots.find((bucket: any) => bucket.name === argv.name)
 
       if (!existing) {
-        throw Error(`Bucket does not exist: ${argv.bucketName}`)
+        throw Error(`Bucket does not exist: ${argv.name}`)
       }
       
       await bucketsArchive(conn, existing.key)
@@ -299,12 +299,12 @@ yargs
     'overwrite the root of a bucket with dir at path.', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key',
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -318,12 +318,12 @@ yargs
         describe: 'Path of dir to push',
         type: 'string'
       })
-      .option('bucketName', {
+      .option('name', {
           alias: 'n',
           type: 'string',
           describe: 'Name of bucket',
       })
-      .option('globPattern', {
+      .option('glob', {
           alias: 'g',
           describe: 'Glob pattern',
           default: '**/*',
@@ -332,17 +332,17 @@ yargs
           type: 'string',
           describe: 'API',
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName', 'path'])
+      .demandOption(['key', 'secret', 'thread', 'name', 'path'])
     },
     async function handler(argv) {
       const output = await execute(
         argv.api || '',
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread,
-        argv.bucketName,
+        argv.name,
         'false',
-        argv.globPattern,
+        argv.glob,
         argv.path,
         '',
       )
@@ -354,12 +354,12 @@ yargs
     'remove all files from remote bucket.', 
     (yargs: Argv) => {
       return yargs
-      .option('apiKey', {
+      .option('key', {
           alias: 'k',
           type: 'string',
           describe: 'API key'
       })
-      .option('apiSecret', {
+      .option('secret', {
           alias: 's',
           type: 'string',
           describe: 'API secret',
@@ -369,7 +369,7 @@ yargs
           type: 'string',
           describe: 'ThreadID of bucket',
       })
-      .option('bucketName', {
+      .option('name', {
           alias: 'n',
           type: 'string',
           describe: 'Name of bucket',
@@ -378,15 +378,15 @@ yargs
           type: 'string',
           describe: 'API',
       })
-      .demandOption(['apiKey', 'apiSecret', 'thread', 'bucketName'])
+      .demandOption(['key', 'secret', 'thread', 'name'])
     },
     async function handler(argv) {
       const output = await execute(
         argv.api || '',
-        argv.apiKey,
-        argv.apiSecret,
+        argv.key,
+        argv.secret,
         argv.thread,
-        argv.bucketName,
+        argv.name,
         'true',
         '',
         '',
