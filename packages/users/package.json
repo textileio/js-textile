@@ -1,6 +1,6 @@
 {
   "name": "@textile/users",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "web-gRPC wrapper client for managing Textile Users.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -24,11 +24,11 @@
     "@textile/buckets-grpc": "2.6.5",
     "@textile/context": "^0.11.1",
     "@textile/crypto": "^4.1.1",
-    "@textile/grpc-authentication": "^3.3.3",
+    "@textile/grpc-authentication": "^3.3.4",
     "@textile/grpc-connection": "^2.4.1",
     "@textile/grpc-transport": "^0.4.0",
     "@textile/hub-grpc": "2.6.5",
-    "@textile/hub-threads-client": "^5.3.3",
+    "@textile/hub-threads-client": "^5.3.4",
     "@textile/security": "^0.8.1",
     "@textile/threads-id": "^0.5.1",
     "@textile/users-grpc": "2.6.5",
@@ -36,6 +36,6 @@
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
-    "@textile/testing": "^0.0.4"
+    "@textile/testing": "^0.0.5"
   }
 }
