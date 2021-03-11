@@ -22,7 +22,7 @@
   "devDependencies": {
     "@textile/context": "^0.11.1",
     "@textile/grpc-transport": "^0.4.0",
-    "@textile/hub-grpc": "2.6.0",
+    "@textile/hub-grpc": "2.6.5",
     "axios": "^0.21.1"
   }
 }

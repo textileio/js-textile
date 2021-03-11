@@ -22,11 +22,11 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
     "@textile/context": "^0.11.1",
-    "@textile/hub-grpc": "2.6.0",
+    "@textile/hub-grpc": "2.6.5",
     "@textile/security": "^0.8.1",
     "@textile/threads-client": "^2.1.2",
     "@textile/threads-id": "^0.5.1",
-    "@textile/users-grpc": "2.6.0",
+    "@textile/users-grpc": "2.6.5",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
