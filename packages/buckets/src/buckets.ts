@@ -933,6 +933,7 @@ export class Buckets extends GrpcAuthentication {
    * @beta
    * @param key Unique (IPNS compatible) identifier key for a bucket.
    * @param options An object to set options that control the behavor of archive.
+   * @param skipAutomaticVerifiedDeal skips logic that automatically uses available datacap to make a verified deal for the archive.
    *
    * @example
    * Archive a Bucket.
@@ -944,9 +945,9 @@ export class Buckets extends GrpcAuthentication {
    * }
    * ```
    */
-  async archive(key: string, options?: ArchiveOptions): Promise<void> {
+  async archive(key: string, options?: ArchiveOptions, skipAutomaticVerifiedDeal?: boolean): Promise<void> {
     logger.debug('archive request')
-    return bucketsArchive(this, key, options)
+    return bucketsArchive(this, key, options, skipAutomaticVerifiedDeal)
   }
 
   /**
