@@ -258,7 +258,7 @@ export interface ArchiveConfig {
   dealStartOffset: number
   /**
    * VerifiedDeal indicates that new deals will be verified-deals, using
-   * available data-cap from the wallet address.
+   * available datacap from the wallet address.
    */
   verifiedDeal: boolean
 }
