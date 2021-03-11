@@ -1,6 +1,6 @@
 {
   "name": "@textile/testing",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "test helpers for monorepo",
   "main": "dist/cjs/index.js",
