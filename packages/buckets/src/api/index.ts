@@ -163,6 +163,7 @@ function toProtoArchiveConfig(config: ArchiveConfig): _ArchiveConfig {
   protoConfig.setMaxPrice(config.maxPrice)
   protoConfig.setRepFactor(config.repFactor)
   protoConfig.setTrustedMinersList(config.trustedMiners)
+  protoConfig.setVerifiedDeal(config.verifiedDeal)
   if (config.renew) {
     const renew = new _ArchiveRenew()
     renew.setEnabled(config.renew.enabled)
@@ -904,16 +905,21 @@ export async function bucketsSetDefaultArchiveConfig(
  * @internal
  * @param key Unique (IPNS compatible) identifier key for a bucket.
  * @param options Options that control the behavior of the bucket archive
+ * @param skipAutomaticVerifiedDeal skips logic that automatically uses available datacap to make a verified deal for the archive.
  */
 export async function bucketsArchive(
   api: GrpcConnection,
   key: string,
   options?: ArchiveOptions,
+  skipAutomaticVerifiedDeal?: boolean,
   ctx?: ContextInterface,
 ): Promise<void> {
   logger.debug('archive request')
   const req = new ArchiveRequest()
   req.setKey(key)
+  if (skipAutomaticVerifiedDeal !== undefined) {
+    req.setSkipAutomaticVerifiedDeal(skipAutomaticVerifiedDeal)
+  } 
   if (options?.archiveConfig) {
     req.setArchiveConfig(toProtoArchiveConfig(options.archiveConfig))
   }
