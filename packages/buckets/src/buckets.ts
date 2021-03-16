@@ -716,7 +716,7 @@ export class Buckets extends GrpcAuthentication {
    *   let streams = []
    *   for (const file of files) {
    *       const stream = fs.createReadStream(
-   *         path.join(cwd, file), {
+   *         path.join(directory, file), {
    *           highWaterMark: 1024,
    *         }
    *       )
