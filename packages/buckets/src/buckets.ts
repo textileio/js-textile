@@ -30,6 +30,7 @@ import {
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
+  CHUNK_SIZE,
 } from './api'
 import {
   ArchiveConfig,
@@ -698,7 +699,7 @@ export class Buckets extends GrpcAuthentication {
    * import path from 'path'
    * import util from 'util'
    * import glob from 'glob'
-   * import { Buckets, CHUNK_SIZE } from '@textile/hub'
+   * import { Buckets } from '@textile/hub'
    *
    * const globDir = util.promisify(glob)
    * 
@@ -716,7 +717,7 @@ export class Buckets extends GrpcAuthentication {
    *   for (const file of files) {
    *       const stream = fs.createReadStream(
    *         path.join(cwd, file), {
-   *           highWaterMark: CHUNK_SIZE,
+   *           highWaterMark: 1024,
    *         }
    *       )
    *       streams.push({

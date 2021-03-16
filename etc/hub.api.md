@@ -182,7 +182,6 @@ export class Buckets extends GrpcAuthentication {
     pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
     pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
-    // (undocumented)
     pushPaths(key: string, input: any, options?: PushOptions): AsyncIterableIterator<PushPathsResult>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, options?: RemovePathOptions): Promise<RemovePathResponse>;
