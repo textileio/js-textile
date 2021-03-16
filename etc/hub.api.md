@@ -88,6 +88,7 @@ export interface ArchiveConfig {
     renew?: ArchiveRenew;
     repFactor: number;
     trustedMiners: Array<string>;
+    verifiedDeal: boolean;
 }
 
 // @public
@@ -138,7 +139,7 @@ export enum ArchiveStatus {
 // @public
 export class Buckets extends GrpcAuthentication {
     // @beta
-    archive(key: string, options?: ArchiveOptions): Promise<void>;
+    archive(key: string, options?: ArchiveOptions, skipAutomaticVerifiedDeal?: boolean): Promise<void>;
     // @beta
     archives(key: string): Promise<Archives>;
     // @beta
@@ -166,6 +167,7 @@ export class Buckets extends GrpcAuthentication {
     listIpfsPath(path: string): Promise<PathItem | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<Path>;
     listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<Array<string>>;
+    movePath(key: string, fromPath: string, toPath: string): Promise<void>;
     // @deprecated
     open(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
         root?: Root;

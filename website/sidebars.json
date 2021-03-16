@@ -126,7 +126,7 @@
       "hub.buckets.listpath",
       "hub.buckets.listpathflat",
       "hub.buckets.listipfspath",
-      "hub.buckets.move",
+      "hub.buckets.movepath",
       "hub.buckets.open",
       "hub.buckets.pushpath",
       "hub.buckets.pushpaths",
