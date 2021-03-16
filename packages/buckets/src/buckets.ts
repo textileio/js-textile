@@ -693,7 +693,7 @@ export class Buckets extends GrpcAuthentication {
    * @param input The input array of file/stream/objects.
    * @param options PushOptions to control response stream.
    * @example
-   * Push a file to the root of a bucket
+   * Push all files in a directory to the root of a bucket
    * ```typescript
    * import fs from 'fs'
    * import path from 'path'
