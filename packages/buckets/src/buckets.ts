@@ -703,12 +703,12 @@ export class Buckets extends GrpcAuthentication {
    *
    * const globDir = util.promisify(glob)
    * 
-   * const pushMultipleFiles = async (buckets: Buckets, bucketKey: string, directory: string) => {
+   * const pushMultipleFiles = async (buckets: Buckets, bucketKey: string, directory: string, globPattern: string) => {
    *   const options = {
    *     directory,
    *     nodir: true,
    *   }
-   *   const files = await globDir('**\/*', options)
+   *   const files = await globDir(globPattern, options)
    *   if (files.length === 0) {
    *     throw Error(`No files found: ${directory}`)
    *   }
