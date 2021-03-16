@@ -30,6 +30,7 @@ import {
   bucketsRoot,
   bucketsSetDefaultArchiveConfig,
   bucketsSetPath,
+  CHUNK_SIZE,
 } from './api'
 import {
   ArchiveConfig,
@@ -686,6 +687,48 @@ export class Buckets extends GrpcAuthentication {
     return bucketsPushPath(this, key, path, input, options)
   }
 
+  /**
+   * Pushes an iterable of files to a bucket.
+   * @param key Unique (IPNS compatible) identifier key for a bucket.
+   * @param input The input array of file/stream/objects.
+   * @param options PushOptions to control response stream.
+   * @example
+   * Push all files in a directory to the root of a bucket
+   * ```typescript
+   * import fs from 'fs'
+   * import path from 'path'
+   * import util from 'util'
+   * import glob from 'glob'
+   * import { Buckets } from '@textile/hub'
+   *
+   * const globDir = util.promisify(glob)
+   * 
+   * const pushMultipleFiles = async (buckets: Buckets, bucketKey: string, directory: string) => {
+   *   const options = {
+   *     directory,
+   *     nodir: true,
+   *   }
+   *   const files = await globDir('**\/*', options)
+   *   if (files.length === 0) {
+   *     throw Error(`No files found: ${directory}`)
+   *   }
+   * 
+   *   let streams = []
+   *   for (const file of files) {
+   *       const stream = fs.createReadStream(
+   *         path.join(directory, file), {
+   *           highWaterMark: 1024,
+   *         }
+   *       )
+   *       streams.push({
+   *         path: file,
+   *         content: stream,
+   *       })
+   *   }
+   *   return await buckets.pushPaths(bucketKey, streams)
+   * }
+   * ```
+   */
   pushPaths(
     key: string,
     input: any,

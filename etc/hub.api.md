@@ -88,6 +88,7 @@ export interface ArchiveConfig {
     renew?: ArchiveRenew;
     repFactor: number;
     trustedMiners: Array<string>;
+    verifiedDeal: boolean;
 }
 
 // @public
@@ -138,7 +139,7 @@ export enum ArchiveStatus {
 // @public
 export class Buckets extends GrpcAuthentication {
     // @beta
-    archive(key: string, options?: ArchiveOptions): Promise<void>;
+    archive(key: string, options?: ArchiveOptions, skipAutomaticVerifiedDeal?: boolean): Promise<void>;
     // @beta
     archives(key: string): Promise<Archives>;
     // @beta
@@ -166,6 +167,7 @@ export class Buckets extends GrpcAuthentication {
     listIpfsPath(path: string): Promise<PathItem | undefined>;
     listPath(key: string, path: string, depth?: number): Promise<Path>;
     listPathFlat(key: string, path: string, dirs?: boolean, depth?: number): Promise<Array<string>>;
+    movePath(key: string, fromPath: string, toPath: string): Promise<void>;
     // @deprecated
     open(name: string, threadName?: string, encrypted?: boolean, threadID?: string): Promise<{
         root?: Root;
@@ -180,7 +182,6 @@ export class Buckets extends GrpcAuthentication {
     pullPathAccessRoles(key: string, path?: string): Promise<Map<string, 0 | 1 | 2 | 3>>;
     pushPath(key: string, path: string, input: any, options?: PushOptions): Promise<PushPathResult>;
     pushPathAccessRoles(key: string, path: string, roles: Map<string, PathAccessRole>): Promise<void>;
-    // (undocumented)
     pushPaths(key: string, input: any, options?: PushOptions): AsyncIterableIterator<PushPathsResult>;
     remove(key: string): Promise<void>;
     removePath(key: string, path: string, options?: RemovePathOptions): Promise<RemovePathResponse>;
