@@ -703,7 +703,7 @@ export class Buckets extends GrpcAuthentication {
    *
    * const globDir = util.promisify(glob)
    * 
-   * const pushMultipleFile = async (buckets: Buckets, bucketKey: string, directory: string) => {
+   * const pushMultipleFiles = async (buckets: Buckets, bucketKey: string, directory: string) => {
    *   const options = {
    *     directory,
    *     nodir: true,

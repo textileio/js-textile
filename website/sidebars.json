@@ -65,6 +65,7 @@
       "hub.mailboxevent",
       "hub.mailboxeventtype",
       "hub.pushpathresult",
+      "hub.pushpathsresult",
       "hub.sentboxlistoptions",
       "hub.usermessage",
       "hub.usageoptions",
