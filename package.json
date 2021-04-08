@@ -65,7 +65,7 @@
     "@types/browser-or-node": "^1.2.0",
     "@types/chai": "^4.2.5",
     "@types/mocha": "^8.2.0",
-    "@typescript-eslint/eslint-plugin": "^2.9.0",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^2.9.0",
     "@wessberg/rollup-plugin-ts": "^1.3.8",
     "browser-or-node": "^1.3.0",
