@@ -86,7 +86,7 @@
     "rollup": "^2.35.1",
     "rollup-plugin-terser": "^7.0.2",
     "source-map-support": "^0.5.19",
-    "ts-loader": "^8.0.12",
+    "ts-loader": "^9.1.2",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.8.0",
     "typedoc": "0.20.20",
