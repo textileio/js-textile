@@ -14,8 +14,7 @@
   },
   "scripts": {
     "build": "npx tsc -b ./tsconfig.json",
-    "clean": "npx rimraf ./dist",
-    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+    "clean": "npx rimraf ./dist"
   },
   "repository": "github:textileio/js-textile",
   "license": "MIT",
