@@ -326,7 +326,13 @@ export class Remote {
     try {
       idString = await newDB(this.storage.name, threadID, schemas, this.config)
     } catch (err) {
-      if (err.toString().includes('db already exists')) {
+      const msg = err.toString()
+
+      if (
+        // TODO: This is a bit of a hack around some error msg issues from the hub
+        msg.includes('db already exists') ||
+        msg.includes('multiple write errors')
+      ) {
         idString = threadID.toString()
         // If it already exists, maybe we just need to create/update the schemas?
         const client = createDbClient(this.config)

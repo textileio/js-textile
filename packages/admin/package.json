@@ -14,8 +14,7 @@
   },
   "scripts": {
     "build": "npx tsc -b ./tsconfig.json",
-    "clean": "npx rimraf ./dist",
-    "test:browser": "polendina --cleanup --timeout 60 src/**/*.spec.ts --webpack-config ../../webpack.test.js"
+    "clean": "npx rimraf ./dist"
   },
   "repository": "github:textileio/js-textile",
   "license": "MIT",
@@ -25,7 +24,7 @@
     "@textile/grpc-authentication": "^3.3.4",
     "@textile/grpc-connection": "^2.4.1",
     "@textile/grpc-transport": "^0.4.0",
-    "@textile/hub-grpc": "^2.6.5",
+    "@textile/hub-grpc": "^2.6.6",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
