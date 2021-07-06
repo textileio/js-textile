@@ -82,7 +82,7 @@
     "polendina": "^1.0.0",
     "prettier": "^2.1.1",
     "prettier-eslint": "^11.0.0",
-    "prettier-plugin-organize-imports": "^1.1.1",
+    "prettier-plugin-organize-imports": "^2.2.0",
     "rollup": "^2.35.1",
     "rollup-plugin-terser": "^7.0.2",
     "source-map-support": "^0.5.19",
