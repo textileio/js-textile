@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-admin",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "web-gRPC wrapper client for managing Textile Hub admin.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -20,15 +20,15 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/context": "^0.11.1",
-    "@textile/grpc-authentication": "^3.3.4",
-    "@textile/grpc-connection": "^2.4.1",
-    "@textile/grpc-transport": "^0.4.0",
+    "@textile/context": "^0.12.0",
+    "@textile/grpc-authentication": "^3.4.0",
+    "@textile/grpc-connection": "^2.5.0",
+    "@textile/grpc-transport": "^0.5.0",
     "@textile/hub-grpc": "^2.6.6",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
-    "@textile/crypto": "^4.1.1",
-    "@textile/testing": "^0.0.5"
+    "@textile/crypto": "^4.2.0",
+    "@textile/testing": "^0.0.6"
   }
 }
