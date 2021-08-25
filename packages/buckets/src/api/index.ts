@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { grpc } from '@improbable-eng/grpc-web'
 import { Repeater } from '@repeaterjs/repeater'
 import {
@@ -59,7 +60,7 @@ import { WebsocketTransport } from '@textile/grpc-transport'
 import CID from 'cids'
 import drain from 'it-drain'
 import log from 'loglevel'
-// @ts-expect-error
+// @ts-expect-error: missing types
 import paramap from 'paramap-it'
 import {
   AbortError,

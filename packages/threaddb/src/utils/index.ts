@@ -1,5 +1,5 @@
 import Dexie, { DexieOptions } from 'dexie'
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import setGlobalVars from 'indexeddbshim'
 import { changesAddon } from '../middleware/changes'
