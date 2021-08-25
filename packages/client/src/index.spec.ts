@@ -421,6 +421,15 @@ describe('Thread Client', function () {
       expect(deleted).to.be.undefined
     })
   })
+  describe('create and delete many instances', function () {
+    it('should not timeout or lead to hanging transaction', async function () {
+      const many = Array.from({ length: 100 }, () => createPerson())
+      const ids = await client.create(dbID, 'Person', many)
+      expect(ids.length).to.equal(many.length)
+      const deleted = await client.delete(dbID, 'Person', ids)
+      expect(deleted).to.be.undefined
+    }).timeout(10000) // Make sure our test doesn't timeout
+  })
   describe('.has', function () {
     it('the created object should also return true for has', async function () {
       const instances = await client.create(dbID, 'Person', [createPerson()])

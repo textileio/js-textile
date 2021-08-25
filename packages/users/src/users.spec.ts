@@ -262,7 +262,7 @@ describe('Users...', () => {
       const token2 = await user2.getToken(user2Id)
       user2Ctx.withToken(token2) // to skip regen in later calls
       await user2.setupMailbox()
-    }).timeout(5000)
+    }).timeout(10000)
     it('should send a message to user2 and check sentbox', async () => {
       const user = new Users(user1Ctx)
       const encoder = new TextEncoder()
