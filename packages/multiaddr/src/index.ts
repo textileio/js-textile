@@ -18,6 +18,8 @@ export function bytesFromAddr(
       throw new Error(`multiaddr "${addr}" must start with a "/"`)
     }
     bytes = codec.fromString(addr)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
   } else if (addr.bytes && addr.protos && addr.protoCodes) {
     // Multiaddr
     bytes = codec.fromBytes(addr.bytes) // validate + copy bytes

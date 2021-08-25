@@ -1,4 +1,4 @@
-import Ajv, { ValidationError } from 'ajv'
+import Ajv from 'ajv'
 import Dexie, {
   DBCore,
   DBCoreMutateRequest,
@@ -58,7 +58,7 @@ export function createSchemaMiddleware(core: DBCore): DBCore {
                 const values = Dexie.deepClone(req.values)
                 values.forEach((value) => {
                   if (validator(value) === false && validator.errors) {
-                    throw new ValidationError(validator.errors)
+                    throw new Ajv.ValidationError(validator.errors)
                   }
                 })
                 // Clone request and replace with updated values

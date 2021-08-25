@@ -759,6 +759,6 @@ describe('Thread Client', function () {
       const got: Person = await newClient.findByID(dbID, 'Person', created[0])
       expect(got).to.haveOwnProperty('_id', created[0])
       expect(got).to.haveOwnProperty('firstName', 'Adam')
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
 })
