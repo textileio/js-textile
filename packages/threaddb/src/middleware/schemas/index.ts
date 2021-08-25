@@ -2,6 +2,7 @@ import Ajv, { ValidationError } from 'ajv'
 import Dexie, {
   DBCore,
   DBCoreMutateRequest,
+  DBCoreMutateResponse,
   DBCoreTable,
   Middleware,
 } from 'dexie'
@@ -42,7 +43,7 @@ export function createSchemaMiddleware(core: DBCore): DBCore {
       if (tableName.startsWith('_')) return table
       return {
         ...table,
-        async mutate(req: DBCoreMutateRequest) {
+        async mutate(req: DBCoreMutateRequest): Promise<DBCoreMutateResponse> {
           const pair = await core
             .table(SchemasTableName)
             .get({ key: tableName, trans: req.trans })
@@ -108,11 +109,11 @@ export function schemaAddon(db: Dexie): void {
   // setSchema will default to setting a wide open schema
   db.Table.prototype.setSchema = async function (
     schema: JSONSchema = defaultSchema,
-  ) {
+  ): Promise<void> {
     await this.db.table(SchemasTableName).put({ name: this.name, schema })
   }
   // getSchema will always return a default schema, even if one doesn't exist
-  db.Table.prototype.getSchema = async function () {
+  db.Table.prototype.getSchema = async function (): Promise<any> {
     const pair = await this.db.table(SchemasTableName).get({ name: this.name })
     const obj = pair?.schema
     if (

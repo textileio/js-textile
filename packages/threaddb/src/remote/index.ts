@@ -549,7 +549,7 @@ export class Remote {
       await table.filter((obj) => !keys.includes(obj._id)).delete()
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isModUpdate = (ops: any[]) => {
+    const isModUpdate = (ops: any[]): boolean => {
       const [op0] = ops
       return op0.op === 'add' && op0.path == '/_mod'
     }

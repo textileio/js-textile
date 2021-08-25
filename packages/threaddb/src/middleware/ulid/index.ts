@@ -1,4 +1,10 @@
-import { DBCore, DBCoreMutateRequest, DBCoreTable, Middleware } from 'dexie'
+import {
+  DBCore,
+  DBCoreMutateRequest,
+  DBCoreMutateResponse,
+  DBCoreTable,
+  Middleware,
+} from 'dexie'
 import { ulid } from 'ulid'
 
 export function createUlidMiddleware(core: DBCore): DBCore {
@@ -11,7 +17,7 @@ export function createUlidMiddleware(core: DBCore): DBCore {
       if (tableName.startsWith('_')) return table
       return {
         ...table,
-        async mutate(req: DBCoreMutateRequest) {
+        async mutate(req: DBCoreMutateRequest): Promise<DBCoreMutateResponse> {
           switch (req.type) {
             case 'add':
             case 'put':

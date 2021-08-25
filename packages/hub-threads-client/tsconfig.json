@@ -4,6 +4,7 @@
   "references": [
     { "path": "../client" },
     { "path": "../context" },
+    { "path": "../crypto" },
     { "path": "../id" },
     { "path": "../security" }
   ]

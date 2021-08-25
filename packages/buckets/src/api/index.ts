@@ -919,7 +919,7 @@ export async function bucketsArchive(
   req.setKey(key)
   if (skipAutomaticVerifiedDeal !== undefined) {
     req.setSkipAutomaticVerifiedDeal(skipAutomaticVerifiedDeal)
-  } 
+  }
   if (options?.archiveConfig) {
     req.setArchiveConfig(toProtoArchiveConfig(options.archiveConfig))
   }

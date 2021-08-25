@@ -32,11 +32,15 @@ export interface Change<T = any> {
   after: T | undefined
 }
 
-const isEmpty = (obj: any) =>
+const isEmpty = (obj: any): boolean =>
   Object.keys(obj).length === 0 && obj.constructor === Object
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const zip = <T = any, R = T>(arr1: T[], arr2: R[], fill: any = undefined) => {
+const zip = <T = any, R = T>(
+  arr1: T[],
+  arr2: R[],
+  fill: any = undefined,
+): any[][] => {
   // Missing values should be undefined
   return arr1.map((k, i) => [k, arr2[i] ?? fill])
 }
@@ -164,7 +168,7 @@ function getEffectiveKeys(
         keys?: any[]
       })
     | Pick<DBCoreDeleteRequest, 'keys' | 'type'>,
-) {
+): any[] {
   if (req.type === 'delete') return req.keys
   return req.keys || req.values.map(primaryKey.extractKey)
 }
@@ -173,7 +177,7 @@ function getExistingValues(
   table: DBCoreTable,
   req: DBCoreAddRequest | DBCorePutRequest | DBCoreDeleteRequest,
   effectiveKeys: unknown[],
-) {
+): Promise<any[]> {
   return req.type === 'add'
     ? Promise.resolve(new Array(req.values.length).fill({}))
     : table

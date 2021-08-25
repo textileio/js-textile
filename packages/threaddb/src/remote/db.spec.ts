@@ -26,7 +26,7 @@ describe('ThreadDB', function () {
       /**
        * Function to create a set of pre-defined udpates/changes
        */
-      async function createChanges() {
+      async function createChanges(): Promise<void> {
         const collection = db.collection('Person')
         if (collection === undefined) throw new Error('should be defined')
         // Create some updates
