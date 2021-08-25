@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Buffer } from 'buffer'
@@ -56,7 +57,7 @@ export interface File {
  * @param {Object} input
  * @return AsyncInterable<{ path, content: AsyncIterable<Buffer> }>
  */
-export function normaliseInput(input: any) {
+export function normaliseInput(input: any): AsyncGenerator<File, any, unknown> {
   // must give us something
   if (input === null || input === undefined) {
     throw new Error(`Unexpected input: ${input}`)
@@ -286,11 +287,11 @@ function isFileObject(obj: any) {
 }
 
 function blobToAsyncGenerator(blob: Blob) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (typeof blob.stream === 'function') {
     // firefox < 69 does not support blob.stream()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return browserStreamToIt(blob.stream())
   }

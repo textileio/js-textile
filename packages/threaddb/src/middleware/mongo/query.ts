@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // From https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/mongodb/index.d.ts
 
@@ -48,6 +49,7 @@ export type AddToSetOperators<Type> = {
   $each: Type
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type ArrayOperator<Type> = {
   // $each: Type;
   $slice?: number

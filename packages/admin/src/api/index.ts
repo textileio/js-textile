@@ -230,7 +230,7 @@ export interface OrgInfo {
 
 const pbToOrgInfo = (orgInfo?: pb.OrgInfo): OrgInfo => {
   if (orgInfo === undefined) throw new Error('error getting org info')
-  const members = orgInfo?.getMembersList().map((res) => {
+  const members = orgInfo.getMembersList().map((res) => {
     return {
       role: res.getRole(),
       key: publicKeyBytesToString(res.getKey_asU8()),
