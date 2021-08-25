@@ -615,7 +615,7 @@ describe('Buckets...', function () {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('permission denied')
       }
-    })
+    }).timeout(5000)
 
     it('remove a file in shared path', async function () {
       if (isBrowser) return this.skip()
