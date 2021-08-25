@@ -54,7 +54,7 @@ describe('ThreadDB', function () {
         ++friend.shoeSize
         // Change 2
         await friends.put(friend)
-        await db.transaction('readwrite', friends, async (tx) => {
+        await db.transaction('readwrite', friends, async () => {
           // Change 3 & 4
           // id is the id of the last add ("blah")
           const id = await friends.bulkAdd([

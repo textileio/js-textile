@@ -47,7 +47,7 @@ describe('ThreadDB', function () {
     /**
      * Function to create a set of pre-defined udpates/changes
      */
-    async function createChanges() {
+    async function createChanges(): Promise<void> {
       // Create some default changes...
       const dogs = dexie.table('dogs')
       // Change 1 | Dogs 1

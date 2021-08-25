@@ -51,7 +51,6 @@
   ],
   "author": "Textile <contact@textile.io>",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@babel/polyfill": "^7.12.1",
     "@lerna/batch-packages": "^3.16.0",
