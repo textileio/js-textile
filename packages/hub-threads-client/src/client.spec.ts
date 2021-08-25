@@ -118,7 +118,7 @@ describe('Hub Threads Client', () => {
       await db.newDB(id, 'foo')
       const res = await client.getThread('foo')
       expect(res.name).to.equal('foo')
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
 
   describe('listDBs', () => {
@@ -166,7 +166,7 @@ describe('Hub Threads Client', () => {
         expect(err).to.not.equal(wrongError)
         expect(err.message).to.include('If using Hub')
       }
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
 
   describe('listThreads', () => {
@@ -253,6 +253,6 @@ describe('Hub Threads Client', () => {
       res = await client.listThreads()
       expect(res).to.have.length(1)
       expect(res[0].name).to.equal('foo')
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
 })

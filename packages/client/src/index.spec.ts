@@ -210,7 +210,7 @@ describe('Thread Client', function () {
       } catch (err) {
         expect(err.toString()).to.include('thread not found')
       }
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
 
   describe('.newDBFromAddr', function () {
@@ -428,7 +428,7 @@ describe('Thread Client', function () {
       expect(instances.length).to.equal(1)
       const has = await client.has(dbID, 'Person', instances)
       expect(has).to.be.true
-    })
+    }).timeout(5000) // Make sure our test doesn't timeout
   })
   describe('.find', function () {
     it('response should contain the same instance based on query', async function () {
