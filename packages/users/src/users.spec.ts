@@ -4,8 +4,8 @@ import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { Client } from '@textile/hub-threads-client'
 import { createAPISig } from '@textile/security'
-import { ThreadID } from '@textile/threads-id'
 import { createKey, signUp } from '@textile/testing'
+import { ThreadID } from '@textile/threads-id'
 import { expect } from 'chai'
 import { MailboxEvent, Status } from './api'
 import { Users } from './users'
@@ -128,7 +128,7 @@ describe('Users...', () => {
       await db.newDB(id, 'foo')
       const res = await user.getThread('foo')
       expect(res.name).to.equal('foo')
-    })
+    }).timeout(5000)
   })
 
   describe('listThreads', () => {
@@ -223,7 +223,7 @@ describe('Users...', () => {
       res = await user.listThreads()
       expect(res).to.have.length(1)
       expect(res[0].name).to.equal('foo')
-    })
+    }).timeout(5000)
   })
 
   describe('mailbox', () => {
