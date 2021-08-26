@@ -34,11 +34,15 @@ const finishSendFrame = new Uint8Array([1])
 function constructWebSocketAddress(url: string) {
   if (url.substr(0, 8) === 'https://') {
     return `wss://${url.substr(8)}`
+  } else if (url.startsWith('wss://')) {
+    return url
   } else if (url.substr(0, 7) === 'http://') {
     return `ws://${url.substr(7)}`
+  } else if (url.startsWith('ws://')) {
+    return url
   }
   throw new Error(
-    'Websocket transport constructed with non-https:// or http:// host.',
+    'Websocket transport constructed with non-{http,ws}[s]:// host.',
   )
 }
 
