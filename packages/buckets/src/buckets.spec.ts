@@ -8,12 +8,12 @@ import {
   sessionSecret,
   signUp,
 } from '@textile/testing'
-import AbortController from 'abort-controller'
 import { isBrowser, isNode } from 'browser-or-node'
 import { expect } from 'chai'
 import fs from 'fs'
 import drain from 'it-drain'
 import last from 'it-last'
+import AbortController from 'native-abort-controller'
 import path from 'path'
 import { Readable } from 'stream'
 import { CHUNK_SIZE, File, genChunks } from './api'
