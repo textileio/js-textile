@@ -1,4 +1,5 @@
 import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
 import Dexie, {
   DBCore,
   DBCoreMutateRequest,
@@ -11,6 +12,9 @@ import {
   initOverrideCreateTransaction,
   initOverrideParseStoreSpec,
 } from '../overrides'
+
+const ajv = new Ajv({ useDefaults: true })
+addFormats(ajv)
 
 export const SchemasTableName = '_schemas'
 
@@ -48,7 +52,7 @@ export function createSchemaMiddleware(core: DBCore): DBCore {
             .table(SchemasTableName)
             .get({ key: tableName, trans: req.trans })
           const schema: JSONSchema = pair?.schema ?? defaultSchema
-          const validator = new Ajv({ useDefaults: true }).compile(schema)
+          const validator = ajv.compile(schema)
           // We only need to worry about validation when mutating data
           try {
             switch (req.type) {
