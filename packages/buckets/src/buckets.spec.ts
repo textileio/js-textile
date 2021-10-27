@@ -13,7 +13,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import drain from 'it-drain'
 import last from 'it-last'
-// Can revert to 'abort-controller' if mysticatea/abort-controller#24 is resolved
+// Can revert to 'abort-controller' when mysticatea/abort-controller#24 is resolved
 import { AbortController } from 'native-abort-controller'
 import path from 'path'
 import { Readable } from 'stream'
