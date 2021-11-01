@@ -1,6 +1,6 @@
 {
   "name": "@textile/buck-util",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "This library has been replaced by @textile/buckr. This library is deprecated.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -24,16 +24,16 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@improbable-eng/grpc-web": "^0.13.0",
-    "@textile/buckets": "^6.2.0",
+    "@textile/buckets": "^6.2.1",
     "@textile/context": "^0.12.1",
-    "@textile/grpc-connection": "^2.5.1",
+    "@textile/grpc-connection": "^2.5.2",
     "dotenv": "8.2.0",
     "glob": "^7.1.6",
     "ws": "^7.3.0",
     "yargs": "16.2.0"
   },
   "devDependencies": {
-    "@textile/testing": "^0.0.7",
+    "@textile/testing": "^0.0.8",
     "@types/glob": "^7.1.1",
     "@types/jest": "^25.2.3",
     "@types/node": "^14.14.22",

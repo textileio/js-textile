@@ -1,6 +1,6 @@
 {
   "name": "@textile/hub-filecoin",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "web-gRPC wrapper client for interacting with Textile Hub Filecoin services.",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -23,8 +23,8 @@
     "@improbable-eng/grpc-web": "^0.12.0",
     "@textile/context": "^0.12.1",
     "@textile/crypto": "^4.2.1",
-    "@textile/grpc-authentication": "^3.4.1",
-    "@textile/grpc-connection": "^2.5.1",
+    "@textile/grpc-authentication": "^3.4.2",
+    "@textile/grpc-connection": "^2.5.2",
     "@textile/grpc-powergate-client": "^2.6.2",
     "@textile/hub-grpc": "2.6.6",
     "@textile/security": "^0.9.1",
