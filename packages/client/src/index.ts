@@ -324,10 +324,15 @@ export class Client {
       client.onMessage(async (message: pb.GetTokenReply) => {
         if (message.hasChallenge()) {
           const challenge = message.getChallenge_asU8()
-          const signature = await callback(challenge)
-          const req = new pb.GetTokenRequest()
-          req.setSignature(signature)
-          client.send(req)
+          let signature: Uint8Array | undefined
+          try {
+            signature = await callback(challenge)
+          } catch (err) {
+            reject(err)
+          }
+          const req_ = new pb.GetTokenRequest()
+          if (signature) req_.setSignature(signature)
+          client.send(req_)
           client.finishSend()
         } else if (message.hasToken()) {
           token = message.getToken()
