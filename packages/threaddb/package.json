@@ -1,6 +1,6 @@
 {
   "name": "@textile/threaddb",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "ThreadDB Javascript implementation",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -25,7 +25,7 @@
     "@textile/crypto": "^4.2.1",
     "@textile/grpc-transport": "^0.5.2",
     "@textile/security": "^0.9.1",
-    "@textile/threads-client": "^2.3.1",
+    "@textile/threads-client": "^2.3.2",
     "@textile/threads-client-grpc": "^1.1.1",
     "@textile/threads-id": "^0.6.1",
     "@types/json-schema": "^7.0.7",

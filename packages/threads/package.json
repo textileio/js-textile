@@ -1,6 +1,6 @@
 {
   "name": "@textile/threads",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
   "module": "dist/esm/index.js",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@textile/crypto": "^4.2.1",
     "@textile/security": "^0.9.1",
-    "@textile/threads-client": "^2.3.1",
+    "@textile/threads-client": "^2.3.2",
     "@textile/threads-id": "^0.6.1"
   },
   "gitHead": "1c550ec78eab0368d5c758a7068e529c45918729"
