@@ -108,13 +108,13 @@ export function getFunctionBody(
  * Textile Buckets file-level access roles are implemented in part with a read filter.
  */
 export interface CollectionConfig<W = any, R = W> {
-  name: string
-  schema?: JSONSchema3or4 | any // JSONSchema is preferred but any works
-  indexes?: pb.Index.AsObject[]
+  name: string;
+  schema?: JSONSchema3or4 | any; // JSONSchema is preferred but any works
+  indexes?: pb.Index.AsObject[];
   writeValidator?:
     | ((writer: string, event: Event, instance: W) => boolean)
-    | string
-  readFilter?: ((reader: string, instance: R) => R) | string
+    | string;
+  readFilter?: ((reader: string, instance: R) => R) | string;
 }
 
 const encoder = new TextEncoder()
@@ -137,10 +137,10 @@ export enum Action {
 }
 
 export interface Update<T = unknown> {
-  instance: T | undefined
-  collectionName: string
-  instanceID: string
-  action: Action
+  instance: T | undefined;
+  collectionName: string;
+  instanceID: string;
+  action: Action;
 }
 
 /**
@@ -151,18 +151,18 @@ export interface DBInfo {
    * The Thread Key, encoded as a base32 string.
    * @see {@link ThreadKey} for details.
    */
-  key: string
+  key: string;
   /**
    * The Multiaddrs for a peer hosting the given Thread/DB.
    */
-  addrs: string[]
+  addrs: string[];
 }
 
 /**
  * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Threads server.
  * This client library can be used to interact with a local or remote Textile gRPC-service
  * It is a wrapper around Textile Thread's 'DB' API, which is defined here:
- * https://github.com/textileio/go-threads/blob/master/api/pb/api.proto.
+ * https://github.com/textileio/go-threads/blob/master/api/pb/threads.proto.
  *
  * @example
  * ```typescript
