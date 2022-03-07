@@ -20,7 +20,7 @@
     "@textile/crypto": "^4.2.1",
     "@textile/grpc-authentication": "^3.4.4",
     "@textile/hub-filecoin": "^2.2.3",
-    "@textile/hub-grpc": "2.6.6",
+    "@textile/hub-grpc": "2.6.17",
     "@textile/hub-threads-client": "^5.5.3",
     "@textile/security": "^0.9.1",
     "@textile/threads-id": "^0.6.1",

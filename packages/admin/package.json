@@ -24,7 +24,7 @@
     "@textile/grpc-authentication": "^3.4.4",
     "@textile/grpc-connection": "^2.5.3",
     "@textile/grpc-transport": "^0.5.2",
-    "@textile/hub-grpc": "^2.6.6",
+    "@textile/hub-grpc": "^2.6.17",
     "loglevel": "^1.7.0"
   },
   "devDependencies": {
