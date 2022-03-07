@@ -13,9 +13,6 @@ import {
   initOverrideParseStoreSpec,
 } from '../overrides'
 
-const ajv = new Ajv({ useDefaults: true })
-addFormats(ajv)
-
 export const SchemasTableName = '_schemas'
 
 export type JSONSchema = JSONSchema4 // | JSONSchema6 | JSONSchema7;
@@ -52,7 +49,9 @@ export function createSchemaMiddleware(core: DBCore): DBCore {
             .table(SchemasTableName)
             .get({ key: tableName, trans: req.trans })
           const schema: JSONSchema = pair?.schema ?? defaultSchema
-          const validator = ajv.compile(schema)
+          const validator = addFormats(new Ajv({ useDefaults: true })).compile(
+            schema,
+          )
           // We only need to worry about validation when mutating data
           try {
             switch (req.type) {
