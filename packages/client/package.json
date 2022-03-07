@@ -26,7 +26,7 @@
     "@textile/grpc-transport": "^0.5.2",
     "@textile/multiaddr": "^0.6.1",
     "@textile/security": "^0.9.1",
-    "@textile/threads-client-grpc": "^1.1.1",
+    "@textile/threads-client-grpc": "^1.1.2",
     "@textile/threads-id": "^0.6.1",
     "@types/to-json-schema": "^0.2.0",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
