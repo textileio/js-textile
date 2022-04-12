@@ -26,13 +26,14 @@ export class GrpcConnection {
     grpc.setDefaultTransport(transport)
   }
 
-  public unary<
+  public async unary<
     R extends grpc.ProtobufMessage,
     T extends grpc.ProtobufMessage,
     M extends grpc.UnaryMethodDefinition<R, T>
   >(methodDescriptor: M, req: R, ctx?: ContextInterface): Promise<T> {
+    const context = new Context().withContext(this.context).withContext(ctx)
+    const metadata = await context.toMetadata()
     return new Promise<T>((resolve, reject) => {
-      const metadata = ctx ? { ...ctx.toJSON() } : { ...this.context.toJSON() }
       grpc.unary(methodDescriptor, {
         request: req,
         host: this.serviceHost,
