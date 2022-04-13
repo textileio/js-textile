@@ -1,5 +1,5 @@
 import { grpc } from '@improbable-eng/grpc-web'
-import { Context, errors } from '@textile/context'
+import { Context, ContextInterface, errors } from '@textile/context'
 import { PrivateKey } from '@textile/crypto'
 import { SignupResponse } from '@textile/hub-grpc/api/hubd/pb/hubd_pb'
 import { Client } from '@textile/hub-threads-client'
@@ -20,6 +20,37 @@ const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('Users...', () => {
+  it('should callback when working with expired token', async () => {
+    const pastDate = new Date(Date.now() - 1000 * 60)
+    const futureDate = new Date(Date.now() + 1000 * 60)
+    const context: ContextInterface = Context.fromUserAuthCallback(async () => {
+      return {
+        sig: 'fake',
+        msg: futureDate.toUTCString(),
+        token: 'fake',
+        key: 'fake',
+      }
+    })
+    context.withAPISig({
+      sig: 'fake',
+      // Create msg date in the past
+      msg: pastDate.toUTCString(),
+    })
+    const user = new Users(context)
+    // Should throw
+    try {
+      await user.getThread('foo')
+      throw wrongError
+    } catch (err) {
+      expect(err).to.equal(errors.expirationError)
+    }
+    // Should be renewed
+    const metadata = await user.context.toMetadata()
+    expect(metadata.get('x-textile-api-sig-msg')[0]).to.equal(
+      futureDate.toUTCString(),
+    )
+  })
+
   describe('getThread', () => {
     const ctx = new Context(addrApiurl)
     let dev: SignupResponse.AsObject

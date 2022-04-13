@@ -204,6 +204,7 @@ describe('Hub Admin...', function () {
     })
 
     it('should list orgs', async function () {
+      this.timeout(5000)
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       // Before
@@ -219,6 +220,7 @@ describe('Hub Admin...', function () {
     })
 
     it('should create and list keys specific to an org', async function () {
+      this.timeout(5000)
       const creds = new Context(addrApiurl).withSession(dev.session)
       const admin = new Admin(creds)
       // Grab the first org
