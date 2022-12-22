@@ -1,3 +1,5 @@
+## DEPRECATION NOTICE: Textile's _hosted_ Hub infrastructure will be taken off-line on January 9th, 2023. At this time, all ThreadDB and Bucket data will no longer be available, and will subsequently be removed. See https://github.com/textileio/textile/issues/578 for further details.
+
 # JS-Textile
 
 [![Made by Textile](https://img.shields.io/badge/made%20by-Textile-informational.svg?style=popout-square)](https://textile.io)
@@ -11,7 +13,7 @@
 
 Go to [the docs](https://docs.textile.io/) for more about Textile.
 
-Join us on our [public Slack channel](https://slack.textile.io/) for news, discussions, and status updates. [Check out our blog](https://medium.com/textileio) for the latest posts and announcements.
+Join us on our [public Discord server](https://discord.com/invite/dc8EBEhGbg) for news, discussions, and status updates.
 
 ## Table of Contents
 
@@ -28,13 +30,15 @@ Join us on our [public Slack channel](https://slack.textile.io/) for news, discu
 
 ## Usage
 
-`@textile/hub` provides access to Textile APIs in apps based on API Keys. For details on getting keys, see [textileio/textile](https://docs.textile.io/hub/) or join the [Textile Slack](https://slack.textile.io).
+> We are shutting down our hosted Hub infrastructure. Please see this [deprecation notice](https://github.com/textileio/textile/issues/578) for details.
+
+`@textile/hub` provides access to Textile APIs in apps based on API Keys. For details on getting keys, see [textileio/textile](https://docs.textile.io/hub/) or join our [Discord](https://discord.com/invite/dc8EBEhGbg).
 
 ## Contributing
 
-This project is a work in progress. As such, there's a few things you can do right now to help out:
+This project is no longer under active development. If you'd like to get something change/fixed/updated, here are some ways to make that happen:
 
-- **Ask questions**! We'll try to help. Be sure to drop a note (on the above issue) if there is anything you'd like to work on and we'll update the issue to let others know. Also [get in touch](https://slack.textile.io) on Slack.
+- **Ask questions**! We'll try to help. Be sure to drop a note (on the above issue) if there is anything you'd like to work on and we'll update the issue to let others know. Also [get in touch](https://discord.com/invite/dc8EBEhGbg) on Slack.
 - **Open issues**, [file issues](https://github.com/textileio/js-textile/issues), submit pull requests!
 - **Perform code reviews**. More eyes will help a) speed the project along b) ensure quality and c) reduce possible future bugs.
 - **Take a look at the code**. Contributions here that would be most helpful are **top-level comments** about how it should look based on your understanding. Again, the more eyes the better.
